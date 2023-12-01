@@ -1,0 +1,65 @@
+name: windows-latest
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - uses: lukka/get-cmake@latest
+
+    - name: Create vcpkg
+      shell: bash
+      run: mkdir -p ${{github.workspace}}/vcpkg
+
+    - name: Restore vcpkg and its artifacts.
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{github.workspace}}/vcpkg/
+          !${{github.workspace}}/vcpkg/buildtrees
+          !${{github.workspace}}/vcpkg/packages
+          !${{github.workspace}}/vcpkg/downloads
+          !${{github.workspace}}/vcpkg/installed
+        # The key is composed in a way that it gets properly invalidated: this must happen whenever vcpkg's Git commit id changes, or the list of packages changes. In this case a cache miss must happen and a new entry with a new key with be pushed to GitHub the cache service.
+        # The key includes: hash of the vcpkg.json file, the hash of the vcpkg Git commit id, and the used vcpkg's triplet. The vcpkg's commit id would suffice, but computing an hash out it does not harm.
+        # Note: given a key, the cache content is immutable. If a cache entry has been created improperly, in order the recreate the right content the key must be changed as well, and it must be brand new (i.e. not existing already).
+        key: |
+          ${{ hashFiles( 'vcpkg.json' ) }}
+    - uses: ilammy/msvc-dev-cmd@v1
+    
+    - name: vcpkg install
+      run: vcpkg install
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DEQEMU_FETCH_MSVC_DEPENDENCIES_VCPKG=0
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: Archive Release
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        path: './build/bin/'
+        filename: 'windows-latest.tar.gz'
+
+    - name: Upload Latest Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'windows-latest.tar.gz'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        tag: latest
