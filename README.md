@@ -7,9 +7,13 @@ EverQuest, the groundbreaking MMORPG that revolutionized the gaming industry, co
 Project Goals:
 
 Enhanced Graphics and Immersive Environment: Utilizing state-of-the-art technologies, the project will revamp the game's graphics, ensuring stunning visual fidelity while preserving the game's original charm.
+
 Streamlined Gameplay and User Experience: Introducing quality-of-life improvements to streamline gameplay mechanics, improve user interfaces, and enhance overall player experience.
+
 Expansive Content Updates: Developing new storylines, quests, and regions within the existing world, offering exciting adventures and challenges for players to explore.
+
 Cross-Platform Accessibility: Facilitating access across multiple platforms, allowing players to enjoy EverQuest seamlessly on PC, consoles, and mobile devices.
+
 Community Engagement and Feedback: Creating avenues for community input and engagement to ensure that the evolving game aligns with player expectations and preferences.
 
 Project Phases:
