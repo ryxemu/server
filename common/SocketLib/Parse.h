@@ -9,7 +9,7 @@ Copyright (C) 1999-2005  Anders Hedstrom
 This library is made available under the terms of the GNU GPL.
 
 If you would like to use this library in a closed-source application,
-a separate license agreement is available. For information about 
+a separate license agreement is available. For information about
 the closed-source license agreement for the C++ sockets library,
 please visit http://www.alhem.net/Sockets/license.html and/or
 email license@alhem.net.
@@ -38,26 +38,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace SOCKETS_NAMESPACE {
 #endif
 
-
 /***************************************************/
 /* interface of class Parse */
 
 /** Splits a string whatever way you want.
-	\ingroup util */
-class Parse
-{
-public:
+    \ingroup util */
+class Parse {
+   public:
 	Parse();
 	Parse(const std::string&);
-	Parse(const std::string&,const std::string&);
-	Parse(const std::string&,const std::string&,short);
+	Parse(const std::string&, const std::string&);
+	Parse(const std::string&, const std::string&, short);
 	~Parse();
 	short issplit(char);
 	void getsplit(void);
 	void getsplit(std::string&);
 	std::string getword(void);
 	void getword(std::string&);
-	void getword(std::string&,std::string&,int);
+	void getword(std::string&, std::string&, int);
 	std::string getrest();
 	void getrest(std::string&);
 	long getvalue(void);
@@ -75,21 +73,20 @@ public:
 	size_t getptr(void) { return pa_the_ptr; }
 	void EnableQuote(bool b) { pa_quote = b; }
 
-private:
+   private:
 	std::string pa_the_str;
 	std::string pa_splits;
 	std::string pa_ord;
-	size_t   pa_the_ptr;
-	char  pa_breakchar;
-	char  pa_enable;
-	char  pa_disable;
+	size_t pa_the_ptr;
+	char pa_breakchar;
+	char pa_enable;
+	char pa_disable;
 	short pa_nospace;
-	bool  pa_quote;
+	bool pa_quote;
 };
-
 
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif // _PARSE_H
+#endif  // _PARSE_H

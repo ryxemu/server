@@ -1,20 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2010 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 #include "../common/global_define.h"
 #include "../common/types.h"
 #include "../common/opcodemgr.h"
@@ -38,19 +21,16 @@ EQEmuLogSys LogSys;
 EQCrypto eq_crypto;
 bool run_server = true;
 
-void CatchSignal(int sig_num)
-{
+void CatchSignal(int sig_num) {
 }
 
-int main()
-{
+int main() {
 	RegisterExecutablePlatform(ExePlatformLogin);
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
 	LogInfo("Logging System Init.");
 
 	LogSys.log_settings[Logs::Error].log_to_console = Logs::General;
-
 
 	/* Parse out login.ini */
 	server.config = new Config();
@@ -69,10 +49,10 @@ int main()
 		server.options.DumpOutPackets(true);
 	}
 
-	if (server.config->GetVariable("security", "allow_token_login").compare("TRUE") == 0) //
+	if (server.config->GetVariable("security", "allow_token_login").compare("TRUE") == 0)  //
 		server.options.AllowTokenLogin(true);
 
-	if (server.config->GetVariable("security", "allow_password_login").compare("FALSE") == 0) //
+	if (server.config->GetVariable("security", "allow_password_login").compare("FALSE") == 0)  //
 		server.options.AllowPasswordLogin(false);
 
 	if (server.config->GetVariable("options", "auto_create_accounts").compare("TRUE") == 0)  //
@@ -88,10 +68,9 @@ int main()
 		server.options.LocalNetwork(local_network);
 	}
 
-	//Parse local network option.
+	// Parse local network option.
 	std::string mip = server.config->GetVariable("options", "network_ip");
-	if (mip.size() > 0)
-	{
+	if (mip.size() > 0) {
 		server.options.NetworkIP(mip);
 	}
 
@@ -127,11 +106,11 @@ int main()
 	if (server.config->GetVariable("database", "subsystem").compare("MySQL") == 0) {
 		LogInfo("MySQL Database Init.");
 		server.db = (Database*)new Database(
-			server.config->GetVariable("database", "user"),
-			server.config->GetVariable("database", "password"),
-			server.config->GetVariable("database", "host"),
-			server.config->GetVariable("database", "port"),
-			server.config->GetVariable("database", "db"));
+		    server.config->GetVariable("database", "user"),
+		    server.config->GetVariable("database", "password"),
+		    server.config->GetVariable("database", "host"),
+		    server.config->GetVariable("database", "port"),
+		    server.config->GetVariable("database", "db"));
 	}
 
 	/* Make sure our database got created okay, otherwise cleanup and exit. */
@@ -143,11 +122,11 @@ int main()
 		return 1;
 	}
 
-	//create our server manager.
+	// create our server manager.
 	LogInfo("Server Manager Initialize.");
 	server.server_manager = new ServerManager();
 	if (!server.server_manager) {
-		//We can't run without a server manager, cleanup and exit.
+		// We can't run without a server manager, cleanup and exit.
 		LogError("Server Manager Failed to Start.");
 
 		LogInfo("Database System Shutdown.");
@@ -157,11 +136,11 @@ int main()
 		return 1;
 	}
 
-	//create our client manager.
+	// create our client manager.
 	LogInfo("Client Manager Initialize.");
 	server.client_manager = new ClientManager();
 	if (!server.client_manager) {
-		//We can't run without a client manager, cleanup and exit.
+		// We can't run without a client manager, cleanup and exit.
 		LogError("Client Manager Failed to Start.");
 		LogInfo("Server Manager Shutdown.");
 		delete server.server_manager;
@@ -182,15 +161,15 @@ int main()
 #endif
 
 	LogInfo("Server Started.");
-	
+
 	auto loop_fun = [&](EQ::Timer* t) {
 		Timer::SetCurrentTime();
-		
+
 		if (!run_server) {
 			EQ::EventLoop::Get().Shutdown();
 			return;
 		}
-		
+
 		server.client_manager->Process();
 		server.server_manager->Process();
 		timeout_manager.CheckTimeouts();
@@ -218,4 +197,3 @@ int main()
 
 	return 0;
 }
-

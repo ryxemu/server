@@ -39,29 +39,25 @@ struct PathFileHeader {
 };
 #pragma pack()
 
-struct Edge
-{
+struct Edge {
 	float distance;
 	bool teleport;
 	int door_id;
 };
 
-struct Node
-{
+struct Node {
 	int id;
 	glm::vec3 v;
 	float bestz;
 	std::map<int, Edge> edges;
 };
 
-struct PathNodeSortStruct
-{
+struct PathNodeSortStruct {
 	int id;
 	float Distance;
 };
 
-struct AStarNode
-{
+struct AStarNode {
 	int PathNodeID;
 	int Parent;
 	float HCost;
@@ -70,58 +66,57 @@ struct AStarNode
 };
 
 template <class Graph, class CostType, class NodeMap>
-class distance_heuristic : public boost::astar_heuristic<Graph, CostType>
-{
-public:
+class distance_heuristic : public boost::astar_heuristic<Graph, CostType> {
+   public:
 	typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
 
 	distance_heuristic(NodeMap n, Vertex goal)
-		: m_node(n), m_goal(goal) {}
-	CostType operator()(Vertex u)
-	{
+	    : m_node(n), m_goal(goal) {}
+	CostType operator()(Vertex u) {
 		CostType dx = m_node[m_goal].v.x - m_node[u].v.x;
 		CostType dy = m_node[m_goal].v.y - m_node[u].v.y;
 		CostType dz = m_node[m_goal].v.z - m_node[u].v.z;
 		return ::sqrt(dx * dx + dy * dy + dz * dz);
 	}
-private:
+
+   private:
 	NodeMap m_node;
 	Vertex m_goal;
 };
 
 struct found_goal {};
 template <class Vertex>
-class astar_goal_visitor : public boost::default_astar_visitor
-{
-public:
+class astar_goal_visitor : public boost::default_astar_visitor {
+   public:
 	astar_goal_visitor(Vertex goal) : m_goal(goal) {}
 	template <class Graph>
-	void examine_vertex(Vertex u, Graph& g) {
+	void examine_vertex(Vertex u, Graph &g) {
 		if (u == m_goal)
 			throw found_goal();
 	}
-private:
+
+   private:
 	Vertex m_goal;
 };
 
 typedef boost::geometry::model::point<float, 3, boost::geometry::cs::cartesian> boostPoint;
 typedef std::pair<boostPoint, unsigned int> RTreeValue;
 typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, boost::no_property,
-	boost::property<boost::edge_weight_t, float>> GraphType;
+                              boost::property<boost::edge_weight_t, float>>
+    GraphType;
 typedef boost::property_map<GraphType, boost::edge_weight_t>::type WeightMap;
 
 struct PathfinderWaypoint::Implementation {
 	bool PathFileValid;
 	std::vector<Node> Nodes;
-	std::vector< std::vector< int16 > > path_tree;
-	std::vector< std::vector< bool > > teleports;
+	std::vector<std::vector<int16>> path_tree;
+	std::vector<std::vector<bool>> teleports;
 	int *ClosedListFlag;
 	std::string FileName;
 	int HeadVersion;
 };
 
-PathfinderWaypoint::PathfinderWaypoint(const std::string &path)
-{
+PathfinderWaypoint::PathfinderWaypoint(const std::string &path) {
 	m_impl.reset(new Implementation());
 	m_impl->PathFileValid = false;
 	m_impl->FileName = path;
@@ -129,13 +124,11 @@ PathfinderWaypoint::PathfinderWaypoint(const std::string &path)
 	Load(path);
 }
 
-PathfinderWaypoint::~PathfinderWaypoint()
-{
+PathfinderWaypoint::~PathfinderWaypoint() {
 	safe_delete_array(m_impl->ClosedListFlag);
 }
 
-IPathfinder::IPath PathfinderWaypoint::FindRoute(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, int flags)
-{
+IPathfinder::IPath PathfinderWaypoint::FindRoute(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, int flags) {
 	stuck = false;
 	partial = false;
 	std::vector<RTreeValue> result_start_n;
@@ -156,7 +149,7 @@ IPathfinder::IPath PathfinderWaypoint::FindRoute(const glm::vec3 &start, const g
 		return Route;
 	}
 
-	std::deque<int>node_list;
+	std::deque<int> node_list;
 	if (m_impl->HeadVersion == 4)
 		node_list = FindRouteV4(j, k);
 	else
@@ -192,12 +185,9 @@ IPathfinder::IPath PathfinderWaypoint::FindRoute(const glm::vec3 &start, const g
 	}
 	Route.push_back(end);
 	return Route;
-
 }
 
-
-IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3& start, const glm::vec3& end, bool& partial, bool& stuck, const PathfinderOptions &opts)
-{
+IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, const PathfinderOptions &opts) {
 	stuck = false;
 	partial = false;
 
@@ -232,7 +222,7 @@ IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3& start, const gl
 		return Route;
 	}
 
-	std::deque<int>node_list;
+	std::deque<int> node_list;
 	if (m_impl->HeadVersion == 4)
 		node_list = FindRouteV4(j, k);
 	else
@@ -269,65 +259,52 @@ IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3& start, const gl
 	Route.push_back(end);
 
 	if (Route.size() > 2) {
-
-
 		int CulledNodes = 0;
 
 		// cull nodes off end
-		while ((Route.size() > 2) && (CulledNodes < 2))
-		{
+		while ((Route.size() > 2) && (CulledNodes < 2)) {
 			auto First = Route.end();
 			--First;
 			--First;
 			auto Second = First;
 			--Second;
 
-			if (!zone->zonemap->LineIntersectsZone(end, Second->pos, 1.0f, nullptr)
-				&& zone->zonemap->NoHazardsAccurate(end, Second->pos, 6.0f, 20, 5.0f))
-			{
+			if (!zone->zonemap->LineIntersectsZone(end, Second->pos, 1.0f, nullptr) && zone->zonemap->NoHazardsAccurate(end, Second->pos, 6.0f, 20, 5.0f)) {
 				Route.erase(First);
 				++CulledNodes;
-			}
-			else
+			} else
 				break;
 		}
 
 		CulledNodes = 0;
-		while ((Route.size() > 2) && (CulledNodes < 2))
-		{
+		while ((Route.size() > 2) && (CulledNodes < 2)) {
 			auto First = Route.begin();
 			++First;
 			auto Second = First;
 			++Second;
 
-			if (!zone->zonemap->LineIntersectsZone(start, Second->pos, 1.0f, nullptr)
-				&& zone->zonemap->NoHazardsAccurate(start, Second->pos, 6.0f, 20, 5.0f))
-			{
+			if (!zone->zonemap->LineIntersectsZone(start, Second->pos, 1.0f, nullptr) && zone->zonemap->NoHazardsAccurate(start, Second->pos, 6.0f, 20, 5.0f)) {
 				Route.erase(First);
 				++CulledNodes;
-			}
-			else
+			} else
 				break;
 		}
 	}
-		
+
 	return Route;
 }
 
-std::deque<int> PathfinderWaypoint::FindRouteV4(int startID, int endID)
-{
-	std::deque<int>Route;
+std::deque<int> PathfinderWaypoint::FindRouteV4(int startID, int endID) {
+	std::deque<int> Route;
 	int curid = endID;
 	int previd = -1;
 	Route.push_back(endID);
 	bool tele = false;
-	while (curid != startID && curid != -1)
-	{
+	while (curid != startID && curid != -1) {
 		previd = m_impl->path_tree[startID][curid];
 		if (previd == -1) {
 			Route.clear();
-		}
-		else {
+		} else {
 			if (m_impl->teleports[previd][curid])
 				Route.push_front(-1);
 			Route.push_front(previd);
@@ -337,9 +314,8 @@ std::deque<int> PathfinderWaypoint::FindRouteV4(int startID, int endID)
 	return Route;
 }
 
-std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
-{
-	std::deque<int>Route;
+std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID) {
+	std::deque<int> Route;
 	// simple case - direct neighbors
 	auto &n = m_impl->Nodes[startID];
 	for (auto &edge : n.edges) {
@@ -365,8 +341,7 @@ std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
 
 	OpenList.push_back(AStarEntry);
 
-	while (!OpenList.empty())
-	{
+	while (!OpenList.empty()) {
 		// The OpenList is maintained in sorted order, lowest to highest cost.
 		CurrentNode = (*OpenList.begin());
 		ClosedList.push_back(CurrentNode);
@@ -384,12 +359,9 @@ std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
 				Route.push_back(endID);
 
 				std::deque<AStarNode>::iterator RouteIterator;
-				while (CurrentNode.PathNodeID != startID)
-				{
-					for (RouteIterator = ClosedList.begin(); RouteIterator != ClosedList.end(); ++RouteIterator)
-					{
-						if ((*RouteIterator).PathNodeID == CurrentNode.Parent)
-						{
+				while (CurrentNode.PathNodeID != startID) {
+					for (RouteIterator = ClosedList.begin(); RouteIterator != ClosedList.end(); ++RouteIterator) {
+						if ((*RouteIterator).PathNodeID == CurrentNode.Parent) {
 							if (CurrentNode.Teleport)
 								Route.insert(Route.begin(), -1);
 
@@ -417,27 +389,24 @@ std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
 			float FCost = AStarEntry.HCost + AStarEntry.GCost;
 #ifdef PATHDEBUG
 			Log(Logs::General, Logs::Pathing, "Node: %i, Open Neighbour %i has HCost %8.3f, GCost %8.3f (Total Cost: %8.3f)\n",
-				CurrentNode.PathNodeID,
-				PathNodes[CurrentNode.PathNodeID].Neighbours[i].id,
-				AStarEntry.HCost,
-				AStarEntry.GCost,
-				AStarEntry.HCost + AStarEntry.GCost);
+			    CurrentNode.PathNodeID,
+			    PathNodes[CurrentNode.PathNodeID].Neighbours[i].id,
+			    AStarEntry.HCost,
+			    AStarEntry.GCost,
+			    AStarEntry.HCost + AStarEntry.GCost);
 #endif
 
 			bool AlreadyInOpenList = false;
 
 			std::deque<AStarNode>::iterator OpenListIterator, InsertionPoint = OpenList.end();
 
-			for (OpenListIterator = OpenList.begin(); OpenListIterator != OpenList.end(); ++OpenListIterator)
-			{
-				if ((*OpenListIterator).PathNodeID == edge.first)
-				{
+			for (OpenListIterator = OpenList.begin(); OpenListIterator != OpenList.end(); ++OpenListIterator) {
+				if ((*OpenListIterator).PathNodeID == edge.first) {
 					AlreadyInOpenList = true;
 
 					float GCostToNode = CurrentNode.GCost + edge.second.distance;
 
-					if (GCostToNode < (*OpenListIterator).GCost)
-					{
+					if (GCostToNode < (*OpenListIterator).GCost) {
 						(*OpenListIterator).Parent = CurrentNode.PathNodeID;
 
 						(*OpenListIterator).GCost = GCostToNode;
@@ -445,9 +414,7 @@ std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
 						(*OpenListIterator).Teleport = edge.second.teleport;
 					}
 					break;
-				}
-				else if ((InsertionPoint == OpenList.end()) && (((*OpenListIterator).HCost + (*OpenListIterator).GCost) > FCost))
-				{
+				} else if ((InsertionPoint == OpenList.end()) && (((*OpenListIterator).HCost + (*OpenListIterator).GCost) > FCost)) {
 					InsertionPoint = OpenListIterator;
 				}
 			}
@@ -459,94 +426,82 @@ std::deque<int> PathfinderWaypoint::FindRouteV2(int startID, int endID)
 	return Route;
 }
 
-glm::vec3 PathfinderWaypoint::GetRandomLocation(const glm::vec3 &start, int flags)
-{
+glm::vec3 PathfinderWaypoint::GetRandomLocation(const glm::vec3 &start, int flags) {
 	if (m_impl->Nodes.size() > 0) {
-
 		auto idx = zone->random.Int(0, (int)m_impl->Nodes.size() - 1);
 		auto &node = m_impl->Nodes[idx];
 		return node.v;
 	}
-	
+
 	return glm::vec3(0.0f);
 }
 
-void PathfinderWaypoint::DebugCommand(Client *c, const Seperator *sep)
-{
-	if(sep->arg[1][0] == '\0' || !strcasecmp(sep->arg[1], "help"))
-	{
+void PathfinderWaypoint::DebugCommand(Client *c, const Seperator *sep) {
+	if (sep->arg[1][0] == '\0' || !strcasecmp(sep->arg[1], "help")) {
 		c->Message(CC_Yellow, "This zone is using path nodes from the .path file.");
 		c->Message(0, "Syntax: #path shownodes: Spawns a npc to represent every npc node.");
 		c->Message(0, "#path reload: Reload the path file.");
 		c->Message(0, "#path info: Gives information about node info (requires shownode target).");
 		return;
 	}
-	
-	if(!strcasecmp(sep->arg[1], "shownodes"))
-	{
-		ShowNodes();	
+
+	if (!strcasecmp(sep->arg[1], "shownodes")) {
+		ShowNodes();
 		return;
 	}
-	
-	if (!strcasecmp(sep->arg[1], "reload"))
-	{
+
+	if (!strcasecmp(sep->arg[1], "reload")) {
 		Load(m_impl->FileName);
 		return;
 	}
-	
-	if (!strcasecmp(sep->arg[1], "info"))
-	{
+
+	if (!strcasecmp(sep->arg[1], "info")) {
 		NodeInfo(c);
 		return;
 	}
 }
 
 void PathfinderWaypoint::Load(const std::string &filename) {
-
 	PathFileHeader Head;
 	Head.PathNodeCount = 0;
 	Head.version = 2;
-	
+
 	FILE *f = fopen(filename.c_str(), "rb");
 	if (f) {
 		char Magic[10];
 		size_t fread_var = 0;
 		fread_var = fread(&Magic, 9, 1, f);
-	
-		if (strncmp(Magic, "EQEMUPATH", 9))
-		{
+
+		if (strncmp(Magic, "EQEMUPATH", 9)) {
 			Log(Logs::General, Logs::Error, "Bad Magic String in .path file");
 			fclose(f);
 			return;
 		}
 		fread_var = fread(&Head, sizeof(Head), 1, f);
-	
-		Log(Logs::General, Logs::Pathing, "Path File Header: Version %d, PathNodes %d",
-			(long)Head.version, (long)Head.PathNodeCount);
 
-		if (Head.version != 2 && Head.version != 3 && Head.version != 4)
-		{
+		Log(Logs::General, Logs::Pathing, "Path File Header: Version %d, PathNodes %d",
+		    (long)Head.version, (long)Head.PathNodeCount);
+
+		if (Head.version != 2 && Head.version != 3 && Head.version != 4) {
 			Log(Logs::General, Logs::Error, "Unsupported path file version.");
 			fclose(f);
 			return;
 		}
-	
+
 		LoadV2(f, Head);
 		return;
 	}
 }
 
-void PathfinderWaypoint::LoadV2(FILE *f, const PathFileHeader &header)
-{
+void PathfinderWaypoint::LoadV2(FILE *f, const PathFileHeader &header) {
 	std::unique_ptr<PathNode[]> PathNodes(new PathNode[header.PathNodeCount]);
 	size_t fread_var = 0;
 	fread_var = fread(PathNodes.get(), sizeof(PathNode), header.PathNodeCount, f);
 	int MaxNodeID = header.PathNodeCount - 1;
-	
+
 	m_impl->PathFileValid = true;
 	m_impl->Nodes.reserve(header.PathNodeCount);
-	for (uint32 i = 0; i < header.PathNodeCount; ++i)
-	{
+	for (uint32 i = 0; i < header.PathNodeCount; ++i) {
 		auto &n = PathNodes[i];
 		Node node;
 		node.id = i;
@@ -554,23 +509,21 @@ void PathfinderWaypoint::LoadV2(FILE *f, const PathFileHeader &header)
 		node.bestz = n.bestz;
 		m_impl->Nodes.push_back(node);
 	}
-	
+
 	for (uint32 i = 0; i < header.PathNodeCount; ++i) {
-		for (uint32 j = 0; j < 50; ++j)
-		{
+		for (uint32 j = 0; j < 50; ++j) {
 			auto &node = m_impl->Nodes[i];
-			if (PathNodes[i].Neighbours[j].id > MaxNodeID)
-			{
+			if (PathNodes[i].Neighbours[j].id > MaxNodeID) {
 				Log(Logs::General, Logs::Error, "Path Node [%d], Neighbour %d (%d) out of range", i, j, PathNodes[i].Neighbours[j].id);
 				m_impl->PathFileValid = false;
 			}
-	
+
 			if (PathNodes[i].Neighbours[j].id > 0) {
 				Edge edge;
 				edge.distance = PathNodes[i].Neighbours[j].distance;
 				edge.door_id = PathNodes[i].Neighbours[j].DoorID;
 				edge.teleport = PathNodes[i].Neighbours[j].Teleport;
-	
+
 				node.edges[PathNodes[i].Neighbours[j].id] = edge;
 			}
 		}
@@ -583,8 +536,7 @@ void PathfinderWaypoint::LoadV2(FILE *f, const PathFileHeader &header)
 			RecalcDistances();
 		ResizePathingVectors();
 		if (header.version == 4) {
-			for (uint32 i = 0; i < header.PathNodeCount; i++)
-			{
+			for (uint32 i = 0; i < header.PathNodeCount; i++) {
 				fread_var = fread(&m_impl->path_tree[i][0], sizeof(int16) * header.PathNodeCount, 1, f);
 			}
 			// update teleports matrix
@@ -599,16 +551,13 @@ void PathfinderWaypoint::LoadV2(FILE *f, const PathFileHeader &header)
 	fclose(f);
 }
 
-void PathfinderWaypoint::ShowNodes()
-{
-	for (size_t i = 0; i < m_impl->Nodes.size(); ++i)
-	{
+void PathfinderWaypoint::ShowNodes() {
+	for (size_t i = 0; i < m_impl->Nodes.size(); ++i) {
 		ShowNode(m_impl->Nodes[i]);
 	}
 }
 
-void PathfinderWaypoint::NodeInfo(Client *c)
-{
+void PathfinderWaypoint::NodeInfo(Client *c) {
 	if (!c->GetTarget()) {
 		return;
 	}
@@ -619,19 +568,18 @@ void PathfinderWaypoint::NodeInfo(Client *c)
 	}
 
 	c->Message(0, "Pathing node: %i at (%.2f, %.2f, %.2f) with bestz %.2f",
-		node->id, node->v.x, node->v.y, node->v.z, node->bestz);
+	           node->id, node->v.x, node->v.y, node->v.z, node->bestz);
 
 	for (auto &edge : node->edges) {
 		c->Message(0, "id: %i, distance: %.2f, door id: %i, is teleport: %i",
-			edge.first,
-			edge.second.distance,
-			edge.second.door_id,
-			edge.second.teleport);
+		           edge.first,
+		           edge.second.distance,
+		           edge.second.door_id,
+		           edge.second.teleport);
 	}
 }
 
-Node *PathfinderWaypoint::FindPathNodeByCoordinates(float x, float y, float z)
-{
+Node *PathfinderWaypoint::FindPathNodeByCoordinates(float x, float y, float z) {
 	for (auto &node : m_impl->Nodes) {
 		auto dist = Distance(glm::vec3(x, y, z), node.v);
 
@@ -643,8 +591,7 @@ Node *PathfinderWaypoint::FindPathNodeByCoordinates(float x, float y, float z)
 	return nullptr;
 }
 
-void PathfinderWaypoint::RecalcDistances()
-{
+void PathfinderWaypoint::RecalcDistances() {
 	// update distances between nodes
 
 	for (auto &node : m_impl->Nodes) {
@@ -652,7 +599,7 @@ void PathfinderWaypoint::RecalcDistances()
 			if (edge.first == -1)
 				continue;
 			auto &neighbor = m_impl->Nodes[edge.first];
-			//PathNode* Neighbor = FindPathNodeById(edge.first);
+			// PathNode* Neighbor = FindPathNodeById(edge.first);
 			if (edge.second.teleport)
 				edge.second.distance = 0.0f;
 			else
@@ -663,15 +610,13 @@ void PathfinderWaypoint::RecalcDistances()
 		m_impl->HeadVersion = 2;
 }
 
-void PathfinderWaypoint::ResizePathingVectors()
-{
+void PathfinderWaypoint::ResizePathingVectors() {
 	// this resizes pathing vectors.
 	if (m_impl->Nodes.size() > 0) {
-		//adjust distance vector size
+		// adjust distance vector size
 		m_impl->path_tree.resize(m_impl->Nodes.size());
 		m_impl->teleports.resize(m_impl->Nodes.size());
-		for (uint32 i = 0; i < m_impl->Nodes.size(); ++i)
-		{
+		for (uint32 i = 0; i < m_impl->Nodes.size(); ++i) {
 			m_impl->path_tree[i].resize(m_impl->Nodes.size());
 			m_impl->teleports[i].resize(m_impl->Nodes.size());
 		}
@@ -679,12 +624,9 @@ void PathfinderWaypoint::ResizePathingVectors()
 		for (uint32 i = 0; i < m_impl->Nodes.size(); ++i)
 			for (uint32 j = 0; j < m_impl->Nodes.size(); ++j)
 				m_impl->teleports[i][j] = false;
-
-
 	}
 }
-void PathfinderWaypoint::Optimize()
-{
+void PathfinderWaypoint::Optimize() {
 	// this converts a v2 pathfile to v4
 	// SortNodes();
 	// ResortConnections();
@@ -693,8 +635,7 @@ void PathfinderWaypoint::Optimize()
 		std::vector<float> distances;
 		distances.resize(m_impl->Nodes.size());
 		// initialize pathing tree
-		for (uint32 i = 0; i < m_impl->Nodes.size(); i++)
-		{
+		for (uint32 i = 0; i < m_impl->Nodes.size(); i++) {
 			for (uint32 j = 0; j < m_impl->Nodes.size(); j++) {
 				m_impl->path_tree[i][j] = -1;
 			}
@@ -709,14 +650,13 @@ void PathfinderWaypoint::Optimize()
 
 		int16 closestnode = -1;
 		// calculate distances and paths between nodes
-		for (uint32 i = 0; i < m_impl->Nodes.size(); i++) { // i
+		for (uint32 i = 0; i < m_impl->Nodes.size(); i++) {  // i
 			memset(m_impl->ClosedListFlag, 0, sizeof(int) * m_impl->Nodes.size());
 			for (uint32 j = 0; j < m_impl->Nodes.size(); j++)
 				distances[j] = 999999.0f;
 			distances[m_impl->Nodes[i].id] = 0.0f;
 			int count = 0;
-			while (count < m_impl->Nodes.size())
-			{
+			while (count < m_impl->Nodes.size()) {
 				int mindist = 999999.0f;
 				// find closest node
 				for (int t = 0; t < m_impl->Nodes.size(); t++) {
@@ -742,9 +682,7 @@ void PathfinderWaypoint::Optimize()
 	}
 }
 
-
-std::string DigitToWord(int i)
-{
+std::string DigitToWord(int i) {
 	std::string digit = std::to_string(i);
 	std::string ret;
 	for (size_t idx = 0; idx < digit.length(); ++idx) {
@@ -753,38 +691,38 @@ std::string DigitToWord(int i)
 		}
 
 		switch (digit[idx]) {
-		case '0':
-			ret += "Zero";
-			break;
-		case '1':
-			ret += "One";
-			break;
-		case '2':
-			ret += "Two";
-			break;
-		case '3':
-			ret += "Three";
-			break;
-		case '4':
-			ret += "Four";
-			break;
-		case '5':
-			ret += "Five";
-			break;
-		case '6':
-			ret += "Six";
-			break;
-		case '7':
-			ret += "Seven";
-			break;
-		case '8':
-			ret += "Eight";
-			break;
-		case '9':
-			ret += "Nine";
-			break;
-		default:
-			break;
+			case '0':
+				ret += "Zero";
+				break;
+			case '1':
+				ret += "One";
+				break;
+			case '2':
+				ret += "Two";
+				break;
+			case '3':
+				ret += "Three";
+				break;
+			case '4':
+				ret += "Four";
+				break;
+			case '5':
+				ret += "Five";
+				break;
+			case '6':
+				ret += "Six";
+				break;
+			case '7':
+				ret += "Seven";
+				break;
+			case '8':
+				ret += "Eight";
+				break;
+			case '9':
+				ret += "Nine";
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -829,14 +767,11 @@ void PathfinderWaypoint::ShowNode(const Node &n) {
 	entity_list.AddNPC(npc, true, true);
 }
 
-auto path_compare = [](const PathNodeSortStruct& a, const PathNodeSortStruct& b)
-{
+auto path_compare = [](const PathNodeSortStruct &a, const PathNodeSortStruct &b) {
 	return a.Distance < b.Distance;
 };
 
-int PathfinderWaypoint::FindNearestPathNode(glm::vec3 Position)
-{
-
+int PathfinderWaypoint::FindNearestPathNode(glm::vec3 Position) {
 	// Find the nearest PathNode we have LOS to.
 	//
 	//
@@ -857,8 +792,8 @@ int PathfinderWaypoint::FindNearestPathNode(glm::vec3 Position)
 
 	for (auto &node : m_impl->Nodes) {
 		if ((std::abs(Position.x - node.v.x) <= CandidateNodeRangeXY) &&
-			(std::abs(Position.y - node.v.y) <= CandidateNodeRangeXY) &&
-			(std::abs(Position.z - node.v.z) <= CandidateNodeRangeZ)) {
+		    (std::abs(Position.y - node.v.y) <= CandidateNodeRangeXY) &&
+		    (std::abs(Position.z - node.v.z) <= CandidateNodeRangeZ)) {
 			TempNode.id = node.id;
 			TempNode.Distance = DistanceSquared(Position, node.v);
 			SortedByDistance.push_back(TempNode);
@@ -867,12 +802,10 @@ int PathfinderWaypoint::FindNearestPathNode(glm::vec3 Position)
 
 	std::sort(SortedByDistance.begin(), SortedByDistance.end(), path_compare);
 	int haz_check = 0;
-	for (auto Iterator = SortedByDistance.begin(); Iterator != SortedByDistance.end(); ++Iterator)
-	{
-		//Log(Logs::Detail, Logs::Pathing, "Checking Reachability of Node %i from Start Position.", PathNodes[(*Iterator).id].id);
+	for (auto Iterator = SortedByDistance.begin(); Iterator != SortedByDistance.end(); ++Iterator) {
+		// Log(Logs::Detail, Logs::Pathing, "Checking Reachability of Node %i from Start Position.", PathNodes[(*Iterator).id].id);
 
-		if (!zone->zonemap->LineIntersectsZone(Position, m_impl->Nodes[(*Iterator).id].v, 1.0f, nullptr))
-		{
+		if (!zone->zonemap->LineIntersectsZone(Position, m_impl->Nodes[(*Iterator).id].v, 1.0f, nullptr)) {
 			// limit how many hazard checks we are doing
 			if (haz_check > 5)
 				break;

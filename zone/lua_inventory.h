@@ -7,24 +7,23 @@
 class Lua_ItemInst;
 class Lua_Item;
 
-namespace EQ
-{
-	class InventoryProfile;
+namespace EQ {
+class InventoryProfile;
 }
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_inventory();
 
-class Lua_Inventory : public Lua_Ptr<EQ::InventoryProfile>
-{
+class Lua_Inventory : public Lua_Ptr<EQ::InventoryProfile> {
 	typedef EQ::InventoryProfile NativeType;
-public:
-	Lua_Inventory() : Lua_Ptr(nullptr) { }
-	Lua_Inventory(EQ::InventoryProfile*d) : Lua_Ptr(d) { }
-	virtual ~Lua_Inventory() { }
+
+   public:
+	Lua_Inventory() : Lua_Ptr(nullptr) {}
+	Lua_Inventory(EQ::InventoryProfile* d) : Lua_Ptr(d) {}
+	virtual ~Lua_Inventory() {}
 
 	operator EQ::InventoryProfile*() {
 		return reinterpret_cast<EQ::InventoryProfile*>(GetLuaPtrData());

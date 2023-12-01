@@ -23,7 +23,7 @@
 #include <tuple>
 
 #ifndef _WIN32
- // this doesn't appear to affect linux-based systems..need feedback for _WIN64
+// this doesn't appear to affect linux-based systems..need feedback for _WIN64
 #include <fmt/format.h>
 #endif
 
@@ -36,7 +36,7 @@
 #include "types.h"
 
 class Strings {
-public:
+   public:
 	static bool Contains(std::vector<std::string> container, std::string element);
 	static bool Contains(const std::string& subject, const std::string& search);
 	static bool IsNumber(const std::string& s);
@@ -66,8 +66,7 @@ public:
 	static std::string Random(size_t length);
 
 	template <typename T>
-	static std::string ImplodePair(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<T>& src)
-	{
+	static std::string ImplodePair(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<T>& src) {
 		if (src.empty()) {
 			return {};
 		}
@@ -83,30 +82,26 @@ public:
 
 		return output;
 	}
-
 };
 
 const std::string StringFormat(const char* format, ...);
 const std::string vStringFormat(const char* format, va_list args);
 
-
 // For converstion of numerics into English
 // Used for grid nodes, as NPC names remove numerals.
 // But general purpose
 
-const std::string NUM_TO_ENGLISH_X[] = { "", "One ", "Two ", "Three ", "Four ",
-				"Five ", "Six ", "Seven ", "Eight ", "Nine ", "Ten ", "Eleven ",
-				"Twelve ", "Thirteen ", "Fourteen ", "Fifteen ",
-				"Sixteen ", "Seventeen ", "Eighteen ", "Nineteen " };
+const std::string NUM_TO_ENGLISH_X[] = {"", "One ", "Two ", "Three ", "Four ",
+                                        "Five ", "Six ", "Seven ", "Eight ", "Nine ", "Ten ", "Eleven ",
+                                        "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ",
+                                        "Sixteen ", "Seventeen ", "Eighteen ", "Nineteen "};
 
-const std::string NUM_TO_ENGLISH_Y[] = { "", "", "Twenty ", "Thirty ", "Forty ",
-				"Fifty ", "Sixty ", "Seventy ", "Eighty ", "Ninety " };
-
+const std::string NUM_TO_ENGLISH_Y[] = {"", "", "Twenty ", "Thirty ", "Forty ",
+                                        "Fifty ", "Sixty ", "Seventy ", "Eighty ", "Ninety "};
 
 // _WIN32 builds require that #include<fmt/format.h> be included in whatever code file the invocation is made from (no header files)
 template <typename T1, typename T2>
-std::vector<std::string> join_pair(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<std::pair<T1, T2>>& src)
-{
+std::vector<std::string> join_pair(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<std::pair<T1, T2>>& src) {
 	if (src.empty()) {
 		return {};
 	}
@@ -116,17 +111,15 @@ std::vector<std::string> join_pair(const std::string& glue, const std::pair<char
 	for (const std::pair<T1, T2>& src_iter : src) {
 		output.push_back(
 
-			fmt::format(
-				"{}{}{}{}{}{}{}",
-				encapsulation.first,
-				src_iter.first,
-				encapsulation.second,
-				glue,
-				encapsulation.first,
-				src_iter.second,
-				encapsulation.second
-			)
-		);
+		    fmt::format(
+		        "{}{}{}{}{}{}{}",
+		        encapsulation.first,
+		        src_iter.first,
+		        encapsulation.second,
+		        glue,
+		        encapsulation.first,
+		        src_iter.second,
+		        encapsulation.second));
 	}
 
 	return output;
@@ -134,8 +127,7 @@ std::vector<std::string> join_pair(const std::string& glue, const std::pair<char
 
 // _WIN32 builds require that #include<fmt/format.h> be included in whatever code file the invocation is made from (no header files)
 template <typename T1, typename T2, typename T3, typename T4>
-std::vector<std::string> join_tuple(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<std::tuple<T1, T2, T3, T4>>& src)
-{
+std::vector<std::string> join_tuple(const std::string& glue, const std::pair<char, char>& encapsulation, const std::vector<std::tuple<T1, T2, T3, T4>>& src) {
 	if (src.empty()) {
 		return {};
 	}
@@ -143,28 +135,25 @@ std::vector<std::string> join_tuple(const std::string& glue, const std::pair<cha
 	std::vector<std::string> output;
 
 	for (const std::tuple<T1, T2, T3, T4>& src_iter : src) {
-
 		output.push_back(
 
-			fmt::format(
-				"{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
-				encapsulation.first,
-				std::get<0>(src_iter),
-				encapsulation.second,
-				glue,
-				encapsulation.first,
-				std::get<1>(src_iter),
-				encapsulation.second,
-				glue,
-				encapsulation.first,
-				std::get<2>(src_iter),
-				encapsulation.second,
-				glue,
-				encapsulation.first,
-				std::get<3>(src_iter),
-				encapsulation.second
-			)
-		);
+		    fmt::format(
+		        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+		        encapsulation.first,
+		        std::get<0>(src_iter),
+		        encapsulation.second,
+		        glue,
+		        encapsulation.first,
+		        std::get<1>(src_iter),
+		        encapsulation.second,
+		        glue,
+		        encapsulation.first,
+		        std::get<2>(src_iter),
+		        encapsulation.second,
+		        glue,
+		        encapsulation.first,
+		        std::get<3>(src_iter),
+		        encapsulation.second));
 	}
 
 	return output;
@@ -172,7 +161,7 @@ std::vector<std::string> join_tuple(const std::string& glue, const std::pair<cha
 
 void ParseAccountString(const std::string& s, std::string& account, std::string& loginserver);
 
-//const char based
+// const char based
 
 bool atobool(const char* iBool);
 bool isAlphaNumeric(const char* text);

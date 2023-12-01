@@ -10,8 +10,7 @@ struct MovementCommand;
 struct MobMovementEntry;
 struct SpawnPositionUpdate_Struct;
 
-enum ClientRange : int
-{
+enum ClientRange : int {
 	ClientRangeNone = 0,
 	ClientRangeClose = 1,
 	ClientRangeMedium = 2,
@@ -22,14 +21,12 @@ enum ClientRange : int
 	ClientRangeAny = 7
 };
 
-enum MobMovementMode : int
-{
+enum MobMovementMode : int {
 	MovementWalking = 0,
 	MovementRunning = 1
 };
 
-enum MobStuckBehavior : int
-{
+enum MobStuckBehavior : int {
 	RunToTarget,
 	WarpToTarget,
 	TakeNoAction,
@@ -37,9 +34,8 @@ enum MobStuckBehavior : int
 	MaxStuckBehavior
 };
 
-class MobMovementManager
-{
-public:
+class MobMovementManager {
+   public:
 	~MobMovementManager();
 	void Process();
 	void AddMob(Mob *mob);
@@ -53,16 +49,15 @@ public:
 	void StopNavigation(Mob *who, float new_head = -1.0f);
 
 	void SendCommandToClients(
-		Mob *mob,
-		float delta_x,
-		float delta_y,
-		float delta_z,
-		float delta_heading,
-		int anim,
-		ClientRange range,
-		Client* single_client = nullptr,
-		Client* ignore_client = nullptr
-	);
+	    Mob *mob,
+	    float delta_x,
+	    float delta_y,
+	    float delta_z,
+	    float delta_heading,
+	    int anim,
+	    ClientRange range,
+	    Client *single_client = nullptr,
+	    Client *ignore_client = nullptr);
 
 	float FixHeading(float in);
 	void DumpStats(Client *client);
@@ -73,10 +68,10 @@ public:
 		return inst;
 	}
 
-private:
+   private:
 	MobMovementManager();
-	MobMovementManager(const MobMovementManager&);
-	MobMovementManager& operator=(const MobMovementManager&);
+	MobMovementManager(const MobMovementManager &);
+	MobMovementManager &operator=(const MobMovementManager &);
 
 	void FillCommandStruct(SpawnPositionUpdate_Struct *position_update, Mob *mob, float delta_x, float delta_y, float delta_z, float delta_heading, int anim);
 	void UpdatePath(Mob *who, float x, float y, float z, MobMovementMode mob_movement_mode, float last_x = 0.0f, float last_y = 0.0f, float last_z = 0.0f);

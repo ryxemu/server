@@ -10,21 +10,21 @@ class Lua_Mob;
 class Lua_NPC;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_raid();
 
-class Lua_Raid : public Lua_Ptr<Raid>
-{
+class Lua_Raid : public Lua_Ptr<Raid> {
 	typedef Raid NativeType;
-public:
-	Lua_Raid() : Lua_Ptr(nullptr) { }
-	Lua_Raid(Raid *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Raid() { }
 
-	operator Raid*() {
-		return reinterpret_cast<Raid*>(GetLuaPtrData());
+   public:
+	Lua_Raid() : Lua_Ptr(nullptr) {}
+	Lua_Raid(Raid *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Raid() {}
+
+	operator Raid *() {
+		return reinterpret_cast<Raid *>(GetLuaPtrData());
 	}
 
 	bool IsRaidMember(const char *name);

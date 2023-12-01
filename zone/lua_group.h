@@ -10,21 +10,21 @@ class Lua_Client;
 class Lua_NPC;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_group();
 
-class Lua_Group : public Lua_Ptr<Group>
-{
+class Lua_Group : public Lua_Ptr<Group> {
 	typedef Group NativeType;
-public:
-	Lua_Group() : Lua_Ptr(nullptr) { }
-	Lua_Group(Group *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Group() { }
 
-	operator Group*() {
-		return reinterpret_cast<Group*>(GetLuaPtrData());
+   public:
+	Lua_Group() : Lua_Ptr(nullptr) {}
+	Lua_Group(Group *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Group() {}
+
+	operator Group *() {
+		return reinterpret_cast<Group *>(GetLuaPtrData());
 	}
 	void DisbandGroup();
 	void DisbandGroup(bool alt_msg);

@@ -1,24 +1,6 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2003 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 /*
 New class for handling corpses and everything associated with them.
 Child of the Mob class.
--Quagmire
 */
 
 #ifdef _WINDOWS
@@ -76,7 +58,7 @@ Corpse* Corpse::LoadCharacterCorpseEntity(uint32 in_dbid, uint32 in_charid, std:
 	PlayerCorpse_Struct *pcs = (PlayerCorpse_Struct*)buffer;
 	database.LoadCharacterCorpseData(in_dbid, pcs);
 
-	/* Load Items */ 
+	/* Load Items */
 	ItemList itemlist;
 	ServerLootItem_Struct* tmp = nullptr;
 	for (unsigned int i = 0; i < pcs->itemcount; i++) {
@@ -179,7 +161,7 @@ Corpse::Corpse(NPC* in_npc, ItemList* in_itemlist, uint32 in_npctypeid, const NP
 	0,							// uint8		in_hairstyle,
 	0,							// uint8		in_luclinface,
 	0,							// uint8		in_beard,
-	EQ::TintProfile(),			// uint32		in_armor_tint[EQ::textures::TextureCount], 
+	EQ::TintProfile(),			// uint32		in_armor_tint[EQ::textures::TextureCount],
 	0xff,						// uint8		in_aa_title,
 	0,							// uint8		in_see_invis, // see through invis/ivu
 	0,							// uint8		in_see_invis_undead,
@@ -196,7 +178,7 @@ Corpse::Corpse(NPC* in_npc, ItemList* in_itemlist, uint32 in_npctypeid, const NP
 	0,							// uint8		in_legtexture,
 	0,							// uint8		in_feettexture,
 	0							// uint8		in_chesttexture,
-),									  
+),
 	corpse_decay_timer(in_decaytime),
 	corpse_rez_timer(0),
 	corpse_delay_timer(RuleI(NPC, CorpseUnlockTimer)),
@@ -232,7 +214,7 @@ Corpse::Corpse(NPC* in_npc, ItemList* in_itemlist, uint32 in_npctypeid, const NP
 	{
 		corpse_decay_timer.Start(RuleI(NPC, EmptyNPCCorpseDecayTimeMS) + 1000);
 	}
-	
+
 	if(in_npc->HasPrivateCorpse()) {
 		corpse_delay_timer.Start(GetDecayTime() + 1000);
 	}
@@ -443,12 +425,12 @@ Corpse::Corpse(Client* client, int32 in_rezexp, uint8 in_killedby) : Mob (
 				std::string query = StringFormat("DELETE FROM character_inventory WHERE id = %i "
 					"AND ((slotid >= %i AND slotid <= %i) "
 					"OR slotid = %i OR (slotid >= %i AND slotid <= %i) )",
-					client->CharacterID(), EQ::invslot::CURSOR_QUEUE_BEGIN, EQ::invslot::CURSOR_QUEUE_END, 
+					client->CharacterID(), EQ::invslot::CURSOR_QUEUE_BEGIN, EQ::invslot::CURSOR_QUEUE_END,
 					EQ::invslot::slotCursor, EQ::invbag::CURSOR_BAG_BEGIN, EQ::invbag::CURSOR_BAG_END);
 				auto results = database.QueryDatabase(query);
 			}
 		}
-			
+
 		client->CalcBonuses(); // will only affect offline profile viewing of dead characters..unneeded overhead
 		client->Save();
 
@@ -488,16 +470,16 @@ std::list<uint32> Corpse::MoveItemToCorpse(Client *client, EQ::ItemInstance *ite
 	// Limit the bag check to inventory, trade, and cursor slots.
 	if (item->IsClassBag() &&
 		(equipslot == EQ::invslot::SLOT_BEGIN ||
-		(equipslot >= EQ::invslot::GENERAL_BEGIN && equipslot <= EQ::invslot::GENERAL_END) || 
+		(equipslot >= EQ::invslot::GENERAL_BEGIN && equipslot <= EQ::invslot::GENERAL_END) ||
 		(equipslot >= EQ::invslot::TRADE_BEGIN && equipslot <= EQ::invslot::TRADE_END)))
-	{ 
-		for (bagindex = EQ::invbag::SLOT_BEGIN; bagindex <= EQ::invbag::SLOT_END; bagindex++) 
+	{
+		for (bagindex = EQ::invbag::SLOT_BEGIN; bagindex <= EQ::invbag::SLOT_END; bagindex++)
 		{
 			// For empty bags in cursor queue, slot was previously being resolved as SLOT_INVALID (-1)
 			interior_slot = EQ::InventoryProfile::CalcSlotId(equipslot, bagindex);
 			interior_item = client->GetInv().GetItem(interior_slot);
 
-			if (interior_item && !interior_item->GetItem()->Soulbound) 
+			if (interior_item && !interior_item->GetItem()->Soulbound)
 			{
 				AddItem(interior_item->GetItem()->ID, interior_item->GetCharges(), interior_slot);
 				returnlist.push_back(EQ::InventoryProfile::CalcSlotId(equipslot, bagindex));
@@ -551,7 +533,7 @@ Corpse::Corpse(uint32 in_dbid, uint32 in_charid, const char* in_charname, ItemLi
 	0,						// uint8		in_hairstyle,
 	0,						// uint8		in_luclinface,
 	0,						// uint8		in_beard,
-	EQ::TintProfile(),		// uint32		in_armor_tint[EQ::textures::TextureCount], 
+	EQ::TintProfile(),		// uint32		in_armor_tint[EQ::textures::TextureCount],
 	0xff,					// uint8		in_aa_title,
 	0,						// uint8		in_see_invis, // see through invis/ivu
 	0,						// uint8		in_see_invis_undead,
@@ -568,7 +550,7 @@ Corpse::Corpse(uint32 in_dbid, uint32 in_charid, const char* in_charname, ItemLi
 	0,						// uint8		in_legtexture,
 	0,						// uint8		in_feettexture,
 	0						// uint8		in_chesttexture,
-	),						
+	),
 	corpse_decay_timer(RuleI(Character, EmptyCorpseDecayTimeMS)),
 	corpse_rez_timer(RuleI(Character, CorpseResTimeMS)),
 	corpse_delay_timer(RuleI(NPC, CorpseUnlockTimer)),
@@ -731,7 +713,7 @@ bool Corpse::Save() {
 	return true;
 }
 
-void Corpse::Delete() 
+void Corpse::Delete()
 {
 	if (IsPlayerCorpse() && corpse_db_id != 0)
 	{
@@ -743,7 +725,7 @@ void Corpse::Delete()
 	player_corpse_depop = true;
 }
 
-void Corpse::Bury() 
+void Corpse::Bury()
 {
 
 	if (IsPlayerCorpse() && corpse_db_id != 0)
@@ -778,7 +760,7 @@ void Corpse::AddItem(uint32 itemnum, int8 charges, int16 slot) {
 	is_corpse_changed = true;
 
 	auto item = new ServerLootItem_Struct;
-	
+
 	memset(item, 0, sizeof(ServerLootItem_Struct));
 	item->item_id = itemnum;
 	item->charges = charges;
@@ -910,7 +892,7 @@ bool Corpse::Process() {
 		return false;
 	}
 
-	if(owner_online_timer.Check() && rezzable) 
+	if(owner_online_timer.Check() && rezzable)
 	{
 		IsOwnerOnline();
 	}
@@ -958,7 +940,7 @@ bool Corpse::Process() {
 		// it already went to GY, prevent dragging it back out
 		if (!corpse_graveyard_moved_timer.Enabled())
 			corpse_graveyard_moved_timer.Start(2000);
-		
+
 		if (corpse_graveyard_moved_timer.Check() && corpse_graveyard_moved_lastpos != GetPosition())
 		{
 			if (DistanceSquaredNoZ(zone->GetGraveyardPoint(), GetPosition()) > 75.0f * 75.0f)
@@ -998,13 +980,13 @@ bool Corpse::Process() {
 		}
 	}
 
-	if(corpse_rez_timer.Check()) 
+	if(corpse_rez_timer.Check())
 	{
 		CompleteResurrection(true);
-	}	
+	}
 
 	/* This is when a corpse hits decay timer and does checks*/
-	if (corpse_decay_timer.Check()) 
+	if (corpse_decay_timer.Check())
 	{
 		/* NPC */
 		if (IsNPCCorpse())
@@ -1015,11 +997,11 @@ bool Corpse::Process() {
 		else
 		{
 			/* Client */
-			if (!RuleB(Zone, EnableShadowrest)) 
+			if (!RuleB(Zone, EnableShadowrest))
 			{
 				Delete();
 			}
-			else 
+			else
 			{
 				Bury();
 			}
@@ -1085,14 +1067,14 @@ void Corpse::MakeLootRequestPackets(Client* client, const EQApplicationPacket* a
 		return;
 	}
 
-	if(being_looted_by == 0) { 
-		being_looted_by = 0xFFFFFFFF; 
+	if(being_looted_by == 0) {
+		being_looted_by = 0xFFFFFFFF;
 	}
 
 	if(this->being_looted_by != 0xFFFFFFFF) {
 		// lets double check....
 		Entity* looter = entity_list.GetID(this->being_looted_by);
-		if(looter == 0) { 
+		if(looter == 0) {
 			ResetLooter();
 		}
 	}
@@ -1139,7 +1121,7 @@ void Corpse::MakeLootRequestPackets(Client* client, const EQApplicationPacket* a
 		d->unknown2		= 0xef;
 
 		/* Don't take the coin off if it's a gm peeking at the corpse */
-		if(Loot_Request_Type == 2 || (Loot_Request_Type >= 3 && loot_coin)) { 
+		if(Loot_Request_Type == 2 || (Loot_Request_Type >= 3 && loot_coin)) {
 			if(!IsPlayerCorpse() && client->IsGrouped() && client->AutoSplitEnabled() && client->GetGroup()) {
 				d->copper		= 0;
 				d->silver		= 0;
@@ -1202,14 +1184,14 @@ void Corpse::MakeLootRequestPackets(Client* client, const EQApplicationPacket* a
 			// Don't display the item if it's in a bag
 			// Added cursor queue slots to corpse item visibility list. Nothing else should be making it to corpse.
 			if (!IsPlayerCorpse() || item_data->equip_slot <= EQ::invslot::GENERAL_END || Loot_Request_Type >= 3 ||
-				(item_data->equip_slot >= EQ::invslot::TRADE_BEGIN && item_data->equip_slot <= EQ::invslot::TRADE_END) || 
+				(item_data->equip_slot >= EQ::invslot::TRADE_BEGIN && item_data->equip_slot <= EQ::invslot::TRADE_END) ||
 				(item_data->equip_slot >= EQ::invslot::CURSOR_QUEUE_BEGIN && item_data->equip_slot <= EQ::invslot::CURSOR_QUEUE_END)) {
-				if (i < corpselootlimit) 
+				if (i < corpselootlimit)
 				{
 					if(!RuleB(NPC, IgnoreQuestLoot) || (RuleB(NPC, IgnoreQuestLoot) && item_data->quest == 0))
 					{
 						item = database.GetItem(item_data->item_id);
-						if(client && item && (item_data->quest == 0 || (item_data->quest == 1 && item->NoDrop != 0))) 
+						if(client && item && (item_data->quest == 0 || (item_data->quest == 1 && item->NoDrop != 0)))
 						{
 							EQ::ItemInstance* inst = database.CreateItem(item, item_data->charges);
 							if(inst) {
@@ -1234,12 +1216,12 @@ void Corpse::MakeLootRequestPackets(Client* client, const EQApplicationPacket* a
 				client->Message(CC_Default, "(%s contains %i additional %s.)", GetName(), (i - corpselootlimit), (i - corpselootlimit) == 1 ? "item" : "items");
 			}
 			// this will happen if an item in a bag slot is on the corpse without its parent bag.
-			if (IsPlayerCorpse() && i == 0 && itemlist.size() > 0) 
+			if (IsPlayerCorpse() && i == 0 && itemlist.size() > 0)
 			{
 				cur = itemlist.begin();
 				end = itemlist.end();
 				int8 slot = EQ::invslot::GENERAL_BEGIN;
-				for (; cur != end; ++cur) 
+				for (; cur != end; ++cur)
 				{
 					ServerLootItem_Struct* item_data = *cur;
 					item = database.GetItem(item_data->item_id);
@@ -1421,19 +1403,19 @@ void Corpse::LootItem(Client* client, const EQApplicationPacket* app) {
 
 		linker.GenerateLink();
 
-		if (!IsPlayerCorpse()) 
+		if (!IsPlayerCorpse())
 		{
 			client->Message_StringID(MT_LootMessages, LOOTED_MESSAGE, linker.Link().c_str());
 
 			Group *g = client->GetGroup();
-			if (g != nullptr) 
+			if (g != nullptr)
 			{
 				g->GroupMessage_StringID(client, MT_LootMessages, OTHER_LOOTED_MESSAGE, client->GetName(), linker.Link().c_str());
 			}
 			else
 			{
 				Raid *r = client->GetRaid();
-				if (r != nullptr) 
+				if (r != nullptr)
 				{
 					r->RaidMessage_StringID(client, MT_LootMessages, OTHER_LOOTED_MESSAGE, client->GetName(), linker.Link().c_str());
 				}
@@ -1694,21 +1676,21 @@ void Corpse::UpdateEquipmentLight()
 
 	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		if (((*iter)->equip_slot < EQ::invslot::EQUIPMENT_BEGIN || (*iter)->equip_slot > EQ::invslot::EQUIPMENT_END)) { continue; }
-		
+
 		auto item = database.GetItem((*iter)->item_id);
 		if (item == nullptr) { continue; }
-		
+
 		if (EQ::lightsource::IsLevelGreater(item->Light, m_Light.Type[EQ::lightsource::LightEquipment]))
 			m_Light.Type[EQ::lightsource::LightEquipment] = item->Light;
 	}
-	
+
 	uint8 general_light_type = 0;
 	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		if ((*iter)->equip_slot < EQ::invslot::GENERAL_BEGIN || (*iter)->equip_slot > EQ::invslot::GENERAL_END) { continue; }
-		
+
 		auto item = database.GetItem((*iter)->item_id);
 		if (item == nullptr) { continue; }
-		
+
 		if (item->ItemClass != EQ::item::ItemClassCommon) { continue; }
 		if (m_Light.Type[EQ::lightsource::LightEquipment] != 0 && (item->Light < 9 || item->Light > 13)) { continue; }
 

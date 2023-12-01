@@ -3,8 +3,7 @@
 
 #include "iostream"
 
-enum EQEmuExePlatform
-{
+enum EQEmuExePlatform {
 	ExePlatformNone = 0,
 	ExePlatformZone,
 	ExePlatformWorld,

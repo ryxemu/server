@@ -6,9 +6,8 @@
 #include <vector>
 #include <utility>
 
-class WaterMapV2 : public WaterMap
-{
-public:
+class WaterMapV2 : public WaterMap {
+   public:
 	WaterMapV2();
 	~WaterMapV2();
 
@@ -19,8 +18,8 @@ public:
 	virtual bool InLiquid(const glm::vec3& location) const;
 	virtual bool InPVP(const glm::vec3& location) const;
 
-protected:
-	virtual bool Load(FILE *fp);
+   protected:
+	virtual bool Load(FILE* fp);
 
 	std::vector<std::pair<WaterRegionType, OrientedBoundingBox>> regions;
 	friend class WaterMap;

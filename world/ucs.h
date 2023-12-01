@@ -6,17 +6,19 @@
 #include "../common/servertalk.h"
 #include "../common/event/timer.h"
 
-class UCSConnection
-{
-public:
+class UCSConnection {
+   public:
 	UCSConnection();
 	void SetConnection(EmuTCPConnection *inStream);
 	bool Process();
 	bool Connected() { return Stream ? Stream->Connected() : false; }
-	bool SendPacket(ServerPacket* pack);
-	void Disconnect() { if(Stream) Stream->Disconnect(); }
+	bool SendPacket(ServerPacket *pack);
+	void Disconnect() {
+		if (Stream) Stream->Disconnect();
+	}
 	void SendMessage(const char *From, const char *Message);
-private:
+
+   private:
 	inline uint32 GetIP() const { return Stream ? Stream->GetrIP() : 0; }
 	EmuTCPConnection *Stream;
 	bool authenticated;
@@ -25,7 +27,7 @@ private:
 	 * Keepalive
 	 */
 	std::unique_ptr<EQ::Timer> m_keepalive;
-	void OnKeepAlive(EQ::Timer* t);
+	void OnKeepAlive(EQ::Timer *t);
 };
 
 #endif /*UCS_H_*/

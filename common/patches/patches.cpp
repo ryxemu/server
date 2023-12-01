@@ -6,10 +6,8 @@
 
 void RegisterAllPatches(EQStreamIdentifier &into) {
 	Mac::Register(into);
-
 }
 
 void ReloadAllPatches() {
 	Mac::Reload();
 }
-

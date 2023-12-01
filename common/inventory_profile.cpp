@@ -1,18 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2016 EQEMu Development Team (http://eqemulator.net)
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include "inventory_profile.h"
 #include "textures.h"
 #include "eqemu_logsys.h"
@@ -20,7 +5,7 @@
 
 #include "../common/light_source.h"
 
-//#include <limits.h>
+// #include <limits.h>
 
 #include <iostream>
 
@@ -37,20 +22,17 @@ ItemInstQueue::~ItemInstQueue() {
 }
 
 // Put item onto back of queue
-void ItemInstQueue::push(EQ::ItemInstance* inst)
-{
+void ItemInstQueue::push(EQ::ItemInstance* inst) {
 	m_list.push_back(inst);
 }
 
 // Put item onto front of queue
-void ItemInstQueue::push_front(EQ::ItemInstance* inst)
-{
+void ItemInstQueue::push_front(EQ::ItemInstance* inst) {
 	m_list.push_front(inst);
 }
 
 // Remove item from front of queue
-EQ::ItemInstance* ItemInstQueue::pop()
-{
+EQ::ItemInstance* ItemInstQueue::pop() {
 	if (m_list.empty())
 		return nullptr;
 
@@ -60,11 +42,9 @@ EQ::ItemInstance* ItemInstQueue::pop()
 }
 
 // Look at item at front of queue
-EQ::ItemInstance* ItemInstQueue::peek_front() const
-{
+EQ::ItemInstance* ItemInstQueue::peek_front() const {
 	return (m_list.empty()) ? nullptr : m_list.front();
 }
-
 
 //
 // class EQ::InventoryProfile
@@ -97,11 +77,10 @@ bool EQ::InventoryProfile::SetInventoryVersion(versions::MobVersion inventory_ve
 		m_lookup = inventory::Lookup(m_mob_version);
 		m_mob_version_set = true;
 		return true;
-	}
-	else {
+	} else {
 		m_lookup = inventory::Lookup(versions::MobVersion::Unknown);
 		Log(Logs::General, Logs::Error, "InventoryVersion set request after initial set (old: %u, new: %u)",
-			static_cast<uint32>(m_mob_version), static_cast<uint32>(inventory_version));
+		    static_cast<uint32>(m_mob_version), static_cast<uint32>(inventory_version));
 		return false;
 	}
 }
@@ -122,8 +101,7 @@ void EQ::InventoryProfile::MarkDirty(ItemInstance* inst) {
 }
 
 // Retrieve item at specified slot; returns false if item not found
-EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id) const
-{
+EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id) const {
 	ItemInstance* result = nullptr;
 
 	// Cursor
@@ -135,16 +113,13 @@ EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id) const
 	// Non bag slots
 	else if (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END) {
 		result = _GetItem(m_trade, slot_id);
-	}
-	else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
+	} else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
 		// Bank slots
 		result = _GetItem(m_bank, slot_id);
-	}
-	else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
+	} else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
 		// Personal inventory slots
 		result = _GetItem(m_inv, slot_id);
-	}
-	else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
+	} else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
 		// Equippable slots (on body)
 		result = _GetItem(m_worn, slot_id);
 	}
@@ -156,22 +131,19 @@ EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id) const
 		if (inst && inst->IsClassBag()) {
 			result = inst->GetItem(InventoryProfile::CalcBagIdx(slot_id));
 		}
-	}
-	else if (slot_id >= invbag::BANK_BAGS_BEGIN && slot_id <= invbag::BANK_BAGS_END) {
+	} else if (slot_id >= invbag::BANK_BAGS_BEGIN && slot_id <= invbag::BANK_BAGS_END) {
 		// Bank bag slots
 		ItemInstance* inst = _GetItem(m_bank, InventoryProfile::CalcSlotId(slot_id));
 		if (inst && inst->IsClassBag()) {
 			result = inst->GetItem(InventoryProfile::CalcBagIdx(slot_id));
 		}
-	}
-	else if (slot_id >= invbag::CURSOR_BAG_BEGIN && slot_id <= invbag::CURSOR_BAG_END) {
+	} else if (slot_id >= invbag::CURSOR_BAG_BEGIN && slot_id <= invbag::CURSOR_BAG_END) {
 		// Cursor bag slots
 		ItemInstance* inst = m_cursor.peek_front();
 		if (inst && inst->IsClassBag()) {
 			result = inst->GetItem(InventoryProfile::CalcBagIdx(slot_id));
 		}
-	}
-	else if (slot_id >= invbag::GENERAL_BAGS_BEGIN && slot_id <= invbag::GENERAL_BAGS_END) {
+	} else if (slot_id >= invbag::GENERAL_BAGS_BEGIN && slot_id <= invbag::GENERAL_BAGS_END) {
 		// Personal inventory bag slots
 		ItemInstance* inst = _GetItem(m_inv, InventoryProfile::CalcSlotId(slot_id));
 		if (inst && inst->IsClassBag()) {
@@ -183,14 +155,12 @@ EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id) const
 }
 
 // Retrieve item at specified position within bag
-EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id, uint8 bagidx) const
-{
+EQ::ItemInstance* EQ::InventoryProfile::GetItem(int16 slot_id, uint8 bagidx) const {
 	return GetItem(InventoryProfile::CalcSlotId(slot_id, bagidx));
 }
 
 // Put an item snto specified slot
-int16 EQ::InventoryProfile::PutItem(int16 slot_id, const ItemInstance& inst)
-{
+int16 EQ::InventoryProfile::PutItem(int16 slot_id, const ItemInstance& inst) {
 	// Clean up item already in slot (if exists)
 	DeleteItem(slot_id);
 
@@ -205,8 +175,7 @@ int16 EQ::InventoryProfile::PutItem(int16 slot_id, const ItemInstance& inst)
 }
 
 // Put an item snto specified slot
-int16 EQ::InventoryProfile::RefPutItem(int16 slot_id, ItemInstance* inst)
-{
+int16 EQ::InventoryProfile::RefPutItem(int16 slot_id, ItemInstance* inst) {
 	// Clean up item already in slot (if exists)
 	DeleteItem(slot_id);
 
@@ -220,9 +189,7 @@ int16 EQ::InventoryProfile::RefPutItem(int16 slot_id, ItemInstance* inst)
 	return _PutItem(slot_id, inst);
 }
 
-
-int16 EQ::InventoryProfile::PushCursor(const ItemInstance& inst, bool push_front)
-{
+int16 EQ::InventoryProfile::PushCursor(const ItemInstance& inst, bool push_front) {
 	if (push_front)
 		m_cursor.push_front(inst.Clone());
 	else
@@ -232,31 +199,36 @@ int16 EQ::InventoryProfile::PushCursor(const ItemInstance& inst, bool push_front
 }
 
 // Swap items in inventory
-bool EQ::InventoryProfile::SwapItem(int16 slot_a, int16 slot_b)
-{
+bool EQ::InventoryProfile::SwapItem(int16 slot_a, int16 slot_b) {
 	// Temp holding areas for a and b
 	ItemInstance* inst_a = GetItem(slot_a);
 	ItemInstance* inst_b = GetItem(slot_b);
 
-	if (inst_a) { if (!inst_a->IsSlotAllowed(slot_b, *this)) { return false; } }
-	if (inst_b) { if (!inst_b->IsSlotAllowed(slot_a, *this)) { return false; } }
+	if (inst_a) {
+		if (!inst_a->IsSlotAllowed(slot_b, *this)) {
+			return false;
+		}
+	}
+	if (inst_b) {
+		if (!inst_b->IsSlotAllowed(slot_a, *this)) {
+			return false;
+		}
+	}
 
-	_PutItem(slot_a, inst_b); // Copy b->a
-	_PutItem(slot_b, inst_a); // Copy a->b
+	_PutItem(slot_a, inst_b);  // Copy b->a
+	_PutItem(slot_b, inst_a);  // Copy a->b
 
 	return true;
 }
 
 // Remove item from inventory (with memory delete)
-bool EQ::InventoryProfile::DeleteItem(int16 slot_id, uint8 quantity)
-{
+bool EQ::InventoryProfile::DeleteItem(int16 slot_id, uint8 quantity) {
 	// Pop item out of inventory map (or queue)
 	ItemInstance* item_to_delete = PopItem(slot_id);
 
 	// Determine if object should be fully deleted, or
 	// just a quantity of charges of the item can be deleted
 	if (item_to_delete && (quantity > 0)) {
-
 		item_to_delete->SetCharges(item_to_delete->GetCharges() - quantity);
 
 		// If there are no charges left on the item,
@@ -264,8 +236,8 @@ bool EQ::InventoryProfile::DeleteItem(int16 slot_id, uint8 quantity)
 			// If the item is stackable (e.g arrows), or
 			// the item is not stackable, and is not a charged item, or is expendable, delete it
 			if (item_to_delete->IsStackable() ||
-				(!item_to_delete->IsStackable() &&
-					((item_to_delete->GetItem()->MaxCharges == 0) || item_to_delete->IsExpendable()))) {
+			    (!item_to_delete->IsStackable() &&
+			     ((item_to_delete->GetItem()->MaxCharges == 0) || item_to_delete->IsExpendable()))) {
 				// Item can now be destroyed
 				InventoryProfile::MarkDirty(item_to_delete);
 				return true;
@@ -279,16 +251,15 @@ bool EQ::InventoryProfile::DeleteItem(int16 slot_id, uint8 quantity)
 
 	InventoryProfile::MarkDirty(item_to_delete);
 	return true;
-
 }
 
 // Checks All items in a bag for No Drop
 bool EQ::InventoryProfile::CheckNoDrop(int16 slot_id) {
 	ItemInstance* inst = GetItem(slot_id);
-	if (!inst) 
+	if (!inst)
 		return false;
 
-	if (!inst->GetItem()->NoDrop) 
+	if (!inst->GetItem()->NoDrop)
 		return true;
 
 	if (inst->GetItem()->ItemClass == 1) {
@@ -303,30 +274,24 @@ bool EQ::InventoryProfile::CheckNoDrop(int16 slot_id) {
 
 // Remove item from bucket without memory delete
 // Returns item pointer if full delete was successful
-EQ::ItemInstance* EQ::InventoryProfile::PopItem(int16 slot_id)
-{
+EQ::ItemInstance* EQ::InventoryProfile::PopItem(int16 slot_id) {
 	ItemInstance* p = nullptr;
 
 	if (slot_id == invslot::slotCursor) {
 		p = m_cursor.pop();
-	}
-	else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
+	} else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
 		p = m_worn[slot_id];
 		m_worn.erase(slot_id);
-	}
-	else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
+	} else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
 		p = m_inv[slot_id];
 		m_inv.erase(slot_id);
-	}
-	else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
+	} else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
 		p = m_bank[slot_id];
 		m_bank.erase(slot_id);
-	}
-	else if (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END) {
+	} else if (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END) {
 		p = m_trade[slot_id];
 		m_trade.erase(slot_id);
-	}
-	else {
+	} else {
 		// Is slot inside bag?
 		ItemInstance* baginst = GetItem(InventoryProfile::CalcSlotId(slot_id));
 		if (baginst != nullptr && baginst->IsClassBag()) {
@@ -339,34 +304,26 @@ EQ::ItemInstance* EQ::InventoryProfile::PopItem(int16 slot_id)
 }
 
 bool EQ::InventoryProfile::HasSpaceForItem(const ItemData* ItemToTry, int16 Quantity) {
-
 	if (ItemToTry->Stackable) {
-
 		for (int16 i = invslot::GENERAL_BEGIN; i <= invslot::GENERAL_END; i++) {
-
 			ItemInstance* InvItem = GetItem(i);
 
 			if (InvItem && (InvItem->GetItem()->ID == ItemToTry->ID) && (InvItem->GetCharges() < InvItem->GetItem()->StackSize)) {
-
 				int ChargeSlotsLeft = InvItem->GetItem()->StackSize - InvItem->GetCharges();
 
 				if (Quantity <= ChargeSlotsLeft)
 					return true;
 
 				Quantity -= ChargeSlotsLeft;
-
 			}
 			if (InvItem && InvItem->IsClassBag()) {
-
 				int16 BaseSlotID = InventoryProfile::CalcSlotId(i, invbag::SLOT_BEGIN);
 				uint8 BagSize = InvItem->GetItem()->BagSlots;
 				for (uint8 BagSlot = invbag::SLOT_BEGIN; BagSlot < BagSize; BagSlot++) {
-
 					InvItem = GetItem(BaseSlotID + BagSlot);
 
 					if (InvItem && (InvItem->GetItem()->ID == ItemToTry->ID) &&
-						(InvItem->GetCharges() < InvItem->GetItem()->StackSize)) {
-
+					    (InvItem->GetCharges() < InvItem->GetItem()->StackSize)) {
 						int ChargeSlotsLeft = InvItem->GetItem()->StackSize - InvItem->GetCharges();
 
 						if (Quantity <= ChargeSlotsLeft)
@@ -380,45 +337,36 @@ bool EQ::InventoryProfile::HasSpaceForItem(const ItemData* ItemToTry, int16 Quan
 	}
 
 	for (int16 i = invslot::GENERAL_BEGIN; i <= invslot::GENERAL_END; i++) {
-
 		ItemInstance* InvItem = GetItem(i);
 
 		if (!InvItem) {
-
 			if (!ItemToTry->Stackable) {
-
 				if (Quantity == 1)
 					return true;
 				else
 					Quantity--;
-			}
-			else {
+			} else {
 				if (Quantity <= ItemToTry->StackSize)
 					return true;
 				else
 					Quantity -= ItemToTry->StackSize;
 			}
 
-		}
-		else if (InvItem->IsClassBag() && CanItemFitInContainer(ItemToTry, InvItem->GetItem())) {
-
+		} else if (InvItem->IsClassBag() && CanItemFitInContainer(ItemToTry, InvItem->GetItem())) {
 			int16 BaseSlotID = InventoryProfile::CalcSlotId(i, invbag::SLOT_BEGIN);
 
 			uint8 BagSize = InvItem->GetItem()->BagSlots;
 
 			for (uint8 BagSlot = invbag::SLOT_BEGIN; BagSlot < BagSize; BagSlot++) {
-
 				InvItem = GetItem(BaseSlotID + BagSlot);
 
 				if (!InvItem) {
 					if (!ItemToTry->Stackable) {
-
 						if (Quantity == 1)
 							return true;
 						else
 							Quantity--;
-					}
-					else {
+					} else {
 						if (Quantity <= ItemToTry->StackSize)
 							return true;
 						else
@@ -430,20 +378,18 @@ bool EQ::InventoryProfile::HasSpaceForItem(const ItemData* ItemToTry, int16 Quan
 	}
 
 	return false;
-
 }
 
 // Checks that user has at least 'quantity' number of items in a given inventory slot
 // Returns first slot it was found in, or INVALID_INDEX if not found
 
-//This function has a flaw in that it only returns the last stack that it looked at
-//when quantity is greater than 1 and not all of quantity can be found in 1 stack.
-int16 EQ::InventoryProfile::HasItem(int16 item_id, uint8 quantity, uint8 where)
-{
+// This function has a flaw in that it only returns the last stack that it looked at
+// when quantity is greater than 1 and not all of quantity can be found in 1 stack.
+int16 EQ::InventoryProfile::HasItem(int16 item_id, uint8 quantity, uint8 where) {
 	int16 slot_id = INVALID_INDEX;
 
-	//Altered by Father Nitwit to support a specification of
-	//where to search, with a default value to maintain compatibility
+	// Altered by Father Nitwit to support a specification of
+	// where to search, with a default value to maintain compatibility
 
 	// Check each inventory bucket
 	if (where & invWhereWorn) {
@@ -480,42 +426,35 @@ int16 EQ::InventoryProfile::HasItem(int16 item_id, uint8 quantity, uint8 where)
 	return slot_id;
 }
 
-int16 EQ::InventoryProfile::HasArtifactItem()
-{
+int16 EQ::InventoryProfile::HasArtifactItem() {
 	int16 slot_id = INVALID_INDEX;
 
-	for (int16 i = invslot::slotCursor; i <= invslot::GENERAL_END; i++)
-	{
+	for (int16 i = invslot::slotCursor; i <= invslot::GENERAL_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
 
-	for (int16 i = invbag::GENERAL_BAGS_BEGIN; i <= invbag::GENERAL_BAGS_END; i++)
-	{
+	for (int16 i = invbag::GENERAL_BAGS_BEGIN; i <= invbag::GENERAL_BAGS_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
 
-	for (int16 i = invslot::BANK_BEGIN; i <= invslot::BANK_END; i++)
-	{
+	for (int16 i = invslot::BANK_BEGIN; i <= invslot::BANK_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
 
-	for (int16 i = invbag::BANK_BAGS_BEGIN; i <= invbag::BANK_BAGS_END; i++)
-	{
+	for (int16 i = invbag::BANK_BAGS_BEGIN; i <= invbag::BANK_BAGS_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
 
-	for (int16 i = invslot::TRADE_BEGIN; i <= invslot::TRADE_END; i++)
-	{
+	for (int16 i = invslot::TRADE_BEGIN; i <= invslot::TRADE_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
 
-	for (int16 i = invbag::TRADE_BAGS_BEGIN; i <= invbag::TRADE_BAGS_END; i++)
-	{
+	for (int16 i = invbag::TRADE_BAGS_BEGIN; i <= invbag::TRADE_BAGS_END; i++) {
 		if (GetItem(i) && GetItem(i)->GetItem()->Lore[0] == '#')
 			return i;
 	}
@@ -523,9 +462,8 @@ int16 EQ::InventoryProfile::HasArtifactItem()
 	return slot_id;
 }
 
-//this function has the same quantity flaw mentioned above in HasItem()
-int16 EQ::InventoryProfile::HasItemByUse(uint8 use, uint8 quantity, uint8 where)
-{
+// this function has the same quantity flaw mentioned above in HasItem()
+int16 EQ::InventoryProfile::HasItemByUse(uint8 use, uint8 quantity, uint8 where) {
 	int16 slot_id = INVALID_INDEX;
 
 	// Check each inventory bucket
@@ -565,8 +503,7 @@ int16 EQ::InventoryProfile::HasItemByUse(uint8 use, uint8 quantity, uint8 where)
 
 // Locate an available inventory slot
 // Returns slot_id when there's one available, else INVALID_INDEX
-int16 EQ::InventoryProfile::FindFreeSlot(bool for_bag, bool try_cursor, uint8 min_size, bool is_arrow)
-{
+int16 EQ::InventoryProfile::FindFreeSlot(bool for_bag, bool try_cursor, uint8 min_size, bool is_arrow) {
 	// Check basic inventory
 	for (int16 i = invslot::GENERAL_BEGIN; i <= invslot::GENERAL_END; i++) {
 		if (!GetItem(i))
@@ -577,11 +514,8 @@ int16 EQ::InventoryProfile::FindFreeSlot(bool for_bag, bool try_cursor, uint8 mi
 	if (!for_bag) {
 		for (int16 i = invslot::GENERAL_BEGIN; i <= invslot::GENERAL_END; i++) {
 			const ItemInstance* inst = GetItem(i);
-			if (inst && inst->IsClassBag()
-				&& inst->GetItem()->BagSize >= min_size)
-			{
-				if (is_arrow && inst->GetItem()->BagType == item::BagTypeQuiver)
-				{
+			if (inst && inst->IsClassBag() && inst->GetItem()->BagSize >= min_size) {
+				if (is_arrow && inst->GetItem()->BagType == item::BagTypeQuiver) {
 					int16 base_slot_id = InventoryProfile::CalcSlotId(i, invslot::SLOT_BEGIN);
 
 					uint8 slots = inst->GetItem()->BagSlots;
@@ -592,8 +526,7 @@ int16 EQ::InventoryProfile::FindFreeSlot(bool for_bag, bool try_cursor, uint8 mi
 							return (base_slot_id + j);
 					}
 				}
-				if (inst->GetItem()->BagType == item::BagTypeQuiver && inst->GetItem()->ItemType != item::ItemTypeArrow)
-				{
+				if (inst->GetItem()->BagType == item::BagTypeQuiver && inst->GetItem()->ItemType != item::ItemTypeArrow) {
 					continue;
 				}
 
@@ -618,7 +551,6 @@ int16 EQ::InventoryProfile::FindFreeSlot(bool for_bag, bool try_cursor, uint8 mi
 	// No available slots
 	return INVALID_INDEX;
 }
-
 
 // This is a mix of HasSpaceForItem and FindFreeSlot..due to existing coding behavior, it was better to add a new helper function...
 int16 EQ::InventoryProfile::FindFreeSlotForTradeItem(const ItemInstance* inst) {
@@ -661,7 +593,7 @@ int16 EQ::InventoryProfile::FindFreeSlotForTradeItem(const ItemInstance* inst) {
 			if (!main_inst)
 				continue;
 
-			if (main_inst->IsClassBag()) { // if item-specific containers already have bad items, we won't fix it here...
+			if (main_inst->IsClassBag()) {  // if item-specific containers already have bad items, we won't fix it here...
 				for (uint8 free_bag_slot = invbag::SLOT_BEGIN; (free_bag_slot < main_inst->GetItem()->BagSlots) && (free_bag_slot <= invbag::SLOT_END); ++free_bag_slot) {
 					const ItemInstance* sub_inst = main_inst->GetItem(free_bag_slot);
 
@@ -744,13 +676,13 @@ int16 EQ::InventoryProfile::CalcSlotId(int16 slot_id) {
 	/*
 	// this is not a bag range... using this risks over-writing existing items
 	else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END)
-		parent_slot_id = invslot::BANK_BEGIN + (slot_id - invslot::BANK_BEGIN) / invbag::SLOT_COUNT;
+	    parent_slot_id = invslot::BANK_BEGIN + (slot_id - invslot::BANK_BEGIN) / invbag::SLOT_COUNT;
 	*/
 
 	else if (slot_id >= invbag::BANK_BAGS_BEGIN && slot_id <= invbag::BANK_BAGS_END)
 		parent_slot_id = invslot::BANK_BEGIN + (slot_id - invbag::BANK_BAGS_BEGIN) / invbag::SLOT_COUNT;
 
-	//else if (slot_id >= 3100 && slot_id <= 3179) should be {3031..3110}..where did this range come from!!? (verified db save range)
+	// else if (slot_id >= 3100 && slot_id <= 3179) should be {3031..3110}..where did this range come from!!? (verified db save range)
 	else if (slot_id >= invbag::TRADE_BAGS_BEGIN && slot_id <= invbag::TRADE_BAGS_END)
 		parent_slot_id = invslot::TRADE_BEGIN + (slot_id - invbag::TRADE_BAGS_BEGIN) / invbag::SLOT_COUNT;
 
@@ -786,12 +718,12 @@ uint8 EQ::InventoryProfile::CalcBagIdx(int16 slot_id) {
 		index = (slot_id - invbag::GENERAL_BAGS_BEGIN) % invbag::SLOT_COUNT;
 
 	else if (slot_id >= invbag::CURSOR_BAG_BEGIN && slot_id <= invbag::CURSOR_BAG_END)
-		index = (slot_id - invbag::CURSOR_BAG_BEGIN); // % invbag::SLOT_COUNT; - not needed since range is 10 slots
+		index = (slot_id - invbag::CURSOR_BAG_BEGIN);  // % invbag::SLOT_COUNT; - not needed since range is 10 slots
 
 	/*
 	// this is not a bag range... using this risks over-writing existing items
 	else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END)
-		index = (slot_id - invslot::BANK_BEGIN) % invbag::SLOT_COUNT;
+	    index = (slot_id - invslot::BANK_BEGIN) % invbag::SLOT_COUNT;
 	*/
 
 	else if (slot_id >= invbag::BANK_BAGS_BEGIN && slot_id <= invbag::BANK_BAGS_END)
@@ -802,68 +734,63 @@ uint8 EQ::InventoryProfile::CalcBagIdx(int16 slot_id) {
 
 	// odd..but, ok... (probably a range-slot conversion for ItemInstance* Object::item
 	else if (slot_id >= invslot::WORLD_BEGIN && slot_id <= invslot::WORLD_END)
-		index = (slot_id - invslot::WORLD_BEGIN); // % invbag::SLOT_COUNT; - not needed since range is 10 slots
+		index = (slot_id - invslot::WORLD_BEGIN);  // % invbag::SLOT_COUNT; - not needed since range is 10 slots
 
 	return index;
 }
 
-int16 EQ::InventoryProfile::CalcSlotFromMaterial(uint8 material)
-{
-	switch (material)
-	{
-	case textures::armorHead:
-		return invslot::slotHead;
-	case textures::armorChest:
-		return invslot::slotChest;
-	case textures::armorArms:
-		return invslot::slotArms;
-	case textures::armorWrist:
-		return invslot::slotWrist1;	// Always prefer wrist1. 
-	case textures::armorHands:
-		return invslot::slotHands;
-	case textures::armorLegs:
-		return invslot::slotLegs;
-	case textures::armorFeet:
-		return invslot::slotFeet;
-	case textures::weaponPrimary:
-		return invslot::slotPrimary;
-	case textures::weaponSecondary:
-		return invslot::slotSecondary;
-	default:
-		return INVALID_INDEX;
+int16 EQ::InventoryProfile::CalcSlotFromMaterial(uint8 material) {
+	switch (material) {
+		case textures::armorHead:
+			return invslot::slotHead;
+		case textures::armorChest:
+			return invslot::slotChest;
+		case textures::armorArms:
+			return invslot::slotArms;
+		case textures::armorWrist:
+			return invslot::slotWrist1;  // Always prefer wrist1.
+		case textures::armorHands:
+			return invslot::slotHands;
+		case textures::armorLegs:
+			return invslot::slotLegs;
+		case textures::armorFeet:
+			return invslot::slotFeet;
+		case textures::weaponPrimary:
+			return invslot::slotPrimary;
+		case textures::weaponSecondary:
+			return invslot::slotSecondary;
+		default:
+			return INVALID_INDEX;
 	}
 }
 
-uint8 EQ::InventoryProfile::CalcMaterialFromSlot(int16 equipslot)
-{
-	switch (equipslot)
-	{
-	case invslot::slotHead:
-		return textures::armorHead;
-	case invslot::slotChest:
-		return textures::armorChest;
-	case invslot::slotArms:
-		return textures::armorArms;
-	case invslot::slotWrist1:
-	case invslot::slotWrist2:
-		return textures::armorWrist; // Both wrists share a single texture slot.
-	case invslot::slotHands:
-		return textures::armorHands;
-	case invslot::slotLegs:
-		return textures::armorLegs;
-	case invslot::slotFeet:
-		return textures::armorFeet;
-	case invslot::slotPrimary:
-		return textures::weaponPrimary;
-	case invslot::slotSecondary:
-		return textures::weaponSecondary;
-	default:
-		return textures::materialInvalid;
+uint8 EQ::InventoryProfile::CalcMaterialFromSlot(int16 equipslot) {
+	switch (equipslot) {
+		case invslot::slotHead:
+			return textures::armorHead;
+		case invslot::slotChest:
+			return textures::armorChest;
+		case invslot::slotArms:
+			return textures::armorArms;
+		case invslot::slotWrist1:
+		case invslot::slotWrist2:
+			return textures::armorWrist;  // Both wrists share a single texture slot.
+		case invslot::slotHands:
+			return textures::armorHands;
+		case invslot::slotLegs:
+			return textures::armorLegs;
+		case invslot::slotFeet:
+			return textures::armorFeet;
+		case invslot::slotPrimary:
+			return textures::weaponPrimary;
+		case invslot::slotSecondary:
+			return textures::weaponSecondary;
+		default:
+			return textures::materialInvalid;
 	}
 }
 
 bool EQ::InventoryProfile::CanItemFitInContainer(const ItemData* ItemToTry, const ItemData* Container) {
-
 	if (!ItemToTry || !Container) return false;
 
 	if (ItemToTry->Size > Container->BagSize) return false;
@@ -873,15 +800,11 @@ bool EQ::InventoryProfile::CanItemFitInContainer(const ItemData* ItemToTry, cons
 	return true;
 }
 
-bool EQ::InventoryProfile::SupportsClickCasting(int16 slot_id)
-{
+bool EQ::InventoryProfile::SupportsClickCasting(int16 slot_id) {
 	// there are a few non-potion items that identify as ItemTypePotion..so, we still need to ubiquitously include the equipment range
-	if ((uint16)slot_id <= invslot::GENERAL_END)
-	{
+	if ((uint16)slot_id <= invslot::GENERAL_END) {
 		return true;
-	}
-	else if (slot_id >= invbag::GENERAL_BAGS_BEGIN && slot_id <= invbag::GENERAL_BAGS_END)
-	{
+	} else if (slot_id >= invbag::GENERAL_BAGS_BEGIN && slot_id <= invbag::GENERAL_BAGS_END) {
 		if (inventory::Lookup(m_mob_version)->AllowClickCastFromBag)
 			return true;
 	}
@@ -890,12 +813,11 @@ bool EQ::InventoryProfile::SupportsClickCasting(int16 slot_id)
 }
 
 // Test whether a given slot can support a container item
-bool EQ::InventoryProfile::SupportsContainers(int16 slot_id)
-{
+bool EQ::InventoryProfile::SupportsContainers(int16 slot_id) {
 	if ((slot_id == invslot::slotCursor) ||
-		(slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END) ||
-		(slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) ||
-		(slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END))
+	    (slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END) ||
+	    (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) ||
+	    (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END))
 		return true;
 	return false;
 }
@@ -931,18 +853,25 @@ int EQ::InventoryProfile::GetSlotByItemInst(ItemInstance* inst) {
 	return INVALID_INDEX;
 }
 
-uint8 EQ::InventoryProfile::FindBrightestLightType()
-{
+uint8 EQ::InventoryProfile::FindBrightestLightType() {
 	uint8 brightest_light_type = 0;
 
 	for (auto iter = m_worn.begin(); iter != m_worn.end(); ++iter) {
-		if ((iter->first < invslot::EQUIPMENT_BEGIN || iter->first > invslot::EQUIPMENT_END)) { continue; }
-		if (iter->first == invslot::slotAmmo) { continue; }
+		if ((iter->first < invslot::EQUIPMENT_BEGIN || iter->first > invslot::EQUIPMENT_END)) {
+			continue;
+		}
+		if (iter->first == invslot::slotAmmo) {
+			continue;
+		}
 
 		auto inst = iter->second;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 		auto item = inst->GetItem();
-		if (item == nullptr) { continue; }
+		if (item == nullptr) {
+			continue;
+		}
 
 		if (lightsource::IsLevelGreater(item->Light, brightest_light_type))
 			brightest_light_type = item->Light;
@@ -950,15 +879,25 @@ uint8 EQ::InventoryProfile::FindBrightestLightType()
 
 	uint8 general_light_type = 0;
 	for (auto iter = m_inv.begin(); iter != m_inv.end(); ++iter) {
-		if (iter->first < invslot::GENERAL_BEGIN || iter->first > invslot::GENERAL_END) { continue; }
+		if (iter->first < invslot::GENERAL_BEGIN || iter->first > invslot::GENERAL_END) {
+			continue;
+		}
 
 		auto inst = iter->second;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 		auto item = inst->GetItem();
-		if (item == nullptr) { continue; }
+		if (item == nullptr) {
+			continue;
+		}
 
-		if (item->ItemClass != item::ItemClassCommon) { continue; }
-		if (item->Light < 9 || item->Light > 13) { continue; }
+		if (item->ItemClass != item::ItemClassCommon) {
+			continue;
+		}
+		if (item->Light < 9 || item->Light > 13) {
+			continue;
+		}
 
 		if (lightsource::TypeToLevel(item->Light))
 			general_light_type = item->Light;
@@ -971,7 +910,6 @@ uint8 EQ::InventoryProfile::FindBrightestLightType()
 }
 
 void EQ::InventoryProfile::dumpEntireInventory() {
-
 	dumpWornItems();
 	dumpInventory();
 	dumpBankItems();
@@ -990,7 +928,6 @@ void EQ::InventoryProfile::dumpInventory() {
 }
 
 void EQ::InventoryProfile::dumpBankItems() {
-
 	std::cout << "Bank items:" << std::endl;
 	dumpItemCollection(m_bank);
 }
@@ -1014,8 +951,7 @@ int EQ::InventoryProfile::GetSlotByItemInstCollection(const std::map<int16, Item
 	return -1;
 }
 
-void EQ::InventoryProfile::dumpItemCollection(const std::map<int16, ItemInstance*>& collection)
-{
+void EQ::InventoryProfile::dumpItemCollection(const std::map<int16, ItemInstance*>& collection) {
 	for (auto it = collection.cbegin(); it != collection.cend(); ++it) {
 		auto inst = it->second;
 		if (!inst || !inst->GetItem())
@@ -1028,9 +964,7 @@ void EQ::InventoryProfile::dumpItemCollection(const std::map<int16, ItemInstance
 	}
 }
 
-void EQ::InventoryProfile::dumpBagContents(ItemInstance* inst, std::map<int16, ItemInstance*>::const_iterator* it)
-{
-
+void EQ::InventoryProfile::dumpBagContents(ItemInstance* inst, std::map<int16, ItemInstance*>::const_iterator* it) {
 	if (!inst || !inst->IsClassBag())
 		return;
 
@@ -1041,15 +975,13 @@ void EQ::InventoryProfile::dumpBagContents(ItemInstance* inst, std::map<int16, I
 			continue;
 
 		std::string subSlot = StringFormat("	Slot %d: %s (%d)", InventoryProfile::CalcSlotId((*it)->first, itb->first),
-			baginst->GetItem()->Name, (baginst->GetCharges() <= 0) ? 1 : baginst->GetCharges());
+		                                   baginst->GetItem()->Name, (baginst->GetCharges() <= 0) ? 1 : baginst->GetCharges());
 		std::cout << subSlot << std::endl;
 	}
-
 }
 
 // Internal Method: Retrieves item within an inventory bucket
-EQ::ItemInstance* EQ::InventoryProfile::_GetItem(const std::map<int16, ItemInstance*>& bucket, int16 slot_id) const
-{
+EQ::ItemInstance* EQ::InventoryProfile::_GetItem(const std::map<int16, ItemInstance*>& bucket, int16 slot_id) const {
 	auto it = bucket.find(slot_id);
 	if (it != bucket.end()) {
 		return it->second;
@@ -1061,11 +993,10 @@ EQ::ItemInstance* EQ::InventoryProfile::_GetItem(const std::map<int16, ItemInsta
 
 // Internal Method: "put" item into bucket, without regard for what is currently in bucket
 // Assumes item has already been allocated
-int16 EQ::InventoryProfile::_PutItem(int16 slot_id, ItemInstance* inst)
-{
+int16 EQ::InventoryProfile::_PutItem(int16 slot_id, ItemInstance* inst) {
 	// If putting a nullptr into slot, we need to remove slot without memory delete
 	if (inst == nullptr) {
-		//Why do we not delete the poped item here????
+		// Why do we not delete the poped item here????
 		PopItem(slot_id);
 		return slot_id;
 	}
@@ -1074,29 +1005,24 @@ int16 EQ::InventoryProfile::_PutItem(int16 slot_id, ItemInstance* inst)
 
 	if (slot_id == invslot::slotCursor) {
 		// Replace current item on cursor, if exists
-		m_cursor.pop(); // no memory delete, clients of this function know what they are doing
+		m_cursor.pop();  // no memory delete, clients of this function know what they are doing
 		m_cursor.push_front(inst);
 		result = slot_id;
-	}
-	else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
+	} else if ((slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)) {
 		m_worn[slot_id] = inst;
 		result = slot_id;
-	}
-	else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
+	} else if ((slot_id >= invslot::GENERAL_BEGIN && slot_id <= invslot::GENERAL_END)) {
 		m_inv[slot_id] = inst;
 		result = slot_id;
-	}
-	else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
+	} else if (slot_id >= invslot::BANK_BEGIN && slot_id <= invslot::BANK_END) {
 		m_bank[slot_id] = inst;
 		result = slot_id;
-	}
-	else if (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END) {
+	} else if (slot_id >= invslot::TRADE_BEGIN && slot_id <= invslot::TRADE_END) {
 		m_trade[slot_id] = inst;
 		result = slot_id;
-	}
-	else {
+	} else {
 		// Slot must be within a bag
-		ItemInstance* baginst = GetItem(InventoryProfile::CalcSlotId(slot_id)); // Get parent bag
+		ItemInstance* baginst = GetItem(InventoryProfile::CalcSlotId(slot_id));  // Get parent bag
 		if (baginst && baginst->IsClassBag()) {
 			baginst->_PutItem(InventoryProfile::CalcBagIdx(slot_id), inst);
 			result = slot_id;
@@ -1105,20 +1031,21 @@ int16 EQ::InventoryProfile::_PutItem(int16 slot_id, ItemInstance* inst)
 
 	if (result == INVALID_INDEX) {
 		LogError("Inventory::_PutItem: Invalid slot_id specified ({})", slot_id);
-		InventoryProfile::MarkDirty(inst); // Slot not found, clean up
+		InventoryProfile::MarkDirty(inst);  // Slot not found, clean up
 	}
 
 	return result;
 }
 
 // Internal Method: Checks an inventory bucket for a particular item
-int16 EQ::InventoryProfile::_HasItem(std::map<int16, ItemInstance*>& bucket, int16 item_id, uint8 quantity)
-{
+int16 EQ::InventoryProfile::_HasItem(std::map<int16, ItemInstance*>& bucket, int16 item_id, uint8 quantity) {
 	uint8 quantity_found = 0;
 
 	for (auto iter = bucket.begin(); iter != bucket.end(); ++iter) {
 		auto inst = iter->second;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 
 		if (inst->GetID() == item_id) {
 			quantity_found += (inst->GetCharges() <= 0) ? 1 : inst->GetCharges();
@@ -1126,11 +1053,15 @@ int16 EQ::InventoryProfile::_HasItem(std::map<int16, ItemInstance*>& bucket, int
 				return iter->first;
 		}
 
-		if (!inst->IsClassBag()) { continue; }
+		if (!inst->IsClassBag()) {
+			continue;
+		}
 
 		for (auto bag_iter = inst->_cbegin(); bag_iter != inst->_cend(); ++bag_iter) {
 			auto bag_inst = bag_iter->second;
-			if (bag_inst == nullptr) { continue; }
+			if (bag_inst == nullptr) {
+				continue;
+			}
 
 			if (bag_inst->GetID() == item_id) {
 				quantity_found += (bag_inst->GetCharges() <= 0) ? 1 : bag_inst->GetCharges();
@@ -1144,8 +1075,7 @@ int16 EQ::InventoryProfile::_HasItem(std::map<int16, ItemInstance*>& bucket, int
 }
 
 // Internal Method: Checks an inventory queue type bucket for a particular item
-int16 EQ::InventoryProfile::_HasItem(ItemInstQueue& iqueue, int16 item_id, uint8 quantity)
-{
+int16 EQ::InventoryProfile::_HasItem(ItemInstQueue& iqueue, int16 item_id, uint8 quantity) {
 	// The downfall of this (these) queue procedure is that callers presume that when an item is
 	// found, it is presented as being available on the cursor. In cases of a parity check, this
 	// is sufficient. However, in cases where referential criteria is considered, this can lead
@@ -1156,7 +1086,9 @@ int16 EQ::InventoryProfile::_HasItem(ItemInstQueue& iqueue, int16 item_id, uint8
 
 	for (auto iter = iqueue.cbegin(); iter != iqueue.cend(); ++iter) {
 		auto inst = *iter;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 
 		if (inst->GetID() == item_id) {
 			quantity_found += (inst->GetCharges() <= 0) ? 1 : inst->GetCharges();
@@ -1164,11 +1096,15 @@ int16 EQ::InventoryProfile::_HasItem(ItemInstQueue& iqueue, int16 item_id, uint8
 				return invslot::slotCursor;
 		}
 
-		if (!inst->IsClassBag()) { continue; }
+		if (!inst->IsClassBag()) {
+			continue;
+		}
 
 		for (auto bag_iter = inst->_cbegin(); bag_iter != inst->_cend(); ++bag_iter) {
 			auto bag_inst = bag_iter->second;
-			if (bag_inst == nullptr) { continue; }
+			if (bag_inst == nullptr) {
+				continue;
+			}
 
 			if (bag_inst->GetID() == item_id) {
 				quantity_found += (bag_inst->GetCharges() <= 0) ? 1 : bag_inst->GetCharges();
@@ -1185,13 +1121,14 @@ int16 EQ::InventoryProfile::_HasItem(ItemInstQueue& iqueue, int16 item_id, uint8
 }
 
 // Internal Method: Checks an inventory bucket for a particular item
-int16 EQ::InventoryProfile::_HasItemByUse(std::map<int16, ItemInstance*>& bucket, uint8 use, uint8 quantity)
-{
+int16 EQ::InventoryProfile::_HasItemByUse(std::map<int16, ItemInstance*>& bucket, uint8 use, uint8 quantity) {
 	uint8 quantity_found = 0;
 
 	for (auto iter = bucket.begin(); iter != bucket.end(); ++iter) {
 		auto inst = iter->second;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 
 		if (inst->IsClassCommon() && inst->GetItem()->ItemType == use) {
 			quantity_found += (inst->GetCharges() <= 0) ? 1 : inst->GetCharges();
@@ -1199,11 +1136,15 @@ int16 EQ::InventoryProfile::_HasItemByUse(std::map<int16, ItemInstance*>& bucket
 				return iter->first;
 		}
 
-		if (!inst->IsClassBag()) { continue; }
+		if (!inst->IsClassBag()) {
+			continue;
+		}
 
 		for (auto bag_iter = inst->_cbegin(); bag_iter != inst->_cend(); ++bag_iter) {
 			auto bag_inst = bag_iter->second;
-			if (bag_inst == nullptr) { continue; }
+			if (bag_inst == nullptr) {
+				continue;
+			}
 
 			if (bag_inst->IsClassCommon() && bag_inst->GetItem()->ItemType == use) {
 				quantity_found += (bag_inst->GetCharges() <= 0) ? 1 : bag_inst->GetCharges();
@@ -1217,13 +1158,14 @@ int16 EQ::InventoryProfile::_HasItemByUse(std::map<int16, ItemInstance*>& bucket
 }
 
 // Internal Method: Checks an inventory queue type bucket for a particular item
-int16 EQ::InventoryProfile::_HasItemByUse(ItemInstQueue& iqueue, uint8 use, uint8 quantity)
-{
+int16 EQ::InventoryProfile::_HasItemByUse(ItemInstQueue& iqueue, uint8 use, uint8 quantity) {
 	uint8 quantity_found = 0;
 
 	for (auto iter = iqueue.cbegin(); iter != iqueue.cend(); ++iter) {
 		auto inst = *iter;
-		if (inst == nullptr) { continue; }
+		if (inst == nullptr) {
+			continue;
+		}
 
 		if (inst->IsClassCommon() && inst->GetItem()->ItemType == use) {
 			quantity_found += (inst->GetCharges() <= 0) ? 1 : inst->GetCharges();
@@ -1231,11 +1173,15 @@ int16 EQ::InventoryProfile::_HasItemByUse(ItemInstQueue& iqueue, uint8 use, uint
 				return invslot::slotCursor;
 		}
 
-		if (!inst->IsClassBag()) { continue; }
+		if (!inst->IsClassBag()) {
+			continue;
+		}
 
 		for (auto bag_iter = inst->_cbegin(); bag_iter != inst->_cend(); ++bag_iter) {
 			auto bag_inst = bag_iter->second;
-			if (bag_inst == nullptr) { continue; }
+			if (bag_inst == nullptr) {
+				continue;
+			}
 
 			if (bag_inst->IsClassCommon() && bag_inst->GetItem()->ItemType == use) {
 				quantity_found += (bag_inst->GetCharges() <= 0) ? 1 : bag_inst->GetCharges();

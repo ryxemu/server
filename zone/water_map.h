@@ -6,7 +6,7 @@
 #include "zone_config.h"
 #include <string>
 
-extern const ZoneConfig *Config;
+extern const ZoneConfig* Config;
 
 enum WaterRegionType {
 	RegionTypeUnsupported = -2,
@@ -21,11 +21,10 @@ enum WaterRegionType {
 	RegionTypeVWater = 7
 };
 
-class WaterMap
-{
-public:
-	WaterMap() { }
-	virtual ~WaterMap() { }
+class WaterMap {
+   public:
+	WaterMap() {}
+	virtual ~WaterMap() {}
 
 	static WaterMap* LoadWaterMapfile(std::string zone_name);
 	virtual WaterRegionType ReturnRegionType(const glm::vec3& location) const = 0;
@@ -35,8 +34,8 @@ public:
 	virtual bool InLiquid(const glm::vec3& location) const = 0;
 	virtual bool InPVP(const glm::vec3& location) const = 0;
 
-protected:
-	virtual bool Load(FILE *fp) { return false; }
+   protected:
+	virtual bool Load(FILE* fp) { return false; }
 };
 
 #endif

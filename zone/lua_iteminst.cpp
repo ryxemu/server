@@ -19,7 +19,7 @@ Lua_ItemInst::Lua_ItemInst(int item_id, int charges) {
 }
 
 Lua_ItemInst& Lua_ItemInst::operator=(const Lua_ItemInst& o) {
-	if(o.cloned_) {
+	if (o.cloned_) {
 		cloned_ = true;
 		d_ = new EQ::ItemInstance(*o.d_);
 	} else {
@@ -30,7 +30,7 @@ Lua_ItemInst& Lua_ItemInst::operator=(const Lua_ItemInst& o) {
 }
 
 Lua_ItemInst::Lua_ItemInst(const Lua_ItemInst& o) {
-	if(o.cloned_) {
+	if (o.cloned_) {
 		cloned_ = true;
 		d_ = new EQ::ItemInstance(*o.d_);
 	} else {
@@ -181,39 +181,39 @@ void Lua_ItemInst::ClearTimers() {
 
 luabind::scope lua_register_iteminst() {
 	return luabind::class_<Lua_ItemInst>("ItemInst")
-		.def(luabind::constructor<>())
-		.def(luabind::constructor<int>())
-		.def(luabind::constructor<int,int>())
-		.property("null", &Lua_ItemInst::Null)
-		.property("valid", &Lua_ItemInst::Valid)
-		.def("IsType", (bool(Lua_ItemInst::*)(int))&Lua_ItemInst::IsType)
-		.def("IsStackable", (bool(Lua_ItemInst::*)(void))&Lua_ItemInst::IsStackable)
-		.def("IsEquipable", (bool(Lua_ItemInst::*)(int,int))&Lua_ItemInst::IsEquipable)
-		.def("IsEquipable", (bool(Lua_ItemInst::*)(int))&Lua_ItemInst::IsEquipable)
-		.def("IsExpendable", (bool(Lua_ItemInst::*)(void))&Lua_ItemInst::IsExpendable)
-		.def("GetItem", (Lua_ItemInst(Lua_ItemInst::*)(int))&Lua_ItemInst::GetItem)
-		.def("GetItemID", (int16(Lua_ItemInst::*)(int))&Lua_ItemInst::GetItemID)
-		.def("GetName", (std::string(Lua_ItemInst::*)(void))&Lua_ItemInst::GetName)
-		.def("GetTotalItemCount", (int(Lua_ItemInst::*)(void))&Lua_ItemInst::GetTotalItemCount)
-		.def("IsWeapon", (bool(Lua_ItemInst::*)(void))&Lua_ItemInst::IsWeapon)
-		.def("IsAmmo", (bool(Lua_ItemInst::*)(void))&Lua_ItemInst::IsAmmo)
-		.def("GetID", (uint32(Lua_ItemInst::*)(void))&Lua_ItemInst::GetID)
-		.def("GetItem", (Lua_Item(Lua_ItemInst::*)(void))&Lua_ItemInst::GetItem)
-		.def("GetCharges", (int(Lua_ItemInst::*)(void))&Lua_ItemInst::GetCharges)
-		.def("SetCharges", (void(Lua_ItemInst::*)(int))&Lua_ItemInst::SetCharges)
-		.def("GetPrice", (uint32(Lua_ItemInst::*)(void))&Lua_ItemInst::GetPrice)
-		.def("SetPrice", (void(Lua_ItemInst::*)(uint32))&Lua_ItemInst::SetPrice)
-		.def("GetCustomDataString", (std::string(Lua_ItemInst::*)(void))&Lua_ItemInst::GetCustomDataString)
-		.def("SetCustomData", (void(Lua_ItemInst::*)(std::string,std::string))&Lua_ItemInst::SetCustomData)
-		.def("SetCustomData", (void(Lua_ItemInst::*)(std::string,int))&Lua_ItemInst::SetCustomData)
-		.def("SetCustomData", (void(Lua_ItemInst::*)(std::string,float))&Lua_ItemInst::SetCustomData)
-		.def("SetCustomData", (void(Lua_ItemInst::*)(std::string,bool))&Lua_ItemInst::SetCustomData)
-		.def("GetCustomData", (std::string(Lua_ItemInst::*)(std::string))&Lua_ItemInst::GetCustomData)
-		.def("DeleteCustomData", (void(Lua_ItemInst::*)(std::string))&Lua_ItemInst::DeleteCustomData)
-		.def("Clone", (Lua_ItemInst(Lua_ItemInst::*)(void))&Lua_ItemInst::Clone)
-		.def("SetTimer", (void(Lua_ItemInst::*)(std::string,uint32))&Lua_ItemInst::SetTimer)
-		.def("StopTimer", (void(Lua_ItemInst::*)(std::string))&Lua_ItemInst::StopTimer)
-		.def("ClearTimers", (void(Lua_ItemInst::*)(void))&Lua_ItemInst::ClearTimers);
+	    .def(luabind::constructor<>())
+	    .def(luabind::constructor<int>())
+	    .def(luabind::constructor<int, int>())
+	    .property("null", &Lua_ItemInst::Null)
+	    .property("valid", &Lua_ItemInst::Valid)
+	    .def("IsType", (bool(Lua_ItemInst::*)(int)) & Lua_ItemInst::IsType)
+	    .def("IsStackable", (bool(Lua_ItemInst::*)(void)) & Lua_ItemInst::IsStackable)
+	    .def("IsEquipable", (bool(Lua_ItemInst::*)(int, int)) & Lua_ItemInst::IsEquipable)
+	    .def("IsEquipable", (bool(Lua_ItemInst::*)(int)) & Lua_ItemInst::IsEquipable)
+	    .def("IsExpendable", (bool(Lua_ItemInst::*)(void)) & Lua_ItemInst::IsExpendable)
+	    .def("GetItem", (Lua_ItemInst(Lua_ItemInst::*)(int)) & Lua_ItemInst::GetItem)
+	    .def("GetItemID", (int16(Lua_ItemInst::*)(int)) & Lua_ItemInst::GetItemID)
+	    .def("GetName", (std::string(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetName)
+	    .def("GetTotalItemCount", (int(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetTotalItemCount)
+	    .def("IsWeapon", (bool(Lua_ItemInst::*)(void)) & Lua_ItemInst::IsWeapon)
+	    .def("IsAmmo", (bool(Lua_ItemInst::*)(void)) & Lua_ItemInst::IsAmmo)
+	    .def("GetID", (uint32(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetID)
+	    .def("GetItem", (Lua_Item(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetItem)
+	    .def("GetCharges", (int(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetCharges)
+	    .def("SetCharges", (void(Lua_ItemInst::*)(int)) & Lua_ItemInst::SetCharges)
+	    .def("GetPrice", (uint32(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetPrice)
+	    .def("SetPrice", (void(Lua_ItemInst::*)(uint32)) & Lua_ItemInst::SetPrice)
+	    .def("GetCustomDataString", (std::string(Lua_ItemInst::*)(void)) & Lua_ItemInst::GetCustomDataString)
+	    .def("SetCustomData", (void(Lua_ItemInst::*)(std::string, std::string)) & Lua_ItemInst::SetCustomData)
+	    .def("SetCustomData", (void(Lua_ItemInst::*)(std::string, int)) & Lua_ItemInst::SetCustomData)
+	    .def("SetCustomData", (void(Lua_ItemInst::*)(std::string, float)) & Lua_ItemInst::SetCustomData)
+	    .def("SetCustomData", (void(Lua_ItemInst::*)(std::string, bool)) & Lua_ItemInst::SetCustomData)
+	    .def("GetCustomData", (std::string(Lua_ItemInst::*)(std::string)) & Lua_ItemInst::GetCustomData)
+	    .def("DeleteCustomData", (void(Lua_ItemInst::*)(std::string)) & Lua_ItemInst::DeleteCustomData)
+	    .def("Clone", (Lua_ItemInst(Lua_ItemInst::*)(void)) & Lua_ItemInst::Clone)
+	    .def("SetTimer", (void(Lua_ItemInst::*)(std::string, uint32)) & Lua_ItemInst::SetTimer)
+	    .def("StopTimer", (void(Lua_ItemInst::*)(std::string)) & Lua_ItemInst::StopTimer)
+	    .def("ClearTimers", (void(Lua_ItemInst::*)(void)) & Lua_ItemInst::ClearTimers);
 }
 
 #endif

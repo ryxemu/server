@@ -34,7 +34,7 @@ bool WaterMapV1::InPVP(const glm::vec3& location) const {
 	return ReturnRegionType(location) == RegionTypePVP;
 }
 
-bool WaterMapV1::Load(FILE *fp) {
+bool WaterMapV1::Load(FILE* fp) {
 	uint32 bsp_tree_size;
 	if (fread(&bsp_tree_size, sizeof(bsp_tree_size), 1, fp) != 1) {
 		return false;
@@ -55,31 +55,31 @@ bool WaterMapV1::Load(FILE *fp) {
 WaterRegionType WaterMapV1::BSPReturnRegionType(int32 node_number, const glm::vec3& location) const {
 	float distance;
 
-	const ZBSP_Node *current_node = &BSP_Root[node_number - 1];
+	const ZBSP_Node* current_node = &BSP_Root[node_number - 1];
 
 	if ((current_node->left == 0) &&
-		(current_node->right == 0)) {
+	    (current_node->right == 0)) {
 		return (WaterRegionType)current_node->special;
 	}
 
 	distance = (location.x * current_node->normal[0]) +
-		(location.y * current_node->normal[1]) +
-		(location.z * current_node->normal[2]) +
-		current_node->splitdistance;
+	           (location.y * current_node->normal[1]) +
+	           (location.z * current_node->normal[2]) +
+	           current_node->splitdistance;
 
 	if (distance == 0.0f) {
-		return(RegionTypeNormal);
+		return (RegionTypeNormal);
 	}
 
-	if (distance >0.0f) {
+	if (distance > 0.0f) {
 		if (current_node->left == 0) {
-			return(RegionTypeNormal);
+			return (RegionTypeNormal);
 		}
 		return BSPReturnRegionType(current_node->left, location);
 	}
 
 	if (current_node->right == 0) {
-		return(RegionTypeNormal);
+		return (RegionTypeNormal);
 	}
 
 	return BSPReturnRegionType(current_node->right, location);

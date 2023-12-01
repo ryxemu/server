@@ -1,22 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
-
 #ifndef COMMAND_H
 #define COMMAND_H
 
@@ -25,18 +6,18 @@ class Seperator;
 
 #include "../common/types.h"
 
-#define	COMMAND_CHAR '#'
+#define COMMAND_CHAR '#'
 
-typedef void (*CmdFuncPtr)(Client *,const Seperator *);
+typedef void (*CmdFuncPtr)(Client *, const Seperator *);
 
 typedef struct {
 	int access;
-	const char *desc;		// description of command
-	CmdFuncPtr function;	//null means perl function
+	const char *desc;     // description of command
+	CmdFuncPtr function;  // null means perl function
 } CommandRecord;
 
-extern int (*command_dispatch)(Client *,char const*);
-extern int commandcount;			// number of commands loaded
+extern int (*command_dispatch)(Client *, char const *);
+extern int commandcount;  // number of commands loaded
 
 // the command system:
 int command_init(void);
@@ -46,7 +27,7 @@ int command_notavail(Client *c, const char *message);
 int command_realdispatch(Client *c, char const *message);
 void command_logcommand(Client *c, const char *message);
 
-//commands
+// commands
 void command_advnpcspawn(Client *c, const Seperator *sep);
 void command_aggro(Client *c, const Seperator *sep);
 void command_aggrozone(Client *c, const Seperator *sep);
@@ -93,7 +74,7 @@ void command_expansion(Client *c, const Seperator *sep);
 void command_face(Client *c, const Seperator *sep);
 void command_falltest(Client *c, const Seperator *sep);
 void command_fillbuffs(Client *c, const Seperator *sep);
-void command_findaliases(Client* c, const Seperator* sep);
+void command_findaliases(Client *c, const Seperator *sep);
 void command_findnpctype(Client *c, const Seperator *sep);
 void command_findspell(Client *c, const Seperator *sep);
 void command_findzone(Client *c, const Seperator *sep);
@@ -164,7 +145,7 @@ void command_motd(Client *c, const Seperator *sep);
 void command_movechar(Client *c, const Seperator *sep);
 void command_mule(Client *c, const Seperator *sep);
 void command_mysql(Client *c, const Seperator *sep);
-void command_mysqltest(Client *c, const Seperator *sep); 
+void command_mysqltest(Client *c, const Seperator *sep);
 void command_mystats(Client *c, const Seperator *sep);
 void command_name(Client *c, const Seperator *sep);
 void command_netstats(Client *c, const Seperator *sep);
@@ -207,7 +188,7 @@ void command_questerrors(Client *c, const Seperator *sep);
 void command_race(Client *c, const Seperator *sep);
 void command_raidloot(Client *c, const Seperator *sep);
 void command_randomfeatures(Client *c, const Seperator *sep);
-void command_randtest(Client*, const Seperator *sep);
+void command_randtest(Client *, const Seperator *sep);
 void command_refreshgroup(Client *c, const Seperator *sep);
 void command_reloadallrules(Client *c, const Seperator *sep);
 void command_reloademote(Client *c, const Seperator *sep);
@@ -222,7 +203,7 @@ void command_reloadworldrules(Client *c, const Seperator *sep);
 void command_reloadzps(Client *c, const Seperator *sep);
 void command_repop(Client *c, const Seperator *sep);
 void command_repopclose(Client *c, const Seperator *sep);
-void command_resetaa(Client *c,const Seperator *sep);
+void command_resetaa(Client *c, const Seperator *sep);
 void command_resetboat(Client *c, const Seperator *sep);
 void command_revoke(Client *c, const Seperator *sep);
 void command_rewind(Client *c, const Seperator *sep);
@@ -232,7 +213,7 @@ void command_scribespell(Client *c, const Seperator *sep);
 void command_scribespells(Client *c, const Seperator *sep);
 void command_sendop(Client *c, const Seperator *sep);
 void command_sendzonespawns(Client *c, const Seperator *sep);
-void command_serverlock(Client* c, const Seperator* sep);
+void command_serverlock(Client *c, const Seperator *sep);
 void command_serversidename(Client *c, const Seperator *sep);
 void command_setaapts(Client *c, const Seperator *sep);
 void command_setaaxp(Client *c, const Seperator *sep);
@@ -292,7 +273,7 @@ void command_uptime(Client *c, const Seperator *sep);
 void command_version(Client *c, const Seperator *sep);
 void command_viewnpctype(Client *c, const Seperator *sep);
 void command_viewplayerfaction(Client *c, const Seperator *sep);
-void command_viewzoneloot(Client* c, const Seperator* sep);
+void command_viewzoneloot(Client *c, const Seperator *sep);
 void command_wc(Client *c, const Seperator *sep);
 void command_weather(Client *c, const Seperator *sep);
 void command_worldshutdown(Client *c, const Seperator *sep);

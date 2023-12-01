@@ -10,21 +10,21 @@ class Lua_NPC;
 class Lua_Client;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_npc();
 
-class Lua_NPC : public Lua_Mob
-{
+class Lua_NPC : public Lua_Mob {
 	typedef NPC NativeType;
-public:
-	Lua_NPC() { SetLuaPtrData(nullptr); }
-	Lua_NPC(NPC *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_NPC() { }
 
-	operator NPC*() {
-		return reinterpret_cast<NPC*>(GetLuaPtrData());
+   public:
+	Lua_NPC() { SetLuaPtrData(nullptr); }
+	Lua_NPC(NPC *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_NPC() {}
+
+	operator NPC *() {
+		return reinterpret_cast<NPC *>(GetLuaPtrData());
 	}
 
 	void Signal(int id);

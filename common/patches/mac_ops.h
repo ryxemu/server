@@ -26,7 +26,7 @@ E(OP_ShopPlayerSell)
 E(OP_AAAction)
 E(OP_PickPocket);
 
-//Below are invalid opcodes ONLY
+// Below are invalid opcodes ONLY
 E(OP_Unknown);
 E(OP_RaidJoin);
 #undef E

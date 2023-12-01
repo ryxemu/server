@@ -8,21 +8,21 @@ class Corpse;
 class Lua_Client;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_corpse();
 
-class Lua_Corpse : public Lua_Mob
-{
+class Lua_Corpse : public Lua_Mob {
 	typedef Corpse NativeType;
-public:
-	Lua_Corpse() { SetLuaPtrData(nullptr); }
-	Lua_Corpse(Corpse *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_Corpse() { }
 
-	operator Corpse*() {
-		return reinterpret_cast<Corpse*>(GetLuaPtrData());
+   public:
+	Lua_Corpse() { SetLuaPtrData(nullptr); }
+	Lua_Corpse(Corpse *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_Corpse() {}
+
+	operator Corpse *() {
+		return reinterpret_cast<Corpse *>(GetLuaPtrData());
 	}
 
 	uint32 GetCharID();

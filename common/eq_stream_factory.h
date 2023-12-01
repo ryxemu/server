@@ -13,57 +13,77 @@ class EQStream;
 class Timer;
 
 class EQStreamFactory : private Timeoutable {
-	private:
-		int sock;
-		int Port;
+   private:
+	int sock;
+	int Port;
 
-		bool ReaderRunning;
-		Mutex MReaderRunning;
-		bool WriterRunning;
-		Mutex MWriterRunning;
+	bool ReaderRunning;
+	Mutex MReaderRunning;
+	bool WriterRunning;
+	Mutex MWriterRunning;
 
-		Condition WriterWork;
+	Condition WriterWork;
 
-		EQStreamType StreamType;
+	EQStreamType StreamType;
 
-		std::queue<EQStream *> NewStreams;
-		Mutex MNewStreams;
+	std::queue<EQStream *> NewStreams;
+	Mutex MNewStreams;
 
-		std::map<std::pair<uint32, uint16>,EQStream *> Streams;
-		Mutex MStreams;
+	std::map<std::pair<uint32, uint16>, EQStream *> Streams;
+	Mutex MStreams;
 
-		Mutex MWritingStreams;
+	Mutex MWritingStreams;
 
-		std::queue<EQOldStream *> NewOldStreams;
+	std::queue<EQOldStream *> NewOldStreams;
 
-		std::map<std::pair<uint32, uint16>,EQOldStream *> OldStreams;
+	std::map<std::pair<uint32, uint16>, EQOldStream *> OldStreams;
 
-		virtual void CheckTimeout();
+	virtual void CheckTimeout();
 
-		Timer *DecayTimer;
+	Timer *DecayTimer;
 
-		uint32 stream_timeout;
+	uint32 stream_timeout;
 
-	public:
-		EQStreamFactory(EQStreamType type, uint32 timeout = 61000) : Timeoutable(5000), stream_timeout(timeout) { ReaderRunning=false; WriterRunning=false; StreamType=type; sock=-1; }
-		EQStreamFactory(EQStreamType type, int port, uint32 timeout = 61000);
+   public:
+	EQStreamFactory(EQStreamType type, uint32 timeout = 61000) : Timeoutable(5000), stream_timeout(timeout) {
+		ReaderRunning = false;
+		WriterRunning = false;
+		StreamType = type;
+		sock = -1;
+	}
+	EQStreamFactory(EQStreamType type, int port, uint32 timeout = 61000);
 
-		EQStream *Pop();
-		void Push(EQStream *s);
+	EQStream *Pop();
+	void Push(EQStream *s);
 
-		EQOldStream *PopOld();
-		void PushOld(EQOldStream *s);
+	EQOldStream *PopOld();
+	void PushOld(EQOldStream *s);
 
-		bool Open();
-		bool Open(unsigned long port) { Port=port; return Open(); }
-		bool IsOpen() { return sock!=-1; }
-		void Close();
-		void ReaderLoop();
-		void WriterLoop();
-		void Stop() { StopReader(); StopWriter(); }
-		void StopReader() { MReaderRunning.lock(); ReaderRunning=false; MReaderRunning.unlock(); }
-		void StopWriter() { MWriterRunning.lock(); WriterRunning=false; MWriterRunning.unlock(); WriterWork.Signal(); }
-		void SignalWriter() { WriterWork.Signal(); }
+	bool Open();
+	bool Open(unsigned long port) {
+		Port = port;
+		return Open();
+	}
+	bool IsOpen() { return sock != -1; }
+	void Close();
+	void ReaderLoop();
+	void WriterLoop();
+	void Stop() {
+		StopReader();
+		StopWriter();
+	}
+	void StopReader() {
+		MReaderRunning.lock();
+		ReaderRunning = false;
+		MReaderRunning.unlock();
+	}
+	void StopWriter() {
+		MWriterRunning.lock();
+		WriterRunning = false;
+		MWriterRunning.unlock();
+		WriterWork.Signal();
+	}
+	void SignalWriter() { WriterWork.Signal(); }
 };
 
 #endif

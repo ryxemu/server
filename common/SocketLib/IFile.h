@@ -1,14 +1,14 @@
 /** \file IFile.h
  **	\date  2005-04-25
  **	\author grymse@alhem.net
-**/
+ **/
 /*
 Copyright (C) 2004,2005  Anders Hedstrom
 
 This library is made available under the terms of the GNU GPL.
 
 If you would like to use this library in a closed-source application,
-a separate license agreement is available. For information about 
+a separate license agreement is available. For information about
 the closed-source license agreement for the C++ sockets library,
 please visit http://www.alhem.net/Sockets/license.html and/or
 email license@alhem.net.
@@ -37,14 +37,13 @@ namespace SOCKETS_NAMESPACE {
 #endif
 
 /** \defgroup file File handling */
-/** Pure virtual file I/O interface. 
-	\ingroup file */
-class IFile
-{
-public:
+/** Pure virtual file I/O interface.
+    \ingroup file */
+class IFile {
+   public:
 	virtual ~IFile() {}
 
-	virtual bool fopen(const std::string&, const std::string&) = 0;
+	virtual bool fopen(const std::string &, const std::string &) = 0;
 	virtual void fclose() = 0;
 
 	virtual size_t fread(char *, size_t, size_t) = 0;
@@ -57,9 +56,8 @@ public:
 	virtual bool eof() = 0;
 };
 
-
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif // _IFILE_H
+#endif  // _IFILE_H

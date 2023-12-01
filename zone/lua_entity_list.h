@@ -23,7 +23,7 @@ struct Lua_Doors_List;
 struct Lua_Spawn_List;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_entity_list();
@@ -35,16 +35,16 @@ luabind::scope lua_register_object_list();
 luabind::scope lua_register_door_list();
 luabind::scope lua_register_spawn_list();
 
-class Lua_EntityList : public Lua_Ptr<EntityList>
-{
+class Lua_EntityList : public Lua_Ptr<EntityList> {
 	typedef EntityList NativeType;
-public:
-	Lua_EntityList() : Lua_Ptr(nullptr) { }
-	Lua_EntityList(EntityList *d) : Lua_Ptr(d) { }
-	virtual ~Lua_EntityList() { }
 
-	operator EntityList*() {
-		return reinterpret_cast<EntityList*>(GetLuaPtrData());
+   public:
+	Lua_EntityList() : Lua_Ptr(nullptr) {}
+	Lua_EntityList(EntityList *d) : Lua_Ptr(d) {}
+	virtual ~Lua_EntityList() {}
+
+	operator EntityList *() {
+		return reinterpret_cast<EntityList *>(GetLuaPtrData());
 	}
 
 	Lua_Mob GetMobID(int id);

@@ -1,19 +1,19 @@
 /*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
+    Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 of the License.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY except by those people which sell it, which
+    are required to give you total support for your newly bought product;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+    A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 #include "../common/global_define.h"
 
@@ -45,27 +45,27 @@
 #include "client.h"
 #include "worlddb.h"
 #ifdef _WINDOWS
-	#include <process.h>
-	#define snprintf	_snprintf
-	#define strncasecmp	_strnicmp
-	#define strcasecmp	_stricmp
-	#include <conio.h>
+#include <process.h>
+#define snprintf _snprintf
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#include <conio.h>
 #else
-	#include <pthread.h>
-	#include "../common/unix.h"
-	#include <sys/types.h>
-	#include <sys/ipc.h>
-	#include <sys/sem.h>
-	#include <sys/shm.h>
-	#if not defined (FREEBSD) && not defined (DARWIN)
-		union semun {
-			int val;
-			struct semid_ds *buf;
-			ushort *array;
-			struct seminfo *__buf;
-			void *__pad;
-		};
-	#endif
+#include <pthread.h>
+#include "../common/unix.h"
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#if not defined(FREEBSD) && not defined(DARWIN)
+union semun {
+	int val;
+	struct semid_ds* buf;
+	ushort* array;
+	struct seminfo* __buf;
+	void* __pad;
+};
+#endif
 
 #endif
 
@@ -87,49 +87,45 @@
 #include "world_server_command_handler.h"
 
 TimeoutManager timeout_manager;
-EQStreamFactory eqsf(WorldStream,9000);
+EQStreamFactory eqsf(WorldStream, 9000);
 EmuTCPServer tcps;
 ClientList client_list;
 ZSList zoneserver_list;
 LoginServerList loginserverlist;
 UCSConnection UCSLink;
 QueryServConnection QSLink;
-LauncherList launcher_list; 
+LauncherList launcher_list;
 EQ::Random emu_random;
 volatile bool RunLoops = true;
 uint32 numclients = 0;
 uint32 numzones = 0;
 bool holdzones = false;
-const WorldConfig *Config;
+const WorldConfig* Config;
 EQEmuLogSys LogSys;
 
 extern ConsoleList console_list;
 
 void CatchSignal(int sig_num);
 
-void LoadDatabaseConnections()
-{
+void LoadDatabaseConnections() {
 	LogInfo(
-			"Connecting to MySQL {0}@{1}:{2}...", 
-			Config->DatabaseUsername.c_str(), 
-			Config->DatabaseHost.c_str(), 
-			Config->DatabasePort
-	);
+	    "Connecting to MySQL {0}@{1}:{2}...",
+	    Config->DatabaseUsername.c_str(),
+	    Config->DatabaseHost.c_str(),
+	    Config->DatabasePort);
 	if (!database.Connect(
-			Config->DatabaseHost.c_str(),
-			Config->DatabaseUsername.c_str(),
-			Config->DatabasePassword.c_str(),
-			Config->DatabaseDB.c_str(),
-			Config->DatabasePort
-	)) {
+	        Config->DatabaseHost.c_str(),
+	        Config->DatabaseUsername.c_str(),
+	        Config->DatabasePassword.c_str(),
+	        Config->DatabaseDB.c_str(),
+	        Config->DatabasePort)) {
 		LogError("Cannot continue without a database connection.");
 
 		std::exit(1);
 	}
 }
 
-void LoadServerConfig()
-{
+void LoadServerConfig() {
 	// Load server configuration
 	LogInfo("Loading server configuration..");
 	if (!WorldConfig::LoadConfig()) {
@@ -138,16 +134,14 @@ void LoadServerConfig()
 	}
 }
 
-void RegisterLoginservers()
-{
+void RegisterLoginservers() {
 	// add login server config to list
 	if (Config->LoginCount == 0) {
 		if (Config->LoginHost.length()) {
 			loginserverlist.Add(Config->LoginHost.c_str(), Config->LoginPort, Config->LoginAccount.c_str(), Config->LoginPassword.c_str(), Config->LoginType);
 			LogInfo("Added loginserver [{0}]:[{1}]", Config->LoginHost.c_str(), Config->LoginPort);
 		}
-	}
-	else {
+	} else {
 		LinkedList<LoginConfig*> loginlist = Config->loginlist;
 		LinkedListIterator<LoginConfig*> iterator(loginlist);
 		iterator.Reset();
@@ -170,28 +164,28 @@ int main(int argc, char** argv) {
 
 	LoadServerConfig();
 
-	Config=WorldConfig::get();
+	Config = WorldConfig::get();
 
 	LogInfo("CURRENT_VERSION: [{0}]", CURRENT_VERSION);
 
-	#ifdef _DEBUG
-		_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	#endif
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
-	if (signal(SIGINT, CatchSignal) == SIG_ERR)	{
+	if (signal(SIGINT, CatchSignal) == SIG_ERR) {
 		LogError("Could not set signal handler");
 		return 1;
 	}
-	if (signal(SIGTERM, CatchSignal) == SIG_ERR)	{
+	if (signal(SIGTERM, CatchSignal) == SIG_ERR) {
 		LogError("Could not set signal handler");
 		return 1;
 	}
-	#ifndef WIN32
-	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)	{
+#ifndef WIN32
+	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
 		LogError("Could not set signal handler");
 		return 1;
 	}
-	#endif
+#endif
 
 	RegisterLoginservers();
 	LoadDatabaseConnections();
@@ -199,8 +193,8 @@ int main(int argc, char** argv) {
 	guild_mgr.SetDatabase(&database);
 
 	LogSys.SetDatabase(&database)
-		->LoadLogDatabaseSettings()
-		->StartFileLogs();
+	    ->LoadLogDatabaseSettings()
+	    ->StartFileLogs();
 
 	if (argc >= 2) {
 		std::string tmp;
@@ -211,20 +205,17 @@ int main(int argc, char** argv) {
 			std::cout << "startzone zoneshortname    - sets the starting zone" << std::endl;
 			std::cout << "-holdzones    - reboots lost zones" << std::endl;
 			return 0;
-		}
-		else if (strcasecmp(argv[1], "-holdzones") == 0) {
+		} else if (strcasecmp(argv[1], "-holdzones") == 0) {
 			std::cout << "Reboot Zones mode ON" << std::endl;
 			holdzones = true;
-		}
-		else if (strcasecmp(argv[1], "flag") == 0) {
+		} else if (strcasecmp(argv[1], "flag") == 0) {
 			if (argc == 4) {
 				if (Seperator::IsNumber(argv[3])) {
 					if (atoi(argv[3]) >= 0 && atoi(argv[3]) <= 255) {
-						if (database.SetAccountStatus(argv[2], atoi(argv[3]))){
+						if (database.SetAccountStatus(argv[2], atoi(argv[3]))) {
 							std::cout << "Account flagged: Username='" << argv[2] << "', status=" << argv[3] << std::endl;
 							return 0;
-						}
-						else {
+						} else {
 							std::cerr << "database.SetAccountStatus failed." << std::endl;
 							return 1;
 						}
@@ -234,8 +225,7 @@ int main(int argc, char** argv) {
 			std::cout << "Usage: world flag username flag" << std::endl;
 			std::cout << "flag = 0-200" << std::endl;
 			return 0;
-		}
-		else {
+		} else {
 			std::cerr << "Error, unknown command line option" << std::endl;
 			return 1;
 		}
@@ -247,7 +237,7 @@ int main(int argc, char** argv) {
 	database.LoadVariables();
 
 	std::string hotfix_name;
-	if(database.GetVariable("hotfix_name", hotfix_name)) {
+	if (database.GetVariable("hotfix_name", hotfix_name)) {
 		if (!hotfix_name.empty()) {
 			LogInfo("Current hotfix in use: [{0}]", hotfix_name.c_str());
 		}
@@ -261,37 +251,37 @@ int main(int argc, char** argv) {
 	database.ClearRaid();
 	database.ClearRaidDetails();
 	LogInfo("Loading items..");
-	if(!database.LoadItems(hotfix_name))
+	if (!database.LoadItems(hotfix_name))
 		LogError("Error: Could not load item data. But ignoring");
 
 	LogInfo("Loading skill caps..");
-	if(!database.LoadSkillCaps(std::string(hotfix_name)))
+	if (!database.LoadSkillCaps(std::string(hotfix_name)))
 		LogError("Error: Could not load skill cap data. But ignoring");
 
 	LogInfo("Loading guilds..");
 	guild_mgr.LoadGuilds();
-	//rules:
+	// rules:
 	{
 		std::string tmp;
 		if (database.GetVariable("RuleSet", tmp)) {
 			LogInfo("Loading rule set [{0}]", tmp.c_str());
-			if(!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
+			if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
 				LogInfo("Failed to load ruleset [{0}], falling back to defaults.", tmp.c_str());
 			}
 		} else {
-			if(!RuleManager::Instance()->LoadRules(&database, "default")) {
+			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 				LogInfo("No rule set configured, using default rules");
 			} else {
 				LogInfo("Loaded default rule set 'default'", tmp.c_str());
 			}
 		}
 	}
-	if(RuleB(World, ClearTempMerchantlist)){
+	if (RuleB(World, ClearTempMerchantlist)) {
 		LogInfo("Clearing temporary merchant lists...");
 		database.ClearMerchantTemp();
 	}
 
-	if(RuleB(World, AdjustRespawnTimes)){
+	if (RuleB(World, AdjustRespawnTimes)) {
 		LogInfo("Clearing and adjusting boot time spawn timers...");
 		database.AdjustSpawnTimes();
 	}
@@ -300,7 +290,7 @@ int main(int argc, char** argv) {
 	TimeOfDay_Struct eqTime;
 	time_t realtime;
 	eqTime = database.LoadTime(realtime);
-	zoneserver_list.worldclock.setEQTimeOfDay(eqTime,realtime);
+	zoneserver_list.worldclock.setEQTimeOfDay(eqTime, realtime);
 	Timer EQTimeTimer(600000);
 	EQTimeTimer.Start(600000);
 
@@ -308,11 +298,11 @@ int main(int argc, char** argv) {
 	launcher_list.LoadList();
 
 	std::string tmp;
-	database.GetVariable("holdzones",tmp);
+	database.GetVariable("holdzones", tmp);
 	if (tmp.length() == 1 && tmp[0] == '1') {
 		holdzones = true;
 	}
-	LogInfo("Reboot zone modes [{0}]",holdzones ? "ON" : "OFF");
+	LogInfo("Reboot zone modes [{0}]", holdzones ? "ON" : "OFF");
 
 	LogInfo("Deleted [{0}] stale player corpses from database", database.DeleteStalePlayerCorpses());
 
@@ -330,8 +320,8 @@ int main(int argc, char** argv) {
 	if (tcps.Open(Config->WorldTCPPort, errbuf)) {
 		LogInfo("Zone (TCP) listener started.");
 	} else {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:",Config->WorldTCPPort);
-		LogError("        {0}",errbuf);
+		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config->WorldTCPPort);
+		LogError("        {0}", errbuf);
 		return 1;
 	}
 	if (eqsf.Open()) {
@@ -341,20 +331,20 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	//register all the patches we have avaliable with the stream identifier.
+	// register all the patches we have avaliable with the stream identifier.
 	EQStreamIdentifier stream_identifier;
 	RegisterAllPatches(stream_identifier);
 	zoneserver_list.shutdowntimer = new Timer(60000);
 	zoneserver_list.shutdowntimer->Disable();
 	zoneserver_list.reminder = new Timer(20000);
 	zoneserver_list.reminder->Disable();
-	Timer InterserverTimer(INTERSERVER_TIMER); // does MySQL pings and auto-reconnect
+	Timer InterserverTimer(INTERSERVER_TIMER);  // does MySQL pings and auto-reconnect
 	InterserverTimer.Trigger();
 	uint8 ReconnectCounter = 100;
 	EQStream* eqs;
 	EQOldStream* eqos;
 	EmuTCPConnection* tcpc;
-	EQStreamInterface *eqsi;
+	EQStreamInterface* eqsi;
 
 	auto loop_fn = [&](EQ::Timer* t) {
 		Timer::SetCurrentTime();
@@ -364,62 +354,62 @@ int main(int argc, char** argv) {
 			return;
 		}
 
-		//give the stream identifier a chance to do its work....
+		// give the stream identifier a chance to do its work....
 		stream_identifier.Process();
 
 		int i = 5;
-		//check the factory for any new incoming streams.
+		// check the factory for any new incoming streams.
 		while ((eqs = eqsf.Pop())) {
-			//pull the stream out of the factory and give it to the stream identifier
-			//which will figure out what patch they are running, and set up the dynamic
-			//structures and opcodes for that patch.
-			struct in_addr	in{};
+			// pull the stream out of the factory and give it to the stream identifier
+			// which will figure out what patch they are running, and set up the dynamic
+			// structures and opcodes for that patch.
+			struct in_addr in {};
 			in.s_addr = eqs->GetRemoteIP();
-			LogInfo("New connection from {0}:{1}", inet_ntoa(in),ntohs(eqs->GetRemotePort()));
-			stream_identifier.AddStream(eqs);	//takes the stream
+			LogInfo("New connection from {0}:{1}", inet_ntoa(in), ntohs(eqs->GetRemotePort()));
+			stream_identifier.AddStream(eqs);  // takes the stream
 			i++;
 			if (i == 5)
 				break;
 		}
 
 		i = 0;
-		//check the factory for any new incoming streams.
+		// check the factory for any new incoming streams.
 		while ((eqos = eqsf.PopOld())) {
-			//pull the stream out of the factory and give it to the stream identifier
-			//which will figure out what patch they are running, and set up the dynamic
-			//structures and opcodes for that patch.
-			struct in_addr	in{};
+			// pull the stream out of the factory and give it to the stream identifier
+			// which will figure out what patch they are running, and set up the dynamic
+			// structures and opcodes for that patch.
+			struct in_addr in {};
 			in.s_addr = eqos->GetRemoteIP();
 			Log(Logs::Detail, Logs::WorldServer, "New connection from %s:%d", inet_ntoa(in), ntohs(eqos->GetRemotePort()));
-			stream_identifier.AddOldStream(eqos);	//takes the stream
+			stream_identifier.AddOldStream(eqos);  // takes the stream
 			i++;
 			if (i == 5)
 				break;
 		}
 
 		i = 0;
-		//check the stream identifier for any now-identified streams
-		while((eqsi = stream_identifier.PopIdentified())) {
-			//now that we know what patch they are running, start up their client object
-			struct in_addr	in{};
+		// check the stream identifier for any now-identified streams
+		while ((eqsi = stream_identifier.PopIdentified())) {
+			// now that we know what patch they are running, start up their client object
+			struct in_addr in {};
 			in.s_addr = eqsi->GetRemoteIP();
-			if (RuleB(World, UseBannedIPsTable)){ //Lieka: Check to see if we have the responsibility for blocking IPs.
+			if (RuleB(World, UseBannedIPsTable)) {  // Lieka: Check to see if we have the responsibility for blocking IPs.
 				LogInfo("Checking inbound connection [{0}] against BannedIPs table", inet_ntoa(in));
-				if (!database.CheckBannedIPs(inet_ntoa(in))){ //Lieka: Check inbound IP against banned IP table.
+				if (!database.CheckBannedIPs(inet_ntoa(in))) {  // Lieka: Check inbound IP against banned IP table.
 					LogInfo("Connection [{0}] PASSED banned IPs check. Processing connection.", inet_ntoa(in));
 					auto client = new Client(eqsi);
 					// @merth: client->zoneattempt=0;
 					client_list.Add(client);
 				} else {
 					LogInfo("Connection from [{0}] FAILED banned IPs check. Closing connection.", inet_ntoa(in));
-					eqsi->Close(); //Lieka: If the inbound IP is on the banned table, close the EQStream.
+					eqsi->Close();  // Lieka: If the inbound IP is on the banned table, close the EQStream.
 				}
 			}
-			if (!RuleB(World, UseBannedIPsTable)){
-					LogInfo("New connection from [{0}]:[{1}], processing connection", inet_ntoa(in), ntohs(eqsi->GetRemotePort()));
-					auto client = new Client(eqsi);
-					// @merth: client->zoneattempt=0;
-					client_list.Add(client);
+			if (!RuleB(World, UseBannedIPsTable)) {
+				LogInfo("New connection from [{0}]:[{1}], processing connection", inet_ntoa(in), ntohs(eqsi->GetRemotePort()));
+				auto client = new Client(eqsi);
+				// @merth: client->zoneattempt=0;
+				client_list.Add(client);
 			}
 			i++;
 			if (i == 5)
@@ -429,30 +419,26 @@ int main(int argc, char** argv) {
 		client_list.Process();
 		i = 0;
 		while ((tcpc = tcps.NewQueuePop())) {
-			struct in_addr in{};
+			struct in_addr in {};
 			in.s_addr = tcpc->GetrIP();
-			LogInfo("New TCP connection from {0}:{1}", inet_ntoa(in),tcpc->GetrPort());
+			LogInfo("New TCP connection from {0}:{1}", inet_ntoa(in), tcpc->GetrPort());
 			console_list.Add(new Console(tcpc));
 			i++;
 			if (i == 5)
 				break;
 		}
 
-		if(EQTimeTimer.Check())
-		{
+		if (EQTimeTimer.Check()) {
 			TimeOfDay_Struct tod;
 			zoneserver_list.worldclock.getEQTimeOfDay(time(0), &tod);
-			if (!database.SaveTime(tod.minute, tod.hour, tod.day, tod.month, tod.year))
-			{
+			if (!database.SaveTime(tod.minute, tod.hour, tod.day, tod.month, tod.year)) {
 				LogError("Failed to save eqtime.");
-			}
-			else
-			{
+			} else {
 				LogDebug("EQTime successfully saved.");
 			}
 		}
 
-		//check for timeouts in other threads
+		// check for timeouts in other threads
 		timeout_manager.CheckTimeouts();
 		loginserverlist.Process();
 		console_list.Process();
@@ -461,14 +447,14 @@ int main(int argc, char** argv) {
 		UCSLink.Process();
 		QSLink.Process();
 
-		//WILink.Process();
+		// WILink.Process();
 
 		if (InterserverTimer.Check()) {
 			InterserverTimer.Start();
 			database.ping();
 			// AsyncLoadVariables(dbasync, &database);
 			ReconnectCounter++;
-			if (ReconnectCounter >= 12) { // only create thread to reconnect every 10 minutes. previously we were creating a new thread every 10 seconds
+			if (ReconnectCounter >= 12) {  // only create thread to reconnect every 10 minutes. previously we were creating a new thread every 10 seconds
 				ReconnectCounter = 0;
 				if (loginserverlist.AllConnected() == false) {
 #ifdef _WINDOWS
@@ -502,7 +488,7 @@ int main(int argc, char** argv) {
 }
 
 void CatchSignal(int sig_num) {
-	Log(Logs::General, Logs::WorldServer,"Caught signal %d",sig_num);
+	Log(Logs::General, Logs::WorldServer, "Caught signal %d", sig_num);
 	RunLoops = false;
 }
 
@@ -511,11 +497,9 @@ void UpdateWindowTitle(char* iNewTitle) {
 	char tmp[500];
 	if (iNewTitle) {
 		snprintf(tmp, sizeof(tmp), "World: %s", iNewTitle);
-	}
-	else {
+	} else {
 		snprintf(tmp, sizeof(tmp), "World");
 	}
 	SetConsoleTitle(tmp);
 #endif
 }
-

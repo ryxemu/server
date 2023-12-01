@@ -8,21 +8,21 @@ class Spawn2;
 class Lua_NPC;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_spawn();
 
-class Lua_Spawn : public Lua_Ptr<Spawn2>
-{
+class Lua_Spawn : public Lua_Ptr<Spawn2> {
 	typedef Spawn2 NativeType;
-public:
-	Lua_Spawn() : Lua_Ptr(nullptr) { }
-	Lua_Spawn(Spawn2 *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Spawn() { }
 
-	operator Spawn2*() {
-		return reinterpret_cast<Spawn2*>(GetLuaPtrData());
+   public:
+	Lua_Spawn() : Lua_Ptr(nullptr) {}
+	Lua_Spawn(Spawn2 *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Spawn() {}
+
+	operator Spawn2 *() {
+		return reinterpret_cast<Spawn2 *>(GetLuaPtrData());
 	}
 
 	void LoadGrid();

@@ -60,17 +60,17 @@ class EQProtocolPacket;
 
 
 template <typename type>                    // LO_BYTE
-type  LO_BYTE (type a) {return (a&=0xff);}  
-template <typename type>                    // HI_BYTE 
-type  HI_BYTE (type a) {return (a&=0xff00);} 
+type  LO_BYTE (type a) {return (a&=0xff);}
+template <typename type>                    // HI_BYTE
+type  HI_BYTE (type a) {return (a&=0xff00);}
 template <typename type>                    // LO_WORD
-type  LO_WORD (type a) {return (a&=0xffff);}  
-template <typename type>                    // HI_WORD 
-type  HI_WORD (type a) {return (a&=0xffff0000);} 
+type  LO_WORD (type a) {return (a&=0xffff);}
+template <typename type>                    // HI_WORD
+type  HI_WORD (type a) {return (a&=0xffff0000);}
 template <typename type>                    // HI_LOSWAPshort
-type  HI_LOSWAPshort (type a) {return (LO_BYTE(a)<<8) | (HI_BYTE(a)>>8);}  
+type  HI_LOSWAPshort (type a) {return (LO_BYTE(a)<<8) | (HI_BYTE(a)>>8);}
 template <typename type>                    // HI_LOSWAPlong
-type  HI_LOSWAPlong (type a) {return (LO_WORD(a)<<16) | (HIWORD(a)>>16);}  
+type  HI_LOSWAPlong (type a) {return (LO_WORD(a)<<16) | (HIWORD(a)>>16);}
 
 #define EQOLDSTREAM_OUTBOUD_THRESHOLD 9
 
@@ -84,7 +84,7 @@ typedef struct
 
 struct ACK_INFO
 {
-	ACK_INFO() 
+	ACK_INFO()
 	{
 		// Set properties to 0
 		dwARQ = 0;
@@ -145,14 +145,14 @@ public:
 	void SetData(uchar* d, uint32 s);
 	void ClearData();
 
-	uchar* GetData() 
+	uchar* GetData()
 	{
 		return this->data;
 	}
 
-	uint32  GetSize() 
-	{ 
-		return this->size; 
+	uint32  GetSize()
+	{
+		return this->size;
 	}
 
 private:
@@ -451,11 +451,11 @@ class EQOldStream : public EQStreamInterface {
 			debug_level = set_level;
 		}
 
-		void LogPackets(bool logging) 
+		void LogPackets(bool logging)
 		{
-			LOG_PACKETS = logging; 
+			LOG_PACKETS = logging;
 		}
-				
+
 		// parce/make packets
 		void ParceEQPacket(uint16 dwSize, uchar* pPacket);
 		void MakeEQPacket(EQProtocolPacket* app, bool ack_req=true); //Make a fragment eq packet and put them on the SQUEUE/RSQUEUE
@@ -464,19 +464,19 @@ class EQOldStream : public EQStreamInterface {
 		void AddAck(EQOldPacket *pack)
 		{
 			if(CACK.dwARQ)
-			{       
+			{
 				pack->HDR.b2_ARSP = 1;          //Set ack response field
 				pack->dwARSP = CACK.dwARQ;      //ACK current ack number.
 				CACK.dwARQ = 0;
 			}
 		}
 		// Timer Functions
-				
-		//Check all class timers and call proper functions
-		void CheckTimers(void); 
 
-		int CheckActive(void) 
-		{ 
+		//Check all class timers and call proper functions
+		void CheckTimers(void);
+
+		int CheckActive(void)
+		{
 			if(pm_state == CLOSED)
 			{
 				return(0);
@@ -490,7 +490,7 @@ class EQOldStream : public EQStreamInterface {
 		virtual void Close();
 
 		// Incomming / Outgoing Ack's
-		void IncomingARSP(uint16 dwARSP); 
+		void IncomingARSP(uint16 dwARSP);
 		void IncomingARQ(uint16 dwARQ);
 		void OutgoingARQ(uint16 dwARQ);
 		void OutgoingARSP();
@@ -512,7 +512,7 @@ class EQOldStream : public EQStreamInterface {
 		FragmentGroupList fragment_group_list;
 		std::vector<EQOldPacket *> buffered_packets; // Buffer of incoming packets
 
-		EQStreamState    pm_state;  //manager state 
+		EQStreamState    pm_state;  //manager state
 		uint16  dwFragSeq;   //current fragseq
 		int8 debug_level;
 		bool LOG_PACKETS;
@@ -531,7 +531,7 @@ class EQOldStream : public EQStreamInterface {
 		uint32 LastPacket;
 		Mutex MVarlock;
 		bool sent_Fin;
-		
+
 		int32	datarate_sec;	// bytes/1000ms
 		int32	datarate_tic;	// bytes/100ms
 		int32	dataflow;
@@ -549,7 +549,7 @@ class EQOldStream : public EQStreamInterface {
 		virtual std::string Describe() const { return("Direct EQOldStream"); }
 		virtual bool IsInUse() { bool flag; MInUse.lock(); flag=(active_users>0); MInUse.unlock(); return flag; }
 		bool IsWriting() { return isWriting; }
-		void SetWriting(bool var) { isWriting = var; } 
+		void SetWriting(bool var) { isWriting = var; }
 		inline void PutInUse() { MInUse.lock(); active_users++; MInUse.unlock(); }
 		inline EQStreamState GetState() { EQStreamState s; MState.lock(); s=pm_state; MState.unlock(); return s; }
 		void	SendPacketQueue(bool Block = true);

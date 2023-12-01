@@ -4,30 +4,36 @@
 
 #include "lua_ptr.h"
 
-namespace EQ
-{
-	class ItemInstance;
+namespace EQ {
+class ItemInstance;
 }
 class Lua_Item;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_iteminst();
 
-class Lua_ItemInst : public Lua_Ptr<EQ::ItemInstance>
-{
+class Lua_ItemInst : public Lua_Ptr<EQ::ItemInstance> {
 	typedef EQ::ItemInstance NativeType;
-public:
+
+   public:
 	Lua_ItemInst(int item_id);
 	Lua_ItemInst(int item_id, int charges);
-	Lua_ItemInst() : Lua_Ptr(nullptr), cloned_(false) { }
-	Lua_ItemInst(EQ::ItemInstance *d) : Lua_Ptr(d), cloned_(false) { }
-	Lua_ItemInst(EQ::ItemInstance *d, bool cloned) : Lua_Ptr(d), cloned_(cloned) { }
+	Lua_ItemInst() : Lua_Ptr(nullptr), cloned_(false) {}
+	Lua_ItemInst(EQ::ItemInstance* d) : Lua_Ptr(d), cloned_(false) {}
+	Lua_ItemInst(EQ::ItemInstance* d, bool cloned) : Lua_Ptr(d), cloned_(cloned) {}
 	Lua_ItemInst& operator=(const Lua_ItemInst& o);
 	Lua_ItemInst(const Lua_ItemInst& o);
-	virtual ~Lua_ItemInst() { if(cloned_) { EQ::ItemInstance *ptr = GetLuaPtrData(); if(ptr) { delete ptr; } } }
+	virtual ~Lua_ItemInst() {
+		if (cloned_) {
+			EQ::ItemInstance* ptr = GetLuaPtrData();
+			if (ptr) {
+				delete ptr;
+			}
+		}
+	}
 
 	operator EQ::ItemInstance*() {
 		return reinterpret_cast<EQ::ItemInstance*>(GetLuaPtrData());
@@ -62,7 +68,7 @@ public:
 	void StopTimer(std::string name);
 	void ClearTimers();
 
-private:
+   private:
 	bool cloned_;
 };
 

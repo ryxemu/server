@@ -105,7 +105,7 @@ int Lua_Group::GetID() {
 Lua_Mob Lua_Group::GetMember(int index) {
 	Lua_Safe_Call_Class(Lua_Mob);
 
-	if(index >= 6 || index < 0) {
+	if (index >= 6 || index < 0) {
 		return Lua_Mob();
 	}
 
@@ -114,28 +114,28 @@ Lua_Mob Lua_Group::GetMember(int index) {
 
 luabind::scope lua_register_group() {
 	return luabind::class_<Lua_Group>("Group")
-		.def(luabind::constructor<>())
-		.property("null", &Lua_Group::Null)
-		.property("valid", &Lua_Group::Valid)
-		.def("DisbandGroup", (void(Lua_Group::*)(void))&Lua_Group::DisbandGroup)
-		.def("DisbandGroup", (void(Lua_Group::*)(bool))&Lua_Group::DisbandGroup)
-		.def("DisbandGroup", (void(Lua_Group::*)(bool,uint32))&Lua_Group::DisbandGroup)
-		.def("IsGroupMember", (bool(Lua_Group::*)(Lua_Mob))&Lua_Group::IsGroupMember)
-		.def("CastGroupSpell", (void(Lua_Group::*)(Lua_Mob,int))&Lua_Group::CastGroupSpell)
-		.def("SplitExp", (void(Lua_Group::*)(uint32,Lua_Mob))&Lua_Group::SplitExp)
-		.def("GroupMessage", (void(Lua_Group::*)(Lua_Mob,int,const char* message))&Lua_Group::GroupMessage)
-		.def("GetTotalGroupDamage", (uint32(Lua_Group::*)(Lua_NPC))&Lua_Group::GetTotalGroupDamage)
-		.def("SplitMoney", (void(Lua_Group::*)(uint32,uint32,uint32,uint32))&Lua_Group::SplitMoney)
-		.def("SplitMoney", (void(Lua_Group::*)(uint32,uint32,uint32,uint32,Lua_Client))&Lua_Group::SplitMoney)
-		.def("SetLeader", (void(Lua_Group::*)(Lua_Mob))&Lua_Group::SetLeader)
-		.def("GetLeader", (Lua_Mob(Lua_Group::*)(void))&Lua_Group::GetLeader)
-		.def("GetLeaderName", (const char*(Lua_Group::*)(void))&Lua_Group::GetLeaderName)
-		.def("IsLeader", (bool(Lua_Group::*)(Lua_Mob))&Lua_Group::IsLeader)
-		.def("GroupCount", (int(Lua_Group::*)(void))&Lua_Group::GroupCount)
-		.def("GetHighestLevel", (int(Lua_Group::*)(void))&Lua_Group::GetHighestLevel)
-		.def("TeleportGroup", (void(Lua_Group::*)(Lua_Mob,uint32,float,float,float,float))&Lua_Group::TeleportGroup)
-		.def("GetID", (int(Lua_Group::*)(void))&Lua_Group::GetID)
-		.def("GetMember", (Lua_Mob(Lua_Group::*)(int))&Lua_Group::GetMember);
+	    .def(luabind::constructor<>())
+	    .property("null", &Lua_Group::Null)
+	    .property("valid", &Lua_Group::Valid)
+	    .def("DisbandGroup", (void(Lua_Group::*)(void)) & Lua_Group::DisbandGroup)
+	    .def("DisbandGroup", (void(Lua_Group::*)(bool)) & Lua_Group::DisbandGroup)
+	    .def("DisbandGroup", (void(Lua_Group::*)(bool, uint32)) & Lua_Group::DisbandGroup)
+	    .def("IsGroupMember", (bool(Lua_Group::*)(Lua_Mob)) & Lua_Group::IsGroupMember)
+	    .def("CastGroupSpell", (void(Lua_Group::*)(Lua_Mob, int)) & Lua_Group::CastGroupSpell)
+	    .def("SplitExp", (void(Lua_Group::*)(uint32, Lua_Mob)) & Lua_Group::SplitExp)
+	    .def("GroupMessage", (void(Lua_Group::*)(Lua_Mob, int, const char *message)) & Lua_Group::GroupMessage)
+	    .def("GetTotalGroupDamage", (uint32(Lua_Group::*)(Lua_NPC)) & Lua_Group::GetTotalGroupDamage)
+	    .def("SplitMoney", (void(Lua_Group::*)(uint32, uint32, uint32, uint32)) & Lua_Group::SplitMoney)
+	    .def("SplitMoney", (void(Lua_Group::*)(uint32, uint32, uint32, uint32, Lua_Client)) & Lua_Group::SplitMoney)
+	    .def("SetLeader", (void(Lua_Group::*)(Lua_Mob)) & Lua_Group::SetLeader)
+	    .def("GetLeader", (Lua_Mob(Lua_Group::*)(void)) & Lua_Group::GetLeader)
+	    .def("GetLeaderName", (const char *(Lua_Group::*)(void)) & Lua_Group::GetLeaderName)
+	    .def("IsLeader", (bool(Lua_Group::*)(Lua_Mob)) & Lua_Group::IsLeader)
+	    .def("GroupCount", (int(Lua_Group::*)(void)) & Lua_Group::GroupCount)
+	    .def("GetHighestLevel", (int(Lua_Group::*)(void)) & Lua_Group::GetHighestLevel)
+	    .def("TeleportGroup", (void(Lua_Group::*)(Lua_Mob, uint32, float, float, float, float)) & Lua_Group::TeleportGroup)
+	    .def("GetID", (int(Lua_Group::*)(void)) & Lua_Group::GetID)
+	    .def("GetMember", (Lua_Mob(Lua_Group::*)(int)) & Lua_Group::GetMember);
 }
 
 #endif

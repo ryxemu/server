@@ -69,7 +69,7 @@ void handle_rc_list_zones(const std::string &method, const std::string &connecti
 	for(uint32 i = 0; i < sz; ++i) {
 		res[itoa(i)] = (itoa(zones[i]));
 	}
-	
+
 	std::string error;
 	RemoteCallResponse(connection_id, request_id, res, error);
 }
@@ -106,29 +106,29 @@ void handle_rc_relay(const std::string &method, const std::string &connection_id
 	std::map<std::string, std::string> res;
 	uint32 zone_id = 0;
 	ZoneServer *zs = nullptr;
-	
+
 	if(params.size() < 2) {
 		error = "Missing zone relay params";
 		RemoteCallResponse(connection_id, request_id, res, error);
 		return;
 	}
-	
+
 	zone_id = (uint32)atoi(params[0].c_str());
 	if(!zone_id) {
 		error = "Zone not booted";
 		RemoteCallResponse(connection_id, request_id, res, error);
 		return;
 	}
-	
-	
+
+
 	zs = zoneserver_list.FindByZoneID(zone_id);
-	
+
 	if(!zs) {
 		error = "Zone server not found";
 		RemoteCallResponse(connection_id, request_id, res, error);
 		return;
 	}
-	
+
 	uint32 sz = (uint32)(request_id.size() + connection_id.size() + method.size() + 3 + 16);
 	uint32 p_sz = (uint32)params.size() - 2;
 	for(uint32 i = 0; i < p_sz; ++i) {
@@ -136,7 +136,7 @@ void handle_rc_relay(const std::string &method, const std::string &connection_id
 		sz += (uint32)param.size();
 		sz += 5;
 	}
-	
+
 	auto pack = new ServerPacket(ServerOP_WIRemoteCall, sz);
 	pack->WriteUInt32((uint32)request_id.size());
 	pack->WriteString(request_id.c_str());
@@ -145,13 +145,13 @@ void handle_rc_relay(const std::string &method, const std::string &connection_id
 	pack->WriteUInt32((uint32)method.size());
 	pack->WriteString(method.c_str());
 	pack->WriteUInt32(p_sz);
-	
+
 	for(uint32 i = 0; i < p_sz; ++i) {
 		auto &param = params[i + 2];
 		pack->WriteUInt32((uint32)param.size());
 		pack->WriteString(param.c_str());
 	}
-	
+
 	zs->SendPacket(pack);
 	safe_delete(pack);
 }

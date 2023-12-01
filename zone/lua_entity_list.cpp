@@ -317,7 +317,7 @@ Lua_Mob_List Lua_EntityList::GetMobList() {
 	auto &t_list = self->GetMobList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_Mob(iter->second));
 		++iter;
 	}
@@ -331,7 +331,7 @@ Lua_Client_List Lua_EntityList::GetClientList() {
 	auto &t_list = self->GetClientList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_Client(iter->second));
 		++iter;
 	}
@@ -345,7 +345,7 @@ Lua_NPC_List Lua_EntityList::GetNPCList() {
 	auto &t_list = self->GetNPCList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_NPC(iter->second));
 		++iter;
 	}
@@ -359,7 +359,7 @@ Lua_Corpse_List Lua_EntityList::GetCorpseList() {
 	auto &t_list = self->GetCorpseList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_Corpse(iter->second));
 		++iter;
 	}
@@ -373,7 +373,7 @@ Lua_Object_List Lua_EntityList::GetObjectList() {
 	auto &t_list = self->GetObjectList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		if (!iter->second->RespawnTimerEnabled())
 			ret.entries.push_back(Lua_Object(iter->second));
 		++iter;
@@ -388,7 +388,7 @@ Lua_Doors_List Lua_EntityList::GetDoorsList() {
 	auto &t_list = self->GetDoorsList();
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_Door(iter->second));
 		++iter;
 	}
@@ -399,11 +399,11 @@ Lua_Doors_List Lua_EntityList::GetDoorsList() {
 Lua_Spawn_List Lua_EntityList::GetSpawnList() {
 	Lua_Safe_Call_Class(Lua_Spawn_List);
 	Lua_Spawn_List ret;
-	std::list<Spawn2*> t_list;
+	std::list<Spawn2 *> t_list;
 	self->GetSpawnList(t_list);
 
 	auto iter = t_list.begin();
-	while(iter != t_list.end()) {
+	while (iter != t_list.end()) {
 		ret.entries.push_back(Lua_Spawn(*iter));
 		++iter;
 	}
@@ -423,105 +423,105 @@ void Lua_EntityList::ChannelMessage(Lua_Mob from, int channel_num, int language,
 
 luabind::scope lua_register_entity_list() {
 	return luabind::class_<Lua_EntityList>("EntityList")
-		.def(luabind::constructor<>())
-		.property("null", &Lua_EntityList::Null)
-		.property("valid", &Lua_EntityList::Valid)
-		.def("GetMobID", (Lua_Mob(Lua_EntityList::*)(int))&Lua_EntityList::GetMobID)
-		.def("GetMob", (Lua_Mob(Lua_EntityList::*)(const char*))&Lua_EntityList::GetMob)
-		.def("GetMob", (Lua_Mob(Lua_EntityList::*)(int))&Lua_EntityList::GetMob)
-		.def("GetMobByNpcTypeID", (Lua_Mob(Lua_EntityList::*)(int))&Lua_EntityList::GetMobByNpcTypeID)
-		.def("IsMobSpawnedByNpcTypeID", (bool(Lua_EntityList::*)(int))&Lua_EntityList::IsMobSpawnedByNpcTypeID)
-		.def("IsMobSpawnedByEntityID", (bool(Lua_EntityList::*)(int))&Lua_EntityList::IsMobSpawnedByEntityID)
-		.def("GetNPCByID", (Lua_NPC(Lua_EntityList::*)(int))&Lua_EntityList::GetNPCByID)
-		.def("GetNPCByNPCTypeID", (Lua_NPC(Lua_EntityList::*)(int))&Lua_EntityList::GetNPCByNPCTypeID)
-		.def("GetClientByName", (Lua_Client(Lua_EntityList::*)(const char*))&Lua_EntityList::GetClientByName)
-		.def("GetClientByAccID", (Lua_Client(Lua_EntityList::*)(uint32))&Lua_EntityList::GetClientByAccID)
-		.def("GetClientByID", (Lua_Client(Lua_EntityList::*)(int))&Lua_EntityList::GetClientByID)
-		.def("GetClientByCharID", (Lua_Client(Lua_EntityList::*)(uint32))&Lua_EntityList::GetClientByCharID)
-		.def("GetClientByWID", (Lua_Client(Lua_EntityList::*)(uint32))&Lua_EntityList::GetClientByWID)
-		.def("GetObjectByID", (Lua_Object(Lua_EntityList::*)(int))&Lua_EntityList::GetObjectByID)
-		.def("GetObjectByDBID", (Lua_Object(Lua_EntityList::*)(uint32))&Lua_EntityList::GetObjectByDBID)
-		.def("GetDoorsByID", (Lua_Door(Lua_EntityList::*)(int))&Lua_EntityList::GetDoorsByID)
-		.def("GetDoorsByDBID", (Lua_Door(Lua_EntityList::*)(uint32))&Lua_EntityList::GetDoorsByDBID)
-		.def("GetDoorsByDoorID", (Lua_Door(Lua_EntityList::*)(uint32))&Lua_EntityList::GetDoorsByDoorID)
-		.def("FindDoor", (Lua_Door(Lua_EntityList::*)(uint32))&Lua_EntityList::FindDoor)
-		.def("GetGroupByMob", (Lua_Group(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::GetGroupByMob)
-		.def("GetGroupByClient", (Lua_Group(Lua_EntityList::*)(Lua_Client))&Lua_EntityList::GetGroupByClient)
-		.def("GetGroupByID", (Lua_Group(Lua_EntityList::*)(int))&Lua_EntityList::GetGroupByID)
-		.def("GetGroupByLeaderName", (Lua_Group(Lua_EntityList::*)(const char*))&Lua_EntityList::GetGroupByLeaderName)
-		.def("GetRaidByID", (Lua_Raid(Lua_EntityList::*)(int))&Lua_EntityList::GetRaidByID)
-		.def("GetRaidByClient", (Lua_Raid(Lua_EntityList::*)(Lua_Client))&Lua_EntityList::GetRaidByClient)
-		.def("GetCorpseByOwner", (Lua_Corpse(Lua_EntityList::*)(Lua_Client))&Lua_EntityList::GetCorpseByOwner)
-		.def("GetCorpseByID", (Lua_Corpse(Lua_EntityList::*)(int))&Lua_EntityList::GetCorpseByID)
-		.def("GetCorpseByName", (Lua_Corpse(Lua_EntityList::*)(const char*))&Lua_EntityList::GetCorpseByName)
-		.def("GetSpawnByID", (Lua_Spawn(Lua_EntityList::*)(uint32))&Lua_EntityList::GetSpawnByID)
-		.def("IsMobSpawnBySpawnID", (bool(Lua_EntityList::*)(int))&Lua_EntityList::IsMobSpawnBySpawnID)
-		.def("CanAddHateForMob", (bool(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::CanAddHateForMob)
-		.def("Message", (void(Lua_EntityList::*)(uint32,uint32,const char*))&Lua_EntityList::Message)
-		.def("MessageStatus", (void(Lua_EntityList::*)(uint32,uint32,uint32,const char*))&Lua_EntityList::MessageStatus)
-		.def("MessageClose", (void(Lua_EntityList::*)(Lua_Mob,bool,float,uint32,const char*))&Lua_EntityList::MessageClose)
-		.def("RemoveFromTargets", (void(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::RemoveFromTargets)
-		.def("RemoveFromTargets", (void(Lua_EntityList::*)(Lua_Mob,bool))&Lua_EntityList::RemoveFromTargets)
-		.def("ReplaceWithTarget", (void(Lua_EntityList::*)(Lua_Mob,Lua_Mob))&Lua_EntityList::ReplaceWithTarget)
-		.def("OpenDoorsNear", (void(Lua_EntityList::*)(Lua_NPC))&Lua_EntityList::OpenDoorsNear)
-		.def("MakeNameUnique", (std::string(Lua_EntityList::*)(const char*))&Lua_EntityList::MakeNameUnique)
-		.def("RemoveNumbers", (std::string(Lua_EntityList::*)(const char*))&Lua_EntityList::RemoveNumbers)
-		.def("SignalMobsByNPCID", (void(Lua_EntityList::*)(uint32,int))&Lua_EntityList::SignalMobsByNPCID)
-		.def("DeleteNPCCorpses", (uint32(Lua_EntityList::*)(void))&Lua_EntityList::DeleteNPCCorpses)
-		.def("DeletePlayerCorpses", (uint32(Lua_EntityList::*)(void))&Lua_EntityList::DeletePlayerCorpses)
-		.def("HalveAggro", (void(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::HalveAggro)
-		.def("DoubleAggro", (void(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::DoubleAggro)
-		.def("ClearFeignAggro", (void(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::ClearFeignAggro)
-		.def("Fighting", (bool(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::Fighting)
-		.def("RemoveFromHateLists", (void(Lua_EntityList::*)(Lua_Mob))&Lua_EntityList::RemoveFromHateLists)
-		.def("RemoveFromHateLists", (void(Lua_EntityList::*)(Lua_Mob,bool))&Lua_EntityList::RemoveFromHateLists)
-		.def("MessageGroup", (void(Lua_EntityList::*)(Lua_Mob,bool,uint32,const char*))&Lua_EntityList::MessageGroup)
-		.def("GetRandomClient", (Lua_Client(Lua_EntityList::*)(float,float,float,float))&Lua_EntityList::GetRandomClient)
-		.def("GetRandomClient", (Lua_Client(Lua_EntityList::*)(float,float,float,float,Lua_Client))&Lua_EntityList::GetRandomClient)
-		.def("GetMobList", (Lua_Mob_List(Lua_EntityList::*)(void))&Lua_EntityList::GetMobList)
-		.def("GetClientList", (Lua_Client_List(Lua_EntityList::*)(void))&Lua_EntityList::GetClientList)
-		.def("GetNPCList", (Lua_NPC_List(Lua_EntityList::*)(void))&Lua_EntityList::GetNPCList)
-		.def("GetCorpseList", (Lua_Corpse_List(Lua_EntityList::*)(void))&Lua_EntityList::GetCorpseList)
-		.def("GetObjectList", (Lua_Object_List(Lua_EntityList::*)(void))&Lua_EntityList::GetObjectList)
-		.def("GetDoorsList", (Lua_Doors_List(Lua_EntityList::*)(void))&Lua_EntityList::GetDoorsList)
-		.def("GetSpawnList", (Lua_Spawn_List(Lua_EntityList::*)(void))&Lua_EntityList::GetSpawnList)
-		.def("SignalAllClients", (void(Lua_EntityList::*)(int))&Lua_EntityList::SignalAllClients)
-		.def("ChannelMessage", (void(Lua_EntityList::*)(Lua_Mob,int,int,const char*))&Lua_EntityList::ChannelMessage);
+	    .def(luabind::constructor<>())
+	    .property("null", &Lua_EntityList::Null)
+	    .property("valid", &Lua_EntityList::Valid)
+	    .def("GetMobID", (Lua_Mob(Lua_EntityList::*)(int)) & Lua_EntityList::GetMobID)
+	    .def("GetMob", (Lua_Mob(Lua_EntityList::*)(const char *)) & Lua_EntityList::GetMob)
+	    .def("GetMob", (Lua_Mob(Lua_EntityList::*)(int)) & Lua_EntityList::GetMob)
+	    .def("GetMobByNpcTypeID", (Lua_Mob(Lua_EntityList::*)(int)) & Lua_EntityList::GetMobByNpcTypeID)
+	    .def("IsMobSpawnedByNpcTypeID", (bool(Lua_EntityList::*)(int)) & Lua_EntityList::IsMobSpawnedByNpcTypeID)
+	    .def("IsMobSpawnedByEntityID", (bool(Lua_EntityList::*)(int)) & Lua_EntityList::IsMobSpawnedByEntityID)
+	    .def("GetNPCByID", (Lua_NPC(Lua_EntityList::*)(int)) & Lua_EntityList::GetNPCByID)
+	    .def("GetNPCByNPCTypeID", (Lua_NPC(Lua_EntityList::*)(int)) & Lua_EntityList::GetNPCByNPCTypeID)
+	    .def("GetClientByName", (Lua_Client(Lua_EntityList::*)(const char *)) & Lua_EntityList::GetClientByName)
+	    .def("GetClientByAccID", (Lua_Client(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetClientByAccID)
+	    .def("GetClientByID", (Lua_Client(Lua_EntityList::*)(int)) & Lua_EntityList::GetClientByID)
+	    .def("GetClientByCharID", (Lua_Client(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetClientByCharID)
+	    .def("GetClientByWID", (Lua_Client(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetClientByWID)
+	    .def("GetObjectByID", (Lua_Object(Lua_EntityList::*)(int)) & Lua_EntityList::GetObjectByID)
+	    .def("GetObjectByDBID", (Lua_Object(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetObjectByDBID)
+	    .def("GetDoorsByID", (Lua_Door(Lua_EntityList::*)(int)) & Lua_EntityList::GetDoorsByID)
+	    .def("GetDoorsByDBID", (Lua_Door(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetDoorsByDBID)
+	    .def("GetDoorsByDoorID", (Lua_Door(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetDoorsByDoorID)
+	    .def("FindDoor", (Lua_Door(Lua_EntityList::*)(uint32)) & Lua_EntityList::FindDoor)
+	    .def("GetGroupByMob", (Lua_Group(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::GetGroupByMob)
+	    .def("GetGroupByClient", (Lua_Group(Lua_EntityList::*)(Lua_Client)) & Lua_EntityList::GetGroupByClient)
+	    .def("GetGroupByID", (Lua_Group(Lua_EntityList::*)(int)) & Lua_EntityList::GetGroupByID)
+	    .def("GetGroupByLeaderName", (Lua_Group(Lua_EntityList::*)(const char *)) & Lua_EntityList::GetGroupByLeaderName)
+	    .def("GetRaidByID", (Lua_Raid(Lua_EntityList::*)(int)) & Lua_EntityList::GetRaidByID)
+	    .def("GetRaidByClient", (Lua_Raid(Lua_EntityList::*)(Lua_Client)) & Lua_EntityList::GetRaidByClient)
+	    .def("GetCorpseByOwner", (Lua_Corpse(Lua_EntityList::*)(Lua_Client)) & Lua_EntityList::GetCorpseByOwner)
+	    .def("GetCorpseByID", (Lua_Corpse(Lua_EntityList::*)(int)) & Lua_EntityList::GetCorpseByID)
+	    .def("GetCorpseByName", (Lua_Corpse(Lua_EntityList::*)(const char *)) & Lua_EntityList::GetCorpseByName)
+	    .def("GetSpawnByID", (Lua_Spawn(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetSpawnByID)
+	    .def("IsMobSpawnBySpawnID", (bool(Lua_EntityList::*)(int)) & Lua_EntityList::IsMobSpawnBySpawnID)
+	    .def("CanAddHateForMob", (bool(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::CanAddHateForMob)
+	    .def("Message", (void(Lua_EntityList::*)(uint32, uint32, const char *)) & Lua_EntityList::Message)
+	    .def("MessageStatus", (void(Lua_EntityList::*)(uint32, uint32, uint32, const char *)) & Lua_EntityList::MessageStatus)
+	    .def("MessageClose", (void(Lua_EntityList::*)(Lua_Mob, bool, float, uint32, const char *)) & Lua_EntityList::MessageClose)
+	    .def("RemoveFromTargets", (void(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::RemoveFromTargets)
+	    .def("RemoveFromTargets", (void(Lua_EntityList::*)(Lua_Mob, bool)) & Lua_EntityList::RemoveFromTargets)
+	    .def("ReplaceWithTarget", (void(Lua_EntityList::*)(Lua_Mob, Lua_Mob)) & Lua_EntityList::ReplaceWithTarget)
+	    .def("OpenDoorsNear", (void(Lua_EntityList::*)(Lua_NPC)) & Lua_EntityList::OpenDoorsNear)
+	    .def("MakeNameUnique", (std::string(Lua_EntityList::*)(const char *)) & Lua_EntityList::MakeNameUnique)
+	    .def("RemoveNumbers", (std::string(Lua_EntityList::*)(const char *)) & Lua_EntityList::RemoveNumbers)
+	    .def("SignalMobsByNPCID", (void(Lua_EntityList::*)(uint32, int)) & Lua_EntityList::SignalMobsByNPCID)
+	    .def("DeleteNPCCorpses", (uint32(Lua_EntityList::*)(void)) & Lua_EntityList::DeleteNPCCorpses)
+	    .def("DeletePlayerCorpses", (uint32(Lua_EntityList::*)(void)) & Lua_EntityList::DeletePlayerCorpses)
+	    .def("HalveAggro", (void(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::HalveAggro)
+	    .def("DoubleAggro", (void(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::DoubleAggro)
+	    .def("ClearFeignAggro", (void(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::ClearFeignAggro)
+	    .def("Fighting", (bool(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::Fighting)
+	    .def("RemoveFromHateLists", (void(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::RemoveFromHateLists)
+	    .def("RemoveFromHateLists", (void(Lua_EntityList::*)(Lua_Mob, bool)) & Lua_EntityList::RemoveFromHateLists)
+	    .def("MessageGroup", (void(Lua_EntityList::*)(Lua_Mob, bool, uint32, const char *)) & Lua_EntityList::MessageGroup)
+	    .def("GetRandomClient", (Lua_Client(Lua_EntityList::*)(float, float, float, float)) & Lua_EntityList::GetRandomClient)
+	    .def("GetRandomClient", (Lua_Client(Lua_EntityList::*)(float, float, float, float, Lua_Client)) & Lua_EntityList::GetRandomClient)
+	    .def("GetMobList", (Lua_Mob_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetMobList)
+	    .def("GetClientList", (Lua_Client_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetClientList)
+	    .def("GetNPCList", (Lua_NPC_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetNPCList)
+	    .def("GetCorpseList", (Lua_Corpse_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetCorpseList)
+	    .def("GetObjectList", (Lua_Object_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetObjectList)
+	    .def("GetDoorsList", (Lua_Doors_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetDoorsList)
+	    .def("GetSpawnList", (Lua_Spawn_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetSpawnList)
+	    .def("SignalAllClients", (void(Lua_EntityList::*)(int)) & Lua_EntityList::SignalAllClients)
+	    .def("ChannelMessage", (void(Lua_EntityList::*)(Lua_Mob, int, int, const char *)) & Lua_EntityList::ChannelMessage);
 }
 
 luabind::scope lua_register_mob_list() {
 	return luabind::class_<Lua_Mob_List>("MobList")
-			.def_readwrite("entries", &Lua_Mob_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Mob_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_client_list() {
 	return luabind::class_<Lua_Client_List>("ClientList")
-			.def_readwrite("entries", &Lua_Client_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Client_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_npc_list() {
 	return luabind::class_<Lua_NPC_List>("NPCList")
-			.def_readwrite("entries", &Lua_NPC_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_NPC_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_corpse_list() {
 	return luabind::class_<Lua_Corpse_List>("CorpseList")
-			.def_readwrite("entries", &Lua_Corpse_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Corpse_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_object_list() {
 	return luabind::class_<Lua_Object_List>("ObjectList")
-			.def_readwrite("entries", &Lua_Object_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Object_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_door_list() {
 	return luabind::class_<Lua_Doors_List>("DoorList")
-			.def_readwrite("entries", &Lua_Doors_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Doors_List::entries, luabind::return_stl_iterator);
 }
 
 luabind::scope lua_register_spawn_list() {
 	return luabind::class_<Lua_Spawn_List>("SpawnList")
-			.def_readwrite("entries", &Lua_Spawn_List::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_Spawn_List::entries, luabind::return_stl_iterator);
 }
 
 #endif

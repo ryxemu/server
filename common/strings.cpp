@@ -21,9 +21,9 @@
 #ifdef _WINDOWS
 #include <windows.h>
 
-#define snprintf	_snprintf
-#define strncasecmp	_strnicmp
-#define strcasecmp  _stricmp
+#define snprintf _snprintf
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
 
 #else
 #include <stdlib.h>
@@ -33,14 +33,13 @@
 #endif
 
 #ifndef va_copy
-#define va_copy(d,s) ((d) = (s))
+#define va_copy(d, s) ((d) = (s))
 #endif
 
- // original source:
- // https://github.com/facebook/folly/blob/master/folly/String.cpp
- //
-const std::string vStringFormat(const char* format, va_list args)
-{
+// original source:
+// https://github.com/facebook/folly/blob/master/folly/String.cpp
+//
+const std::string vStringFormat(const char* format, va_list args) {
 	std::string output;
 	va_list tmpargs;
 
@@ -66,26 +65,21 @@ const std::string vStringFormat(const char* format, va_list args)
 	return output;
 }
 
-const std::string Strings::ToLower(std::string s)
-{
+const std::string Strings::ToLower(std::string s) {
 	std::transform(
-		s.begin(), s.end(), s.begin(),
-		[](unsigned char c) { return ::tolower(c); }
-	);
+	    s.begin(), s.end(), s.begin(),
+	    [](unsigned char c) { return ::tolower(c); });
 	return s;
 }
 
-const std::string Strings::ToUpper(std::string s)
-{
+const std::string Strings::ToUpper(std::string s) {
 	std::transform(
-		s.begin(), s.end(), s.begin(),
-		[](unsigned char c) { return ::toupper(c); }
-	);
+	    s.begin(), s.end(), s.begin(),
+	    [](unsigned char c) { return ::toupper(c); });
 	return s;
 }
 
-const std::string Strings::UcFirst(std::string s)
-{
+const std::string Strings::UcFirst(std::string s) {
 	std::string output = s;
 	if (!s.empty())
 		output[0] = static_cast<char>(::toupper(s[0]));
@@ -93,8 +87,7 @@ const std::string Strings::UcFirst(std::string s)
 	return output;
 }
 
-const std::string StringFormat(const char* format, ...)
-{
+const std::string StringFormat(const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 	std::string output = vStringFormat(format, args);
@@ -119,10 +112,9 @@ std::vector<std::string> Strings::Split(const std::string& str, const char delim
 }
 
 // this one takes delimiter length into consideration
-std::vector<std::string> Strings::Split(std::string s, std::string delimiter)
-{
-	size_t                   pos_start = 0, pos_end, delim_len = delimiter.length();
-	std::string              token;
+std::vector<std::string> Strings::Split(std::string s, std::string delimiter) {
+	size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+	std::string token;
 	std::vector<std::string> res;
 
 	while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
@@ -135,8 +127,7 @@ std::vector<std::string> Strings::Split(std::string s, std::string delimiter)
 	return res;
 }
 
-std::string::size_type Strings::SearchDelim(const std::string &haystack, const std::string &needle, const char deliminator)
-{
+std::string::size_type Strings::SearchDelim(const std::string& haystack, const std::string& needle, const char deliminator) {
 	// this shouldn't go out of bounds, even without obvious bounds checks
 	auto pos = haystack.find(needle);
 	while (pos != std::string::npos) {
@@ -148,13 +139,12 @@ std::string::size_type Strings::SearchDelim(const std::string &haystack, const s
 	return std::string::npos;
 }
 
-std::string Strings::Implode(std::string glue, std::vector<std::string> src)
-{
+std::string Strings::Implode(std::string glue, std::vector<std::string> src) {
 	if (src.empty()) {
 		return {};
 	}
 
-	std::ostringstream                 output;
+	std::ostringstream output;
 	std::vector<std::string>::iterator src_iter;
 
 	for (src_iter = src.begin(); src_iter != src.end(); src_iter++) {
@@ -167,8 +157,7 @@ std::string Strings::Implode(std::string glue, std::vector<std::string> src)
 	return final_output;
 }
 
-std::vector<std::string> Strings::Wrap(std::vector<std::string>& src, std::string character)
-{
+std::vector<std::string> Strings::Wrap(std::vector<std::string>& src, std::string character) {
 	std::vector<std::string> new_vector;
 	new_vector.reserve(src.size());
 
@@ -191,30 +180,30 @@ std::string Strings::Escape(const std::string& s) {
 	for (size_t i = 0; i < sz; ++i) {
 		char c = s[i];
 		switch (c) {
-		case '\x00':
-			ret += "\\x00";
-			break;
-		case '\n':
-			ret += "\\n";
-			break;
-		case '\r':
-			ret += "\\r";
-			break;
-		case '\\':
-			ret += "\\\\";
-			break;
-		case '\'':
-			ret += "\\'";
-			break;
-		case '\"':
-			ret += "\\\"";
-			break;
-		case '\x1a':
-			ret += "\\x1a";
-			break;
-		default:
-			ret.push_back(c);
-			break;
+			case '\x00':
+				ret += "\\x00";
+				break;
+			case '\n':
+				ret += "\\n";
+				break;
+			case '\r':
+				ret += "\\r";
+				break;
+			case '\\':
+				ret += "\\\\";
+				break;
+			case '\'':
+				ret += "\\'";
+				break;
+			case '\"':
+				ret += "\\\"";
+				break;
+			case '\x1a':
+				ret += "\\x1a";
+				break;
+			default:
+				ret.push_back(c);
+				break;
 		}
 	}
 
@@ -227,30 +216,30 @@ std::string Strings::EscapePair(const char* src, size_t sz) {
 	for (size_t i = 0; i < sz; ++i) {
 		char c = src[i];
 		switch (c) {
-		case '\x00':
-			ret += "\\x00";
-			break;
-		case '\n':
-			ret += "\\n";
-			break;
-		case '\r':
-			ret += "\\r";
-			break;
-		case '\\':
-			ret += "\\\\";
-			break;
-		case '\'':
-			ret += "\\'";
-			break;
-		case '\"':
-			ret += "\\\"";
-			break;
-		case '\x1a':
-			ret += "\\x1a";
-			break;
-		default:
-			ret.push_back(c);
-			break;
+			case '\x00':
+				ret += "\\x00";
+				break;
+			case '\n':
+				ret += "\\n";
+				break;
+			case '\r':
+				ret += "\\r";
+				break;
+			case '\\':
+				ret += "\\\\";
+				break;
+			case '\'':
+				ret += "\\'";
+				break;
+			case '\"':
+				ret += "\\\"";
+				break;
+			case '\x1a':
+				ret += "\\x1a";
+				break;
+			default:
+				ret.push_back(c);
+				break;
 		}
 	}
 
@@ -261,8 +250,7 @@ bool Strings::IsNumber(const std::string& s) {
 	try {
 		auto r = stod(s);
 		return true;
-	}
-	catch (std::exception&) {
+	} catch (std::exception&) {
 		return false;
 	}
 }
@@ -280,8 +268,7 @@ std::string Strings::Join(const std::vector<std::string>& ar, const std::string&
 	return ret;
 }
 
-void Strings::FindReplace(std::string& string_subject, const std::string& search_string, const std::string& replace_string)
-{
+void Strings::FindReplace(std::string& string_subject, const std::string& search_string, const std::string& replace_string) {
 	if (string_subject.find(search_string) == std::string::npos) {
 		return;
 	}
@@ -293,8 +280,7 @@ void Strings::FindReplace(std::string& string_subject, const std::string& search
 	}
 }
 
-std::string Strings::Replace(std::string subject, const std::string& search, const std::string& replace)
-{
+std::string Strings::Replace(std::string subject, const std::string& search, const std::string& replace) {
 	size_t pos = 0;
 	while ((pos = subject.find(search, pos)) != std::string::npos) {
 		subject.replace(pos, search.length(), replace);
@@ -303,14 +289,12 @@ std::string Strings::Replace(std::string subject, const std::string& search, con
 	return subject;
 }
 
-void ParseAccountString(const std::string& s, std::string& account, std::string& loginserver)
-{
+void ParseAccountString(const std::string& s, std::string& account, std::string& loginserver) {
 	auto split = Strings::Split(s, ':');
 	if (split.size() == 2) {
 		loginserver = split[0];
 		account = split[1];
-	}
-	else if (split.size() == 1) {
+	} else if (split.size() == 1) {
 		account = split[0];
 	}
 }
@@ -324,8 +308,7 @@ std::string Strings::Commify(const std::string& number) {
 	for (i = string_length - 3; i >= 0; i -= 3) {
 		if (i > 0) {
 			temp_string = "," + number.substr(static_cast<unsigned long>(i), 3) + temp_string;
-		}
-		else {
+		} else {
 			temp_string = number.substr(static_cast<unsigned long>(i), 3) + temp_string;
 		}
 	}
@@ -337,12 +320,11 @@ std::string Strings::Commify(const std::string& number) {
 	return temp_string;
 }
 
-bool Strings::Contains(std::vector<std::string> container, std::string element)
-{
+bool Strings::Contains(std::vector<std::string> container, std::string element) {
 	return std::find(container.begin(), container.end(), element) != container.end();
 }
 
-//Const char based
+// Const char based
 
 // normal strncpy doesnt put a null term on copied strings, this one does
 // ref: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wcecrt/htm/_wcecrt_strncpy_wcsncpy.asp
@@ -385,10 +367,10 @@ void MakeLowerString(const char* source, char* target) {
 		*target = 0;
 		return;
 	}
-	while (*source)
-	{
+	while (*source) {
 		*target = tolower(*source);
-		target++; source++;
+		target++;
+		source++;
 	}
 	*target = 0;
 }
@@ -448,7 +430,6 @@ uint64 hextoi64(const char* num) {
 }
 
 bool atobool(const char* iBool) {
-
 	if (iBool == nullptr)
 		return false;
 	if (!strcasecmp(iBool, "true"))
@@ -481,50 +462,41 @@ bool atobool(const char* iBool) {
 }
 
 // removes the crap and turns the underscores into spaces.
-char* CleanMobName(const char* in, char* out)
-{
+char* CleanMobName(const char* in, char* out) {
 	unsigned i, j;
 
-	for (i = j = 0; i < strlen(in); i++)
-	{
+	for (i = j = 0; i < strlen(in); i++) {
 		// convert _ to space.. any other conversions like this?  I *think* this
 		// is the only non alpha char that's not stripped but converted.
-		if (in[i] == '_')
-		{
+		if (in[i] == '_') {
 			out[j++] = ' ';
-		}
-		else
-		{
-			if (isalpha(in[i]) || (in[i] == '`'))	// numbers, #, or any other crap just gets skipped
+		} else {
+			if (isalpha(in[i]) || (in[i] == '`'))  // numbers, #, or any other crap just gets skipped
 				out[j++] = in[i];
 		}
 	}
-	out[j] = 0;	// terimnate the string before returning it
+	out[j] = 0;  // terimnate the string before returning it
 	return out;
 }
 
-char* CleanMobNameWithSpaces(const char* in, char* out)
-{
+char* CleanMobNameWithSpaces(const char* in, char* out) {
 	unsigned i, j;
 
-	for (i = j = 0; i < strlen(in); i++)
-	{
-		if (isalpha(in[i]) || (in[i] == '`') || (in[i] == '_'))	// numbers, #, or any other crap just gets skipped
+	for (i = j = 0; i < strlen(in); i++) {
+		if (isalpha(in[i]) || (in[i] == '`') || (in[i] == '_'))  // numbers, #, or any other crap just gets skipped
 			out[j++] = in[i];
 	}
-	out[j] = 0;	// terimnate the string before returning it
+	out[j] = 0;  // terimnate the string before returning it
 	return out;
 }
 
-void RemoveApostrophes(std::string& s)
-{
+void RemoveApostrophes(std::string& s) {
 	for (unsigned int i = 0; i < s.length(); ++i)
 		if (s[i] == '\'')
 			s[i] = '_';
 }
 
-char* RemoveApostrophes(const char* s)
-{
+char* RemoveApostrophes(const char* s) {
 	auto NewString = new char[strlen(s) + 1];
 
 	strcpy(NewString, s);
@@ -536,24 +508,21 @@ char* RemoveApostrophes(const char* s)
 	return NewString;
 }
 
-const char* ConvertArray(int input, char* returnchar)
-{
+const char* ConvertArray(int input, char* returnchar) {
 	sprintf(returnchar, "%i", input);
 	return returnchar;
 }
 
-const char* ConvertArrayF(float input, char* returnchar)
-{
+const char* ConvertArrayF(float input, char* returnchar) {
 	sprintf(returnchar, "%0.2f", input);
 	return returnchar;
 }
 
-bool isAlphaNumeric(const char* text)
-{
+bool isAlphaNumeric(const char* text) {
 	for (unsigned int charIndex = 0; charIndex < strlen(text); charIndex++) {
 		if ((text[charIndex] < 'a' || text[charIndex] > 'z') &&
-			(text[charIndex] < 'A' || text[charIndex] > 'Z') &&
-			(text[charIndex] < '0' || text[charIndex] > '9'))
+		    (text[charIndex] < 'A' || text[charIndex] > 'Z') &&
+		    (text[charIndex] < '0' || text[charIndex] > '9'))
 			return false;
 	}
 
@@ -561,8 +530,7 @@ bool isAlphaNumeric(const char* text)
 }
 
 // first letter capitalized and rest made lower case
-std::string FormatName(const std::string& char_name)
-{
+std::string FormatName(const std::string& char_name) {
 	std::string formatted(char_name);
 	if (!formatted.empty()) {
 		std::transform(formatted.begin(), formatted.end(), formatted.begin(), ::tolower);
@@ -572,8 +540,7 @@ std::string FormatName(const std::string& char_name)
 }
 
 // Function to convert single digit or two digit number into words
-std::string Strings::ConvertToDigit(int n, std::string suffix)
-{
+std::string Strings::ConvertToDigit(int n, std::string suffix) {
 	// if n is zero
 	if (n == 0) {
 		return "";
@@ -582,15 +549,13 @@ std::string Strings::ConvertToDigit(int n, std::string suffix)
 	// split n if it is more than 19
 	if (n > 19) {
 		return NUM_TO_ENGLISH_Y[n / 10] + NUM_TO_ENGLISH_X[n % 10] + suffix;
-	}
-	else {
+	} else {
 		return NUM_TO_ENGLISH_X[n] + suffix;
 	}
 }
 
 // Function to convert a given number (max 9-digits) into words
-std::string Strings::NumberToWords(unsigned long long int n)
-{
+std::string Strings::NumberToWords(unsigned long long int n) {
 	// string to store word representation of given number
 	std::string res;
 
@@ -619,35 +584,27 @@ std::string Strings::NumberToWords(unsigned long long int n)
 	return res;
 }
 
-void replace_all(std::string& in, std::string old, std::string repl)
-{
+void replace_all(std::string& in, std::string old, std::string repl) {
 	for (std::string::size_type pos = 0;
-		(pos = in.find(old, pos)) != std::string::npos;
-		pos += repl.size())
-	{
+	     (pos = in.find(old, pos)) != std::string::npos;
+	     pos += repl.size()) {
 		in.replace(pos, old.size(), repl);
 	}
 }
 
-std::string Strings::SecondsToTime(int duration, bool is_milliseconds)
-{
+std::string Strings::SecondsToTime(int duration, bool is_milliseconds) {
 	if (duration <= 0) {
 		return "Unknown";
 	}
 
 	if (is_milliseconds && duration < 1000) {
 		return fmt::format(
-			" {} Millisecond{} ",
-			duration,
-			duration != 1 ? "s" : ""
-		);
+		    " {} Millisecond{} ",
+		    duration,
+		    duration != 1 ? "s" : "");
 	}
 
-	int timer_length = (
-		is_milliseconds ?
-		static_cast<int>(std::ceil(static_cast<float>(duration) / 1000.0f)) :
-		duration
-	);
+	int timer_length = (is_milliseconds ? static_cast<int>(std::ceil(static_cast<float>(duration) / 1000.0f)) : duration);
 
 	int days = int(timer_length / 86400000);
 	timer_length %= 86400000;
@@ -661,285 +618,221 @@ std::string Strings::SecondsToTime(int duration, bool is_milliseconds)
 	std::string hour_string = (hours == 1 ? "Hour" : "Hours");
 	std::string minute_string = (minutes == 1 ? "Minute" : "Minutes");
 	std::string second_string = (seconds == 1 ? "Second" : "Seconds");
-	if (days && hours && minutes && seconds) { // DHMS
+	if (days && hours && minutes && seconds) {  // DHMS
 		time_string = fmt::format(
-			" {} {}, {} {}, {} {}, and {} {} ",
-			days,
-			day_string,
-			hours,
-			hour_string,
-			minutes,
-			minute_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (days && hours && minutes && !seconds) { // DHM
+		    " {} {}, {} {}, {} {}, and {} {} ",
+		    days,
+		    day_string,
+		    hours,
+		    hour_string,
+		    minutes,
+		    minute_string,
+		    seconds,
+		    second_string);
+	} else if (days && hours && minutes && !seconds) {  // DHM
 		time_string = fmt::format(
-			" {} {}, {} {}, and {} {} ",
-			days,
-			day_string,
-			hours,
-			hour_string,
-			minutes,
-			minute_string
-		);
-	}
-	else if (days && hours && !minutes && seconds) { // DHS
+		    " {} {}, {} {}, and {} {} ",
+		    days,
+		    day_string,
+		    hours,
+		    hour_string,
+		    minutes,
+		    minute_string);
+	} else if (days && hours && !minutes && seconds) {  // DHS
 		time_string = fmt::format(
-			" {} {}, {} {}, and {} {} ",
-			days,
-			day_string,
-			hours,
-			hour_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (days && hours && !minutes && !seconds) { // DH
+		    " {} {}, {} {}, and {} {} ",
+		    days,
+		    day_string,
+		    hours,
+		    hour_string,
+		    seconds,
+		    second_string);
+	} else if (days && hours && !minutes && !seconds) {  // DH
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			days,
-			day_string,
-			hours,
-			hour_string
-		);
-	}
-	else if (days && !hours && minutes && seconds) { // DMS
+		    " {} {} and {} {} ",
+		    days,
+		    day_string,
+		    hours,
+		    hour_string);
+	} else if (days && !hours && minutes && seconds) {  // DMS
 		time_string = fmt::format(
-			" {} {}, {} {}, and {} {} ",
-			days,
-			day_string,
-			minutes,
-			minute_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (days && !hours && minutes && !seconds) { // DM
+		    " {} {}, {} {}, and {} {} ",
+		    days,
+		    day_string,
+		    minutes,
+		    minute_string,
+		    seconds,
+		    second_string);
+	} else if (days && !hours && minutes && !seconds) {  // DM
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			days,
-			day_string,
-			minutes,
-			minute_string
-		);
-	}
-	else if (days && !hours && !minutes && seconds) { // DS
+		    " {} {} and {} {} ",
+		    days,
+		    day_string,
+		    minutes,
+		    minute_string);
+	} else if (days && !hours && !minutes && seconds) {  // DS
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			days,
-			day_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (days && !hours && !minutes && !seconds) { // D
+		    " {} {} and {} {} ",
+		    days,
+		    day_string,
+		    seconds,
+		    second_string);
+	} else if (days && !hours && !minutes && !seconds) {  // D
 		time_string = fmt::format(
-			" {} {} ",
-			days,
-			day_string
-		);
-	}
-	else if (!days && hours && minutes && seconds) { // HMS
+		    " {} {} ",
+		    days,
+		    day_string);
+	} else if (!days && hours && minutes && seconds) {  // HMS
 		time_string = fmt::format(
-			" {} {}, {} {}, and {} {} ",
-			hours,
-			hour_string,
-			minutes,
-			minute_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (!days && hours && minutes && !seconds) { // HM
+		    " {} {}, {} {}, and {} {} ",
+		    hours,
+		    hour_string,
+		    minutes,
+		    minute_string,
+		    seconds,
+		    second_string);
+	} else if (!days && hours && minutes && !seconds) {  // HM
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			hours,
-			hour_string,
-			minutes,
-			minute_string
-		);
-	}
-	else if (!days && hours && !minutes && seconds) { // HS
+		    " {} {} and {} {} ",
+		    hours,
+		    hour_string,
+		    minutes,
+		    minute_string);
+	} else if (!days && hours && !minutes && seconds) {  // HS
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			hours,
-			hour_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (!days && hours && !minutes && !seconds) { // H
+		    " {} {} and {} {} ",
+		    hours,
+		    hour_string,
+		    seconds,
+		    second_string);
+	} else if (!days && hours && !minutes && !seconds) {  // H
 		time_string = fmt::format(
-			" {} {} ",
-			hours,
-			hour_string
-		);
-	}
-	else if (!days && !hours && minutes && seconds) { // MS
+		    " {} {} ",
+		    hours,
+		    hour_string);
+	} else if (!days && !hours && minutes && seconds) {  // MS
 		time_string = fmt::format(
-			" {} {} and {} {} ",
-			minutes,
-			minute_string,
-			seconds,
-			second_string
-		);
-	}
-	else if (!days && !hours && minutes && !seconds) { // M
+		    " {} {} and {} {} ",
+		    minutes,
+		    minute_string,
+		    seconds,
+		    second_string);
+	} else if (!days && !hours && minutes && !seconds) {  // M
 		time_string = fmt::format(
-			" {} {} ",
-			minutes,
-			minute_string
-		);
-	}
-	else if (!days && !hours && !minutes && seconds) { // S
+		    " {} {} ",
+		    minutes,
+		    minute_string);
+	} else if (!days && !hours && !minutes && seconds) {  // S
 		time_string = fmt::format(
-			" {} {} ",
-			seconds,
-			second_string
-		);
+		    " {} {} ",
+		    seconds,
+		    second_string);
 	}
 	return time_string;
 }
 
-std::string Strings::MillisecondsToTime(int duration)
-{
+std::string Strings::MillisecondsToTime(int duration) {
 	return SecondsToTime(duration, true);
 }
 
-std::string& Strings::LTrim(std::string& str, const std::string& chars)
-{
+std::string& Strings::LTrim(std::string& str, const std::string& chars) {
 	str.erase(0, str.find_first_not_of(chars));
 	return str;
 }
 
-std::string& Strings::RTrim(std::string& str, const std::string& chars)
-{
+std::string& Strings::RTrim(std::string& str, const std::string& chars) {
 	str.erase(str.find_last_not_of(chars) + 1);
 	return str;
 }
 
-std::string& Strings::Trim(std::string& str, const std::string& chars)
-{
+std::string& Strings::Trim(std::string& str, const std::string& chars) {
 	return LTrim(RTrim(str, chars), chars);
 }
 
-std::string Strings::Money(uint32 platinum, uint32 gold, uint32 silver, uint32 copper)
-{
+std::string Strings::Money(uint32 platinum, uint32 gold, uint32 silver, uint32 copper) {
 	std::string money_string = "Unknown";
-	if (copper && silver && gold && platinum) { // CSGP
+	if (copper && silver && gold && platinum) {  // CSGP
 		money_string = fmt::format(
-			" {} platinum, {} gold, {} silver, and {} copper",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(silver)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (copper && silver && gold && !platinum) { // CSG
+		    " {} platinum, {} gold, {} silver, and {} copper",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(silver)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (copper && silver && gold && !platinum) {  // CSG
 		money_string = fmt::format(
-			" {} gold, {} silver, and {} copper",
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(silver)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (copper && silver && !gold && !platinum) { // CS
+		    " {} gold, {} silver, and {} copper",
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(silver)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (copper && silver && !gold && !platinum) {  // CS
 		money_string = fmt::format(
-			" {} silver and {} copper",
-			Strings::Commify(std::to_string(silver)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (copper && !silver && !gold && platinum) { // CP
+		    " {} silver and {} copper",
+		    Strings::Commify(std::to_string(silver)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (copper && !silver && !gold && platinum) {  // CP
 		money_string = fmt::format(
-			" {} platinum and {} copper",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (copper && silver && !gold && platinum) { // CSP
+		    " {} platinum and {} copper",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (copper && silver && !gold && platinum) {  // CSP
 		money_string = fmt::format(
-			" {} platinum, {} silver, and {} copper",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(silver)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (!copper && silver && gold && platinum) { // SGP
+		    " {} platinum, {} silver, and {} copper",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(silver)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (!copper && silver && gold && platinum) {  // SGP
 		money_string = fmt::format(
-			" {} platinum, {} gold, and {} silver",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(silver))
-		);
-	}
-	else if (!copper && silver && gold && !platinum) { // SG
+		    " {} platinum, {} gold, and {} silver",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(silver)));
+	} else if (!copper && silver && gold && !platinum) {  // SG
 		money_string = fmt::format(
-			" {} gold and {} silver",
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(silver))
-		);
-	}
-	else if (!copper && silver && !gold && platinum) { // SP
+		    " {} gold and {} silver",
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(silver)));
+	} else if (!copper && silver && !gold && platinum) {  // SP
 		money_string = fmt::format(
-			" {} platinum and {} silver",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(silver))
-		);
-	}
-	else if (copper && !silver && gold && platinum) { // CGP
+		    " {} platinum and {} silver",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(silver)));
+	} else if (copper && !silver && gold && platinum) {  // CGP
 		money_string = fmt::format(
-			" {} platinum, {} gold, and {} copper",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (copper && !silver && gold && !platinum) { // CG
+		    " {} platinum, {} gold, and {} copper",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (copper && !silver && gold && !platinum) {  // CG
 		money_string = fmt::format(
-			" {} gold and {} copper",
-			Strings::Commify(std::to_string(gold)),
-			Strings::Commify(std::to_string(copper))
-		);
-	}
-	else if (!copper && !silver && gold && platinum) { // GP
+		    " {} gold and {} copper",
+		    Strings::Commify(std::to_string(gold)),
+		    Strings::Commify(std::to_string(copper)));
+	} else if (!copper && !silver && gold && platinum) {  // GP
 		money_string = fmt::format(
-			" {} platinum and {} gold",
-			Strings::Commify(std::to_string(platinum)),
-			Strings::Commify(std::to_string(gold))
-		);
-	}
-	else if (!copper && !silver && !gold && platinum) { // P
+		    " {} platinum and {} gold",
+		    Strings::Commify(std::to_string(platinum)),
+		    Strings::Commify(std::to_string(gold)));
+	} else if (!copper && !silver && !gold && platinum) {  // P
 		money_string = fmt::format(
-			" {} platinum",
-			Strings::Commify(std::to_string(platinum))
-		);
-	}
-	else if (!copper && !silver && gold && !platinum) { // G
+		    " {} platinum",
+		    Strings::Commify(std::to_string(platinum)));
+	} else if (!copper && !silver && gold && !platinum) {  // G
 		money_string = fmt::format(
-			" {} gold",
-			Strings::Commify(std::to_string(gold))
-		);
-	}
-	else if (!copper && silver && !gold && !platinum) { // S
+		    " {} gold",
+		    Strings::Commify(std::to_string(gold)));
+	} else if (!copper && silver && !gold && !platinum) {  // S
 		money_string = fmt::format(
-			" {} silver",
-			Strings::Commify(std::to_string(silver))
-		);
-	}
-	else if (copper && !silver && !gold && !platinum) { // C
+		    " {} silver",
+		    Strings::Commify(std::to_string(silver)));
+	} else if (copper && !silver && !gold && !platinum) {  // C
 		money_string = fmt::format(
-			" {} copper",
-			Strings::Commify(std::to_string(copper))
-		);
+		    " {} copper",
+		    Strings::Commify(std::to_string(copper)));
 	}
 	return money_string;
 }
 
-uint32 Strings::TimeToSeconds(std::string time_string)
-{
+uint32 Strings::TimeToSeconds(std::string time_string) {
 	if (time_string.empty()) {
 		return 0;
 	}
@@ -976,18 +869,17 @@ uint32 Strings::TimeToSeconds(std::string time_string)
 	return duration;
 }
 
-bool Strings::Contains(const std::string& subject, const std::string& search)
-{
+bool Strings::Contains(const std::string& subject, const std::string& search) {
 	return subject.find(search) != std::string::npos;
 }
 
 // returns a random string of specified length
-std::string Strings::Random(size_t length)
-{
-	auto        randchar = []() -> char {
-		const char   charset[] = "0123456789"
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-			"abcdefghijklmnopqrstuvwxyz";
+std::string Strings::Random(size_t length) {
+	auto randchar = []() -> char {
+		const char charset[] =
+		    "0123456789"
+		    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		    "abcdefghijklmnopqrstuvwxyz";
 		const size_t max_index = (sizeof(charset) - 1);
 		return charset[static_cast<size_t>(std::rand()) % max_index];
 	};

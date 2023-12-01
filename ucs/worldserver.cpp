@@ -1,20 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 #include "../common/global_define.h"
 #include "../common/eqemu_logsys.h"
 #include <iostream>
@@ -40,23 +23,19 @@ extern const ucsconfig *Config;
 extern Database database;
 
 WorldServer::WorldServer()
-: WorldConnection(EmuTCPConnection::packetModeUCS, Config->SharedKey.c_str())
-{
+    : WorldConnection(EmuTCPConnection::packetModeUCS, Config->SharedKey.c_str()) {
 	pTryReconnect = true;
 }
 
-WorldServer::~WorldServer()
-{
+WorldServer::~WorldServer() {
 }
 
-void WorldServer::OnConnected()
-{
+void WorldServer::OnConnected() {
 	LogInfo("Connected to World.");
 	WorldConnection::OnConnected();
 }
 
-void WorldServer::Process()
-{
+void WorldServer::Process() {
 	WorldConnection::Process();
 
 	if (!Connected())
@@ -64,21 +43,17 @@ void WorldServer::Process()
 
 	ServerPacket *pack = nullptr;
 
-	while((pack = tcpc.PopPacket()))
-	{
+	while ((pack = tcpc.PopPacket())) {
 		LogNetcode("Received Opcode: {:#04x}", pack->opcode);
 
-		switch(pack->opcode)
-		{
+		switch (pack->opcode) {
 			case 0: {
 				break;
 			}
-			case ServerOP_KeepAlive:
-			{
+			case ServerOP_KeepAlive: {
 				break;
 			}
-			case ServerOP_UCSMessage:
-			{
+			case ServerOP_UCSMessage: {
 				char *Buffer = (char *)pack->pBuffer;
 
 				auto From = new char[strlen(Buffer) + 1];
@@ -93,21 +68,17 @@ void WorldServer::Process()
 
 				safe_delete_array(From);
 
-				if(Message.length() < 2)
+				if (Message.length() < 2)
 					break;
 
-				if(!c)
-				{
+				if (!c) {
 					LogInfo("Client not found");
 					break;
 				}
 
-				if(Message[0] == ';')
-				{
+				if (Message[0] == ';') {
 					c->SendChannelMessageByNumber(Message.substr(1, std::string::npos));
-				}
-				else if(Message[0] == '[')
-				{
+				} else if (Message[0] == '[') {
 					g_Clientlist->ProcessOPChatCommand(c, Message.substr(1, std::string::npos));
 				}
 
@@ -119,4 +90,3 @@ void WorldServer::Process()
 	safe_delete(pack);
 	return;
 }
-

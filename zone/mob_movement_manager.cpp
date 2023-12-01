@@ -15,11 +15,11 @@
 #include <stdlib.h>
 
 extern double frame_time;
-extern Zone   *zone;
+extern Zone *zone;
 extern FastMath g_Math;
 
 class IMovementCommand {
-public:
+   public:
 	IMovementCommand() = default;
 	virtual ~IMovementCommand() = default;
 	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) = 0;
@@ -28,25 +28,21 @@ public:
 };
 
 class RotateToCommand : public IMovementCommand {
-public:
-	RotateToCommand(double rotate_to, double dir, MobMovementMode mob_movement_mode, bool at_guardpoint)
-	{
-		m_rotate_to      = rotate_to;
-		m_rotate_to_dir  = dir;
+   public:
+	RotateToCommand(double rotate_to, double dir, MobMovementMode mob_movement_mode, bool at_guardpoint) {
+		m_rotate_to = rotate_to;
+		m_rotate_to_dir = dir;
 		m_rotate_to_mode = mob_movement_mode;
-		m_started        = false;
-		m_at_guardpoint  = at_guardpoint;
+		m_started = false;
+		m_at_guardpoint = at_guardpoint;
 	}
 
-	virtual ~RotateToCommand()
-	{
-
+	virtual ~RotateToCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3(0.0f); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
@@ -69,10 +65,10 @@ public:
 			return true;
 		}
 
-		auto rotate_to_speed =  12.0f;
+		auto rotate_to_speed = 12.0f;
 
 		auto from = FixHeading(mob->GetHeading());
-		auto to   = FixHeading(m_rotate_to);
+		auto to = FixHeading(m_rotate_to);
 		auto diff = to - from;
 
 		while (diff < 0.0f) {
@@ -88,15 +84,14 @@ public:
 		if (!m_started) {
 			m_started = true;
 			mob->SetRunAnimation(0.0f);
-			if (dist > 13.0f && rotate_to_speed > 0.0f && rotate_to_speed <= 25.0f) { //send basic rotation
+			if (dist > 13.0f && rotate_to_speed > 0.0f && rotate_to_speed <= 25.0f) {  // send basic rotation
 				mob->SetDelta(glm::vec4(0.0f, 0.0f, 0.0f, static_cast<float>(m_rotate_to_dir * rotate_to_speed)));
 				mob->SendPosUpdate();
 				mob->SendPosUpdate(2);
 				mob->SetMoving(true);
 				mob->SetMoved(false);
 				return false;
-			}
-			else {
+			} else {
 				mob->SetHeading(to);
 				mob->SetRunAnimation(0.0f);
 				mob->SetDelta(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -141,57 +136,53 @@ public:
 		return false;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return m_started;
 	}
 
-private:
-	double          m_rotate_to;
-	double          m_rotate_to_dir;
+   private:
+	double m_rotate_to;
+	double m_rotate_to_dir;
 	MobMovementMode m_rotate_to_mode;
-	bool            m_started;
-	bool			m_at_guardpoint;
+	bool m_started;
+	bool m_at_guardpoint;
 };
 
 class MoveToCommand : public IMovementCommand {
-public:
-	MoveToCommand(float x, float y, float z, MobMovementMode mob_movement_mode)
-	{
+   public:
+	MoveToCommand(float x, float y, float z, MobMovementMode mob_movement_mode) {
 		m_distance_moved_since_correction = 0.0;
-		m_move_to_x                       = x;
-		m_move_to_y                       = y;
-		m_move_to_z                       = z;
-		m_move_to_mode                    = mob_movement_mode;
-		m_last_sent_time                  = 0.0;
-		m_last_sent_speed                 = 0;
-		m_started                         = false;
-		m_total_h_dist                    = 0.0;
-		m_total_v_dist                    = 0.0;
-		m_total_h_dist_moved              = 0.0;
+		m_move_to_x = x;
+		m_move_to_y = y;
+		m_move_to_z = z;
+		m_move_to_mode = mob_movement_mode;
+		m_last_sent_time = 0.0;
+		m_last_sent_speed = 0;
+		m_started = false;
+		m_total_h_dist = 0.0;
+		m_total_v_dist = 0.0;
+		m_total_h_dist_moved = 0.0;
 	}
 
-	virtual ~MoveToCommand()
-	{
-
+	virtual ~MoveToCommand() {
 	}
 
 	glm::vec3 CurrentDest() {
-		return glm::vec3((float)m_move_to_x, (float)m_move_to_y, (float)m_move_to_z); }
+		return glm::vec3((float)m_move_to_x, (float)m_move_to_y, (float)m_move_to_z);
+	}
 
 	/**
 	 * @param mob_movement_manager
 	 * @param mob
 	 * @return
 	 */
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
-		//Send a movement packet when you start moving		
-		double current_time  = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-		float  current_float_speed = 0.0f;
+		// Send a movement packet when you start moving
+		double current_time = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
+		float current_float_speed = 0.0f;
 		int current_speed = 0;
 		float mob_speed = mob->GetCurrentSpeed();
 		bool need_update = false;
@@ -200,13 +191,11 @@ public:
 			if (mob->IsFeared()) {
 				current_float_speed = mob->GetFearSpeed();
 				current_speed = mob->GetIntFearSpeed();
-			}
-			else {
+			} else {
 				current_float_speed = mob->GetRunspeed();
 				current_speed = mob->GetIntRunspeed();
 			}
-		}
-		else {
+		} else {
 			current_float_speed = mob->GetWalkspeed();
 			current_speed = mob->GetIntWalkspeed();
 		}
@@ -220,23 +209,23 @@ public:
 		if (mob->IsClient())
 			current_speed *= 2;
 
-		auto      &p = mob->GetPosition();
+		auto &p = mob->GetPosition();
 		glm::vec2 tar(m_move_to_x, m_move_to_y);
 		glm::vec2 pos(p.x, p.y);
-		double    len = glm::distance(pos, tar);
+		double len = glm::distance(pos, tar);
 
 		if (!m_started) {
 			m_started = true;
 			bool currently_moving = mob->IsMoving();
-			//rotate to the point
+			// rotate to the point
 			if (current_speed > 0)
 				mob->SetMoving(true);
 			float cur_head = mob->GetHeading();
 			mob->SetHeading(mob->CalculateHeadingToTarget(m_move_to_x, m_move_to_y));
 			glm::vec2 dir = tar - pos;
 			m_ndir = glm::normalize(dir);
-			m_total_h_dist    = DistanceNoZ(mob->GetPosition(), glm::vec4(m_move_to_x, m_move_to_y, 0.0f, 0.0f));
-			m_total_v_dist    = m_move_to_z - mob->GetZ();
+			m_total_h_dist = DistanceNoZ(mob->GetPosition(), glm::vec4(m_move_to_x, m_move_to_y, 0.0f, 0.0f));
+			m_total_v_dist = m_move_to_z - mob->GetZ();
 			m_last_sent_speed = current_speed;
 			if (!currently_moving || (currently_moving && current_speed == 0) || cur_head != mob->GetHeading()) {
 				m_last_sent_time = current_time;
@@ -252,9 +241,9 @@ public:
 		if (m_last_sent_speed > 0.0f)
 			mob->SetMoved(true);
 
-		double    distance_moved = frame_time * static_cast<double>(m_last_sent_speed) * 0.4f * 1.45f;
+		double distance_moved = frame_time * static_cast<double>(m_last_sent_speed) * 0.4f * 1.45f;
 
-		//When speed changes
+		// When speed changes
 		if (current_speed != m_last_sent_speed || mob_speed != current_float_speed) {
 			need_update = true;
 		}
@@ -272,13 +261,12 @@ public:
 			mob->SendPosUpdate();
 			mob->SendPosUpdate(2);
 			return true;
-		}
-		else {
+		} else {
 			glm::vec2 npos = pos + (m_ndir * static_cast<float>(distance_moved));
 			len -= distance_moved;
 			double total_distance_traveled = m_total_h_dist - len;
 			// z remaining to move
-			
+
 			double h_remaining = m_total_h_dist - total_distance_traveled;
 			double z_at_pos = mob->GetZ();
 			if (h_remaining > 0) {
@@ -295,7 +283,7 @@ public:
 				m_distance_moved_since_correction += distance_moved;
 			}
 		}
-		//If x seconds have passed without sending an update.
+		// If x seconds have passed without sending an update.
 		if ((m_distance_moved_since_correction > 0.0 || mob->IsClient()) && ((current_time - m_last_sent_time) >= 2.0))
 			need_update = true;
 
@@ -313,47 +301,43 @@ public:
 		return false;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return m_started;
 	}
 
-protected:
-	double          m_distance_moved_since_correction;
-	double          m_move_to_x;
-	double          m_move_to_y;
-	double          m_move_to_z;
+   protected:
+	double m_distance_moved_since_correction;
+	double m_move_to_x;
+	double m_move_to_y;
+	double m_move_to_z;
 	MobMovementMode m_move_to_mode;
-	bool            m_started;
-	glm::vec2		m_ndir;
+	bool m_started;
+	glm::vec2 m_ndir;
 
 	double m_last_sent_time;
-	int    m_last_sent_speed;
+	int m_last_sent_speed;
 	double m_total_h_dist;
 	double m_total_v_dist;
 	double m_total_h_dist_moved;
 };
 
 class FlyToCommand : public IMovementCommand {
-public:
-	FlyToCommand(float x, float y, float z, MobMovementMode mob_movement_mode)
-	{
+   public:
+	FlyToCommand(float x, float y, float z, MobMovementMode mob_movement_mode) {
 		m_distance_moved_since_correction = 0.0;
-		m_move_to_x                       = x;
-		m_move_to_y                       = y;
-		m_move_to_z                       = z;
-		m_move_to_mode                    = mob_movement_mode;
-		m_last_sent_time                  = 0.0;
-		m_last_sent_speed                 = 0;
-		m_started                         = false;
-		m_total_h_dist                    = 0.0;
-		m_total_v_dist                    = 0.0;
+		m_move_to_x = x;
+		m_move_to_y = y;
+		m_move_to_z = z;
+		m_move_to_mode = mob_movement_mode;
+		m_last_sent_time = 0.0;
+		m_last_sent_speed = 0;
+		m_started = false;
+		m_total_h_dist = 0.0;
+		m_total_v_dist = 0.0;
 		m_total_h_dist_moved = 0.0;
 	}
 
-	virtual ~FlyToCommand()
-	{
-
+	virtual ~FlyToCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3((float)m_move_to_x, (float)m_move_to_y, (float)m_move_to_z); }
@@ -363,15 +347,14 @@ public:
 	 * @param mob
 	 * @return
 	 */
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
 
-		//Send a movement packet when you start moving
-		double current_time  = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-		float    current_float_speed = 0.0f;
+		// Send a movement packet when you start moving
+		double current_time = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
+		float current_float_speed = 0.0f;
 		int current_speed = 0;
 		float mob_speed = mob->GetCurrentSpeed();
 
@@ -379,13 +362,11 @@ public:
 			if (mob->IsFeared()) {
 				current_float_speed = mob->GetFearSpeed();
 				current_speed = mob->GetIntFearSpeed();
-			}
-			else {
+			} else {
 				current_float_speed = mob->GetRunspeed();
 				current_speed = mob->GetIntRunspeed();
 			}
-		}
-		else {
+		} else {
 			current_float_speed = mob->GetWalkspeed();
 			current_speed = mob->GetIntWalkspeed();
 		}
@@ -402,40 +383,40 @@ public:
 
 		if (!m_started) {
 			m_started = true;
-			//rotate to the point
+			// rotate to the point
 			if (current_speed > 0)
 				mob->SetMoving(true);
 			mob->SetHeading(mob->CalculateHeadingToTarget(m_move_to_x, m_move_to_y));
 
 			m_last_sent_speed = current_speed;
-			m_last_sent_time  = current_time;
-			m_total_h_dist    = DistanceNoZ(mob->GetPosition(), glm::vec4(m_move_to_x, m_move_to_y, 0.0f, 0.0f));
-			m_total_v_dist    = m_move_to_z - mob->GetZ();
+			m_last_sent_time = current_time;
+			m_total_h_dist = DistanceNoZ(mob->GetPosition(), glm::vec4(m_move_to_x, m_move_to_y, 0.0f, 0.0f));
+			m_total_v_dist = m_move_to_z - mob->GetZ();
 			mob->SendPosUpdate();
 			mob->SendPosUpdate(2);
 			return false;
 		}
 
-		//When speed changes
+		// When speed changes
 		if (current_speed != m_last_sent_speed || mob_speed != current_float_speed) {
 			m_distance_moved_since_correction = 0.0;
 			m_last_sent_speed = current_speed;
-			m_last_sent_time  = current_time;
+			m_last_sent_time = current_time;
 			mob->SendPosUpdate();
 			mob->SendPosUpdate(2);
 		}
 
 		bool need_update = false;
-		auto      &p  = mob->GetPosition();
+		auto &p = mob->GetPosition();
 		glm::vec2 tar(m_move_to_x, m_move_to_y);
 		glm::vec2 pos(p.x, p.y);
-		double    len = glm::distance(pos, tar);
+		double len = glm::distance(pos, tar);
 		if (current_speed > 0)
 			mob->SetMoved(true);
 
-		glm::vec2 dir            = tar - pos;
-		glm::vec2 ndir           = glm::normalize(dir);
-		double    distance_moved = frame_time * current_speed * 0.4f * 1.45f;
+		glm::vec2 dir = tar - pos;
+		glm::vec2 ndir = glm::normalize(dir);
+		double distance_moved = frame_time * current_speed * 0.4f * 1.45f;
 
 		m_total_h_dist_moved += distance_moved;
 		if (distance_moved >= len || m_total_h_dist_moved > m_total_h_dist) {
@@ -447,14 +428,13 @@ public:
 			mob->SendPosUpdate();
 			mob->SendPosUpdate(2);
 			return true;
-		}
-		else {
+		} else {
 			glm::vec2 npos = pos + (ndir * static_cast<float>(distance_moved));
 
 			len -= distance_moved;
 			double total_distance_traveled = m_total_h_dist - len;
-			double start_z                 = m_move_to_z - m_total_v_dist;
-			double z_at_pos                = start_z + (m_total_v_dist * (total_distance_traveled / m_total_h_dist));
+			double start_z = m_move_to_z - m_total_v_dist;
+			double z_at_pos = start_z + (m_total_v_dist * (total_distance_traveled / m_total_h_dist));
 
 			if (mob->IsNPC()) {
 				entity_list.ProcessMove(mob->CastToNPC(), npos.x, npos.y, z_at_pos);
@@ -463,7 +443,7 @@ public:
 			mob->SetPosition(vec);
 			m_distance_moved_since_correction += distance_moved;
 		}
-		//If x seconds have passed without sending an update.
+		// If x seconds have passed without sending an update.
 		if ((current_time - m_last_sent_time >= 2.0) && (mob->IsClient() || (m_distance_moved_since_correction > 0.0))) {
 			m_distance_moved_since_correction = 0.0;
 			m_last_sent_speed = current_speed;
@@ -475,30 +455,28 @@ public:
 		return false;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return m_started;
 	}
 
-protected:
-	double          m_distance_moved_since_correction;
-	double          m_move_to_x;
-	double          m_move_to_y;
-	double          m_move_to_z;
+   protected:
+	double m_distance_moved_since_correction;
+	double m_move_to_x;
+	double m_move_to_y;
+	double m_move_to_z;
 	MobMovementMode m_move_to_mode;
-	bool            m_started;
+	bool m_started;
 
 	double m_last_sent_time;
-	int    m_last_sent_speed;
+	int m_last_sent_speed;
 	double m_total_h_dist;
 	double m_total_v_dist;
 	double m_total_h_dist_moved;
 };
 
 class SwimToCommand : public MoveToCommand {
-public:
-	SwimToCommand(float x, float y, float z, MobMovementMode mob_movement_mode) : MoveToCommand(x, y, z, mob_movement_mode)
-	{
+   public:
+	SwimToCommand(float x, float y, float z, MobMovementMode mob_movement_mode) : MoveToCommand(x, y, z, mob_movement_mode) {
 		m_distance_moved_since_correction = 0.0;
 		m_move_to_x = x;
 		m_move_to_y = y;
@@ -514,14 +492,13 @@ public:
 
 	glm::vec3 CurrentDest() { return glm::vec3((float)m_move_to_x, (float)m_move_to_y, (float)m_move_to_z); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
-		//Send a movement packet when you start moving		
+		// Send a movement packet when you start moving
 		double current_time = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-		float  current_float_speed = 0;
+		float current_float_speed = 0;
 		float mob_speed = mob->GetCurrentSpeed();
 		int current_speed = 0;
 		bool need_update = false;
@@ -530,13 +507,11 @@ public:
 			if (mob->IsFeared()) {
 				current_float_speed = mob->GetFearSpeed();
 				current_speed = mob->GetIntFearSpeed();
-			}
-			else {
+			} else {
 				current_float_speed = mob->GetRunspeed();
 				current_speed = mob->GetIntRunspeed();
 			}
-		}
-		else {
+		} else {
 			current_float_speed = mob->GetWalkspeed();
 			current_speed = mob->GetIntWalkspeed();
 		}
@@ -551,15 +526,15 @@ public:
 		if (mob->IsClient())
 			current_speed *= 2;
 
-		auto      &p = mob->GetPosition();
+		auto &p = mob->GetPosition();
 		glm::vec2 tar(m_move_to_x, m_move_to_y);
 		glm::vec2 pos(p.x, p.y);
-		double    len = glm::distance(pos, tar);
+		double len = glm::distance(pos, tar);
 
 		if (!m_started) {
 			m_started = true;
 			bool currently_moving = mob->IsMoving();
-			//rotate to the point
+			// rotate to the point
 			if (current_speed > 0)
 				mob->SetMoving(true);
 			mob->SetHeading(mob->CalculateHeadingToTarget(m_move_to_x, m_move_to_y));
@@ -580,9 +555,9 @@ public:
 		if (m_last_sent_speed > 0)
 			mob->SetMoved(true);
 
-		double    distance_moved = frame_time * static_cast<double>(m_last_sent_speed) * 0.4f * 1.45f;
+		double distance_moved = frame_time * static_cast<double>(m_last_sent_speed) * 0.4f * 1.45f;
 
-		//When speed changes
+		// When speed changes
 		if (current_speed != m_last_sent_speed || mob_speed != current_float_speed) {
 			need_update = true;
 		}
@@ -596,8 +571,7 @@ public:
 			mob->SendPosUpdate();
 			mob->SendPosUpdate(2);
 			return true;
-		}
-		else {
+		} else {
 			glm::vec2 npos = pos + (m_ndir * static_cast<float>(distance_moved));
 
 			len -= distance_moved;
@@ -612,9 +586,8 @@ public:
 			mob->SetPosition(vec);
 
 			m_distance_moved_since_correction += distance_moved;
-
 		}
-		//If x seconds have passed without sending an update.
+		// If x seconds have passed without sending an update.
 		if ((m_distance_moved_since_correction > 0.0 || mob->IsClient()) && ((current_time - m_last_sent_time) >= 2.0))
 			need_update = true;
 
@@ -630,24 +603,20 @@ public:
 };
 
 class TeleportToCommand : public IMovementCommand {
-public:
-	TeleportToCommand(float x, float y, float z, float heading)
-	{
-		m_teleport_to_x       = x;
-		m_teleport_to_y       = y;
-		m_teleport_to_z       = z;
+   public:
+	TeleportToCommand(float x, float y, float z, float heading) {
+		m_teleport_to_x = x;
+		m_teleport_to_y = y;
+		m_teleport_to_z = z;
 		m_teleport_to_heading = heading;
 	}
 
-	virtual ~TeleportToCommand()
-	{
-
+	virtual ~TeleportToCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3(0.0f); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
@@ -665,13 +634,11 @@ public:
 		return true;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return false;
 	}
 
-private:
-
+   private:
 	double m_teleport_to_x;
 	double m_teleport_to_y;
 	double m_teleport_to_z;
@@ -679,20 +646,16 @@ private:
 };
 
 class StopMovingCommand : public IMovementCommand {
-public:
-	StopMovingCommand()
-	{
+   public:
+	StopMovingCommand() {
 	}
 
-	virtual ~StopMovingCommand()
-	{
-
+	virtual ~StopMovingCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3(0.0f); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
@@ -711,27 +674,22 @@ public:
 		return true;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return false;
 	}
 };
 
 class StopSwimmingCommand : public IMovementCommand {
-public:
-	StopSwimmingCommand()
-	{
+   public:
+	StopSwimmingCommand() {
 	}
 
-	virtual ~StopSwimmingCommand()
-	{
-
+	virtual ~StopSwimmingCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3(0.0f); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
@@ -746,27 +704,22 @@ public:
 		return true;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return false;
 	}
 };
 
 class EvadeCombatCommand : public IMovementCommand {
-public:
-	EvadeCombatCommand()
-	{
+   public:
+	EvadeCombatCommand() {
 	}
 
-	virtual ~EvadeCombatCommand()
-	{
-
+	virtual ~EvadeCombatCommand() {
 	}
 
 	glm::vec3 CurrentDest() { return glm::vec3(0.0f); }
 
-	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob)
-	{
+	virtual bool Process(MobMovementManager *mob_movement_manager, Mob *mob) {
 		if (!mob->IsAIControlled()) {
 			return true;
 		}
@@ -785,23 +738,21 @@ public:
 		return true;
 	}
 
-	virtual bool Started() const
-	{
+	virtual bool Started() const {
 		return false;
 	}
 };
 
 struct MovementStats {
-	MovementStats()
-	{
-		LastResetTime     = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-		TotalSent         = 0ULL;
+	MovementStats() {
+		LastResetTime = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
+		TotalSent = 0ULL;
 		TotalSentMovement = 0ULL;
 		TotalSentPosition = 0ULL;
-		TotalSentHeading  = 0ULL;
+		TotalSentHeading = 0ULL;
 	}
 
-	double   LastResetTime;
+	double LastResetTime;
 	uint64_t TotalSent;
 	uint64_t TotalSentMovement;
 	uint64_t TotalSentPosition;
@@ -809,13 +760,12 @@ struct MovementStats {
 };
 
 struct NavigateTo {
-	NavigateTo()
-	{
-		navigate_to_x       = 0.0;
-		navigate_to_y       = 0.0;
-		navigate_to_z       = 0.0;
-		navigate_to_speed   = 0.0f;
-		last_set_time       = 0.0;
+	NavigateTo() {
+		navigate_to_x = 0.0;
+		navigate_to_y = 0.0;
+		navigate_to_z = 0.0;
+		navigate_to_speed = 0.0f;
+		last_set_time = 0.0;
 		navigate_to_mode = MovementWalking;
 	}
 
@@ -830,11 +780,10 @@ struct NavigateTo {
 
 struct MobMovementEntry {
 	std::deque<std::unique_ptr<IMovementCommand>> Commands;
-	NavigateTo                                    NavTo;
+	NavigateTo NavTo;
 };
 
-void AdjustRoute(std::list<IPathfinder::IPathNode> &nodes, Mob *who)
-{
+void AdjustRoute(std::list<IPathfinder::IPathNode> &nodes, Mob *who) {
 	if (!zone->HasMap() || !zone->HasWaterMap() || !who || who->IsBoat()) {
 		return;
 	}
@@ -867,28 +816,25 @@ void AdjustRoute(std::list<IPathfinder::IPathNode> &nodes, Mob *who)
 
 struct MobMovementManager::Implementation {
 	std::map<Mob *, MobMovementEntry> Entries;
-	std::vector<Client *>             Clients;
-	MovementStats                     Stats;
+	std::vector<Client *> Clients;
+	MovementStats Stats;
 };
 
-MobMovementManager::MobMovementManager()
-{
+MobMovementManager::MobMovementManager() {
 	_impl.reset(new Implementation());
 }
 
-MobMovementManager::~MobMovementManager()
-{
+MobMovementManager::~MobMovementManager() {
 }
 
-void MobMovementManager::Process()
-{
+void MobMovementManager::Process() {
 	for (auto &iter : _impl->Entries) {
-		auto &ent      = iter.second;
+		auto &ent = iter.second;
 		auto &commands = ent.Commands;
 
 		while (true != commands.empty()) {
 			auto &cmd = commands.front();
-			auto r    = cmd->Process(this, iter.first);
+			auto r = cmd->Process(this, iter.first);
 
 			if (true != r) {
 				break;
@@ -902,32 +848,28 @@ void MobMovementManager::Process()
 /**
  * @param mob
  */
-void MobMovementManager::AddMob(Mob *mob)
-{
+void MobMovementManager::AddMob(Mob *mob) {
 	_impl->Entries.insert(std::make_pair(mob, MobMovementEntry()));
 }
 
 /**
  * @param mob
  */
-void MobMovementManager::RemoveMob(Mob *mob)
-{
+void MobMovementManager::RemoveMob(Mob *mob) {
 	_impl->Entries.erase(mob);
 }
 
 /**
  * @param client
  */
-void MobMovementManager::AddClient(Client *client)
-{
+void MobMovementManager::AddClient(Client *client) {
 	_impl->Clients.push_back(client);
 }
 
 /**
  * @param client
  */
-void MobMovementManager::RemoveClient(Client *client)
-{
+void MobMovementManager::RemoveClient(Client *client) {
 	auto iter = _impl->Clients.begin();
 	while (iter != _impl->Clients.end()) {
 		if (client == *iter) {
@@ -944,8 +886,7 @@ void MobMovementManager::RemoveClient(Client *client)
  * @param to
  * @param mob_movement_mode
  */
-void MobMovementManager::RotateTo(Mob *who, float to, MobMovementMode mob_movement_mode, bool at_guardpoint)
-{
+void MobMovementManager::RotateTo(Mob *who, float to, MobMovementMode mob_movement_mode, bool at_guardpoint) {
 	auto iter = _impl->Entries.find(who);
 	auto &ent = (*iter);
 
@@ -966,8 +907,7 @@ void MobMovementManager::RotateTo(Mob *who, float to, MobMovementMode mob_moveme
  * @param z
  * @param heading
  */
-void MobMovementManager::Teleport(Mob *who, float x, float y, float z, float heading)
-{
+void MobMovementManager::Teleport(Mob *who, float x, float y, float z, float heading) {
 	auto iter = _impl->Entries.find(who);
 	auto &ent = (*iter);
 
@@ -983,8 +923,7 @@ void MobMovementManager::Teleport(Mob *who, float x, float y, float z, float hea
  * @param z
  * @param mode
  */
-void MobMovementManager::NavigateTo(Mob *who, float x, float y, float z, MobMovementMode mode)
-{
+void MobMovementManager::NavigateTo(Mob *who, float x, float y, float z, MobMovementMode mode) {
 	if (IsPositionEqualWithinCertainZ(glm::vec3(x, y, z), glm::vec3(who->GetX(), who->GetY(), who->GetZ()), 6.0f)) {
 		who->SetPosition(glm::vec4(x, y, z, who->GetHeading()));
 		return;
@@ -998,16 +937,14 @@ void MobMovementManager::NavigateTo(Mob *who, float x, float y, float z, MobMove
 	float current_speed = who->GetCurrentSpeed();
 	bool speed_changed = (who->GetCurrentSpeed() != nav.navigate_to_speed) || (mode != nav.navigate_to_mode);
 	if ((current_time - nav.last_set_time) > 0.5 || speed_changed || ((ent.second.Commands.size() < 2) && (current_time - nav.last_set_time) > 0.2)) {
-		//Can potentially recalc
+		// Can potentially recalc
 		auto within = IsPositionWithinSimpleCylinder(
-			glm::vec3(x, y, z),
-			glm::vec3(nav.navigate_to_x, nav.navigate_to_y, nav.navigate_to_z),
-			1.5f,
-			6.0f
-		);
+		    glm::vec3(x, y, z),
+		    glm::vec3(nav.navigate_to_x, nav.navigate_to_y, nav.navigate_to_z),
+		    1.5f,
+		    6.0f);
 
 		if (false == within || ent.second.Commands.size() == 0 || speed_changed) {
-
 			// we are updating path to a new location
 			// see what our current command was heading us toward.
 			glm::vec3 last(0.0f);
@@ -1018,13 +955,13 @@ void MobMovementManager::NavigateTo(Mob *who, float x, float y, float z, MobMove
 			}
 
 			ent.second.Commands.clear();
-			//Path is no longer valid, calculate a new path
+			// Path is no longer valid, calculate a new path
 			UpdatePath(who, x, y, z, mode, last.x, last.y, last.z);
-			nav.navigate_to_x       = x;
-			nav.navigate_to_y       = y;
-			nav.navigate_to_z       = z;
+			nav.navigate_to_x = x;
+			nav.navigate_to_y = y;
+			nav.navigate_to_z = z;
 			nav.navigate_to_speed = current_speed;
-			nav.last_set_time       = current_time;
+			nav.last_set_time = current_time;
 			nav.navigate_to_mode = mode;
 		}
 	}
@@ -1033,15 +970,14 @@ void MobMovementManager::NavigateTo(Mob *who, float x, float y, float z, MobMove
 /**
  * @param who
  */
-void MobMovementManager::StopNavigation(Mob *who, float new_head)
-{
+void MobMovementManager::StopNavigation(Mob *who, float new_head) {
 	auto iter = _impl->Entries.find(who);
 	auto &ent = (*iter);
 	auto &nav = ent.second.NavTo;
 
-	nav.navigate_to_x       = 0.0;
-	nav.navigate_to_y       = 0.0;
-	nav.navigate_to_z       = 0.0;
+	nav.navigate_to_x = 0.0;
+	nav.navigate_to_y = 0.0;
+	nav.navigate_to_z = 0.0;
 	nav.navigate_to_speed = 0.0f;
 
 	if (new_head != -1.0f && who->GetHeading() != new_head) {
@@ -1074,30 +1010,28 @@ void MobMovementManager::StopNavigation(Mob *who, float new_head)
  * @param single_client
  */
 void MobMovementManager::SendCommandToClients(
-	Mob *mob,
-	float delta_x,
-	float delta_y,
-	float delta_z,
-	float delta_heading,
-	int anim,
-	ClientRange range,
-	Client* single_client,
-	Client* ignore_client
-)
-{
+    Mob *mob,
+    float delta_x,
+    float delta_y,
+    float delta_z,
+    float delta_heading,
+    int anim,
+    ClientRange range,
+    Client *single_client,
+    Client *ignore_client) {
 	if (range == ClientRangeNone) {
 		return;
 	}
 
 	EQApplicationPacket outapp(OP_ClientUpdate, sizeof(SpawnPositionUpdate_Struct));
-	auto                *spu = (SpawnPositionUpdate_Struct*) outapp.pBuffer;
+	auto *spu = (SpawnPositionUpdate_Struct *)outapp.pBuffer;
 
 	FillCommandStruct(spu, mob, delta_x, delta_y, delta_z, delta_heading, anim);
 
-		//float short_range = RuleR(Pathing, ShortMovementUpdateRange);
-		//float long_range = zone->GetMaxMovementUpdateRange();
+	// float short_range = RuleR(Pathing, ShortMovementUpdateRange);
+	// float long_range = zone->GetMaxMovementUpdateRange();
 
-	for (auto& c : _impl->Clients) {
+	for (auto &c : _impl->Clients) {
 		if (single_client && c != single_client) {
 			continue;
 		}
@@ -1112,11 +1046,9 @@ void MobMovementManager::SendCommandToClients(
 
 			if (anim != 0) {
 				_impl->Stats.TotalSentMovement++;
-			}
-			else if (delta_heading != 0) {
+			} else if (delta_heading != 0) {
 				_impl->Stats.TotalSentHeading++;
-			}
-			else {
+			} else {
 				_impl->Stats.TotalSentPosition++;
 			}
 
@@ -1129,8 +1061,7 @@ void MobMovementManager::SendCommandToClients(
  * @param in
  * @return
  */
-float MobMovementManager::FixHeading(float in)
-{
+float MobMovementManager::FixHeading(float in) {
 	auto h = in;
 	while (h >= 256.0) {
 		h -= 256.0;
@@ -1146,43 +1077,37 @@ float MobMovementManager::FixHeading(float in)
 /**
  * @param client
  */
-void MobMovementManager::DumpStats(Client *client)
-{
+void MobMovementManager::DumpStats(Client *client) {
 	auto current_time = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-	auto total_time   = current_time - _impl->Stats.LastResetTime;
+	auto total_time = current_time - _impl->Stats.LastResetTime;
 
 	client->Message(15, "Dumping Movement Stats:");
 	client->Message(
-		15,
-		"Total Sent: %u (%.2f / sec)",
-		_impl->Stats.TotalSent,
-		static_cast<double>(_impl->Stats.TotalSent) / total_time
-	);
+	    15,
+	    "Total Sent: %u (%.2f / sec)",
+	    _impl->Stats.TotalSent,
+	    static_cast<double>(_impl->Stats.TotalSent) / total_time);
 	client->Message(
-		15,
-		"Total Heading: %u (%.2f / sec)",
-		_impl->Stats.TotalSentHeading,
-		static_cast<double>(_impl->Stats.TotalSentHeading) / total_time
-	);
+	    15,
+	    "Total Heading: %u (%.2f / sec)",
+	    _impl->Stats.TotalSentHeading,
+	    static_cast<double>(_impl->Stats.TotalSentHeading) / total_time);
 	client->Message(
-		15,
-		"Total Movement: %u (%.2f / sec)",
-		_impl->Stats.TotalSentMovement,
-		static_cast<double>(_impl->Stats.TotalSentMovement) / total_time
-	);
+	    15,
+	    "Total Movement: %u (%.2f / sec)",
+	    _impl->Stats.TotalSentMovement,
+	    static_cast<double>(_impl->Stats.TotalSentMovement) / total_time);
 	client->Message(
-		15,
-		"Total Position: %u (%.2f / sec)",
-		_impl->Stats.TotalSentPosition,
-		static_cast<double>(_impl->Stats.TotalSentPosition) / total_time
-	);
+	    15,
+	    "Total Position: %u (%.2f / sec)",
+	    _impl->Stats.TotalSentPosition,
+	    static_cast<double>(_impl->Stats.TotalSentPosition) / total_time);
 }
 
-void MobMovementManager::ClearStats()
-{
-	_impl->Stats.LastResetTime     = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
-	_impl->Stats.TotalSent         = 0;
-	_impl->Stats.TotalSentHeading  = 0;
+void MobMovementManager::ClearStats() {
+	_impl->Stats.LastResetTime = static_cast<double>(Timer::GetCurrentTime()) / 1000.0;
+	_impl->Stats.TotalSent = 0;
+	_impl->Stats.TotalSentHeading = 0;
 	_impl->Stats.TotalSentMovement = 0;
 	_impl->Stats.TotalSentPosition = 0;
 }
@@ -1197,24 +1122,22 @@ void MobMovementManager::ClearStats()
  * @param anim
  */
 void MobMovementManager::FillCommandStruct(
-	SpawnPositionUpdate_Struct *position_update,
-	Mob *mob,
-	float delta_x,
-	float delta_y,
-	float delta_z,
-	float delta_heading,
-	int anim
-)
-{
+    SpawnPositionUpdate_Struct *position_update,
+    Mob *mob,
+    float delta_x,
+    float delta_y,
+    float delta_z,
+    float delta_heading,
+    int anim) {
 	memset(position_update, 0x00, sizeof(SpawnPositionUpdate_Struct));
-	position_update->spawn_id      = mob->GetID();
-	position_update->x_pos         = static_cast<int16>(mob->GetX());
-	position_update->y_pos         = static_cast<int16>(mob->GetY());
-	position_update->z_pos         = static_cast<int16>(mob->GetZ() * 10.0f);
-	position_update->heading       = static_cast<int8>(mob->GetHeading());
+	position_update->spawn_id = mob->GetID();
+	position_update->x_pos = static_cast<int16>(mob->GetX());
+	position_update->y_pos = static_cast<int16>(mob->GetY());
+	position_update->z_pos = static_cast<int16>(mob->GetZ() * 10.0f);
+	position_update->heading = static_cast<int8>(mob->GetHeading());
 	position_update->delta_yzx.SetValue(delta_x, delta_y, delta_z);
 	position_update->delta_heading = static_cast<int8>(delta_heading);
-	position_update->anim_type     = mob->GetRunAnimSpeed();
+	position_update->anim_type = mob->GetRunAnimSpeed();
 }
 
 /**
@@ -1224,9 +1147,8 @@ void MobMovementManager::FillCommandStruct(
  * @param z
  * @param mob_movement_mode
  */
-void MobMovementManager::UpdatePath(Mob *who, float x, float y, float z, MobMovementMode mob_movement_mode, float last_x, float last_y, float last_z)
-{
-	Mob *target=who->GetTarget();
+void MobMovementManager::UpdatePath(Mob *who, float x, float y, float z, MobMovementMode mob_movement_mode, float last_x, float last_y, float last_z) {
+	Mob *target = who->GetTarget();
 
 	if (!zone->HasMap()) {
 		auto iter = _impl->Entries.find(who);
@@ -1238,19 +1160,17 @@ void MobMovementManager::UpdatePath(Mob *who, float x, float y, float z, MobMove
 
 	if (who->IsBoat()) {
 		UpdatePathBoat(who, x, y, z, mob_movement_mode);
-	}
-	else if ((who->IsNPC() && who->CastToNPC()->IsUnderwaterOnly()) || zone->IsWaterZone(who->GetZ()) || (zone->HasWaterMap() && zone->watermap->InLiquid(who->GetPosition()))) {
+	} else if ((who->IsNPC() && who->CastToNPC()->IsUnderwaterOnly()) || zone->IsWaterZone(who->GetZ()) || (zone->HasWaterMap() && zone->watermap->InLiquid(who->GetPosition()))) {
 		UpdatePathUnderwater(who, x, y, z, mob_movement_mode);
 	}
 	// If we can fly, and we have a target and we have LoS, simply fly to them.
 	// if we ever lose LoS we go back to mesh run mode.
 	else if (target && who->IsNPC() && (who->GetFlyMode() == 1 || who->GetFlyMode() == 2) &&
-				who->CheckLosFN(x,y,z,target->GetSize())) {
+	         who->CheckLosFN(x, y, z, target->GetSize())) {
 		auto iter = _impl->Entries.find(who);
 		auto &ent = (*iter);
 		PushFlyTo(ent.second, x, y, z, mob_movement_mode);
-		}
-	else {
+	} else {
 		UpdatePathGround(who, x, y, z, mob_movement_mode, last_x, last_y, last_z);
 	}
 }
@@ -1262,17 +1182,16 @@ void MobMovementManager::UpdatePath(Mob *who, float x, float y, float z, MobMove
  * @param z
  * @param mode
  */
-void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, MobMovementMode mode, float last_x, float last_y, float last_z)
-{
+void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, MobMovementMode mode, float last_x, float last_y, float last_z) {
 	PathfinderOptions opts;
 	opts.smooth_path = true;
-	opts.step_size   = RuleR(Pathing, NavmeshStepSize);
-	opts.offset      = who->GetZOffset();
-	opts.flags       = PathingNotDisabled ^ PathingZoneLine;
+	opts.step_size = RuleR(Pathing, NavmeshStepSize);
+	opts.offset = who->GetZOffset();
+	opts.flags = PathingNotDisabled ^ PathingZoneLine;
 
-	//This is probably pointless since the nav mesh tool currently sets zonelines to disabled anyway
+	// This is probably pointless since the nav mesh tool currently sets zonelines to disabled anyway
 	auto partial = false;
-	auto stuck   = false;
+	auto stuck = false;
 	glm::vec3 begin(who->GetX(), who->GetY(), who->GetZ());
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(begin) || zone->IsWaterZone(begin.z);
 	if (!in_liquid) {
@@ -1280,8 +1199,7 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 			float best_z = zone->zonemap->FindBestZ(begin, nullptr);
 			if (best_z != BEST_Z_INVALID)
 				begin.z = best_z + who->GetZOffset();
-		}
-		else {
+		} else {
 			float best_z = zone->zonemap->FindBestZ(begin, nullptr, 20.0f);
 			if (best_z == BEST_Z_INVALID)
 				best_z = zone->zonemap->FindBestZ(begin, nullptr);
@@ -1292,16 +1210,15 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 
 	glm::vec3 end(x, y, z);
 
-	auto route   = zone->pathing->FindPath(
-		begin,
-		end,
-		partial,
-		stuck,
-		opts
-	);
+	auto route = zone->pathing->FindPath(
+	    begin,
+	    end,
+	    partial,
+	    stuck,
+	    opts);
 
 	auto eiter = _impl->Entries.find(who);
-	auto &ent  = (*eiter);
+	auto &ent = (*eiter);
 
 	if (route.size() == 0) {
 		HandleStuckBehavior(who, x, y, z, mode);
@@ -1310,16 +1227,15 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 
 	AdjustRoute(route, who);
 
-	//avoid doing any processing if the mob is stuck to allow normal stuck code to work.
+	// avoid doing any processing if the mob is stuck to allow normal stuck code to work.
 	if (!stuck) {
-
-		//there are times when the routes returned are no differen than where the mob is currently standing. What basically happens
-		//is a mob will get 'stuck' in such a way that it should be moving but the 'moving' place is the exact same spot it is at.
-		//this is a problem and creates an area of ground that if a mob gets to, will stay there forever. If socal this creates a
+		// there are times when the routes returned are no differen than where the mob is currently standing. What basically happens
+		// is a mob will get 'stuck' in such a way that it should be moving but the 'moving' place is the exact same spot it is at.
+		// this is a problem and creates an area of ground that if a mob gets to, will stay there forever. If socal this creates a
 		//"Ball of Death" (tm). This code tries to prevent this by simply warping the mob to the requested x/y. Better to have a warp than
-		//have stuck mobs.
+		// have stuck mobs.
 
-		auto routeNode   = route.begin();
+		auto routeNode = route.begin();
 		bool noValidPath = true;
 		while (routeNode != route.end() && noValidPath == true) {
 			auto &currentNode = (*routeNode);
@@ -1329,22 +1245,21 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 			}
 
 			if (!(currentNode.pos.x == who->GetX() && currentNode.pos.y == who->GetY())) {
-				//if one of the nodes to move to, is not our current node, pass it.
+				// if one of the nodes to move to, is not our current node, pass it.
 				noValidPath = false;
 				break;
 			}
-			//move to the next node
+			// move to the next node
 			routeNode++;
 		}
 		if (noValidPath) {
-			//we are 'stuck' in a path, lets just get out of this by 'teleporting' to the next position.
+			// we are 'stuck' in a path, lets just get out of this by 'teleporting' to the next position.
 			PushTeleportTo(
-				ent.second,
-				x,
-				y,
-				z,
-				CalculateHeadingAngleBetweenPositions(who->GetX(), who->GetY(), x, y)
-			);
+			    ent.second,
+			    x,
+			    y,
+			    z,
+			    CalculateHeadingAngleBetweenPositions(who->GetX(), who->GetY(), x, y));
 			return;
 		}
 		if (!(last_x == 0.0f && last_y != 0.0f && last_z != 0.0f)) {
@@ -1357,12 +1272,10 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 				// first node should be our location
 				if (!(currentNode.pos.x == who->GetX() && currentNode.pos.y == who->GetY())) {
 					nodes_checked = 5;
-				}
-				else {
+				} else {
 					routeNode++;
 				}
 				while (routeNode != route.end() && found_last == false && nodes_checked < 5) {
-
 					if (routeNode == route.end()) {
 						continue;
 					}
@@ -1374,7 +1287,7 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 						found_last = true;
 						break;
 					}
-					//move to the next node
+					// move to the next node
 					nodes_checked++;
 					routeNode++;
 				}
@@ -1395,7 +1308,6 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 				}
 			}
 		}
-		
 	}
 
 	auto iter = route.begin();
@@ -1417,27 +1329,23 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 		if (next_node.teleport)
 			continue;
 
-		//move to / teleport to node + 1
+		// move to / teleport to node + 1
 		if (current_node.teleport && next_node.pos.x != 0.0f && next_node.pos.y != 0.0f) {
 			PushTeleportTo(
-				ent.second,
-				next_node.pos.x,
-				next_node.pos.y,
-				next_node.pos.z,
-				CalculateHeadingAngleBetweenPositions(
-					current_node.pos.x,
-					current_node.pos.y,
-					next_node.pos.x,
-					next_node.pos.y
-				)
-			);
-		}
-		else {
+			    ent.second,
+			    next_node.pos.x,
+			    next_node.pos.y,
+			    next_node.pos.z,
+			    CalculateHeadingAngleBetweenPositions(
+			        current_node.pos.x,
+			        current_node.pos.y,
+			        next_node.pos.x,
+			        next_node.pos.y));
+		} else {
 			bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(previous_pos) || zone->IsWaterZone(previous_pos.z);
 			if (in_liquid || who->IsBoat()) {
 				PushSwimTo(ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z, mode);
-			}
-			else {
+			} else {
 				PushMoveTo(ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z, mode);
 			}
 		}
@@ -1455,12 +1363,11 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
  * @param z
  * @param movement_mode
  */
-void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float z, MobMovementMode movement_mode)
-{
+void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float z, MobMovementMode movement_mode) {
 	auto eiter = _impl->Entries.find(who);
-	auto &ent  = (*eiter);
+	auto &ent = (*eiter);
 	bool underwater_mob = who->IsNPC() && (who->CastToNPC()->IsUnderwaterOnly() || (zone->IsWaterZone(who->GetZ()) && zone->IsWaterZone(z)) ||
-		(zone->HasWaterMap() && zone->watermap->InLiquid(who->GetPosition()) && zone->watermap->InLiquid(glm::vec3(x, y, z))));
+	                                       (zone->HasWaterMap() && zone->watermap->InLiquid(who->GetPosition()) && zone->watermap->InLiquid(glm::vec3(x, y, z))));
 
 	if (underwater_mob && zone->zonemap->CheckLoS(who->GetPosition(), glm::vec3(x, y, z))) {
 		PushSwimTo(ent.second, x, y, z, movement_mode);
@@ -1469,19 +1376,18 @@ void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float 
 
 	PathfinderOptions opts;
 	opts.smooth_path = true;
-	opts.step_size   = RuleR(Pathing, NavmeshStepSize);
-	opts.offset      = who->GetZOffset();
-	opts.flags       = PathingNotDisabled ^ PathingZoneLine;
+	opts.step_size = RuleR(Pathing, NavmeshStepSize);
+	opts.offset = who->GetZOffset();
+	opts.flags = PathingNotDisabled ^ PathingZoneLine;
 
 	auto partial = false;
-	auto stuck   = false;
-	auto route   = zone->pathing->FindPath(
-		glm::vec3(who->GetX(), who->GetY(), who->GetZ()),
-		glm::vec3(x, y, z),
-		partial,
-		stuck,
-		opts
-	);
+	auto stuck = false;
+	auto route = zone->pathing->FindPath(
+	    glm::vec3(who->GetX(), who->GetY(), who->GetZ()),
+	    glm::vec3(x, y, z),
+	    partial,
+	    stuck,
+	    opts);
 
 	if (route.size() == 0) {
 		HandleStuckBehavior(who, x, y, z, movement_mode);
@@ -1489,7 +1395,7 @@ void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float 
 	}
 	AdjustRoute(route, who);
 
-	auto      iter = route.begin();
+	auto iter = route.begin();
 	glm::vec3 previous_pos(who->GetX(), who->GetY(), who->GetZ());
 
 	if (route.size() == 0) {
@@ -1513,21 +1419,17 @@ void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float 
 		if (next_node.teleport)
 			continue;
 
-		//move to / teleport to node + 1
+		// move to / teleport to node + 1
 		if (current_node.teleport && next_node.pos.x != 0.0f && next_node.pos.y != 0.0f) {
 			PushTeleportTo(
-				ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z,
-				CalculateHeadingAngleBetweenPositions(
-					current_node.pos.x,
-					current_node.pos.y,
-					next_node.pos.x,
-					next_node.pos.y
-				));
-		}
-		else {
-			if (underwater_mob || (zone->IsWaterZone(previous_pos.z) && zone->IsWaterZone(next_node.pos.z)) 
-				|| (zone->watermap->InLiquid(previous_pos) && zone->watermap->InLiquid(next_node.pos))
-			)
+			    ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z,
+			    CalculateHeadingAngleBetweenPositions(
+			        current_node.pos.x,
+			        current_node.pos.y,
+			        next_node.pos.x,
+			        next_node.pos.y));
+		} else {
+			if (underwater_mob || (zone->IsWaterZone(previous_pos.z) && zone->IsWaterZone(next_node.pos.z)) || (zone->watermap->InLiquid(previous_pos) && zone->watermap->InLiquid(next_node.pos)))
 				PushSwimTo(ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z, movement_mode);
 			else
 				PushMoveTo(ent.second, next_node.pos.x, next_node.pos.y, next_node.pos.z, movement_mode);
@@ -1546,10 +1448,9 @@ void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float 
  * @param z
  * @param mode
  */
-void MobMovementManager::UpdatePathBoat(Mob *who, float x, float y, float z, MobMovementMode mode)
-{
+void MobMovementManager::UpdatePathBoat(Mob *who, float x, float y, float z, MobMovementMode mode) {
 	auto eiter = _impl->Entries.find(who);
-	auto &ent  = (*eiter);
+	auto &ent = (*eiter);
 
 	PushSwimTo(ent.second, x, y, z, mode);
 }
@@ -1561,8 +1462,7 @@ void MobMovementManager::UpdatePathBoat(Mob *who, float x, float y, float z, Mob
  * @param z
  * @param heading
  */
-void MobMovementManager::PushTeleportTo(MobMovementEntry &ent, float x, float y, float z, float heading)
-{
+void MobMovementManager::PushTeleportTo(MobMovementEntry &ent, float x, float y, float z, float heading) {
 	ent.Commands.push_back(std::unique_ptr<IMovementCommand>(new TeleportToCommand(x, y, z, heading)));
 }
 
@@ -1573,8 +1473,7 @@ void MobMovementManager::PushTeleportTo(MobMovementEntry &ent, float x, float y,
  * @param z
  * @param mob_movement_mode
  */
-void MobMovementManager::PushMoveTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode)
-{
+void MobMovementManager::PushMoveTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode) {
 	ent.Commands.push_back(std::unique_ptr<IMovementCommand>(new MoveToCommand(x, y, z, mob_movement_mode)));
 }
 
@@ -1585,8 +1484,7 @@ void MobMovementManager::PushMoveTo(MobMovementEntry &ent, float x, float y, flo
  * @param z
  * @param mob_movement_mode
  */
-void MobMovementManager::PushSwimTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode)
-{
+void MobMovementManager::PushSwimTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode) {
 	ent.Commands.push_back(std::unique_ptr<IMovementCommand>(new SwimToCommand(x, y, z, mob_movement_mode)));
 }
 
@@ -1596,8 +1494,7 @@ void MobMovementManager::PushSwimTo(MobMovementEntry &ent, float x, float y, flo
  * @param to
  * @param mob_movement_mode
  */
-void MobMovementManager::PushRotateTo(MobMovementEntry &ent, Mob *who, float to, MobMovementMode mob_movement_mode, bool at_guardpoint)
-{
+void MobMovementManager::PushRotateTo(MobMovementEntry &ent, Mob *who, float to, MobMovementMode mob_movement_mode, bool at_guardpoint) {
 	auto from = FixHeading(who->GetHeading());
 	to = FixHeading(to);
 
@@ -1621,32 +1518,28 @@ void MobMovementManager::PushRotateTo(MobMovementEntry &ent, Mob *who, float to,
  * @param z
  * @param mob_movement_mode
  */
-void MobMovementManager::PushFlyTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode)
-{
+void MobMovementManager::PushFlyTo(MobMovementEntry &ent, float x, float y, float z, MobMovementMode mob_movement_mode) {
 	ent.Commands.push_back(std::unique_ptr<IMovementCommand>(new FlyToCommand(x, y, z, mob_movement_mode)));
 }
 
 /**
  * @param mob_movement_entry
  */
-void MobMovementManager::PushStopMoving(MobMovementEntry &mob_movement_entry)
-{
+void MobMovementManager::PushStopMoving(MobMovementEntry &mob_movement_entry) {
 	mob_movement_entry.Commands.push_back(std::unique_ptr<IMovementCommand>(new StopMovingCommand()));
 }
 
 /**
-* @param mob_movement_entry
-*/
-void MobMovementManager::PushStopSwimming(MobMovementEntry &mob_movement_entry)
-{
+ * @param mob_movement_entry
+ */
+void MobMovementManager::PushStopSwimming(MobMovementEntry &mob_movement_entry) {
 	mob_movement_entry.Commands.push_back(std::unique_ptr<IMovementCommand>(new StopSwimmingCommand()));
 }
 
 /**
  * @param mob_movement_entry
  */
-void MobMovementManager::PushEvadeCombat(MobMovementEntry &mob_movement_entry)
-{
+void MobMovementManager::PushEvadeCombat(MobMovementEntry &mob_movement_entry) {
 	mob_movement_entry.Commands.push_back(std::unique_ptr<IMovementCommand>(new EvadeCombatCommand()));
 }
 
@@ -1657,15 +1550,13 @@ void MobMovementManager::PushEvadeCombat(MobMovementEntry &mob_movement_entry)
  * @param z
  * @param mob_movement_mode
  */
-void MobMovementManager::HandleStuckBehavior(Mob *who, float x, float y, float z, MobMovementMode mob_movement_mode)
-{
-
+void MobMovementManager::HandleStuckBehavior(Mob *who, float x, float y, float z, MobMovementMode mob_movement_mode) {
 	auto sb = who->GetStuckBehavior();
 	MobStuckBehavior behavior = RunToTarget;
 
 	if (sb >= 0 && sb < MaxStuckBehavior) {
 		if (who->IsEngaged())
-			behavior = (MobStuckBehavior) sb;
+			behavior = (MobStuckBehavior)sb;
 	}
 
 	auto eiter = _impl->Entries.find(who);

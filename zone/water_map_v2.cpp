@@ -8,8 +8,8 @@ WaterMapV2::~WaterMapV2() {
 
 WaterRegionType WaterMapV2::ReturnRegionType(const glm::vec3& location) const {
 	size_t sz = regions.size();
-	for(size_t i = 0; i < sz; ++i) {
-		auto const &region = regions[i];
+	for (size_t i = 0; i < sz; ++i) {
+		auto const& region = regions[i];
 		if (region.second.ContainsPoint(glm::vec3(location.y, location.x, location.z))) {
 			return region.first;
 		}
@@ -37,13 +37,13 @@ bool WaterMapV2::InPVP(const glm::vec3& location) const {
 	return ReturnRegionType(location) == RegionTypePVP;
 }
 
-bool WaterMapV2::Load(FILE *fp) {
+bool WaterMapV2::Load(FILE* fp) {
 	uint32 region_count;
 	if (fread(&region_count, sizeof(region_count), 1, fp) != 1) {
 		return false;
 	}
 
-	for(uint32_t i = 0; i < region_count; ++i) {
+	for (uint32_t i = 0; i < region_count; ++i) {
 		uint32_t region_type;
 		float x;
 		float y;
@@ -111,7 +111,7 @@ bool WaterMapV2::Load(FILE *fp) {
 		}
 
 		regions.push_back(std::make_pair((WaterRegionType)region_type,
-			OrientedBoundingBox(glm::vec3(x, y, z), glm::vec3(x_rot, y_rot, z_rot), glm::vec3(x_scale, y_scale, z_scale), glm::vec3(x_extent, y_extent, z_extent))));
+		                                 OrientedBoundingBox(glm::vec3(x, y, z), glm::vec3(x_rot, y_rot, z_rot), glm::vec3(x_scale, y_scale, z_scale), glm::vec3(x_extent, y_extent, z_extent))));
 	}
 
 	return true;

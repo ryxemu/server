@@ -5,62 +5,60 @@
 #include "../any.h"
 
 namespace EQ {
-	class Task
-	{
-	public:
-		typedef std::function<void(const EQ::Any&)> ResolveFn;
-		typedef std::function<void(const std::exception&)> RejectFn;
-		typedef std::function<void()> FinallyFn;
-		typedef std::function<void(ResolveFn, RejectFn)> TaskFn;
-		struct TaskBaton
-		{
-			TaskFn fn;
-			ResolveFn on_then;
-			RejectFn on_catch;
-			FinallyFn on_finally;
-			bool has_result;
-			EQ::Any result;
-			bool has_error;
-			std::exception error;
-		};
+class Task {
+   public:
+	typedef std::function<void(const EQ::Any&)> ResolveFn;
+	typedef std::function<void(const std::exception&)> RejectFn;
+	typedef std::function<void()> FinallyFn;
+	typedef std::function<void(ResolveFn, RejectFn)> TaskFn;
+	struct TaskBaton {
+		TaskFn fn;
+		ResolveFn on_then;
+		RejectFn on_catch;
+		FinallyFn on_finally;
+		bool has_result;
+		EQ::Any result;
+		bool has_error;
+		std::exception error;
+	};
 
-		Task(TaskFn fn) {
-			m_fn = fn;
-		}
+	Task(TaskFn fn) {
+		m_fn = fn;
+	}
 
-		~Task() {
+	~Task() {
+	}
 
-		}
+	Task& Then(ResolveFn fn) {
+		m_then = fn;
+		return *this;
+	}
 
-		Task& Then(ResolveFn fn) {
-			m_then = fn;
-			return *this;
-		}
+	Task& Catch(RejectFn fn) {
+		m_catch = fn;
+		return *this;
+	}
 
-		Task& Catch(RejectFn fn) {
-			m_catch = fn;
-			return *this;
-		}
+	Task& Finally(FinallyFn fn) {
+		m_finally = fn;
+		return *this;
+	}
 
-		Task& Finally(FinallyFn fn) {
-			m_finally = fn;
-			return *this;
-		}
+	void Run() {
+		uv_work_t* m_work = new uv_work_t;
+		memset(m_work, 0, sizeof(uv_work_t));
+		TaskBaton* baton = new TaskBaton();
+		baton->fn = m_fn;
+		baton->on_then = m_then;
+		baton->on_catch = m_catch;
+		baton->on_finally = m_finally;
+		baton->has_result = false;
+		baton->has_error = false;
 
-		void Run() {
-			uv_work_t *m_work = new uv_work_t;
-			memset(m_work, 0, sizeof(uv_work_t));
-			TaskBaton *baton = new TaskBaton();
-			baton->fn = m_fn;
-			baton->on_then = m_then;
-			baton->on_catch = m_catch;
-			baton->on_finally = m_finally;
-			baton->has_result = false;
-			baton->has_error = false;
+		m_work->data = baton;
 
-			m_work->data = baton;
-
-			uv_queue_work(EventLoop::Get().Handle(), m_work, [](uv_work_t* req) {
+		uv_queue_work(
+		    EventLoop::Get().Handle(), m_work, [](uv_work_t* req) {
 				TaskBaton *baton = (TaskBaton*)req->data;
 
 				baton->fn([baton](const EQ::Any& result) {
@@ -71,8 +69,7 @@ namespace EQ {
 					baton->has_error = true;
 					baton->has_result = false;
 					baton->error = err;
-				});
-			}, [](uv_work_t* req, int status) {
+				}); }, [](uv_work_t* req, int status) {
 				TaskBaton *baton = (TaskBaton*)req->data;
 
 				if (baton->has_error && baton->on_catch) {
@@ -87,14 +84,13 @@ namespace EQ {
 				}
 
 				delete baton;
-				delete req;
-			});
-		}
+				delete req; });
+	}
 
-	private:
-		TaskFn m_fn;
-		ResolveFn m_then;
-		RejectFn m_catch;
-		FinallyFn m_finally;
-	};
-}
+   private:
+	TaskFn m_fn;
+	ResolveFn m_then;
+	RejectFn m_catch;
+	FinallyFn m_finally;
+};
+}  // namespace EQ

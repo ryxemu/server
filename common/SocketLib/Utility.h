@@ -1,14 +1,14 @@
 /** \file Utility.h
  **	\date  2004-02-13
  **	\author grymse@alhem.net
-**/
+ **/
 /*
 Copyright (C) 2004,2005  Anders Hedstrom
 
 This library is made available under the terms of the GNU GPL.
 
 If you would like to use this library in a closed-source application,
-a separate license agreement is available. For information about 
+a separate license agreement is available. For information about
 the closed-source license agreement for the C++ sockets library,
 please visit http://www.alhem.net/Sockets/license.html and/or
 email license@alhem.net.
@@ -36,9 +36,9 @@ typedef unsigned __int64 uint64_t;
 #else
 #include <stdlib.h>
 #ifdef SOLARIS
-# include <sys/types.h>
+#include <sys/types.h>
 #else
-# include <stdint.h>
+#include <stdint.h>
 #endif
 #endif
 #include "Base64.h"
@@ -47,11 +47,10 @@ typedef unsigned __int64 uint64_t;
 namespace SOCKETS_NAMESPACE {
 #endif
 
-/** Conversion utilities. 
-	\ingroup util */
-class Utility
-{
-public:
+/** Conversion utilities.
+    \ingroup util */
+class Utility {
+   public:
 	static std::string base64(const std::string& str_in);
 	static std::string base64d(const std::string& str_in);
 	static std::string l2string(long l);
@@ -62,9 +61,8 @@ public:
 	static std::string rfc1738_decode(const std::string& src);
 };
 
-
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif // _UTILITY_H
+#endif  // _UTILITY_H

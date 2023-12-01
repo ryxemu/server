@@ -1,23 +1,3 @@
-/**
- * EQEmulator: Everquest Server Emulator
- * Copyright (C) 2001-2020 EQEmulator Development Team (https://github.com/EQEmu/Server)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY except by those people which sell it, which
- * are required to give you total support for your newly bought product;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
-*/
-
 #include <string>
 #include <cstdio>
 #include <iterator>
@@ -41,12 +21,10 @@
 
 #define DATABASE_DUMP_PATH "backups/"
 
-
 /**
  * @return bool
  */
-bool DatabaseDumpService::IsMySQLInstalled()
-{
+bool DatabaseDumpService::IsMySQLInstalled() {
 	std::string version_output = GetMySQLVersion();
 
 	return version_output.find("mysql") != std::string::npos && version_output.find("Ver") != std::string::npos;
@@ -56,8 +34,7 @@ bool DatabaseDumpService::IsMySQLInstalled()
  * Linux
  * @return bool
  */
-bool DatabaseDumpService::IsTarAvailable()
-{
+bool DatabaseDumpService::IsTarAvailable() {
 	std::string version_output = Process::execute("tar --version");
 
 	return version_output.find("GNU tar") != std::string::npos;
@@ -67,8 +44,7 @@ bool DatabaseDumpService::IsTarAvailable()
  * Windows
  * @return bool
  */
-bool DatabaseDumpService::Is7ZipAvailable()
-{
+bool DatabaseDumpService::Is7ZipAvailable() {
 	std::string version_output = Process::execute("7z --help");
 
 	return version_output.find("7-Zip") != std::string::npos;
@@ -77,16 +53,14 @@ bool DatabaseDumpService::Is7ZipAvailable()
 /**
  * @return
  */
-bool DatabaseDumpService::HasCompressionBinary()
-{
+bool DatabaseDumpService::HasCompressionBinary() {
 	return IsTarAvailable() || Is7ZipAvailable();
 }
 
 /**
  * @return
  */
-std::string DatabaseDumpService::GetMySQLVersion()
-{
+std::string DatabaseDumpService::GetMySQLVersion() {
 	std::string version_output = Process::execute("mysql --version");
 
 	return Strings::Trim(version_output);
@@ -95,84 +69,72 @@ std::string DatabaseDumpService::GetMySQLVersion()
 /**
  * @return
  */
-std::string DatabaseDumpService::GetBaseMySQLDumpCommand()
-{
+std::string DatabaseDumpService::GetBaseMySQLDumpCommand() {
 	auto config = EQEmuConfig::get();
 
 	return fmt::format(
-		"mysqldump -u {} -p{} -h {} {}",
-		config->DatabaseUsername,
-		config->DatabasePassword,
-		config->DatabaseHost,
-		config->DatabaseDB
-	);
+	    "mysqldump -u {} -p{} -h {} {}",
+	    config->DatabaseUsername,
+	    config->DatabasePassword,
+	    config->DatabaseHost,
+	    config->DatabaseDB);
 }
 
 /**
  * @return
  */
-std::string DatabaseDumpService::GetPlayerTablesList()
-{
+std::string DatabaseDumpService::GetPlayerTablesList() {
 	return Strings::Join(DatabaseSchema::GetPlayerTables(), " ");
 }
 
 /**
  * @return
  */
-std::string DatabaseDumpService::GetQueryServTables()
-{
+std::string DatabaseDumpService::GetQueryServTables() {
 	return Strings::Join(DatabaseSchema::GetQueryServerTables(), " ");
 }
-
 
 /**
  * @return
  */
 /*std::string DatabaseDumpService::GetLoginTableList()
 {
-	std::string              tables_list;
-	std::vector<std::string> tables = DatabaseSchema::GetLoginTables();
-	for (const auto          &table : tables) {
-		tables_list += table + " ";
-	}
+    std::string              tables_list;
+    std::vector<std::string> tables = DatabaseSchema::GetLoginTables();
+    for (const auto          &table : tables) {
+        tables_list += table + " ";
+    }
 
-	return trim(tables_list);
+    return trim(tables_list);
 }
 */
 /**
  * @return
  */
-std::string DatabaseDumpService::GetSystemTablesList()
-{
+std::string DatabaseDumpService::GetSystemTablesList() {
 	return Strings::Join(DatabaseSchema::GetServerTables(), " ");
 }
 /**
  * @return
  */
-std::string DatabaseDumpService::GetStateTablesList()
-{
+std::string DatabaseDumpService::GetStateTablesList() {
 	return Strings::Join(DatabaseSchema::GetStateTables(), " ");
 }
-
-
 
 /**
  * @return
  */
-std::string DatabaseDumpService::GetContentTablesList()
-{
+std::string DatabaseDumpService::GetContentTablesList() {
 	return Strings::Join(DatabaseSchema::GetContentTables(), " ");
 }
 
 /**
  * @return
  */
-std::string GetDumpDate()
-{
-
-	time_t    now = time(nullptr);
-	struct tm time_struct{};
-	char      buf[80];
+std::string GetDumpDate() {
+	time_t now = time(nullptr);
+	struct tm time_struct {};
+	char buf[80];
 	time_struct = *localtime(&now);
 	strftime(buf, sizeof(buf), "%Y-%m-%d", &time_struct);
 
@@ -184,20 +146,17 @@ std::string GetDumpDate()
 /**
  * @return
  */
-std::string DatabaseDumpService::GetSetDumpPath()
-{
+std::string DatabaseDumpService::GetSetDumpPath() {
 	return !GetDumpPath().empty() ? GetDumpPath() : DATABASE_DUMP_PATH;
 }
 /**
  * @return
  */
-std::string DatabaseDumpService::GetDumpFileNameWithPath()
-{
+std::string DatabaseDumpService::GetDumpFileNameWithPath() {
 	return GetSetDumpPath() + GetDumpFileName();
 }
 
-void DatabaseDumpService::Dump()
-{
+void DatabaseDumpService::Dump() {
 	if (!IsMySQLInstalled()) {
 		LogError("MySQL is not installed; Please check your PATH for a valid MySQL installation");
 		return;
@@ -218,11 +177,10 @@ void DatabaseDumpService::Dump()
 	auto config = EQEmuConfig::get();
 
 	LogInfo(
-		"Database [{}] Host [{}] Username [{}]",
-		config->DatabaseDB,
-		config->DatabaseHost,
-		config->DatabaseUsername
-	);
+	    "Database [{}] Host [{}] Username [{}]",
+	    config->DatabaseDB,
+	    config->DatabaseHost,
+	    config->DatabaseUsername);
 
 	std::string options = "--allow-keywords --extended-insert --max-allowed-packet=1G --net-buffer-length=32704";
 	if (IsDumpWithNoData()) {
@@ -257,10 +215,10 @@ void DatabaseDumpService::Dump()
 			dump_descriptor += "-content";
 		}
 
-	/*	if (IsDumpLoginServerTables()) {
-			tables_to_dump += GetLoginTableList() + " ";
-			dump_descriptor += "-login";
-		} */
+		/*	if (IsDumpLoginServerTables()) {
+		        tables_to_dump += GetLoginTableList() + " ";
+		        dump_descriptor += "-login";
+		    } */
 
 		if (IsDumpQueryServerTables()) {
 			tables_to_dump += GetQueryServTables();
@@ -281,12 +239,11 @@ void DatabaseDumpService::Dump()
 	}
 
 	std::string execute_command = fmt::format(
-		"{} {} {} {}",
-		GetBaseMySQLDumpCommand(),
-		options,
-		tables_to_dump,
-		pipe_file
-	);
+	    "{} {} {} {}",
+	    GetBaseMySQLDumpCommand(),
+	    options,
+	    tables_to_dump,
+	    pipe_file);
 
 	if (!FileUtil::exists(GetSetDumpPath()) && !IsDumpOutputToConsole()) {
 		FileUtil::mkdir(GetSetDumpPath());
@@ -295,15 +252,14 @@ void DatabaseDumpService::Dump()
 	if (IsDumpDropTableSyntaxOnly()) {
 		std::vector<std::string> tables = Strings::Split(tables_to_dump, ' ');
 
-		for (auto& table : tables) {
+		for (auto &table : tables) {
 			std::cout << "DROP TABLE IF EXISTS `" << table << "`;" << std::endl;
 		}
 
 		if (tables_to_dump.empty()) {
 			std::cerr << "No tables were specified" << std::endl;
 		}
-	}
-	else {
+	} else {
 		std::string execution_result = Process::execute(execute_command);
 		if (!execution_result.empty() && IsDumpOutputToConsole()) {
 			std::cout << execution_result;
@@ -322,181 +278,148 @@ void DatabaseDumpService::Dump()
 
 			if (IsTarAvailable()) {
 				Process::execute(
-					fmt::format(
-						"tar -zcvf {}.tar.gz -C {} {}.sql",
-						GetDumpFileNameWithPath(),
-						GetSetDumpPath(),
-						GetDumpFileName()
-					)
-				);
+				    fmt::format(
+				        "tar -zcvf {}.tar.gz -C {} {}.sql",
+				        GetDumpFileNameWithPath(),
+				        GetSetDumpPath(),
+				        GetDumpFileName()));
 				LogInfo("Compressed dump created at [{}.tar.gz]", GetDumpFileNameWithPath());
-			}
-			else if (Is7ZipAvailable()) {
+			} else if (Is7ZipAvailable()) {
 				Process::execute(
-					fmt::format(
-						"7z a -t7z {}.zip {}.sql",
-						GetDumpFileNameWithPath(),
-						GetDumpFileNameWithPath()
-					)
-				);
+				    fmt::format(
+				        "7z a -t7z {}.zip {}.sql",
+				        GetDumpFileNameWithPath(),
+				        GetDumpFileNameWithPath()));
 				LogInfo("Compressed dump created at [{}.zip]", GetDumpFileNameWithPath());
-			}
-			else {
+			} else {
 				LogInfo("Compression requested, but no available compression binary was found");
 			}
-		}
-		else {
+		} else {
 			LogWarning("Compression requested but binary not found... Skipping...");
 		}
 	}
 
-//	LogDebug("[{}] dump-to-console", IsDumpOutputToConsole());
-//	LogDebug("[{}] dump-path", GetSetDumpPath());
-//	LogDebug("[{}] compression", (IsDumpWithCompression() ? "true" : "false"));
-//	LogDebug("[{}] query-serv", (IsDumpQueryServerTables() ? "true" : "false"));
-//	LogDebug("[{}] has-compression-binary", (HasCompressionBinary() ? "true" : "false"));
-//	LogDebug("[{}] content", (IsDumpContentTables() ? "true" : "false"));
-//	LogDebug("[{}] no-data", (IsDumpWithNoData() ? "true" : "false"));
-//	LogDebug("[{}] login", (IsDumpLoginServerTables() ? "true" : "false"));
-//	LogDebug("[{}] player", (IsDumpPlayerTables() ? "true" : "false"));
-//	LogDebug("[{}] system", (IsDumpSystemTables() ? "true" : "false"));
+	//	LogDebug("[{}] dump-to-console", IsDumpOutputToConsole());
+	//	LogDebug("[{}] dump-path", GetSetDumpPath());
+	//	LogDebug("[{}] compression", (IsDumpWithCompression() ? "true" : "false"));
+	//	LogDebug("[{}] query-serv", (IsDumpQueryServerTables() ? "true" : "false"));
+	//	LogDebug("[{}] has-compression-binary", (HasCompressionBinary() ? "true" : "false"));
+	//	LogDebug("[{}] content", (IsDumpContentTables() ? "true" : "false"));
+	//	LogDebug("[{}] no-data", (IsDumpWithNoData() ? "true" : "false"));
+	//	LogDebug("[{}] login", (IsDumpLoginServerTables() ? "true" : "false"));
+	//	LogDebug("[{}] player", (IsDumpPlayerTables() ? "true" : "false"));
+	//	LogDebug("[{}] system", (IsDumpSystemTables() ? "true" : "false"));
 }
 
-bool DatabaseDumpService::IsDumpSystemTables() const
-{
+bool DatabaseDumpService::IsDumpSystemTables() const {
 	return dump_system_tables;
 }
 
-void DatabaseDumpService::SetDumpSystemTables(bool dump_system_tables)
-{
+void DatabaseDumpService::SetDumpSystemTables(bool dump_system_tables) {
 	DatabaseDumpService::dump_system_tables = dump_system_tables;
 }
 
-bool DatabaseDumpService::IsDumpContentTables() const
-{
+bool DatabaseDumpService::IsDumpContentTables() const {
 	return dump_content_tables;
 }
 
-void DatabaseDumpService::SetDumpContentTables(bool dump_content_tables)
-{
+void DatabaseDumpService::SetDumpContentTables(bool dump_content_tables) {
 	DatabaseDumpService::dump_content_tables = dump_content_tables;
 }
 
-bool DatabaseDumpService::IsDumpPlayerTables() const
-{
+bool DatabaseDumpService::IsDumpPlayerTables() const {
 	return dump_player_tables;
 }
 
-void DatabaseDumpService::SetDumpPlayerTables(bool dump_player_tables)
-{
+void DatabaseDumpService::SetDumpPlayerTables(bool dump_player_tables) {
 	DatabaseDumpService::dump_player_tables = dump_player_tables;
 }
 /*
 bool DatabaseDumpService::IsDumpLoginServerTables() const
 {
-	return dump_login_server_tables;
+    return dump_login_server_tables;
 }
 
 void DatabaseDumpService::SetDumpLoginServerTables(bool dump_login_server_tables)
 {
-	DatabaseDumpService::dump_login_server_tables = dump_login_server_tables;
+    DatabaseDumpService::dump_login_server_tables = dump_login_server_tables;
 }
 */
-bool DatabaseDumpService::IsDumpWithNoData() const
-{
+bool DatabaseDumpService::IsDumpWithNoData() const {
 	return dump_with_no_data;
 }
 
-void DatabaseDumpService::SetDumpWithNoData(bool dump_with_no_data)
-{
+void DatabaseDumpService::SetDumpWithNoData(bool dump_with_no_data) {
 	DatabaseDumpService::dump_with_no_data = dump_with_no_data;
 }
 
-bool DatabaseDumpService::IsDumpAllTables() const
-{
+bool DatabaseDumpService::IsDumpAllTables() const {
 	return dump_all_tables;
 }
 
-void DatabaseDumpService::SetDumpAllTables(bool dump_all_tables)
-{
+void DatabaseDumpService::SetDumpAllTables(bool dump_all_tables) {
 	DatabaseDumpService::dump_all_tables = dump_all_tables;
 }
-bool DatabaseDumpService::IsDumpTableLock() const
-{
+bool DatabaseDumpService::IsDumpTableLock() const {
 	return dump_table_lock;
 }
 
-void DatabaseDumpService::SetDumpTableLock(bool dump_no_table_lock)
-{
+void DatabaseDumpService::SetDumpTableLock(bool dump_no_table_lock) {
 	DatabaseDumpService::dump_table_lock = dump_no_table_lock;
 }
 
-bool DatabaseDumpService::IsDumpWithCompression() const
-{
+bool DatabaseDumpService::IsDumpWithCompression() const {
 	return dump_with_compression;
 }
 
-void DatabaseDumpService::SetDumpWithCompression(bool dump_with_compression)
-{
+void DatabaseDumpService::SetDumpWithCompression(bool dump_with_compression) {
 	DatabaseDumpService::dump_with_compression = dump_with_compression;
 }
 
-const std::string &DatabaseDumpService::GetDumpPath() const
-{
+const std::string &DatabaseDumpService::GetDumpPath() const {
 	return dump_path;
 }
 
-void DatabaseDumpService::SetDumpPath(const std::string &dump_path)
-{
+void DatabaseDumpService::SetDumpPath(const std::string &dump_path) {
 	DatabaseDumpService::dump_path = dump_path;
 }
 
-void DatabaseDumpService::SetDumpFileName(const std::string &dump_file_name)
-{
+void DatabaseDumpService::SetDumpFileName(const std::string &dump_file_name) {
 	DatabaseDumpService::dump_file_name = dump_file_name;
 }
 
-const std::string &DatabaseDumpService::GetDumpFileName() const
-{
+const std::string &DatabaseDumpService::GetDumpFileName() const {
 	return dump_file_name;
 }
 
-bool DatabaseDumpService::IsDumpQueryServerTables() const
-{
+bool DatabaseDumpService::IsDumpQueryServerTables() const {
 	return dump_query_server_tables;
 }
 
-void DatabaseDumpService::SetDumpQueryServerTables(bool dump_query_server_tables)
-{
+void DatabaseDumpService::SetDumpQueryServerTables(bool dump_query_server_tables) {
 	DatabaseDumpService::dump_query_server_tables = dump_query_server_tables;
 }
 
-bool DatabaseDumpService::IsDumpOutputToConsole() const
-{
+bool DatabaseDumpService::IsDumpOutputToConsole() const {
 	return dump_output_to_console;
 }
 
-void DatabaseDumpService::SetDumpOutputToConsole(bool dump_output_to_console)
-{
+void DatabaseDumpService::SetDumpOutputToConsole(bool dump_output_to_console) {
 	DatabaseDumpService::dump_output_to_console = dump_output_to_console;
 }
 
-bool DatabaseDumpService::IsDumpDropTableSyntaxOnly() const
-{
+bool DatabaseDumpService::IsDumpDropTableSyntaxOnly() const {
 	return dump_drop_table_syntax_only;
 }
 
-void DatabaseDumpService::SetDumpDropTableSyntaxOnly(bool dump_drop_table_syntax_only)
-{
+void DatabaseDumpService::SetDumpDropTableSyntaxOnly(bool dump_drop_table_syntax_only) {
 	DatabaseDumpService::dump_drop_table_syntax_only = dump_drop_table_syntax_only;
 }
 
-bool DatabaseDumpService::IsDumpStateTables() const
-{
+bool DatabaseDumpService::IsDumpStateTables() const {
 	return dump_state_tables;
 }
 
-void DatabaseDumpService::SetDumpStateTables(bool dump_state_tables)
-{
+void DatabaseDumpService::SetDumpStateTables(bool dump_state_tables) {
 	DatabaseDumpService::dump_state_tables = dump_state_tables;
 }

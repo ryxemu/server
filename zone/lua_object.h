@@ -7,23 +7,23 @@
 class Object;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_object();
 
-class Lua_Object : public Lua_Entity
-{
+class Lua_Object : public Lua_Entity {
 	typedef Object NativeType;
-public:
-	Lua_Object() { SetLuaPtrData(nullptr); }
-	Lua_Object(Object *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_Object() { }
 
-	operator Object*() {
+   public:
+	Lua_Object() { SetLuaPtrData(nullptr); }
+	Lua_Object(Object *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_Object() {}
+
+	operator Object *() {
 		void *d = GetLuaPtrData();
-		if(d) {
-			return reinterpret_cast<Object*>(d);
+		if (d) {
+			return reinterpret_cast<Object *>(d);
 		}
 
 		return nullptr;

@@ -7,22 +7,22 @@
 struct SPDat_Spell_Struct;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_spell();
 
-class Lua_Spell : public Lua_Ptr<const SPDat_Spell_Struct>
-{
+class Lua_Spell : public Lua_Ptr<const SPDat_Spell_Struct> {
 	typedef const SPDat_Spell_Struct NativeType;
-public:
-	Lua_Spell(int id);
-	Lua_Spell() : Lua_Ptr(nullptr) { }
-	Lua_Spell(const SPDat_Spell_Struct *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Spell() { }
 
-	operator const SPDat_Spell_Struct*() {
-		return reinterpret_cast<const SPDat_Spell_Struct*>(GetLuaPtrData());
+   public:
+	Lua_Spell(int id);
+	Lua_Spell() : Lua_Ptr(nullptr) {}
+	Lua_Spell(const SPDat_Spell_Struct *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Spell() {}
+
+	operator const SPDat_Spell_Struct *() {
+		return reinterpret_cast<const SPDat_Spell_Struct *>(GetLuaPtrData());
 	}
 
 	int GetID();

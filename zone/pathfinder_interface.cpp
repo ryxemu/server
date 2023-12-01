@@ -18,6 +18,6 @@ IPathfinder *IPathfinder::Load(const std::string &zone) {
 	if (stat(old_navmesh_path.c_str(), &statbuffer) == 0) {
 		return new PathfinderWaypoint(old_navmesh_path);
 	}
-	
+
 	return new PathfinderNull();
 }

@@ -10,8 +10,7 @@
 #include "lua_mob.h"
 #include "lua_hate_list.h"
 
-struct Lua_HateList
-{
+struct Lua_HateList {
 	std::vector<Lua_HateEntry> entries;
 };
 
@@ -56,19 +55,18 @@ void Lua_HateEntry::SetFrenzy(bool value) {
 }
 
 luabind::scope lua_register_hate_entry() {
-
 	return luabind::class_<Lua_HateEntry>("HateEntry")
-			.property("null", &Lua_HateEntry::Null)
-			.property("valid", &Lua_HateEntry::Valid)
-			.property("ent", &Lua_HateEntry::GetEnt, &Lua_HateEntry::SetEnt)
-			.property("damage", &Lua_HateEntry::GetDamage, &Lua_HateEntry::SetDamage)
-			.property("hate", &Lua_HateEntry::GetHate, &Lua_HateEntry::SetHate)
-			.property("frenzy", &Lua_HateEntry::GetFrenzy, &Lua_HateEntry::SetFrenzy);
+	    .property("null", &Lua_HateEntry::Null)
+	    .property("valid", &Lua_HateEntry::Valid)
+	    .property("ent", &Lua_HateEntry::GetEnt, &Lua_HateEntry::SetEnt)
+	    .property("damage", &Lua_HateEntry::GetDamage, &Lua_HateEntry::SetDamage)
+	    .property("hate", &Lua_HateEntry::GetHate, &Lua_HateEntry::SetHate)
+	    .property("frenzy", &Lua_HateEntry::GetFrenzy, &Lua_HateEntry::SetFrenzy);
 }
 
 luabind::scope lua_register_hate_list() {
 	return luabind::class_<Lua_HateList>("HateList")
-			.def_readwrite("entries", &Lua_HateList::entries, luabind::return_stl_iterator);
+	    .def_readwrite("entries", &Lua_HateList::entries, luabind::return_stl_iterator);
 }
 
 #endif

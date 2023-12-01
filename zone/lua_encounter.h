@@ -7,26 +7,25 @@
 class Encounter;
 
 namespace luabind {
-	struct scope;
-	namespace adl {
-		class object;
-	}
+struct scope;
+namespace adl {
+class object;
 }
+}  // namespace luabind
 
 luabind::scope lua_register_encounter();
 
-class Lua_Encounter : public Lua_Ptr<Encounter>
-{
+class Lua_Encounter : public Lua_Ptr<Encounter> {
 	typedef Encounter NativeType;
-public:
+
+   public:
 	Lua_Encounter() { SetLuaPtrData(nullptr); }
-	Lua_Encounter(Encounter *d) { SetLuaPtrData(reinterpret_cast<Encounter*>(d)); }
-	virtual ~Lua_Encounter() { }
+	Lua_Encounter(Encounter *d) { SetLuaPtrData(reinterpret_cast<Encounter *>(d)); }
+	virtual ~Lua_Encounter() {}
 
-	operator Encounter*() {
-		return reinterpret_cast<Encounter*>(GetLuaPtrData());
+	operator Encounter *() {
+		return reinterpret_cast<Encounter *>(GetLuaPtrData());
 	}
-
 };
 #endif
 #endif

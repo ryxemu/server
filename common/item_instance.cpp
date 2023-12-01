@@ -1,21 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2022 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include "inventory_profile.h"
 #include "rulesys.h"
 #include "shareddb.h"
@@ -23,12 +5,11 @@
 
 #include <limits.h>
 
-//#include <iostream>
+// #include <iostream>
 
 int32 NextItemInstSerialNumber = 1;
 
 static inline int32 GetNextItemInstSerialNumber() {
-
 	// The Bazaar relies on each item a client has up for Trade having a unique
 	// identifier. This 'SerialNumber' is sent in Serialized item packets and
 	// is used in Bazaar packets to identify the item a player is buying or inspecting.
@@ -41,8 +22,7 @@ static inline int32 GetNextItemInstSerialNumber() {
 	// It is very unlikely to reach 2,147,483,647. Maybe we should call abort(), rather than wrapping back to 1.
 	if (NextItemInstSerialNumber >= INT_MAX) {
 		NextItemInstSerialNumber = 1;
-	}
-	else {
+	} else {
 		NextItemInstSerialNumber++;
 	}
 
@@ -53,7 +33,7 @@ static inline int32 GetNextItemInstSerialNumber() {
 // class EQ::ItemInstance
 //
 EQ::ItemInstance::ItemInstance(const EQ::ItemData* item, int8 charges) {
-	if(item) {
+	if (item) {
 		m_item = new EQ::ItemData(*item);
 	}
 
@@ -66,10 +46,9 @@ EQ::ItemInstance::ItemInstance(const EQ::ItemData* item, int8 charges) {
 	m_SerialNumber = GetNextItemInstSerialNumber();
 }
 
-EQ::ItemInstance::ItemInstance(SharedDatabase *db, int16 item_id, int8 charges) {
-
+EQ::ItemInstance::ItemInstance(SharedDatabase* db, int16 item_id, int8 charges) {
 	m_item = db->GetItem(item_id);
-	if(m_item) {
+	if (m_item) {
 		m_item = new EQ::ItemData(*m_item);
 	}
 
@@ -77,8 +56,7 @@ EQ::ItemInstance::ItemInstance(SharedDatabase *db, int16 item_id, int8 charges) 
 
 	if (m_item && m_item->IsClassCommon()) {
 		m_color = m_item->Color;
-	}
-	else {
+	} else {
 		m_color = 0;
 	}
 
@@ -90,22 +68,20 @@ EQ::ItemInstance::ItemInstance(ItemInstTypes use_type) {
 }
 
 // Make a copy of an EQ::ItemInstance object
-EQ::ItemInstance::ItemInstance(const ItemInstance& copy)
-{
-	m_use_type=copy.m_use_type;
+EQ::ItemInstance::ItemInstance(const ItemInstance& copy) {
+	m_use_type = copy.m_use_type;
 	if (copy.m_item) {
 		m_item = new EQ::ItemData(*copy.m_item);
-	}
-	else {
+	} else {
 		m_item = nullptr;
 	}
 
-	m_charges		= copy.m_charges;
-	m_price			= copy.m_price;
-	m_color			= copy.m_color;
-	m_merchantslot	= copy.m_merchantslot;
-	m_currentslot	= copy.m_currentslot;
-	m_merchantcount	= copy.m_merchantcount;
+	m_charges = copy.m_charges;
+	m_price = copy.m_price;
+	m_color = copy.m_color;
+	m_merchantslot = copy.m_merchantslot;
+	m_currentslot = copy.m_currentslot;
+	m_merchantcount = copy.m_merchantcount;
 	// Copy container contents
 
 	for (auto it = copy.m_contents.begin(); it != copy.m_contents.end(); ++it) {
@@ -125,22 +101,20 @@ EQ::ItemInstance::ItemInstance(const ItemInstance& copy)
 		m_custom_data[iter->first] = iter->second;
 	}
 
-	m_SerialNumber	= copy.m_SerialNumber;
-	m_custom_data	= copy.m_custom_data;
-	m_timers		= copy.m_timers;
-	m_cursorqueue	= copy.m_cursorqueue;
+	m_SerialNumber = copy.m_SerialNumber;
+	m_custom_data = copy.m_custom_data;
+	m_timers = copy.m_timers;
+	m_cursorqueue = copy.m_cursorqueue;
 }
 
 // Clean up container contents
-EQ::ItemInstance::~ItemInstance()
-{
+EQ::ItemInstance::~ItemInstance() {
 	Clear();
 	safe_delete(m_item);
 }
 
 // Query item type
-bool EQ::ItemInstance::IsType(item::ItemClass item_class) const
-{
+bool EQ::ItemInstance::IsType(item::ItemClass item_class) const {
 	// Check usage type
 	if ((m_use_type == ItemInstWorldContainer) && (item_class == item::ItemClassBag)) {
 		return true;
@@ -153,24 +127,20 @@ bool EQ::ItemInstance::IsType(item::ItemClass item_class) const
 	return (m_item->ItemClass == item_class);
 }
 
-bool EQ::ItemInstance::IsClassCommon()
-{
+bool EQ::ItemInstance::IsClassCommon() {
 	return (m_item && m_item->IsClassCommon());
 }
 
-bool EQ::ItemInstance::IsClassBag()
-{
+bool EQ::ItemInstance::IsClassBag() {
 	return (m_item && m_item->IsClassBag());
 }
 
-bool EQ::ItemInstance::IsClassBook()
-{
+bool EQ::ItemInstance::IsClassBook() {
 	return (m_item && m_item->IsClassBook());
 }
 
 // Is item stackable?
-bool EQ::ItemInstance::IsStackable() const
-{
+bool EQ::ItemInstance::IsStackable() const {
 	if (m_item->Lore[0] == '*' || m_item->Lore[0] == '#') {
 		return false;
 	}
@@ -179,8 +149,7 @@ bool EQ::ItemInstance::IsStackable() const
 }
 
 // Can item be equipped?
-bool EQ::ItemInstance::IsEquipable(uint16 race, uint16 class_) const
-{
+bool EQ::ItemInstance::IsEquipable(uint16 race, uint16 class_) const {
 	if (!m_item || !m_item->Slots) {
 		return false;
 	}
@@ -189,32 +158,35 @@ bool EQ::ItemInstance::IsEquipable(uint16 race, uint16 class_) const
 }
 
 // Can equip at this slot?
-bool EQ::ItemInstance::IsEquipable(int16 slot_id) const
-{
+bool EQ::ItemInstance::IsEquipable(int16 slot_id) const {
 	if (!m_item)
 		return false;
 
 	// another "shouldn't do" fix..will be fixed in future updates (requires code and database work)
 	int16 use_slot = INVALID_INDEX;
-	if ((uint16)slot_id <= invslot::EQUIPMENT_END) { use_slot = slot_id; }
+	if ((uint16)slot_id <= invslot::EQUIPMENT_END) {
+		use_slot = slot_id;
+	}
 
-	if (use_slot != INVALID_INDEX) 
-	{
+	if (use_slot != INVALID_INDEX) {
 		// Some 2H items were collected equippable in the secondary slot.
 		if (use_slot == invslot::slotSecondary &&
-		(m_item->ItemType == item::ItemType2HSlash || m_item->ItemType == item::ItemType2HBlunt || m_item->ItemType == item::ItemType2HPiercing))
-		{ return false; }
+		    (m_item->ItemType == item::ItemType2HSlash || m_item->ItemType == item::ItemType2HBlunt || m_item->ItemType == item::ItemType2HPiercing)) {
+			return false;
+		}
 
-		if (m_item->Slots & (1 << use_slot)) { return true; }
-		else if (slot_id == invslot::slotAmmo && (m_item->ItemType == item::ItemTypeSmallThrowing)) { return true; }
+		if (m_item->Slots & (1 << use_slot)) {
+			return true;
+		} else if (slot_id == invslot::slotAmmo && (m_item->ItemType == item::ItemTypeSmallThrowing)) {
+			return true;
+		}
 	}
 
 	return false;
 }
 
 // Retrieve item inside container
-EQ::ItemInstance* EQ::ItemInstance::GetItem(uint8 index) const
-{
+EQ::ItemInstance* EQ::ItemInstance::GetItem(uint8 index) const {
 	auto it = m_contents.find(index);
 	if (it != m_contents.end()) {
 		return it->second;
@@ -223,8 +195,7 @@ EQ::ItemInstance* EQ::ItemInstance::GetItem(uint8 index) const
 	return nullptr;
 }
 
-int16 EQ::ItemInstance::GetItemID(uint8 slot) const
-{
+int16 EQ::ItemInstance::GetItemID(uint8 slot) const {
 	const auto item = GetItem(slot);
 	if (item) {
 		return item->GetID();
@@ -233,40 +204,35 @@ int16 EQ::ItemInstance::GetItemID(uint8 slot) const
 	return 0;
 }
 
-void EQ::ItemInstance::PutItem(uint8 index, const ItemInstance& inst)
-{
+void EQ::ItemInstance::PutItem(uint8 index, const ItemInstance& inst) {
 	// Clean up item already in slot (if exists)
 	DeleteItem(index);
-
 
 	// Delegate to internal method
 	_PutItem(index, inst.Clone());
 }
 
 // Remove item inside container
-void EQ::ItemInstance::DeleteItem(uint8 index)
-{
+void EQ::ItemInstance::DeleteItem(uint8 index) {
 	ItemInstance* inst = PopItem(index);
 	safe_delete(inst);
 }
 
 // Remove item from container without memory delete
 // Hands over memory ownership to client of this function call
-EQ::ItemInstance* EQ::ItemInstance::PopItem(uint8 index)
-{
+EQ::ItemInstance* EQ::ItemInstance::PopItem(uint8 index) {
 	auto iter = m_contents.find(index);
 	if (iter != m_contents.end()) {
 		ItemInstance* inst = iter->second;
 		m_contents.erase(index);
-		return inst; // Return pointer that needs to be deleted (or otherwise managed)
+		return inst;  // Return pointer that needs to be deleted (or otherwise managed)
 	}
 
 	return nullptr;
 }
 
 // Remove all items from container
-void EQ::ItemInstance::Clear()
-{
+void EQ::ItemInstance::Clear() {
 	// Destroy container contents
 	for (auto iter = m_contents.begin(); iter != m_contents.end(); ++iter) {
 		safe_delete(iter->second);
@@ -275,52 +241,44 @@ void EQ::ItemInstance::Clear()
 }
 
 // Remove all items from container
-void EQ::ItemInstance::ClearByFlags(byFlagSetting is_nodrop, byFlagSetting is_norent)
-{
+void EQ::ItemInstance::ClearByFlags(byFlagSetting is_nodrop, byFlagSetting is_norent) {
 	// Destroy container contents
 	std::map<uint8, ItemInstance*>::const_iterator cur, end, del;
 	cur = m_contents.begin();
 	end = m_contents.end();
-	for (; cur != end;)
-	{
+	for (; cur != end;) {
 		ItemInstance* inst = cur->second;
-		if (inst != nullptr)
-		{
+		if (inst != nullptr) {
 			const ItemData* item = inst->GetItem();
 			del = cur;
 			++cur;
 
-			switch (is_nodrop)
-			{
-			case byFlagSet:
-				if (item->NoDrop == 0)
-				{
-					safe_delete(inst);
-					m_contents.erase(del->first);
-					continue;
-				}
-			default:
-				break;
+			switch (is_nodrop) {
+				case byFlagSet:
+					if (item->NoDrop == 0) {
+						safe_delete(inst);
+						m_contents.erase(del->first);
+						continue;
+					}
+				default:
+					break;
 			}
 
-			switch (is_norent)
-			{
-			case byFlagSet:
-				if (item->NoRent == 0)
-				{
-					safe_delete(inst);
-					m_contents.erase(del->first);
-					continue;
-				}
-			default:
-				break;
+			switch (is_norent) {
+				case byFlagSet:
+					if (item->NoRent == 0) {
+						safe_delete(inst);
+						m_contents.erase(del->first);
+						continue;
+					}
+				default:
+					break;
 			}
 		}
 	}
 }
 
-uint8 EQ::ItemInstance::FirstOpenSlot() const
-{
+uint8 EQ::ItemInstance::FirstOpenSlot() const {
 	if (!m_item) {
 		return INVALID_INDEX;
 	}
@@ -335,34 +293,32 @@ uint8 EQ::ItemInstance::FirstOpenSlot() const
 	return (i < slots) ? i : INVALID_INDEX;
 }
 
-uint8 EQ::ItemInstance::GetTotalItemCount() const
-{
+uint8 EQ::ItemInstance::GetTotalItemCount() const {
 	if (!m_item) {
 		return 0;
 	}
 
 	uint8 item_count = 1;
 
-	if (!m_item->IsClassBag()) { 
-		return item_count; 
+	if (!m_item->IsClassBag()) {
+		return item_count;
 	}
 
 	for (int index = invbag::SLOT_BEGIN; index < m_item->BagSlots; ++index) {
-		if (GetItem(index)) { 
-			++item_count; 
-		} 
+		if (GetItem(index)) {
+			++item_count;
+		}
 	}
 
 	return item_count;
 }
 
-bool EQ::ItemInstance::IsNoneEmptyContainer()
-{
+bool EQ::ItemInstance::IsNoneEmptyContainer() {
 	if (!m_item || !m_item->IsClassBag()) {
 		return false;
 	}
 
-	for (int index = invbag::SLOT_BEGIN; index < m_item->BagSlots; ++index){
+	for (int index = invbag::SLOT_BEGIN; index < m_item->BagSlots; ++index) {
 		if (GetItem(index)) {
 			return true;
 		}
@@ -372,38 +328,33 @@ bool EQ::ItemInstance::IsNoneEmptyContainer()
 }
 
 // Has attack/delay?
-bool EQ::ItemInstance::IsWeapon() const
-{
+bool EQ::ItemInstance::IsWeapon() const {
 	if (!m_item || !m_item->IsClassCommon()) {
 		return false;
 	}
 
 	if (m_item->ItemType == item::ItemTypeArrow && m_item->Damage != 0) {
 		return true;
-	}
-	else {
+	} else {
 		return ((m_item->Damage != 0) && (m_item->Delay != 0));
 	}
 }
 
 bool EQ::ItemInstance::IsAmmo() const {
-
 	if (!m_item) {
 		return false;
 	}
 
 	if ((m_item->ItemType == item::ItemTypeArrow) ||
-		(m_item->ItemType == item::ItemTypeLargeThrowing) ||
-		(m_item->ItemType == item::ItemTypeSmallThrowing)) {
+	    (m_item->ItemType == item::ItemTypeLargeThrowing) ||
+	    (m_item->ItemType == item::ItemTypeSmallThrowing)) {
 		return true;
 	}
 
 	return false;
-
 }
 
-const EQ::ItemData* EQ::ItemInstance::GetItem() const 
-{
+const EQ::ItemData* EQ::ItemInstance::GetItem() const {
 	if (!m_item) {
 		return nullptr;
 	}
@@ -475,85 +426,78 @@ void EQ::ItemInstance::DeleteCustomData(std::string identifier) {
 // Clone a type of EQ::ItemInstance object
 // c++ doesn't allow a polymorphic copy constructor,
 // so we have to resort to a polymorphic Clone()
-EQ::ItemInstance* EQ::ItemInstance::Clone() const
-{
+EQ::ItemInstance* EQ::ItemInstance::Clone() const {
 	// Pseudo-polymorphic copy constructor
 	return new ItemInstance(*this);
 }
 
-bool EQ::ItemInstance::IsSlotAllowed(int16 slot_id, EQ::InventoryProfile &inv) const
-{
-	if (!m_item) { return false; }
-	if (InventoryProfile::SupportsContainers(slot_id)) { return true; }
-	if (slot_id > invslot::EQUIPMENT_END) { return true; }
+bool EQ::ItemInstance::IsSlotAllowed(int16 slot_id, EQ::InventoryProfile& inv) const {
+	if (!m_item) {
+		return false;
+	}
+	if (InventoryProfile::SupportsContainers(slot_id)) {
+		return true;
+	}
+	if (slot_id > invslot::EQUIPMENT_END) {
+		return true;
+	}
 
-	if (slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END)
-	{
+	if (slot_id >= invslot::EQUIPMENT_BEGIN && slot_id <= invslot::EQUIPMENT_END) {
 		if (m_item->ItemClass == EQ::item::ItemClassBag || m_item->ItemClass == EQ::item::ItemClassBook)
 			return false;
 
-		if (slot_id == invslot::slotRange)
-		{
-			if (m_item->ItemType == item::ItemTypeArrow || m_item->ItemType == item::ItemTypeUnknown4) // type 28 isn't actually used on any items but this logic is in the client
+		if (slot_id == invslot::slotRange) {
+			if (m_item->ItemType == item::ItemTypeArrow || m_item->ItemType == item::ItemTypeUnknown4)  // type 28 isn't actually used on any items but this logic is in the client
 				return false;
 			if (m_item->Range)
 				return true;
-		}
-		else if (slot_id == invslot::slotAmmo)
-		{
+		} else if (slot_id == invslot::slotAmmo) {
 			if (m_item->ItemType == item::ItemTypeArrow || m_item->ItemType == item::ItemTypeSmallThrowing)
 				return true;
 		}
-		if (m_item->ItemType == item::ItemTypeUnknown4) // type 28 isn't actually used on any items but this logic is in the client
+		if (m_item->ItemType == item::ItemTypeUnknown4)  // type 28 isn't actually used on any items but this logic is in the client
 			return true;
 
-		if ((m_item->Slots & (1 << slot_id)) == 0) { return false; }
+		if ((m_item->Slots & (1 << slot_id)) == 0) {
+			return false;
+		}
 
-		if (slot_id == invslot::slotPrimary)
-		{
+		if (slot_id == invslot::slotPrimary) {
 			auto secondary_item = inv[invslot::slotSecondary];
-			if (secondary_item)
-			{
+			if (secondary_item) {
 				if (m_item->ItemType == item::ItemType2HBlunt ||
-					m_item->ItemType == item::ItemType2HSlash ||
-					m_item->ItemType == item::ItemType2HPiercing ||
-					secondary_item->m_item->ItemType == item::ItemTypeWindInstrument ||
-					secondary_item->m_item->ItemType == item::ItemTypeStringedInstrument ||
-					secondary_item->m_item->ItemType == item::ItemTypeBrassInstrument ||
-					secondary_item->m_item->ItemType == item::ItemTypePercussionInstrument)
-				{
+				    m_item->ItemType == item::ItemType2HSlash ||
+				    m_item->ItemType == item::ItemType2HPiercing ||
+				    secondary_item->m_item->ItemType == item::ItemTypeWindInstrument ||
+				    secondary_item->m_item->ItemType == item::ItemTypeStringedInstrument ||
+				    secondary_item->m_item->ItemType == item::ItemTypeBrassInstrument ||
+				    secondary_item->m_item->ItemType == item::ItemTypePercussionInstrument) {
 					return false;
 				}
 			}
-		}
-		else if (slot_id == invslot::slotSecondary)
-		{
+		} else if (slot_id == invslot::slotSecondary) {
 			if (m_item->ItemType != item::ItemType2HBlunt &&
-				m_item->ItemType != item::ItemType2HSlash &&
-				m_item->ItemType != item::ItemType2HPiercing)
-			{
+			    m_item->ItemType != item::ItemType2HSlash &&
+			    m_item->ItemType != item::ItemType2HPiercing) {
 				// EQ_Equipment::IsWeapon
 				bool IsWeapon = true;
 				if (m_item->Damage == 0 || m_item->ItemType == item::ItemTypeUnknown6 || m_item->ItemType == item::ItemTypeUnknown7 || m_item->ItemType == item::ItemTypeArrow || m_item->ItemType == item::ItemTypeUnknown4)
 					IsWeapon = false;
 
-				bool CanDualWield = true; // TODO - get this value from the character
+				bool CanDualWield = true;  // TODO - get this value from the character
 
-				if (!IsWeapon || CanDualWield)
-				{
+				if (!IsWeapon || CanDualWield) {
 					auto primary_item = inv[invslot::slotPrimary];
 					if (!primary_item)
 						return true;
 
 					if (m_item->ItemType != item::ItemTypeWindInstrument &&
-						m_item->ItemType != item::ItemTypeStringedInstrument &&
-						m_item->ItemType != item::ItemTypeBrassInstrument &&
-						m_item->ItemType != item::ItemTypePercussionInstrument)
-					{
+					    m_item->ItemType != item::ItemTypeStringedInstrument &&
+					    m_item->ItemType != item::ItemTypeBrassInstrument &&
+					    m_item->ItemType != item::ItemTypePercussionInstrument) {
 						if (primary_item->m_item->ItemType != item::ItemType2HBlunt &&
-							primary_item->m_item->ItemType != item::ItemType2HSlash &&
-							primary_item->m_item->ItemType != item::ItemType2HPiercing)
-						{
+						    primary_item->m_item->ItemType != item::ItemType2HSlash &&
+						    primary_item->m_item->ItemType != item::ItemType2HPiercing) {
 							return true;
 						}
 					}
@@ -567,7 +511,7 @@ bool EQ::ItemInstance::IsSlotAllowed(int16 slot_id, EQ::InventoryProfile &inv) c
 	return true;
 }
 
-void EQ::ItemInstance::Initialize(SharedDatabase *db) {
+void EQ::ItemInstance::Initialize(SharedDatabase* db) {
 	// if there's no actual item, don't do anything
 	if (!m_item)
 		return;
@@ -581,7 +525,7 @@ void EQ::ItemInstance::SetTimer(std::string name, uint32 time) {
 
 void EQ::ItemInstance::StopTimer(std::string name) {
 	auto iter = m_timers.find(name);
-	if(iter != m_timers.end()) {
+	if (iter != m_timers.end()) {
 		m_timers.erase(iter);
 	}
 }
@@ -590,37 +534,32 @@ void EQ::ItemInstance::ClearTimers() {
 	m_timers.clear();
 }
 
-bool EQ::ItemInstance::IsFlesh() const
-{
+bool EQ::ItemInstance::IsFlesh() const {
 	if (!m_item || m_item->ItemClass != EQ::item::ItemClassCommon)
 		return false;
 
 	if (m_item->Icon == 601 ||
-		m_item->Icon == 797 ||
-		m_item->Icon == 814 ||
-		m_item->Icon == 815 ||
-		m_item->Icon == 816 ||
-		m_item->Icon == 817 ||
-		m_item->Icon == 924 ||
-		m_item->Icon == 925 ||
-		m_item->Icon == 1003 ||
-		m_item->Icon == 1139 ||
-		m_item->Icon == 1199 ||
-		m_item->Icon == 1238 ||
-		m_item->Icon == 1202)
+	    m_item->Icon == 797 ||
+	    m_item->Icon == 814 ||
+	    m_item->Icon == 815 ||
+	    m_item->Icon == 816 ||
+	    m_item->Icon == 817 ||
+	    m_item->Icon == 924 ||
+	    m_item->Icon == 925 ||
+	    m_item->Icon == 1003 ||
+	    m_item->Icon == 1139 ||
+	    m_item->Icon == 1199 ||
+	    m_item->Icon == 1238 ||
+	    m_item->Icon == 1202)
 		return true;
 
 	return false;
 }
 
-bool EQ::ItemInstance::IsTieredPotion() const
-{
-	if (!m_item || m_item->ItemType != item::ItemTypePotion)
-	{
+bool EQ::ItemInstance::IsTieredPotion() const {
+	if (!m_item || m_item->ItemType != item::ItemTypePotion) {
 		return false;
-	}
-	else if (m_item->Click.Effect == 49 || (m_item->Click.Effect >= 1252 && m_item->Click.Effect <= 1266))
-	{
+	} else if (m_item->Click.Effect == 49 || (m_item->Click.Effect >= 1252 && m_item->Click.Effect <= 1266)) {
 		return true;
 	}
 

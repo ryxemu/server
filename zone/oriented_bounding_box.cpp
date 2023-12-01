@@ -45,8 +45,7 @@ OrientedBoundingBox::OrientedBoundingBox(glm::vec3 pos, glm::vec3 rot, glm::vec3
 	min_x = -extents.x;
 	max_x = extents.x;
 
-	if (min_x > max_x)
-	{
+	if (min_x > max_x) {
 		float t = min_x;
 		min_x = max_x;
 		max_x = t;
@@ -54,8 +53,7 @@ OrientedBoundingBox::OrientedBoundingBox(glm::vec3 pos, glm::vec3 rot, glm::vec3
 
 	min_y = -extents.y;
 	max_y = extents.y;
-	if (min_y > max_y)
-	{
+	if (min_y > max_y) {
 		float t = min_y;
 		min_y = max_y;
 		max_y = t;
@@ -63,20 +61,19 @@ OrientedBoundingBox::OrientedBoundingBox(glm::vec3 pos, glm::vec3 rot, glm::vec3
 
 	min_z = -extents.z;
 	max_z = extents.z;
-	if (min_z > max_z)
-	{
+	if (min_z > max_z) {
 		float t = min_z;
 		min_z = max_z;
 		max_z = t;
 	}
 
-	//rotate
+	// rotate
 	transformation = CreateRotateMatrix(rot.x * 3.141592654f / 180.0f, rot.y * 3.141592654f / 180.0f, rot.z * 3.141592654f / 180.0f);
-	
-	//scale
+
+	// scale
 	transformation = CreateScaleMatrix(scale.x, scale.y, scale.z) * transformation;
 
-	//translate
+	// translate
 	transformation = CreateTranslateMatrix(pos.x, pos.y, pos.z) * transformation;
 	inverted_transformation = glm::inverse(transformation);
 }
@@ -86,10 +83,10 @@ bool OrientedBoundingBox::ContainsPoint(glm::vec3 p) const {
 	glm::vec4 box_space_p = inverted_transformation * pt;
 
 	if (box_space_p.x >= min_x && box_space_p.x <= max_x &&
-		box_space_p.y >= min_y && box_space_p.y <= max_y &&
-		box_space_p.z >= min_z && box_space_p.z <= max_z) {
+	    box_space_p.y >= min_y && box_space_p.y <= max_y &&
+	    box_space_p.z >= min_z && box_space_p.z <= max_z) {
 		return true;
 	}
-	
+
 	return false;
 }

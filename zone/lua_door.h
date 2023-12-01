@@ -8,23 +8,23 @@ class Doors;
 class Lua_Mob;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_door();
 
-class Lua_Door : public Lua_Entity
-{
+class Lua_Door : public Lua_Entity {
 	typedef Doors NativeType;
-public:
-	Lua_Door() { }
-	Lua_Door(Doors *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_Door() { }
 
-	operator Doors*() {
+   public:
+	Lua_Door() {}
+	Lua_Door(Doors *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_Door() {}
+
+	operator Doors *() {
 		void *d = GetLuaPtrData();
-		if(d) {
-			return reinterpret_cast<Doors*>(d);
+		if (d) {
+			return reinterpret_cast<Doors *>(d);
 		}
 
 		return nullptr;

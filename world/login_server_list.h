@@ -10,35 +10,35 @@
 #include "../common/emu_tcp_connection.h"
 
 #ifdef _WINDOWS
-	void AutoInitLoginServer(void *tmp);
+void AutoInitLoginServer(void *tmp);
 #else
-	void *AutoInitLoginServer(void *tmp);
+void *AutoInitLoginServer(void *tmp);
 #endif
 
 class LoginServer;
 
-class LoginServerList{
-public:
+class LoginServerList {
+   public:
 	LoginServerList();
 	~LoginServerList();
 
-	void	Add(const char*, uint16, const char*, const char*, uint8);
-	void	InitLoginServer();
+	void Add(const char *, uint16, const char *, const char *, uint8);
+	void InitLoginServer();
 
-	bool	Process();
+	bool Process();
 
-	bool	SendInfo();
-	bool	SendNewInfo();
-	bool	SendStatus();
+	bool SendInfo();
+	bool SendNewInfo();
+	bool SendStatus();
 
-	bool	SendPacket(ServerPacket *pack);
-	bool	SendAccountUpdate(ServerPacket *pack);
-	bool	Connected();
-	bool	AllConnected();
-	bool	CanUpdate();
+	bool SendPacket(ServerPacket *pack);
+	bool SendAccountUpdate(ServerPacket *pack);
+	bool Connected();
+	bool AllConnected();
+	bool CanUpdate();
 
-protected:
-	LinkedList<LoginServer*> list;
+   protected:
+	LinkedList<LoginServer *> list;
 };
 
 #endif /*LOGINSERVERLIST_H_*/

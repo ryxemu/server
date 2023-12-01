@@ -1,20 +1,3 @@
-/*  EQEMu:  Everquest Server Emulator
-    Copyright (C) 2001-2004  EQEMu Development Team (http://eqemulator.net)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; version 2 of the License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 #ifndef __QUEST_MANAGER_H__
 #define __QUEST_MANAGER_H__
 
@@ -27,16 +10,15 @@ class Client;
 class Mob;
 class NPC;
 
-namespace EQ
-{
-	class ItemInstance;
+namespace EQ {
+class ItemInstance;
 }
 
 class QuestManager {
 	struct running_quest {
 		Mob *owner;
 		Client *initiator;
-		EQ::ItemInstance* questitem;
+		EQ::ItemInstance *questitem;
 		bool depop_npc;
 		std::string encounter;
 	};
@@ -47,11 +29,12 @@ class QuestManager {
 		uint32 time;
 		uint32 duration;
 	};
-public:
+
+   public:
 	QuestManager();
 	virtual ~QuestManager();
 
-	void StartQuest(Mob *_owner, Client *_initiator = nullptr, EQ::ItemInstance* _questitem = nullptr, std::string encounter = "");
+	void StartQuest(Mob *_owner, Client *_initiator = nullptr, EQ::ItemInstance *_questitem = nullptr, std::string encounter = "");
 	void EndQuest();
 	bool QuestsRunning() { return !quests_running_.empty(); }
 
@@ -60,16 +43,16 @@ public:
 	void ClearTimers(Mob *who);
 	void ClearAllTimers();
 
-	//quest functions
+	// quest functions
 	void echo(int colour, const char *str);
 	void say(const char *str);
 	void say(const char *str, uint8 language);
 	void me(const char *str);
 	void summonitem(uint32 itemid, int16 charges = -1);
 	void write(const char *file, const char *str);
-	Mob* spawn2(int npc_type, int grid, int unused, const glm::vec4& position, const char* name = nullptr);
-	Mob* unique_spawn(int npc_type, int grid, int unused, const glm::vec4& position);
-	Mob* spawn_from_spawn2(uint32 spawn2_id);
+	Mob *spawn2(int npc_type, int grid, int unused, const glm::vec4 &position, const char *name = nullptr);
+	Mob *unique_spawn(int npc_type, int grid, int unused, const glm::vec4 &position);
+	Mob *spawn_from_spawn2(uint32 spawn2_id);
 	void enable_spawn2(uint32 spawn2_id);
 	void disable_spawn2(uint32 spawn2_id);
 	void castspell(int spell_id, int target_id);
@@ -89,13 +72,13 @@ public:
 	void pausetimer(const char *timer_name);
 	void resumetimer(const char *timer_name);
 	bool ispausedtimer(const char *timer_name);
-	int	gettimer(const char *timer_name);
+	int gettimer(const char *timer_name);
 	void emote(const char *str);
 	void shout(const char *str);
 	void shout2(const char *str);
 	void gmsay(const char *str, uint32 color, bool send_to_world, uint32 to_guilddbid, uint32 to_minstatus);
-	void depop(int npc_type = 0); // depop NPC and don't start spawn timer
-	void depop_withtimer(int npc_type = 0); // depop NPC and start spawn timer
+	void depop(int npc_type = 0);            // depop NPC and don't start spawn timer
+	void depop_withtimer(int npc_type = 0);  // depop NPC and start spawn timer
 	void depopall(int npc_type = 0);
 	void depopzone(bool StartSpawnTimer = true);
 	void repopzone();
@@ -141,21 +124,21 @@ public:
 	void settime(uint8 new_hour, uint8 new_min);
 	void itemlink(int item_id);
 	void signal(int npc_id, int wait_ms = 0);
-	void signalwith(int npc_id, int signal_id, int wait_ms = 0, const char* data = nullptr);
+	void signalwith(int npc_id, int signal_id, int wait_ms = 0, const char *data = nullptr);
 	void setglobal(const char *varname, const char *newvalue, int options, const char *duration);
 	void targlobal(const char *varname, const char *value, const char *duration, int npcid, int charid, int zoneid);
 	void delglobal(const char *varname);
-	void rebind(int zoneid, const glm::vec3& location);
-	void rebind(int zoneid, const glm::vec4& location);
+	void rebind(int zoneid, const glm::vec3 &location);
+	void rebind(int zoneid, const glm::vec4 &location);
 	void start(int wp);
 	void stop();
 	void pause(int duration);
-	void moveto(const glm::vec4& position, bool saveguardspot, uint32 pause);
+	void moveto(const glm::vec4 &position, bool saveguardspot, uint32 pause);
 	void resume();
 	void setnexthpevent(int at);
 	void setnextinchpevent(int at);
 	void respawn(int npc_type, int grid);
-	void set_proximity(float minx, float maxx, float miny, float maxy, float minz=BEST_Z_INVALID, float maxz=-BEST_Z_INVALID);
+	void set_proximity(float minx, float maxx, float miny, float maxy, float minz = BEST_Z_INVALID, float maxz = -BEST_Z_INVALID);
 	void clear_proximity();
 	void enable_proximity_say();
 	void disable_proximity_say();
@@ -168,8 +151,8 @@ public:
 	void set_zone_flag(int zone_id);
 	void clear_zone_flag(int zone_id);
 	void sethp(int hpperc);
-	bool summonburriedplayercorpse(uint32 char_id, const glm::vec4& position);
-	bool summonallplayercorpses(uint32 char_id, const glm::vec4& position);
+	bool summonburriedplayercorpse(uint32 char_id, const glm::vec4 &position);
+	bool summonallplayercorpses(uint32 char_id, const glm::vec4 &position);
 	uint32 getplayerburriedcorpsecount(uint32 char_id);
 	bool buryplayercorpse(uint32 char_id);
 	void forcedooropen(uint32 doorid, bool altmode);
@@ -177,7 +160,8 @@ public:
 	void toggledoorstate(uint32 doorid);
 	bool isdooropen(uint32 doorid);
 	void npcrace(int race_id);
-	void npcgender(int gender_id);	void npcsize(int newsize);
+	void npcgender(int gender_id);
+	void npcsize(int newsize);
 	void npctexture(int newtexture);
 	void playerrace(int race_id);
 	void playergender(int gender_id);
@@ -185,42 +169,42 @@ public:
 	void playertexture(int newtexture);
 	void playerfeature(char *feature, int setting);
 	void npcfeature(char *feature, int setting);
-    void clearspawntimers();
+	void clearspawntimers();
 	void ze(int type, const char *str);
 	void we(int type, const char *str);
-    int getlevel(uint8 type);
-    int collectitems(uint32 item_id, bool remove);
-    int collectitems_processSlot(int16 slot_id, uint32 item_id, bool remove);
-    void enabletitle(int titleset);
-   	bool checktitle(int titlecheck);
-   	void removetitle(int titlecheck);
-	uint16 CreateGroundObject(uint32 itemid, const glm::vec4& position, uint32 decay_time = 300000);
-	uint16 CreateGroundObjectFromModel(const char* model, const glm::vec4& position, uint8 type = 0x00, uint32 decay_time = 0);
+	int getlevel(uint8 type);
+	int collectitems(uint32 item_id, bool remove);
+	int collectitems_processSlot(int16 slot_id, uint32 item_id, bool remove);
+	void enabletitle(int titleset);
+	bool checktitle(int titlecheck);
+	void removetitle(int titlecheck);
+	uint16 CreateGroundObject(uint32 itemid, const glm::vec4 &position, uint32 decay_time = 300000);
+	uint16 CreateGroundObjectFromModel(const char *model, const glm::vec4 &position, uint8 type = 0x00, uint32 decay_time = 0);
 	void ModifyNPCStat(const char *identifier, const char *newValue);
 	void UpdateSpawnTimer(uint32 id, uint32 newTime);
 	void MerchantSetItem(uint32 NPCid, uint32 itemid, uint32 quantity = 0);
 	uint32 MerchantCountItem(uint32 NPCid, uint32 itemid);
-	const char* varlink(char* perltext, int item_id);
-	std::string saylink(char* saylink_text, bool silent, const char* link_name);
-	const char* getguildnamebyid(int guild_id);
+	const char *varlink(char *perltext, int item_id);
+	std::string saylink(char *saylink_text, bool silent, const char *link_name);
+	const char *getguildnamebyid(int guild_id);
 	void SetRunning(bool val);
 	bool IsRunning();
 	void FlyMode(uint8 flymode);
 	uint8 FactionValue();
 	void wearchange(uint8 slot, uint16 texture);
-    void SendMail(const char *to, const char *from, const char *subject, const char *message);
-	uint16 CreateDoor( const char* model, float x, float y, float z, float heading, uint8 opentype, uint16 size);
-    int32 GetZoneID(const char *zone);
-    const char *GetZoneLongName(const char *zone);
+	void SendMail(const char *to, const char *from, const char *subject, const char *message);
+	uint16 CreateDoor(const char *model, float x, float y, float z, float heading, uint8 opentype, uint16 size);
+	int32 GetZoneID(const char *zone);
+	const char *GetZoneLongName(const char *zone);
 	void CrossZoneSignalPlayerByCharID(int charid, uint32 data);
-	void CrossZoneSignalNPCByNPCTypeID(uint32 npctype_id, int num, const char* data = nullptr);
+	void CrossZoneSignalNPCByNPCTypeID(uint32 npctype_id, int num, const char *data = nullptr);
 	void CrossZoneSignalPlayerByName(const char *CharName, uint32 data);
 	void CrossZoneSetEntityVariableByNPCTypeID(uint32 npctype_id, const char *id, const char *m_var);
 	void CrossZoneMessagePlayerByName(uint32 Type, const char *CharName, const char *Message);
 	bool EnableRecipe(uint32 recipe_id);
 	bool DisableRecipe(uint32 recipe_id);
 	void ClearNPCTypeCache(int npctype_id);
-	void SendDebug(const char* message, int level);
+	void SendDebug(const char *message, int level);
 	void ReloadZoneStaticData();
 
 	Client *GetInitiator() const;
@@ -229,9 +213,9 @@ public:
 	EQ::ItemInstance *GetQuestItem() const;
 	std::string GetEncounter() const;
 	inline bool ProximitySayInUse() { return HaveProximitySays; }
-	inline uint16 GetMana(uint32 spell_id) { return( spells[spell_id].mana); }
+	inline uint16 GetMana(uint32 spell_id) { return (spells[spell_id].mana); }
 
-private:
+   private:
 	std::stack<running_quest> quests_running_;
 
 	bool HaveProximitySays;
@@ -240,31 +224,32 @@ private:
 	int InsertQuestGlobal(int charid, int npcid, int zoneid, const char *name, const char *value, int expdate);
 
 	class QuestTimer {
-	public:
+	   public:
 		inline QuestTimer(uint32 duration, Mob *_mob, std::string _name)
-			: mob(_mob), name(_name), Timer_(duration) { Timer_.Start(duration, false); }
+		    : mob(_mob), name(_name), Timer_(duration) { Timer_.Start(duration, false); }
 		inline QuestTimer(uint32 duration, Mob *_mob, std::string _name, uint32 remaining)
-			: mob(_mob), name(_name), Timer_(duration) { Timer_.Start(remaining, false); Timer_.SetDuration(duration); }
-		Mob*   mob;
+		    : mob(_mob), name(_name), Timer_(duration) {
+			Timer_.Start(remaining, false);
+			Timer_.SetDuration(duration);
+		}
+		Mob *mob;
 		std::string name;
 		Timer Timer_;
 	};
 	class SignalTimer {
-	public:
-		inline SignalTimer(int duration, int _npc_id, int _signal_id, const char* _data) : npc_id(_npc_id), signal_id(_signal_id), data(_data ? _data : ""), Timer_(duration) { Timer_.Start(duration, false); }
+	   public:
+		inline SignalTimer(int duration, int _npc_id, int _signal_id, const char *_data) : npc_id(_npc_id), signal_id(_signal_id), data(_data ? _data : ""), Timer_(duration) { Timer_.Start(duration, false); }
 		int npc_id;
 		int signal_id;
 		std::string data;
 		Timer Timer_;
 	};
-	std::list<QuestTimer>	QTimerList;
-	std::list<SignalTimer>	STimerList;
-	std::list<PausedTimer>	PTimerList;
+	std::list<QuestTimer> QTimerList;
+	std::list<SignalTimer> STimerList;
+	std::list<PausedTimer> PTimerList;
 	size_t item_timers;
-
 };
 
 extern QuestManager quest_manager;
 
 #endif
-

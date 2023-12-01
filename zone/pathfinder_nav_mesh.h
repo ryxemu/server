@@ -4,19 +4,18 @@
 #include <string>
 #include <DetourNavMesh.h>
 
-class PathfinderNavmesh : public IPathfinder
-{
-public:
+class PathfinderNavmesh : public IPathfinder {
+   public:
 	PathfinderNavmesh(const std::string &path);
 	virtual ~PathfinderNavmesh();
 
 	bool IsUsingNavMesh() { return true; }
 	virtual IPath FindRoute(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, int flags = PathingNotDisabled);
-	virtual IPath FindPath(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, const PathfinderOptions& opts);
+	virtual IPath FindPath(const glm::vec3 &start, const glm::vec3 &end, bool &partial, bool &stuck, const PathfinderOptions &opts);
 	virtual glm::vec3 GetRandomLocation(const glm::vec3 &start, int flags = PathingNotDisabled);
-	virtual void DebugCommand(Client* c, const Seperator* sep);
+	virtual void DebugCommand(Client *c, const Seperator *sep);
 
-private:
+   private:
 	void Clear();
 	void Load(const std::string &path);
 	void ShowPath(Client *c, const glm::vec3 &start, const glm::vec3 &end);

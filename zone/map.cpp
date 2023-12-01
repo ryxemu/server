@@ -12,16 +12,16 @@
 #include <vector>
 #include <zlib.h>
 
-extern Zone* zone;
+extern Zone *zone;
 
-uint32 InflateData(const char* buffer, uint32 len, char* out_buffer, uint32 out_len_max) {
+uint32 InflateData(const char *buffer, uint32 len, char *out_buffer, uint32 out_len_max) {
 	z_stream zstream;
 	int zerror = 0;
 	int i;
 
-	zstream.next_in = const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(buffer));
+	zstream.next_in = const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(buffer));
 	zstream.avail_in = len;
-	zstream.next_out = reinterpret_cast<unsigned char*>(out_buffer);
+	zstream.next_out = reinterpret_cast<unsigned char *>(out_buffer);
 	zstream.avail_out = out_len_max;
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
@@ -36,10 +36,8 @@ uint32 InflateData(const char* buffer, uint32 len, char* out_buffer, uint32 out_
 	if (zerror == Z_STREAM_END) {
 		inflateEnd(&zstream);
 		return zstream.total_out;
-	}
-	else {
-		if (zerror == -4 && zstream.msg == 0)
-		{
+	} else {
+		if (zerror == -4 && zstream.msg == 0) {
 			return 0;
 		}
 
@@ -48,8 +46,7 @@ uint32 InflateData(const char* buffer, uint32 len, char* out_buffer, uint32 out_
 	}
 }
 
-struct Map::impl
-{
+struct Map::impl {
 	RaycastMesh *rm;
 };
 
@@ -58,7 +55,7 @@ Map::Map() {
 }
 
 Map::~Map() {
-	if(imp) {
+	if (imp) {
 		imp->rm->release();
 		safe_delete(imp);
 	}
@@ -77,27 +74,23 @@ float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result) const {
 	float hit_distance;
 	bool hit = false;
 
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
-	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld)
-	{
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
+	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld) {
 		hit = false;
 	}
 
-	if (hit)
-	{
+	if (hit) {
 		return result->z;
 	}
 
 	// Find nearest Z above us
 
 	to.z = -BEST_Z_INVALID;
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
-	if (zone->newzone_data.max_z != 0.0f && result->z > zone->newzone_data.max_z)
-	{
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
+	if (zone->newzone_data.max_z != 0.0f && result->z > zone->newzone_data.max_z) {
 		hit = false;
 	}
-	if (hit)
-	{
+	if (hit) {
 		return result->z;
 	}
 
@@ -122,27 +115,24 @@ float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result, float limit, float off
 	glm::vec3 to(start.x, start.y, BEST_Z_INVALID);
 	float hit_distance;
 	bool hit = false;
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 	if (hit && (std::abs(start.z - result->z) > (limit + offset)))
 		hit = false;
 
-	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld)
-	{
+	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld) {
 		hit = false;
 	}
 
-	if (hit)
-	{
+	if (hit) {
 		return result->z;
 	}
 
 	to.z = -BEST_Z_INVALID;
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 	if (hit && std::abs(result->z - start.z) > (limit))
 		hit = false;
 
-	if (hit)
-	{
+	if (hit) {
 		return result->z;
 	}
 
@@ -167,10 +157,9 @@ float Map::FindClosestZ(glm::vec3 &start, glm::vec3 *result, float z_offset) con
 	bool hit = false;
 
 	// first check is below us
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 
-	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld)
-	{
+	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld) {
 		hit = false;
 	}
 
@@ -180,10 +169,9 @@ float Map::FindClosestZ(glm::vec3 &start, glm::vec3 *result, float z_offset) con
 
 	// Find nearest Z above us
 	to.z = -BEST_Z_INVALID;
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 
-	if (hit && zone->newzone_data.max_z != 0.0f && result->z > zone->newzone_data.max_z)
-	{
+	if (hit && zone->newzone_data.max_z != 0.0f && result->z > zone->newzone_data.max_z) {
 		hit = false;
 	}
 	if (hit) {
@@ -215,7 +203,7 @@ float Map::FindCeiling(glm::vec3 &start, glm::vec3 *result) const {
 	bool hit = false;
 
 	// Find nearest Z above us
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 	if (hit) {
 		return result->z;
 	}
@@ -239,7 +227,7 @@ float Map::FindGround(glm::vec3 &start, glm::vec3 *result) const {
 	bool hit = false;
 
 	// Find nearest Z below us
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)result, nullptr, &hit_distance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
 	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld)
 		hit = false;
 
@@ -251,7 +239,7 @@ float Map::FindGround(glm::vec3 &start, glm::vec3 *result) const {
 }
 
 bool Map::LineIntersectsZoneCeiling(glm::vec3 start, glm::vec3 end, float step, glm::vec3 *hitLocation, glm::vec3 *hitNormal, float *hitDistance) const {
-	if(!imp)
+	if (!imp)
 		return false;
 
 	// find ceiling above start
@@ -262,7 +250,7 @@ bool Map::LineIntersectsZoneCeiling(glm::vec3 start, glm::vec3 end, float step, 
 	glm::vec3 result;
 
 	// Find nearest Z above us
-	hit = imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)&result, (RmReal*)hitNormal, (RmReal*)hitDistance);
+	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)&result, (RmReal *)hitNormal, (RmReal *)hitDistance);
 	if (!hit)
 		return false;
 
@@ -270,19 +258,19 @@ bool Map::LineIntersectsZoneCeiling(glm::vec3 start, glm::vec3 end, float step, 
 	to = end;
 
 	// find ceiling above end
-	return imp->rm->raycast((const RmReal*)&from, (const RmReal*)&to, (RmReal*)hitLocation, (RmReal*)hitNormal, (RmReal*)hitDistance);
+	return imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)hitLocation, (RmReal *)hitNormal, (RmReal *)hitDistance);
 }
 
 bool Map::LineIntersectsZone(glm::vec3 start, glm::vec3 end, float step, glm::vec3 *hitLocation, glm::vec3 *hitNormal, float *hitDistance) const {
 	if (!imp)
 		return false;
-	return imp->rm->raycast((const RmReal*)&start, (const RmReal*)&end, (RmReal*)hitLocation, (RmReal*)hitNormal, (RmReal*)hitDistance);
+	return imp->rm->raycast((const RmReal *)&start, (const RmReal *)&end, (RmReal *)hitLocation, (RmReal *)hitNormal, (RmReal *)hitDistance);
 }
 
 bool Map::LineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_mag, glm::vec3 *result) const {
 	if (!imp)
 		return false;
-	
+
 	float z = BEST_Z_INVALID;
 	glm::vec3 step;
 	glm::vec3 cur;
@@ -293,7 +281,7 @@ bool Map::LineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_
 	step.x = end.x - start.x;
 	step.y = end.y - start.y;
 	step.z = end.z - start.z;
-	float factor = step_mag / sqrt(step.x*step.x + step.y*step.y + step.z*step.z);
+	float factor = step_mag / sqrt(step.x * step.x + step.y * step.y + step.z * step.z);
 
 	step.x *= factor;
 	step.y *= factor;
@@ -314,10 +302,9 @@ bool Map::LineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_
 	if (step.z < 0 && step.z > -0.001f)
 		step.z = -0.001f;
 
-	//while we are not past end
-	//always do this once, even if start == end.
-	while(cur.x != end.x || cur.y != end.y || cur.z != end.z)
-	{
+	// while we are not past end
+	// always do this once, even if start == end.
+	while (cur.x != end.x || cur.y != end.y || cur.z != end.z) {
 		steps++;
 		glm::vec3 me;
 		me.x = cur.x;
@@ -334,13 +321,12 @@ bool Map::LineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_
 		else
 			return true;
 
-		//look at current location
-		if(LineIntersectsZone(start, end, step_mag, result))
-		{
+		// look at current location
+		if (LineIntersectsZone(start, end, step_mag, result)) {
 			return true;
 		}
 
-		//move 1 step
+		// move 1 step
 		if (cur.x != end.x)
 			cur.x += step.x;
 		if (cur.y != end.y)
@@ -348,35 +334,35 @@ bool Map::LineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_
 		if (cur.z != end.z)
 			cur.z += step.z;
 
-		//watch for end conditions
-		if ( (cur.x > end.x && end.x >= start.x) || (cur.x < end.x && end.x <= start.x) || (step.x == 0) ) {
+		// watch for end conditions
+		if ((cur.x > end.x && end.x >= start.x) || (cur.x < end.x && end.x <= start.x) || (step.x == 0)) {
 			cur.x = end.x;
 		}
-		if ( (cur.y > end.y && end.y >= start.y) || (cur.y < end.y && end.y <= start.y) || (step.y == 0) ) {
+		if ((cur.y > end.y && end.y >= start.y) || (cur.y < end.y && end.y <= start.y) || (step.y == 0)) {
 			cur.y = end.y;
 		}
-		if ( (cur.z > end.z && end.z >= start.z) || (cur.z < end.z && end.z < start.z) || (step.z == 0) ) {
+		if ((cur.z > end.z && end.z >= start.z) || (cur.z < end.z && end.z < start.z) || (step.z == 0)) {
 			cur.z = end.z;
 		}
 	}
 
-	//walked entire line and didnt run into anything...
+	// walked entire line and didnt run into anything...
 	return false;
 }
 
 bool Map::CheckLoS(glm::vec3 myloc, glm::vec3 oloc) const {
-	if(!imp)
-		return false;
-
-	return !imp->rm->raycast((const RmReal*)&myloc, (const RmReal*)&oloc, nullptr, nullptr, nullptr);
-}
-
-// returns true if a collision happens
-bool Map::DoCollisionCheck(glm::vec3 myloc, glm::vec3 oloc, glm::vec3& outnorm, float& distance) const {
 	if (!imp)
 		return false;
 
-	return imp->rm->raycast((const RmReal*)&myloc, (const RmReal*)&oloc, nullptr, (RmReal*)&outnorm, (RmReal*)&distance);
+	return !imp->rm->raycast((const RmReal *)&myloc, (const RmReal *)&oloc, nullptr, nullptr, nullptr);
+}
+
+// returns true if a collision happens
+bool Map::DoCollisionCheck(glm::vec3 myloc, glm::vec3 oloc, glm::vec3 &outnorm, float &distance) const {
+	if (!imp)
+		return false;
+
+	return imp->rm->raycast((const RmReal *)&myloc, (const RmReal *)&oloc, nullptr, (RmReal *)&outnorm, (RmReal *)&distance);
 }
 
 Map *Map::LoadMapFile(std::string file) {
@@ -399,21 +385,21 @@ Map *Map::LoadMapFile(std::string file) {
  * @param filename
  * @return
  */
-bool Map::Load(const std::string& filename) {
-	FILE * map_file = fopen(filename.c_str(), "rb");
-	if(map_file) {
+bool Map::Load(const std::string &filename) {
+	FILE *map_file = fopen(filename.c_str(), "rb");
+	if (map_file) {
 		uint32 version;
-		if(fread(&version, sizeof(version), 1, map_file) != 1) {
+		if (fread(&version, sizeof(version), 1, map_file) != 1) {
 			fclose(map_file);
 			return false;
 		}
-		
-		if(version == 0x01000000) {
+
+		if (version == 0x01000000) {
 			bool loaded_map_file = LoadV1(map_file);
 			fclose(map_file);
 
 			return loaded_map_file;
-		} else if(version == 0x02000000) {
+		} else if (version == 0x02000000) {
 			bool loaded_map_file = LoadV2(map_file);
 			fclose(map_file);
 			return loaded_map_file;
@@ -422,7 +408,7 @@ bool Map::Load(const std::string& filename) {
 			return false;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -430,39 +416,39 @@ bool Map::LoadV1(FILE *f) {
 	uint32 face_count;
 	uint16 node_count;
 	uint32 facelist_count;
-	
-	if(fread(&face_count, sizeof(face_count), 1, f) != 1) {
+
+	if (fread(&face_count, sizeof(face_count), 1, f) != 1) {
 		return false;
 	}
-	
-	if(fread(&node_count, sizeof(node_count), 1, f) != 1) {
+
+	if (fread(&node_count, sizeof(node_count), 1, f) != 1) {
 		return false;
 	}
-	
-	if(fread(&facelist_count, sizeof(facelist_count), 1, f) != 1) {
+
+	if (fread(&facelist_count, sizeof(facelist_count), 1, f) != 1) {
 		return false;
 	}
-	
+
 	std::vector<glm::vec3> verts;
 	std::vector<uint32> indices;
-	for(uint32 i = 0; i < face_count; ++i) {
+	for (uint32 i = 0; i < face_count; ++i) {
 		glm::vec3 a;
 		glm::vec3 b;
 		glm::vec3 c;
 		float normals[4];
-		if(fread(&a, sizeof(glm::vec3), 1, f) != 1) {
+		if (fread(&a, sizeof(glm::vec3), 1, f) != 1) {
 			return false;
 		}
 
-		if(fread(&b, sizeof(glm::vec3), 1, f) != 1) {
+		if (fread(&b, sizeof(glm::vec3), 1, f) != 1) {
 			return false;
 		}
 
-		if(fread(&c, sizeof(glm::vec3), 1, f) != 1) {
+		if (fread(&c, sizeof(glm::vec3), 1, f) != 1) {
 			return false;
 		}
 
-		if(fread(normals, sizeof(normals), 1, f) != 1) {
+		if (fread(normals, sizeof(normals), 1, f) != 1) {
 			return false;
 		}
 
@@ -476,27 +462,26 @@ bool Map::LoadV1(FILE *f) {
 		verts.push_back(c);
 		indices.push_back((uint32)sz + 2);
 	}
-	
-	if(imp) {
+
+	if (imp) {
 		imp->rm->release();
 		imp->rm = nullptr;
 	} else {
 		imp = new impl;
 	}
-	
-	imp->rm = createRaycastMesh((RmUint32)verts.size(), (const RmReal*)&verts[0], face_count, &indices[0]);
-	
-	if(!imp->rm) {
+
+	imp->rm = createRaycastMesh((RmUint32)verts.size(), (const RmReal *)&verts[0], face_count, &indices[0]);
+
+	if (!imp->rm) {
 		delete imp;
 		imp = nullptr;
 		return false;
 	}
-	
+
 	return true;
 }
 
-bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_steps, float interval)
-{
+bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_steps, float interval) {
 	if (zone->GetZoneID() == kedge || From == To || (zone->GetZoneID() == powater && (From.z < 0.0f || To.z < 0.0f)))
 		return true;
 
@@ -537,8 +522,7 @@ bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_st
 	step.y /= total_steps;
 	step.z /= total_steps;
 
-	for (int i = 0; i < count; i++)
-	{
+	for (int i = 0; i < count; i++) {
 		begin.x += step.x;
 		begin.y += step.y;
 		begin.z += step.z;
@@ -563,10 +547,8 @@ bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_st
 	return true;
 }
 
-struct ModelEntry
-{
-	struct Poly
-	{
+struct ModelEntry {
+	struct Poly {
 		uint32 v1, v2, v3;
 		uint8 vis;
 	};
@@ -607,34 +589,34 @@ bool Map::LoadV2(FILE *f) {
 	uint32 quads_per_tile;
 	float units_per_vertex;
 
-	vert_count = *(uint32*)buf;
+	vert_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	ind_count = *(uint32*)buf;
+	ind_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	nc_vert_count = *(uint32*)buf;
+	nc_vert_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	nc_ind_count = *(uint32*)buf;
+	nc_ind_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	model_count = *(uint32*)buf;
+	model_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	plac_count = *(uint32*)buf;
+	plac_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	plac_group_count = *(uint32*)buf;
+	plac_group_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	tile_count = *(uint32*)buf;
+	tile_count = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	quads_per_tile = *(uint32*)buf;
+	quads_per_tile = *(uint32 *)buf;
 	buf += sizeof(uint32);
 
-	units_per_vertex = *(float*)buf;
+	units_per_vertex = *(float *)buf;
 	buf += sizeof(float);
 
 	std::vector<glm::vec3> verts;
@@ -645,13 +627,13 @@ bool Map::LoadV2(FILE *f) {
 		float y;
 		float z;
 
-		x = *(float*)buf;
+		x = *(float *)buf;
 		buf += sizeof(float);
 
-		y = *(float*)buf;
+		y = *(float *)buf;
 		buf += sizeof(float);
 
-		z = *(float*)buf;
+		z = *(float *)buf;
 		buf += sizeof(float);
 
 		glm::vec3 vert(x, y, z);
@@ -660,7 +642,7 @@ bool Map::LoadV2(FILE *f) {
 
 	for (uint32 i = 0; i < ind_count; ++i) {
 		uint32 index;
-		index = *(uint32*)buf;
+		index = *(uint32 *)buf;
 		buf += sizeof(uint32);
 
 		indices.push_back(index);
@@ -680,19 +662,19 @@ bool Map::LoadV2(FILE *f) {
 		std::string name = buf;
 		buf += name.length() + 1;
 
-		uint32 vert_count = *(uint32*)buf;
+		uint32 vert_count = *(uint32 *)buf;
 		buf += sizeof(uint32);
 
-		uint32 poly_count = *(uint32*)buf;
+		uint32 poly_count = *(uint32 *)buf;
 		buf += sizeof(uint32);
 
 		me->verts.resize(vert_count);
 		for (uint32 j = 0; j < vert_count; ++j) {
-			float x = *(float*)buf;
+			float x = *(float *)buf;
 			buf += sizeof(float);
-			float y = *(float*)buf;
+			float y = *(float *)buf;
 			buf += sizeof(float);
-			float z = *(float*)buf;
+			float z = *(float *)buf;
 			buf += sizeof(float);
 
 			me->verts[j] = glm::vec3(x, y, z);
@@ -700,13 +682,13 @@ bool Map::LoadV2(FILE *f) {
 
 		me->polys.resize(poly_count);
 		for (uint32 j = 0; j < poly_count; ++j) {
-			uint32 v1 = *(uint32*)buf;
+			uint32 v1 = *(uint32 *)buf;
 			buf += sizeof(uint32);
-			uint32 v2 = *(uint32*)buf;
+			uint32 v2 = *(uint32 *)buf;
 			buf += sizeof(uint32);
-			uint32 v3 = *(uint32*)buf;
+			uint32 v3 = *(uint32 *)buf;
 			buf += sizeof(uint32);
-			uint8 vis = *(uint8*)buf;
+			uint8 vis = *(uint8 *)buf;
 			buf += sizeof(uint8);
 
 			ModelEntry::Poly p;
@@ -724,25 +706,25 @@ bool Map::LoadV2(FILE *f) {
 		std::string name = buf;
 		buf += name.length() + 1;
 
-		float x = *(float*)buf;
+		float x = *(float *)buf;
 		buf += sizeof(float);
-		float y = *(float*)buf;
+		float y = *(float *)buf;
 		buf += sizeof(float);
-		float z = *(float*)buf;
-		buf += sizeof(float);
-
-		float x_rot = *(float*)buf;
-		buf += sizeof(float);
-		float y_rot = *(float*)buf;
-		buf += sizeof(float);
-		float z_rot = *(float*)buf;
+		float z = *(float *)buf;
 		buf += sizeof(float);
 
-		float x_scale = *(float*)buf;
+		float x_rot = *(float *)buf;
 		buf += sizeof(float);
-		float y_scale = *(float*)buf;
+		float y_rot = *(float *)buf;
 		buf += sizeof(float);
-		float z_scale = *(float*)buf;
+		float z_rot = *(float *)buf;
+		buf += sizeof(float);
+
+		float x_scale = *(float *)buf;
+		buf += sizeof(float);
+		float y_scale = *(float *)buf;
+		buf += sizeof(float);
+		float z_scale = *(float *)buf;
 		buf += sizeof(float);
 
 		if (models.count(name) == 0)
@@ -794,60 +776,60 @@ bool Map::LoadV2(FILE *f) {
 	}
 
 	for (uint32 i = 0; i < plac_group_count; ++i) {
-		float x = *(float*)buf;
+		float x = *(float *)buf;
 		buf += sizeof(float);
-		float y = *(float*)buf;
+		float y = *(float *)buf;
 		buf += sizeof(float);
-		float z = *(float*)buf;
-		buf += sizeof(float);
-
-		float x_rot = *(float*)buf;
-		buf += sizeof(float);
-		float y_rot = *(float*)buf;
-		buf += sizeof(float);
-		float z_rot = *(float*)buf;
+		float z = *(float *)buf;
 		buf += sizeof(float);
 
-		float x_scale = *(float*)buf;
+		float x_rot = *(float *)buf;
 		buf += sizeof(float);
-		float y_scale = *(float*)buf;
+		float y_rot = *(float *)buf;
 		buf += sizeof(float);
-		float z_scale = *(float*)buf;
-		buf += sizeof(float);
-
-		float x_tile = *(float*)buf;
-		buf += sizeof(float);
-		float y_tile = *(float*)buf;
-		buf += sizeof(float);
-		float z_tile = *(float*)buf;
+		float z_rot = *(float *)buf;
 		buf += sizeof(float);
 
-		uint32 p_count = *(uint32*)buf;
+		float x_scale = *(float *)buf;
+		buf += sizeof(float);
+		float y_scale = *(float *)buf;
+		buf += sizeof(float);
+		float z_scale = *(float *)buf;
+		buf += sizeof(float);
+
+		float x_tile = *(float *)buf;
+		buf += sizeof(float);
+		float y_tile = *(float *)buf;
+		buf += sizeof(float);
+		float z_tile = *(float *)buf;
+		buf += sizeof(float);
+
+		uint32 p_count = *(uint32 *)buf;
 		buf += sizeof(uint32);
 
 		for (uint32 j = 0; j < p_count; ++j) {
 			std::string name = buf;
 			buf += name.length() + 1;
 
-			float p_x = *(float*)buf;
+			float p_x = *(float *)buf;
 			buf += sizeof(float);
-			float p_y = *(float*)buf;
+			float p_y = *(float *)buf;
 			buf += sizeof(float);
-			float p_z = *(float*)buf;
-			buf += sizeof(float);
-
-			float p_x_rot = *(float*)buf * 3.141592654f / 180.0f;
-			buf += sizeof(float);
-			float p_y_rot = *(float*)buf * 3.141592654f / 180.0f;
-			buf += sizeof(float);
-			float p_z_rot = *(float*)buf * 3.141592654f / 180.0f;
+			float p_z = *(float *)buf;
 			buf += sizeof(float);
 
-			float p_x_scale = *(float*)buf;
+			float p_x_rot = *(float *)buf * 3.141592654f / 180.0f;
 			buf += sizeof(float);
-			float p_y_scale = *(float*)buf;
+			float p_y_rot = *(float *)buf * 3.141592654f / 180.0f;
 			buf += sizeof(float);
-			float p_z_scale = *(float*)buf;
+			float p_z_rot = *(float *)buf * 3.141592654f / 180.0f;
+			buf += sizeof(float);
+
+			float p_x_scale = *(float *)buf;
+			buf += sizeof(float);
+			float p_y_scale = *(float *)buf;
+			buf += sizeof(float);
+			float p_z_scale = *(float *)buf;
 			buf += sizeof(float);
 
 			if (models.count(name) == 0)
@@ -952,20 +934,20 @@ bool Map::LoadV2(FILE *f) {
 	floats.resize(ter_vert_count);
 	for (uint32 i = 0; i < tile_count; ++i) {
 		bool flat;
-		flat = *(bool*)buf;
+		flat = *(bool *)buf;
 		buf += sizeof(bool);
 
 		float x;
-		x = *(float*)buf;
+		x = *(float *)buf;
 		buf += sizeof(float);
 
 		float y;
-		y = *(float*)buf;
+		y = *(float *)buf;
 		buf += sizeof(float);
 
 		if (flat) {
 			float z;
-			z = *(float*)buf;
+			z = *(float *)buf;
 			buf += sizeof(float);
 
 			float QuadVertex1X = x;
@@ -997,21 +979,20 @@ bool Map::LoadV2(FILE *f) {
 			indices.push_back(current_vert);
 			indices.push_back(current_vert - 3);
 			indices.push_back(current_vert - 2);
-		}
-		else {
-			//read flags
+		} else {
+			// read flags
 			for (uint32 j = 0; j < ter_quad_count; ++j) {
 				uint8 f;
-				f = *(uint8*)buf;
+				f = *(uint8 *)buf;
 				buf += sizeof(uint8);
 
 				flags[j] = f;
 			}
 
-			//read floats
+			// read floats
 			for (uint32 j = 0; j < ter_vert_count; ++j) {
 				float f;
-				f = *(float*)buf;
+				f = *(float *)buf;
 				buf += sizeof(float);
 
 				floats[j] = f;
@@ -1048,8 +1029,7 @@ bool Map::LoadV2(FILE *f) {
 				auto iter = cur_verts.find(t);
 				if (iter != cur_verts.end()) {
 					i1 = iter->second;
-				}
-				else {
+				} else {
 					i1 = (uint32)verts.size();
 					verts.push_back(glm::vec3(QuadVertex1X, QuadVertex1Y, QuadVertex1Z));
 					cur_verts[std::make_tuple(QuadVertex1X, QuadVertex1Y, QuadVertex1Z)] = i1;
@@ -1059,8 +1039,7 @@ bool Map::LoadV2(FILE *f) {
 				iter = cur_verts.find(t);
 				if (iter != cur_verts.end()) {
 					i2 = iter->second;
-				}
-				else {
+				} else {
 					i2 = (uint32)verts.size();
 					verts.push_back(glm::vec3(QuadVertex2X, QuadVertex2Y, QuadVertex2Z));
 					cur_verts[std::make_tuple(QuadVertex2X, QuadVertex2Y, QuadVertex2Z)] = i2;
@@ -1070,8 +1049,7 @@ bool Map::LoadV2(FILE *f) {
 				iter = cur_verts.find(t);
 				if (iter != cur_verts.end()) {
 					i3 = iter->second;
-				}
-				else {
+				} else {
 					i3 = (uint32)verts.size();
 					verts.push_back(glm::vec3(QuadVertex3X, QuadVertex3Y, QuadVertex3Z));
 					cur_verts[std::make_tuple(QuadVertex3X, QuadVertex3Y, QuadVertex3Z)] = i3;
@@ -1081,8 +1059,7 @@ bool Map::LoadV2(FILE *f) {
 				iter = cur_verts.find(t);
 				if (iter != cur_verts.end()) {
 					i4 = iter->second;
-				}
-				else {
+				} else {
 					i4 = (uint32)verts.size();
 					verts.push_back(glm::vec3(QuadVertex4X, QuadVertex4Y, QuadVertex4Z));
 					cur_verts[std::make_tuple(QuadVertex4X, QuadVertex4Y, QuadVertex4Z)] = i4;
@@ -1104,12 +1081,11 @@ bool Map::LoadV2(FILE *f) {
 	if (imp) {
 		imp->rm->release();
 		imp->rm = nullptr;
-	}
-	else {
+	} else {
 		imp = new impl;
 	}
 
-	imp->rm = createRaycastMesh((RmUint32)verts.size(), (const RmReal*)&verts[0], face_count, &indices[0]);
+	imp->rm = createRaycastMesh((RmUint32)verts.size(), (const RmReal *)&verts[0], face_count, &indices[0]);
 
 	if (!imp->rm) {
 		delete imp;

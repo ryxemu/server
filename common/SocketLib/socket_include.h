@@ -1,14 +1,14 @@
 /** \file socket_include.h
  **	\date  2005-04-12
  **	\author grymse@alhem.net
-**/
+ **/
 /*
 Copyright (C) 2004,2005  Anders Hedstrom
 
 This library is made available under the terms of the GNU GPL.
 
 If you would like to use this library in a closed-source application,
-a separate license agreement is available. For information about 
+a separate license agreement is available. For information about
 the closed-source license agreement for the C++ sockets library,
 please visit http://www.alhem.net/Sockets/license.html and/or
 email license@alhem.net.
@@ -34,8 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <sys/param.h>
 #endif
 
-
-#ifndef _WIN32 
+#ifndef _WIN32
 // ----------------------------------------
 // common unix includes / defines
 #include <unistd.h>
@@ -60,15 +59,14 @@ namespace SOCKETS_NAMESPACE {
 typedef int SOCKET;
 
 #ifndef INADDR_NONE
-#define INADDR_NONE ((unsigned long) -1)
-#endif // INADDR_NONE
+#define INADDR_NONE ((unsigned long)-1)
+#endif  // INADDR_NONE
 
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif // !_WIN32
-
+#endif  // !_WIN32
 
 // ----------------------------------------
 // Generic
@@ -76,11 +74,10 @@ typedef int SOCKET;
 #define SOL_IP IPPROTO_IP
 #endif
 
-
 // ----------------------------------------
 // OS specific adaptions
 
-#ifdef SOLARIS 
+#ifdef SOLARIS
 // ----------------------------------------
 // Solaris
 #ifdef SOCKETS_NAMESPACE
@@ -98,29 +95,29 @@ typedef unsigned short port_t;
 #elif defined __FreeBSD__
 // ----------------------------------------
 // FreeBSD
-# if __FreeBSD_version >= 400014
-#  define s6_addr16 __u6_addr.__u6_addr16
-#  if !defined(MSG_NOSIGNAL)
-#   define MSG_NOSIGNAL 0
-#  endif
-#  include <netinet/in.h>
+#if __FreeBSD_version >= 400014
+#define s6_addr16 __u6_addr.__u6_addr16
+#if !defined(MSG_NOSIGNAL)
+#define MSG_NOSIGNAL 0
+#endif
+#include <netinet/in.h>
 #ifdef SOCKETS_NAMESPACE
 namespace SOCKETS_NAMESPACE {
 #endif
 
-typedef	in_addr_t ipaddr_t;
-typedef	in_port_t port_t;
+typedef in_addr_t ipaddr_t;
+typedef in_port_t port_t;
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#  define IPV6_ADD_MEMBERSHIP IPV6_JOIN_GROUP
-#  define IPV6_DROP_MEMBERSHIP IPV6_LEAVE_GROUP
-# else
-#  error FreeBSD versions prior to 400014 does not support ipv6
-# endif
+#define IPV6_ADD_MEMBERSHIP IPV6_JOIN_GROUP
+#define IPV6_DROP_MEMBERSHIP IPV6_LEAVE_GROUP
+#else
+#error FreeBSD versions prior to 400014 does not support ipv6
+#endif
 
-#elif defined MACOSX 
+#elif defined MACOSX
 // ----------------------------------------
 // Mac OS X
 #include <string.h>
@@ -135,11 +132,11 @@ typedef unsigned long ipaddr_t;
 #endif
 
 #define s6_addr16 __u6_addr.__u6_addr16
-#define MSG_NOSIGNAL 0 // oops - thanks Derek
+#define MSG_NOSIGNAL 0  // oops - thanks Derek
 #define IPV6_ADD_MEMBERSHIP IPV6_JOIN_GROUP
 #define IPV6_DROP_MEMBERSHIP IPV6_LEAVE_GROUP
 
-#elif defined _WIN32 
+#elif defined _WIN32
 // ----------------------------------------
 // Win32
 #pragma comment(lib, "wsock32.lib")
@@ -161,7 +158,7 @@ typedef int socklen_t;
 
 // 1.8.6: define FD_SETSIZE to something bigger than 64 if there are a lot of
 // simultaneous connections (must be done before including winsock.h)
-//#define FD_SETSIZE 1024
+// #define FD_SETSIZE 1024
 #include <winsock.h>
 
 #define Errno WSAGetLastError()
@@ -174,19 +171,19 @@ const char *StrError(int x);
 // class WSAInitializer is a part of the Socket class (on win32)
 // as a static instance - so whenever an application uses a Socket,
 // winsock is initialized
-class WSAInitializer // Winsock Initializer
+class WSAInitializer  // Winsock Initializer
 {
-public:
+   public:
 	WSAInitializer() {
-		if (WSAStartup(0x101,&m_wsadata)) 
-		{
+		if (WSAStartup(0x101, &m_wsadata)) {
 			exit(-1);
 		}
 	}
 	~WSAInitializer() {
 		WSACleanup();
 	}
-private:
+
+   private:
 	WSADATA m_wsadata;
 };
 
@@ -194,9 +191,9 @@ private:
 }
 #endif
 
-#else 
+#else
 // ----------------------------------------
-// LINUX 
+// LINUX
 #ifdef SOCKETS_NAMESPACE
 namespace SOCKETS_NAMESPACE {
 #endif
@@ -207,7 +204,6 @@ typedef unsigned short port_t;
 }
 #endif
 
-
 #endif
 
 #ifdef _THREADSAFE_SOCKETS
@@ -215,4 +211,4 @@ typedef unsigned short port_t;
 #include "Lock.h"
 #endif
 
-#endif // _SOCKET_INCLUDE_H
+#endif  // _SOCKET_INCLUDE_H

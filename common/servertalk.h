@@ -863,7 +863,7 @@ struct ServerRaidGeneralAction_Struct {
 };
 
 struct ServerRaidGroupAction_Struct { //add / remove depends on opcode.
-	
+
 	uint32 gid; //group id to send to.
 	uint32 rid; //raid id to send to.
 	char membername[64]; //member who's adding / leaving
@@ -1135,7 +1135,7 @@ struct ServerRequestSoulMark_Struct {
 };
 
 struct ServerIsOwnerOnline_Struct {
-	char   name[64];	
+	char   name[64];
 	uint32 corpseid;
 	uint16 zoneid;
 	uint8  online;

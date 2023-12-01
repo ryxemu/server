@@ -7,22 +7,22 @@
 struct ItemData;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_item();
 
-class Lua_Item : public Lua_Ptr<const EQ::ItemData>
-{
+class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	typedef const EQ::ItemData NativeType;
-public:
-	Lua_Item(uint32 item_id);
-	Lua_Item() : Lua_Ptr(nullptr) { }
-	Lua_Item(const EQ::ItemData *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Item() { }
 
-	operator const EQ::ItemData*() {
-		return reinterpret_cast<const EQ::ItemData*>(GetLuaPtrData());
+   public:
+	Lua_Item(uint32 item_id);
+	Lua_Item() : Lua_Ptr(nullptr) {}
+	Lua_Item(const EQ::ItemData *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Item() {}
+
+	operator const EQ::ItemData *() {
+		return reinterpret_cast<const EQ::ItemData *>(GetLuaPtrData());
 	}
 
 	int GetMinStatus();

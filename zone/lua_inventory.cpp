@@ -21,7 +21,7 @@ Lua_ItemInst Lua_Inventory::GetItem(int slot_id, int bag_slot) {
 int Lua_Inventory::PutItem(int slot_id, Lua_ItemInst item) {
 	Lua_Safe_Call_Int();
 	EQ::ItemInstance *inst = item;
-	if(!inst) {
+	if (!inst) {
 		return 0;
 	}
 
@@ -31,7 +31,7 @@ int Lua_Inventory::PutItem(int slot_id, Lua_ItemInst item) {
 int Lua_Inventory::PushCursor(Lua_ItemInst item) {
 	Lua_Safe_Call_Int();
 	EQ::ItemInstance *inst = item;
-	if(!inst) {
+	if (!inst) {
 		return 0;
 	}
 
@@ -155,34 +155,34 @@ int Lua_Inventory::GetSlotByItemInst(Lua_ItemInst inst) {
 
 luabind::scope lua_register_inventory() {
 	return luabind::class_<Lua_Inventory>("Inventory")
-		.def(luabind::constructor<>())
-		.def("GetItem", (Lua_ItemInst(Lua_Inventory::*)(int))&Lua_Inventory::GetItem)
-		.def("GetItem", (Lua_ItemInst(Lua_Inventory::*)(int,int))&Lua_Inventory::GetItem)
-		.def("PutItem", (int(Lua_Inventory::*)(int,Lua_ItemInst))&Lua_Inventory::PutItem)
-		.def("PushCursor", (int(Lua_Inventory::*)(Lua_ItemInst))&Lua_Inventory::PushCursor)
-		.def("SwapItem", (bool(Lua_Inventory::*)(int,int))&Lua_Inventory::SwapItem)
-		.def("DeleteItem", (bool(Lua_Inventory::*)(int))&Lua_Inventory::DeleteItem)
-		.def("DeleteItem", (bool(Lua_Inventory::*)(int,int))&Lua_Inventory::DeleteItem)
-		.def("CheckNoDrop", (bool(Lua_Inventory::*)(int))&Lua_Inventory::CheckNoDrop)
-		.def("PopItem", (Lua_ItemInst(Lua_Inventory::*)(int))&Lua_Inventory::PopItem)
-		.def("HasItem", (int(Lua_Inventory::*)(int))&Lua_Inventory::HasItem)
-		.def("HasItem", (int(Lua_Inventory::*)(int,int))&Lua_Inventory::HasItem)
-		.def("HasItem", (int(Lua_Inventory::*)(int,int,int))&Lua_Inventory::HasItem)
-		.def("HasSpaceForItem", (bool(Lua_Inventory::*)(Lua_Item,int))&Lua_Inventory::HasSpaceForItem)
-		.def("HasItemByUse", (int(Lua_Inventory::*)(int))&Lua_Inventory::HasItemByUse)
-		.def("HasItemByUse", (int(Lua_Inventory::*)(int,uint8))&Lua_Inventory::HasItemByUse)
-		.def("HasItemByUse", (int(Lua_Inventory::*)(int,uint8,uint8))&Lua_Inventory::HasItemByUse)
-		.def("FindFreeSlot", (int(Lua_Inventory::*)(bool,bool))&Lua_Inventory::FindFreeSlot)
-		.def("FindFreeSlot", (int(Lua_Inventory::*)(bool,bool,int))&Lua_Inventory::FindFreeSlot)
-		.def("FindFreeSlot", (int(Lua_Inventory::*)(bool,bool,int,bool))&Lua_Inventory::FindFreeSlot)
-		.def("CalcSlotId", (int(Lua_Inventory::*)(int))&Lua_Inventory::CalcSlotId)
-		.def("CalcSlotId", (int(Lua_Inventory::*)(int,int))&Lua_Inventory::CalcSlotId)
-		.def("CalcBagIdx", (int(Lua_Inventory::*)(int))&Lua_Inventory::CalcBagIdx)
-		.def("CalcSlotFromMaterial", (int(Lua_Inventory::*)(int))&Lua_Inventory::CalcSlotFromMaterial)
-		.def("CalcMaterialFromSlot", (int(Lua_Inventory::*)(int))&Lua_Inventory::CalcMaterialFromSlot)
-		.def("CanItemFitInContainer", (bool(Lua_Inventory::*)(Lua_Item,Lua_Item))&Lua_Inventory::CanItemFitInContainer)
-		.def("SupportsContainers", (bool(Lua_Inventory::*)(int))&Lua_Inventory::SupportsContainers)
-		.def("GetSlotByItemInst", (int(Lua_Inventory::*)(Lua_ItemInst))&Lua_Inventory::GetSlotByItemInst);
+	    .def(luabind::constructor<>())
+	    .def("GetItem", (Lua_ItemInst(Lua_Inventory::*)(int)) & Lua_Inventory::GetItem)
+	    .def("GetItem", (Lua_ItemInst(Lua_Inventory::*)(int, int)) & Lua_Inventory::GetItem)
+	    .def("PutItem", (int(Lua_Inventory::*)(int, Lua_ItemInst)) & Lua_Inventory::PutItem)
+	    .def("PushCursor", (int(Lua_Inventory::*)(Lua_ItemInst)) & Lua_Inventory::PushCursor)
+	    .def("SwapItem", (bool(Lua_Inventory::*)(int, int)) & Lua_Inventory::SwapItem)
+	    .def("DeleteItem", (bool(Lua_Inventory::*)(int)) & Lua_Inventory::DeleteItem)
+	    .def("DeleteItem", (bool(Lua_Inventory::*)(int, int)) & Lua_Inventory::DeleteItem)
+	    .def("CheckNoDrop", (bool(Lua_Inventory::*)(int)) & Lua_Inventory::CheckNoDrop)
+	    .def("PopItem", (Lua_ItemInst(Lua_Inventory::*)(int)) & Lua_Inventory::PopItem)
+	    .def("HasItem", (int(Lua_Inventory::*)(int)) & Lua_Inventory::HasItem)
+	    .def("HasItem", (int(Lua_Inventory::*)(int, int)) & Lua_Inventory::HasItem)
+	    .def("HasItem", (int(Lua_Inventory::*)(int, int, int)) & Lua_Inventory::HasItem)
+	    .def("HasSpaceForItem", (bool(Lua_Inventory::*)(Lua_Item, int)) & Lua_Inventory::HasSpaceForItem)
+	    .def("HasItemByUse", (int(Lua_Inventory::*)(int)) & Lua_Inventory::HasItemByUse)
+	    .def("HasItemByUse", (int(Lua_Inventory::*)(int, uint8)) & Lua_Inventory::HasItemByUse)
+	    .def("HasItemByUse", (int(Lua_Inventory::*)(int, uint8, uint8)) & Lua_Inventory::HasItemByUse)
+	    .def("FindFreeSlot", (int(Lua_Inventory::*)(bool, bool)) & Lua_Inventory::FindFreeSlot)
+	    .def("FindFreeSlot", (int(Lua_Inventory::*)(bool, bool, int)) & Lua_Inventory::FindFreeSlot)
+	    .def("FindFreeSlot", (int(Lua_Inventory::*)(bool, bool, int, bool)) & Lua_Inventory::FindFreeSlot)
+	    .def("CalcSlotId", (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcSlotId)
+	    .def("CalcSlotId", (int(Lua_Inventory::*)(int, int)) & Lua_Inventory::CalcSlotId)
+	    .def("CalcBagIdx", (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcBagIdx)
+	    .def("CalcSlotFromMaterial", (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcSlotFromMaterial)
+	    .def("CalcMaterialFromSlot", (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcMaterialFromSlot)
+	    .def("CanItemFitInContainer", (bool(Lua_Inventory::*)(Lua_Item, Lua_Item)) & Lua_Inventory::CanItemFitInContainer)
+	    .def("SupportsContainers", (bool(Lua_Inventory::*)(int)) & Lua_Inventory::SupportsContainers)
+	    .def("GetSlotByItemInst", (int(Lua_Inventory::*)(Lua_ItemInst)) & Lua_Inventory::GetSlotByItemInst);
 }
 
 #endif

@@ -1,32 +1,15 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
 enum {
-	consoleLoginStatus = 50,	//ability to log in, basic commands.
-	httpLoginStatus = 100,		//can log into the HTTP interface
-	consoleFlagStatus = 200,	//flag
-	consoleKickStatus = 150,	//kick
-	consoleLockStatus = 150,	//world lock/unlock
-	consoleZoneStatus = 150,	//zone up/down/lock
-	consolePassStatus = 200,	//change password
-	consoleWorldStatus = 200,	//world shutdown
+	consoleLoginStatus = 50,   // ability to log in, basic commands.
+	httpLoginStatus = 100,     // can log into the HTTP interface
+	consoleFlagStatus = 200,   // flag
+	consoleKickStatus = 150,   // kick
+	consoleLockStatus = 150,   // world lock/unlock
+	consoleZoneStatus = 150,   // zone up/down/lock
+	consolePassStatus = 200,   // change password
+	consoleWorldStatus = 200,  // world shutdown
 	consoleOpcodesStatus = 250
 };
 
@@ -45,7 +28,7 @@ enum {
 struct ServerChannelMessage_Struct;
 
 class Console : public WorldTCPConnection {
-public:
+   public:
 	Console(EmuTCPConnection* itcpc);
 	virtual ~Console();
 	virtual inline bool IsConsole() { return true; }
@@ -69,7 +52,8 @@ public:
 	const char* AccountName() { return paccountname; }
 	uint32 AccountID() { return paccountid; }
 	void SetAccountID(uint32 new_id) { paccountid = new_id; }
-private:
+
+   private:
 	EmuTCPConnection* tcpc;
 
 	Timer timeout_timer;
@@ -88,9 +72,8 @@ private:
 	int bufindex;
 };
 
-class ConsoleList
-{
-public:
+class ConsoleList {
+   public:
 	ConsoleList() {}
 	~ConsoleList() {}
 
@@ -103,8 +86,8 @@ public:
 	void SendEmoteMessage(uint32 type, const char* message, ...);
 	void SendEmoteMessageRaw(uint32 type, const char* message);
 	Console* FindByAccountName(const char* accname);
-private:
+
+   private:
 	LinkedList<Console*> list;
 };
 #endif
-

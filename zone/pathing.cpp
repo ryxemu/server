@@ -14,7 +14,7 @@
 #define snprintf _snprintf
 #endif
 
-//#define PATHDEBUG 
+// #define PATHDEBUG
 
 extern Zone* zone;
 
@@ -42,8 +42,7 @@ void CullPoints(std::vector<FindPerson_Point>& points) {
 			if (zone->zonemap->CheckLoS(glm::vec3(p.x, p.y, p.z), glm::vec3(p2.x, p2.y, p2.z))) {
 				points.erase(points.begin() + i + 1);
 				Log(Logs::Detail, Logs::Pathing, "Culled find path point %d, connecting %d->%d instead", i + 1, i, i + 2);
-			}
-			else {
+			} else {
 				break;
 			}
 		}

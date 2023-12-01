@@ -4,20 +4,19 @@
 #include <openssl/des.h>
 
 #ifdef WIN32
-	#include <windows.h>
+#include <windows.h>
 #else
-	#include "../common/unix.h"
+#include "../common/unix.h"
 #endif
 
-class EQCrypto 
-{
-public:
+class EQCrypto {
+   public:
 	EQCrypto();
 
 	void DoEQDecrypt(const unsigned char *in_buffer, unsigned char *out_buffer, int buffer_size);
 	void DoEQEncrypt(const unsigned char *in_buffer, unsigned char *out_buffer, int buffer_size);
 
-private:
+   private:
 	void DoDESCrypt(const unsigned char *in_buffer, unsigned char *out_buffer, int buffer_size, int enc);
 
 	static DES_cblock verant_key;

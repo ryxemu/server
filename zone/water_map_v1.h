@@ -13,23 +13,22 @@ typedef struct ZBSP_Node {
 } ZBSP_Node;
 #pragma pack()
 
-class WaterMapV1 : public WaterMap
-{
-public:
+class WaterMapV1 : public WaterMap {
+   public:
 	WaterMapV1();
 	~WaterMapV1();
-	
+
 	virtual WaterRegionType ReturnRegionType(const glm::vec3& location) const;
 	virtual bool InWater(const glm::vec3& location) const;
 	virtual bool InVWater(const glm::vec3& location) const;
 	virtual bool InLava(const glm::vec3& location) const;
 	virtual bool InLiquid(const glm::vec3& location) const;
 	virtual bool InPVP(const glm::vec3& location) const;
-	
-protected:
-	virtual bool Load(FILE *fp);
 
-private:
+   protected:
+	virtual bool Load(FILE* fp);
+
+   private:
 	WaterRegionType BSPReturnRegionType(int32 node_number, const glm::vec3& location) const;
 	ZBSP_Node* BSP_Root;
 

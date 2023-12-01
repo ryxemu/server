@@ -11,22 +11,22 @@ class Lua_Inventory;
 class Lua_Packet;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_client();
 luabind::scope lua_register_inventory_where();
 
-class Lua_Client : public Lua_Mob
-{
+class Lua_Client : public Lua_Mob {
 	typedef Client NativeType;
-public:
-	Lua_Client() { SetLuaPtrData(nullptr); }
-	Lua_Client(Client *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_Client() { }
 
-	operator Client*() {
-		return reinterpret_cast<Client*>(GetLuaPtrData());
+   public:
+	Lua_Client() { SetLuaPtrData(nullptr); }
+	Lua_Client(Client *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_Client() {}
+
+	operator Client *() {
+		return reinterpret_cast<Client *>(GetLuaPtrData());
 	}
 
 	void SendSound(unsigned int soundid);
@@ -228,8 +228,8 @@ public:
 	void SetConsumption(int in_hunger, int in_thirst);
 	int GetBoatID();
 	void SetBoatID(uint32 in_boatid);
-	char* GetBoatName();
-	void SetBoatName(const char* in_boatname);
+	char *GetBoatName();
+	void SetBoatName(const char *in_boatname);
 	void QuestReward(Lua_Mob target);
 	void QuestReward(Lua_Mob target, int32 copper);
 	void QuestReward(Lua_Mob target, int32 copper, int32 silver);

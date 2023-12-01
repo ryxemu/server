@@ -1,21 +1,17 @@
 #include "json_config.h"
 #include <fstream>
 
-EQ::JsonConfigFile::JsonConfigFile()
-{
+EQ::JsonConfigFile::JsonConfigFile() {
 }
 
-EQ::JsonConfigFile::JsonConfigFile(const Json::Value &value)
-{
+EQ::JsonConfigFile::JsonConfigFile(const Json::Value &value) {
 	m_root = value;
 }
 
-EQ::JsonConfigFile::~JsonConfigFile()
-{
+EQ::JsonConfigFile::~JsonConfigFile() {
 }
 
-EQ::JsonConfigFile EQ::JsonConfigFile::Load(const std::string &filename)
-{
+EQ::JsonConfigFile EQ::JsonConfigFile::Load(const std::string &filename) {
 	JsonConfigFile ret;
 	ret.m_root = Json::Value();
 
@@ -28,8 +24,7 @@ EQ::JsonConfigFile EQ::JsonConfigFile::Load(const std::string &filename)
 
 	try {
 		ifs >> ret.m_root;
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return ret;
 	}
 
@@ -41,8 +36,7 @@ std::string EQ::JsonConfigFile::GetVariableString(const std::string &title, cons
 		if (m_root.isMember(title) && m_root[title].isMember(parameter)) {
 			return m_root[title][parameter].asString();
 		}
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return default_value;
 	}
 
@@ -54,8 +48,7 @@ int EQ::JsonConfigFile::GetVariableInt(const std::string &title, const std::stri
 		if (m_root.isMember(title) && m_root[title].isMember(parameter)) {
 			return m_root[title][parameter].asInt();
 		}
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return default_value;
 	}
 
@@ -67,8 +60,7 @@ bool EQ::JsonConfigFile::GetVariableBool(const std::string &title, const std::st
 		if (m_root.isMember(title) && m_root[title].isMember(parameter)) {
 			return m_root[title][parameter].asBool();
 		}
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return default_value;
 	}
 
@@ -80,8 +72,7 @@ double EQ::JsonConfigFile::GetVariableDouble(const std::string &title, const std
 		if (m_root.isMember(title) && m_root[title].isMember(parameter)) {
 			return m_root[title][parameter].asDouble();
 		}
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return default_value;
 	}
 

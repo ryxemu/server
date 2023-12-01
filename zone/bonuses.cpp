@@ -1,20 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2004 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 #include "../common/classes.h"
 #include "../common/global_define.h"
 #include "../common/item_instance.h"
@@ -27,15 +10,12 @@
 #include "mob.h"
 #include "quest_parser_collection.h"
 
-
 #ifndef WIN32
 #include <stdlib.h>
 #include "../common/unix.h"
 #endif
 
-
-void Mob::CalcBonuses()
-{
+void Mob::CalcBonuses() {
 	CalcSpellBonuses(&spellbonuses);
 	CalcMaxHP();
 	CalcMaxMana();
@@ -44,8 +24,7 @@ void Mob::CalcBonuses()
 	rooted = FindType(SE_Root);
 }
 
-void NPC::CalcBonuses()
-{
+void NPC::CalcBonuses() {
 	Mob::CalcBonuses();
 	memset(&aabonuses, 0, sizeof(StatBonuses));
 
@@ -56,8 +35,7 @@ void NPC::CalcBonuses()
 	Mob::CalcBonuses();
 }
 
-void Client::CalcBonuses()
-{
+void Client::CalcBonuses() {
 	if (has_zomm)
 		return;
 
@@ -69,7 +47,7 @@ void Client::CalcBonuses()
 	// worn effects that provide AC are counted as spell bonus
 	spellbonuses.AC += itembonuses.SpellAC;
 
-	if (FindBuff(2434))			// primal weapon avatar proc
+	if (FindBuff(2434))  // primal weapon avatar proc
 	{
 		// primal proc is applied to item atk, not spell atk.  seen in client decompile
 		spellbonuses.ATK -= 100;
@@ -100,16 +78,15 @@ void Client::CalcBonuses()
 	CalcMaxHP();
 	CalcMaxMana();
 
-	CalcAGI();	// AGI calc depends on max hp
-	CalcAC(); // AC depends on AGI
+	CalcAGI();  // AGI calc depends on max hp
+	CalcAC();   // AC depends on AGI
 
 	SetAttackTimer();
 
 	rooted = FindType(SE_Root);
 }
 
-void Mob::CalcSpellBonuses()
-{
+void Mob::CalcSpellBonuses() {
 	if (IsClient() && CastToClient()->has_zomm)
 		return;
 
@@ -118,21 +95,16 @@ void Mob::CalcSpellBonuses()
 	CalcMaxMana();
 }
 
-int Client::CalcRecommendedLevelBonus(uint8 level, uint8 reclevel, int basestat)
-{
-	if( (reclevel > 0) && (level < reclevel) )
-	{
+int Client::CalcRecommendedLevelBonus(uint8 level, uint8 reclevel, int basestat) {
+	if ((reclevel > 0) && (level < reclevel)) {
 		int32 statmod = (level * 10000 / reclevel) * basestat;
 
-		if( statmod < 0 )
-		{
+		if (statmod < 0) {
 			statmod -= 5000;
-			return (statmod/10000);
-		}
-		else
-		{
+			return (statmod / 10000);
+		} else {
 			statmod += 5000;
-			return (statmod/10000);
+			return (statmod / 10000);
 		}
 	}
 
@@ -140,7 +112,7 @@ int Client::CalcRecommendedLevelBonus(uint8 level, uint8 reclevel, int basestat)
 }
 
 void Client::CalcItemBonuses(StatBonuses* newbon) {
-	//memset assumed to be done by caller.
+	// memset assumed to be done by caller.
 
 	// Clear item faction mods
 	ClearItemFactionBonuses();
@@ -148,14 +120,14 @@ void Client::CalcItemBonuses(StatBonuses* newbon) {
 	SetBashEnablingWeapon(false);
 
 	unsigned int i;
-	//should not include 21 (SLOT_AMMO)
+	// should not include 21 (SLOT_AMMO)
 	for (i = EQ::invslot::slotEar1; i < EQ::invslot::slotAmmo; i++) {
 		const EQ::ItemInstance* inst = m_inv[i];
-		if(inst == 0)
+		if (inst == 0)
 			continue;
 		AddItemBonuses(inst, newbon);
 
-		//Check if item in secondary slot is a 'shield'. Required for multiple spell effects. 
+		// Check if item in secondary slot is a 'shield'. Required for multiple spell effects.
 		if (i == EQ::invslot::slotSecondary && (m_inv.GetItem(EQ::invslot::slotSecondary)->GetItem()->ItemType == EQ::item::ItemTypeShield))
 			ShieldEquiped(true);
 
@@ -163,10 +135,7 @@ void Client::CalcItemBonuses(StatBonuses* newbon) {
 		if (i == EQ::invslot::slotPrimary && (m_inv.GetItem(EQ::invslot::slotPrimary)->GetID() == 11050 || m_inv.GetItem(EQ::invslot::slotPrimary)->GetID() == 10099 || m_inv.GetItem(EQ::invslot::slotPrimary)->GetID() == 14383))
 			SetBashEnablingWeapon(true);
 
-		if (GetAA(aa2HandBash) && i == EQ::invslot::slotPrimary && (m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HSlash
-			|| m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HBlunt
-			|| m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HPiercing)
-		)
+		if (GetAA(aa2HandBash) && i == EQ::invslot::slotPrimary && (m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HSlash || m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HBlunt || m_inv.GetItem(EQ::invslot::slotPrimary)->GetItem()->ItemType == EQ::item::ItemType2HPiercing))
 			SetBashEnablingWeapon(true);
 	}
 
@@ -176,36 +145,32 @@ void Client::CalcItemBonuses(StatBonuses* newbon) {
 		newbon->ATK = RuleI(Character, ItemATKCap);
 
 	newbon->HPRegenUncapped = newbon->HPRegen;
-	if(newbon->HPRegen > CalcHPRegenCap())
+	if (newbon->HPRegen > CalcHPRegenCap())
 		newbon->HPRegen = CalcHPRegenCap();
 
 	newbon->ManaRegenUncapped = newbon->ManaRegen;
-	if(newbon->ManaRegen > CalcManaRegenCap())
+	if (newbon->ManaRegen > CalcManaRegenCap())
 		newbon->ManaRegen = CalcManaRegenCap();
 }
 
-void Client::AddItemBonuses(const EQ::ItemInstance *inst, StatBonuses* newbon) {
-	if(!inst || !inst->IsType(EQ::item::ItemClassCommon))
-	{
+void Client::AddItemBonuses(const EQ::ItemInstance* inst, StatBonuses* newbon) {
+	if (!inst || !inst->IsType(EQ::item::ItemClassCommon)) {
 		return;
 	}
 
-	const EQ::ItemData *item = inst->GetItem();
+	const EQ::ItemData* item = inst->GetItem();
 
-	if(!inst->IsEquipable(GetBaseRace(),GetClass()))
-	{
-		if(item->ItemType != EQ::item::ItemTypeFood && item->ItemType != EQ::item::ItemTypeDrink)
+	if (!inst->IsEquipable(GetBaseRace(), GetClass())) {
+		if (item->ItemType != EQ::item::ItemTypeFood && item->ItemType != EQ::item::ItemTypeDrink)
 			return;
 	}
 
 	// The client always applies bonuses if the item is equipped, so skip this check for devels who deleved themselves in testing.
-	if(GetLevel() < item->ReqLevel && Admin() < 80)
-	{
+	if (GetLevel() < item->ReqLevel && Admin() < 80) {
 		return;
 	}
 
-	if(GetLevel() >= item->RecLevel)
-	{
+	if (GetLevel() >= item->RecLevel) {
 		newbon->AC += item->AC;
 		newbon->HP += item->HP;
 		newbon->Mana += item->Mana;
@@ -236,152 +201,131 @@ void Client::AddItemBonuses(const EQ::ItemInstance *inst, StatBonuses* newbon) {
 		newbon->PRCapMod += item->PR;
 		newbon->DRCapMod += item->DR;
 
-	}
-	else
-	{
+	} else {
 		int lvl = GetLevel();
 		int reclvl = item->RecLevel;
 
-		newbon->AC += CalcRecommendedLevelBonus( lvl, reclvl, item->AC );
-		newbon->HP += CalcRecommendedLevelBonus( lvl, reclvl, item->HP );
-		newbon->Mana += CalcRecommendedLevelBonus( lvl, reclvl, item->Mana );
-		newbon->STR += CalcRecommendedLevelBonus( lvl, reclvl, (item->AStr) );
-		newbon->STA += CalcRecommendedLevelBonus( lvl, reclvl, (item->ASta) );
-		newbon->DEX += CalcRecommendedLevelBonus( lvl, reclvl, (item->ADex) );
-		newbon->AGI += CalcRecommendedLevelBonus( lvl, reclvl, (item->AAgi) );
-		newbon->INT += CalcRecommendedLevelBonus( lvl, reclvl, (item->AInt) );
-		newbon->WIS += CalcRecommendedLevelBonus( lvl, reclvl, (item->AWis) );
-		newbon->CHA += CalcRecommendedLevelBonus( lvl, reclvl, (item->ACha) );
+		newbon->AC += CalcRecommendedLevelBonus(lvl, reclvl, item->AC);
+		newbon->HP += CalcRecommendedLevelBonus(lvl, reclvl, item->HP);
+		newbon->Mana += CalcRecommendedLevelBonus(lvl, reclvl, item->Mana);
+		newbon->STR += CalcRecommendedLevelBonus(lvl, reclvl, (item->AStr));
+		newbon->STA += CalcRecommendedLevelBonus(lvl, reclvl, (item->ASta));
+		newbon->DEX += CalcRecommendedLevelBonus(lvl, reclvl, (item->ADex));
+		newbon->AGI += CalcRecommendedLevelBonus(lvl, reclvl, (item->AAgi));
+		newbon->INT += CalcRecommendedLevelBonus(lvl, reclvl, (item->AInt));
+		newbon->WIS += CalcRecommendedLevelBonus(lvl, reclvl, (item->AWis));
+		newbon->CHA += CalcRecommendedLevelBonus(lvl, reclvl, (item->ACha));
 
-		newbon->MR += CalcRecommendedLevelBonus( lvl, reclvl, (item->MR) );
-		newbon->FR += CalcRecommendedLevelBonus( lvl, reclvl, (item->FR) );
-		newbon->CR += CalcRecommendedLevelBonus( lvl, reclvl, (item->CR) );
-		newbon->PR += CalcRecommendedLevelBonus( lvl, reclvl, (item->PR) );
-		newbon->DR += CalcRecommendedLevelBonus( lvl, reclvl, (item->DR) );
+		newbon->MR += CalcRecommendedLevelBonus(lvl, reclvl, (item->MR));
+		newbon->FR += CalcRecommendedLevelBonus(lvl, reclvl, (item->FR));
+		newbon->CR += CalcRecommendedLevelBonus(lvl, reclvl, (item->CR));
+		newbon->PR += CalcRecommendedLevelBonus(lvl, reclvl, (item->PR));
+		newbon->DR += CalcRecommendedLevelBonus(lvl, reclvl, (item->DR));
 
-		newbon->STRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->AStr );
-		newbon->STACapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->ASta );
-		newbon->DEXCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->ADex );
-		newbon->AGICapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->AAgi );
-		newbon->INTCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->AInt );
-		newbon->WISCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->AWis );
-		newbon->CHACapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->ACha );
-		newbon->MRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->MR );
-		newbon->CRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->FR );
-		newbon->FRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->CR );
-		newbon->PRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->PR );
-		newbon->DRCapMod += CalcRecommendedLevelBonus( lvl, reclvl, item->DR );
-
+		newbon->STRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->AStr);
+		newbon->STACapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->ASta);
+		newbon->DEXCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->ADex);
+		newbon->AGICapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->AAgi);
+		newbon->INTCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->AInt);
+		newbon->WISCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->AWis);
+		newbon->CHACapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->ACha);
+		newbon->MRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->MR);
+		newbon->CRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->FR);
+		newbon->FRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->CR);
+		newbon->PRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->PR);
+		newbon->DRCapMod += CalcRecommendedLevelBonus(lvl, reclvl, item->DR);
 	}
 
-	//FatherNitwit: New style haste, shields, and regens
-	//solar: some OLDPEQ items in the TAKP db have worn effect in the proc effect field, this is also fixed up in mac.cpp so the client sees them correctly
-	if ((item->Worn.Effect>0 || item->Proc.Effect>0) && (item->Worn.Type == EQ::item::ItemEffectWorn)) { // latent effects
+	// FatherNitwit: New style haste, shields, and regens
+	// solar: some OLDPEQ items in the TAKP db have worn effect in the proc effect field, this is also fixed up in mac.cpp so the client sees them correctly
+	if ((item->Worn.Effect > 0 || item->Proc.Effect > 0) && (item->Worn.Type == EQ::item::ItemEffectWorn)) {  // latent effects
 		ApplySpellsBonuses(item->Worn.Effect ? item->Worn.Effect : item->Proc.Effect, item->Worn.Level > 0 ? item->Worn.Level : GetLevel(), newbon, 0, true);
 	}
 
-	if (item->Focus.Effect>0 && (item->Focus.Type == EQ::item::ItemEffectFocus)) { // focus effects
+	if (item->Focus.Effect > 0 && (item->Focus.Type == EQ::item::ItemEffectFocus)) {  // focus effects
 		ApplySpellsBonuses(item->Focus.Effect, GetLevel(), newbon, 0, true);
 	}
 
-	switch(item->BardType)
-	{
-	case 51: /* All (e.g. Singing Short Sword) */
+	switch (item->BardType) {
+		case 51: /* All (e.g. Singing Short Sword) */
 		{
-			if(item->BardValue > newbon->singingMod)
+			if (item->BardValue > newbon->singingMod)
 				newbon->singingMod = item->BardValue;
-			if(item->BardValue > newbon->brassMod)
+			if (item->BardValue > newbon->brassMod)
 				newbon->brassMod = item->BardValue;
-			if(item->BardValue > newbon->stringedMod)
+			if (item->BardValue > newbon->stringedMod)
 				newbon->stringedMod = item->BardValue;
-			if(item->BardValue > newbon->percussionMod)
+			if (item->BardValue > newbon->percussionMod)
 				newbon->percussionMod = item->BardValue;
-			if(item->BardValue > newbon->windMod)
+			if (item->BardValue > newbon->windMod)
 				newbon->windMod = item->BardValue;
 			break;
 		}
-	case 50: /* Singing */
+		case 50: /* Singing */
 		{
-			if(item->BardValue > newbon->singingMod)
+			if (item->BardValue > newbon->singingMod)
 				newbon->singingMod = item->BardValue;
 			break;
 		}
-	case 23: /* Wind */
+		case 23: /* Wind */
 		{
-			if(item->BardValue > newbon->windMod)
+			if (item->BardValue > newbon->windMod)
 				newbon->windMod = item->BardValue;
 			break;
 		}
-	case 24: /* stringed */
+		case 24: /* stringed */
 		{
-			if(item->BardValue > newbon->stringedMod)
+			if (item->BardValue > newbon->stringedMod)
 				newbon->stringedMod = item->BardValue;
 			break;
 		}
-	case 25: /* brass */
+		case 25: /* brass */
 		{
-			if(item->BardValue > newbon->brassMod)
+			if (item->BardValue > newbon->brassMod)
 				newbon->brassMod = item->BardValue;
 			break;
 		}
-	case 26: /* Percussion */
+		case 26: /* Percussion */
 		{
-			if(item->BardValue > newbon->percussionMod)
+			if (item->BardValue > newbon->percussionMod)
 				newbon->percussionMod = item->BardValue;
 			break;
 		}
 	}
 
-	if (item->SkillModValue != 0 && item->SkillModType <= EQ::skills::HIGHEST_SKILL){
+	if (item->SkillModValue != 0 && item->SkillModType <= EQ::skills::HIGHEST_SKILL) {
 		if ((item->SkillModValue > 0 && newbon->skillmod[item->SkillModType] < item->SkillModValue) ||
-			(item->SkillModValue < 0 && newbon->skillmod[item->SkillModType] > item->SkillModValue))
-		{
+		    (item->SkillModValue < 0 && newbon->skillmod[item->SkillModType] > item->SkillModValue)) {
 			newbon->skillmod[item->SkillModType] = item->SkillModValue;
 		}
 	}
 
 	// Add Item Faction Mods
-	if (item->FactionMod1)
-	{
-		if (item->FactionAmt1 > 0 && item->FactionAmt1 > GetItemFactionBonus(item->FactionMod1))
-		{
+	if (item->FactionMod1) {
+		if (item->FactionAmt1 > 0 && item->FactionAmt1 > GetItemFactionBonus(item->FactionMod1)) {
 			AddItemFactionBonus(item->FactionMod1, item->FactionAmt1);
-		}
-		else if (item->FactionAmt1 < 0 && item->FactionAmt1 < GetItemFactionBonus(item->FactionMod1))
-		{
+		} else if (item->FactionAmt1 < 0 && item->FactionAmt1 < GetItemFactionBonus(item->FactionMod1)) {
 			AddItemFactionBonus(item->FactionMod1, item->FactionAmt1);
 		}
 	}
-	if (item->FactionMod2)
-	{
-		if (item->FactionAmt2 > 0 && item->FactionAmt2 > GetItemFactionBonus(item->FactionMod2))
-		{
+	if (item->FactionMod2) {
+		if (item->FactionAmt2 > 0 && item->FactionAmt2 > GetItemFactionBonus(item->FactionMod2)) {
 			AddItemFactionBonus(item->FactionMod2, item->FactionAmt2);
-		}
-		else if (item->FactionAmt2 < 0 && item->FactionAmt2 < GetItemFactionBonus(item->FactionMod2))
-		{
+		} else if (item->FactionAmt2 < 0 && item->FactionAmt2 < GetItemFactionBonus(item->FactionMod2)) {
 			AddItemFactionBonus(item->FactionMod2, item->FactionAmt2);
 		}
 	}
-	if (item->FactionMod3)
-	{
-		if (item->FactionAmt3 > 0 && item->FactionAmt3 > GetItemFactionBonus(item->FactionMod3))
-		{
+	if (item->FactionMod3) {
+		if (item->FactionAmt3 > 0 && item->FactionAmt3 > GetItemFactionBonus(item->FactionMod3)) {
 			AddItemFactionBonus(item->FactionMod3, item->FactionAmt3);
-		}
-		else if (item->FactionAmt3 < 0 && item->FactionAmt3 < GetItemFactionBonus(item->FactionMod3))
-		{
+		} else if (item->FactionAmt3 < 0 && item->FactionAmt3 < GetItemFactionBonus(item->FactionMod3)) {
 			AddItemFactionBonus(item->FactionMod3, item->FactionAmt3);
 		}
 	}
-	if (item->FactionMod4)
-	{
-		if (item->FactionAmt4 > 0 && item->FactionAmt4 > GetItemFactionBonus(item->FactionMod4))
-		{
+	if (item->FactionMod4) {
+		if (item->FactionAmt4 > 0 && item->FactionAmt4 > GetItemFactionBonus(item->FactionMod4)) {
 			AddItemFactionBonus(item->FactionMod4, item->FactionAmt4);
-		}
-		else if (item->FactionAmt4 < 0 && item->FactionAmt4 < GetItemFactionBonus(item->FactionMod4))
-		{
+		} else if (item->FactionAmt4 < 0 && item->FactionAmt4 < GetItemFactionBonus(item->FactionMod4)) {
 			AddItemFactionBonus(item->FactionMod4, item->FactionAmt4);
 		}
 	}
@@ -393,32 +337,26 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 	bool food = false;
 	bool drink = false;
 	// The client checks for food/drink in order of general slot including bag contents within.
-	for (i = EQ::invslot::GENERAL_BEGIN; i <= EQ::invslot::GENERAL_END; i++)
-	{
+	for (i = EQ::invslot::GENERAL_BEGIN; i <= EQ::invslot::GENERAL_END; i++) {
 		if (food && drink)
 			break;
 
 		const EQ::ItemInstance* inst = GetInv().GetItem(i);
 
-		if (inst && inst->GetItem()->ItemClass == EQ::item::ItemClassBag)
-		{
-			for (int j = EQ::invbag::SLOT_BEGIN; j <= EQ::invbag::SLOT_END; j++)
-			{
+		if (inst && inst->GetItem()->ItemClass == EQ::item::ItemClassBag) {
+			for (int j = EQ::invbag::SLOT_BEGIN; j <= EQ::invbag::SLOT_END; j++) {
 				const EQ::ItemInstance* instbag = GetInv().GetItem(i, j);
-				const EQ::ItemData *item = nullptr;
+				const EQ::ItemData* item = nullptr;
 
-				if(instbag) 
+				if (instbag)
 					item = instbag->GetItem();
 
-				if (item && item->ItemType == EQ::item::ItemTypeFood)
-				{
-					if (!food)
-					{
+				if (item && item->ItemType == EQ::item::ItemTypeFood) {
+					if (!food) {
 						food = true;
 						AddItemBonuses(instbag, newbon);
 						int32 item_hp = item->HP;
-						if (item_hp != 0 || food_hp != 0)
-						{
+						if (item_hp != 0 || food_hp != 0) {
 							if (item_hp < food_hp)
 								UpdateHP(food_hp - item_hp, false);
 							else if (item_hp > food_hp)
@@ -427,16 +365,12 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 							food_hp = item_hp;
 						}
 					}
-				}
-				else if (item && item->ItemType == EQ::item::ItemTypeDrink)
-				{
-					if (!drink)
-					{
+				} else if (item && item->ItemType == EQ::item::ItemTypeDrink) {
+					if (!drink) {
 						drink = true;
 						AddItemBonuses(instbag, newbon);
 						int32 item_hp = item->HP;
-						if (item_hp != 0 || drink_hp != 0)
-						{
+						if (item_hp != 0 || drink_hp != 0) {
 							if (item_hp < drink_hp)
 								UpdateHP(drink_hp - item_hp, false);
 							else if (item_hp > drink_hp)
@@ -445,25 +379,18 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 							drink_hp = item_hp;
 						}
 					}
-				}
-				else
-				{
+				} else {
 					continue;
 				}
 			}
-		}
-		else if (inst)
-		{
-			const EQ::ItemData *item = inst->GetItem();
-			if (item && item->ItemType == EQ::item::ItemTypeFood)
-			{
-				if (!food)
-				{
+		} else if (inst) {
+			const EQ::ItemData* item = inst->GetItem();
+			if (item && item->ItemType == EQ::item::ItemTypeFood) {
+				if (!food) {
 					food = true;
 					AddItemBonuses(inst, newbon);
 					int32 item_hp = item->HP;
-					if (item_hp != 0 || food_hp != 0)
-					{
+					if (item_hp != 0 || food_hp != 0) {
 						if (item_hp < food_hp)
 							UpdateHP(food_hp - item_hp, false);
 						else if (item_hp > food_hp)
@@ -472,16 +399,12 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 						food_hp = item_hp;
 					}
 				}
-			}
-			else if (item && item->ItemType == EQ::item::ItemTypeDrink)
-			{
-				if (!drink)
-				{
+			} else if (item && item->ItemType == EQ::item::ItemTypeDrink) {
+				if (!drink) {
 					drink = true;
 					AddItemBonuses(inst, newbon);
 					int32 item_hp = item->HP;
-					if (item_hp != 0 || drink_hp != 0)
-					{
+					if (item_hp != 0 || drink_hp != 0) {
 						if (item_hp < drink_hp)
 							UpdateHP(drink_hp - item_hp, false);
 						else if (item_hp > drink_hp)
@@ -490,9 +413,7 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 						drink_hp = item_hp;
 					}
 				}
-			}
-			else
-			{
+			} else {
 				continue;
 			}
 		}
@@ -500,46 +421,43 @@ void Client::CalcEdibleBonuses(StatBonuses* newbon) {
 }
 
 void Client::CalcAABonuses(StatBonuses* newbon) {
-	memset(newbon, 0, sizeof(StatBonuses));	//start fresh
+	memset(newbon, 0, sizeof(StatBonuses));  // start fresh
 
 	int i;
 	uint32 slots = 0;
 	uint32 aa_AA = 0;
 	uint32 aa_value = 0;
-	if(this->aa) {
-		for (i = 0; i < MAX_PP_AA_ARRAY; i++) {	//iterate through all of the client's AAs
-			if (this->aa[i]) {	// make sure aa exists or we'll crash zone
-				aa_AA = this->aa[i]->AA;	//same as aaid from the aa_effects table
-				aa_value = this->aa[i]->value;	//how many points in it
-				if (aa_AA > 0 || aa_value > 0) {	//do we have the AA? if 1 of the 2 is set, we can assume we do
-					//slots = database.GetTotalAALevels(aa_AA);	//find out how many effects from aa_effects table
-					slots = zone->GetTotalAALevels(aa_AA);	//find out how many effects from aa_effects, which is loaded into memory
-					if (slots > 0)	//and does it have any effects? may be able to put this above, not sure if it runs on each iteration
-						ApplyAABonuses(aa_AA, slots, newbon);	//add the bonuses
+	if (this->aa) {
+		for (i = 0; i < MAX_PP_AA_ARRAY; i++) {   // iterate through all of the client's AAs
+			if (this->aa[i]) {                    // make sure aa exists or we'll crash zone
+				aa_AA = this->aa[i]->AA;          // same as aaid from the aa_effects table
+				aa_value = this->aa[i]->value;    // how many points in it
+				if (aa_AA > 0 || aa_value > 0) {  // do we have the AA? if 1 of the 2 is set, we can assume we do
+					// slots = database.GetTotalAALevels(aa_AA);	//find out how many effects from aa_effects table
+					slots = zone->GetTotalAALevels(aa_AA);     // find out how many effects from aa_effects, which is loaded into memory
+					if (slots > 0)                             // and does it have any effects? may be able to put this above, not sure if it runs on each iteration
+						ApplyAABonuses(aa_AA, slots, newbon);  // add the bonuses
 				}
 			}
 		}
 	}
 }
 
-
-//A lot of the normal spell functions (IsBlankSpellEffect, etc) are set for just spells (in common/spdat.h).
-//For now, we'll just put them directly into the code and comment with the corresponding normal function
-//Maybe we'll fix it later? :-D
-void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
-{
-	if(slots == 0)	//sanity check. why bother if no slots to fill?
+// A lot of the normal spell functions (IsBlankSpellEffect, etc) are set for just spells (in common/spdat.h).
+// For now, we'll just put them directly into the code and comment with the corresponding normal function
+// Maybe we'll fix it later? :-D
+void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon) {
+	if (slots == 0)  // sanity check. why bother if no slots to fill?
 		return;
 
-	//from AA_Ability struct
+	// from AA_Ability struct
 	uint32 effect = 0;
 	int32 base1 = 0;
-	int32 base2 = 0;	//only really used for SE_RaiseStatCap & SE_ReduceSkillTimer in aa_effects table
+	int32 base2 = 0;  // only really used for SE_RaiseStatCap & SE_ReduceSkillTimer in aa_effects table
 	uint32 slot = 0;
 
 	std::map<uint32, std::map<uint32, AA_Ability> >::const_iterator find_iter = aa_effects.find(aaid);
-	if(find_iter == aa_effects.end())
-	{
+	if (find_iter == aa_effects.end()) {
 		return;
 	}
 
@@ -549,39 +467,37 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 		base2 = iter->second.base2;
 		slot = iter->second.slot;
 
-		//we default to 0 (SE_CurrentHP) for the effect, so if there aren't any base1/2 values, we'll just skip it
+		// we default to 0 (SE_CurrentHP) for the effect, so if there aren't any base1/2 values, we'll just skip it
 		if (effect == 0 && base1 == 0 && base2 == 0)
 			continue;
 
-		//IsBlankSpellEffect()
+		// IsBlankSpellEffect()
 		if (effect == SE_Blank || (effect == SE_CHA && base1 == 0) || effect == SE_StackingCommand_Block || effect == SE_StackingCommand_Overwrite)
 			continue;
 
 		Log(Logs::Detail, Logs::AA, "Applying Effect %d from AA %u in slot %d (base1: %d, base2: %d) on %s EQMacID: %d", effect, aaid, slot, base1, base2, this->GetCleanName(), zone->EmuToEQMacAA(aaid));
-			
-		uint8 focus = IsFocusEffect(0, 0, true,effect);
-		if (focus)
-		{
+
+		uint8 focus = IsFocusEffect(0, 0, true, effect);
+		if (focus) {
 			newbon->FocusEffects[focus] = effect;
 			continue;
 		}
 
-		switch (effect)
-		{
-			//Note: AA effects that use accuracy are skill limited, while spell effect is not.
+		switch (effect) {
+			// Note: AA effects that use accuracy are skill limited, while spell effect is not.
 			case SE_Accuracy:
-				if ((base2 == -1) && (newbon->Accuracy[EQ::skills::HIGHEST_SKILL+1] < base1))
-					newbon->Accuracy[EQ::skills::HIGHEST_SKILL+1] = base1;
+				if ((base2 == -1) && (newbon->Accuracy[EQ::skills::HIGHEST_SKILL + 1] < base1))
+					newbon->Accuracy[EQ::skills::HIGHEST_SKILL + 1] = base1;
 				else if (newbon->Accuracy[base2] < base1)
 					newbon->Accuracy[base2] += base1;
 				break;
-			case SE_CurrentHP: //regens
+			case SE_CurrentHP:  // regens
 				newbon->HPRegen += base1;
 				break;
 			case SE_MovementSpeed:
-				newbon->movementspeed += base1;	//should we let these stack?
+				newbon->movementspeed += base1;  // should we let these stack?
 				/*if (base1 > newbon->movementspeed)	//or should we use a total value?
-					newbon->movementspeed = base1;*/
+				    newbon->movementspeed = base1;*/
 				break;
 			case SE_STR:
 				newbon->STR += base1;
@@ -626,56 +542,55 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				break;
 			case SE_IncreaseRange:
 				break;
-			case SE_MaxHPChange: // Natural Durability, Physical Enhancement and Planar Durability have harcoded logic and don't use this bonus, see Client::CalcMaxHP()
+			case SE_MaxHPChange:  // Natural Durability, Physical Enhancement and Planar Durability have harcoded logic and don't use this bonus, see Client::CalcMaxHP()
 				newbon->MaxHP += base1;
 				break;
 			case SE_TwoHandBash:
 				break;
 			case SE_WaterBreathing:
-				//handled by client
+				// handled by client
 				newbon->WaterBreathing = true;
 				break;
 			case SE_SetBreathLevel:
 				newbon->BreathLevel += base1;
 				break;
 			case SE_RaiseStatCap:
-				switch(base2)
-				{
-					//are these #define'd somewhere?
-					case 0: //str
+				switch (base2) {
+					// are these #define'd somewhere?
+					case 0:  // str
 						newbon->STRCapMod += base1;
 						break;
-					case 1: //sta
+					case 1:  // sta
 						newbon->STACapMod += base1;
 						break;
-					case 2: //agi
+					case 2:  // agi
 						newbon->AGICapMod += base1;
 						break;
-					case 3: //dex
+					case 3:  // dex
 						newbon->DEXCapMod += base1;
 						break;
-					case 4: //wis
+					case 4:  // wis
 						newbon->WISCapMod += base1;
 						break;
-					case 5: //int
+					case 5:  // int
 						newbon->INTCapMod += base1;
 						break;
-					case 6: //cha
+					case 6:  // cha
 						newbon->CHACapMod += base1;
 						break;
-					case 7: //mr
+					case 7:  // mr
 						newbon->MRCapMod += base1;
 						break;
-					case 8: //cr
+					case 8:  // cr
 						newbon->CRCapMod += base1;
 						break;
-					case 9: //fr
+					case 9:  // fr
 						newbon->FRCapMod += base1;
 						break;
-					case 10: //pr
+					case 10:  // pr
 						newbon->PRCapMod += base1;
 						break;
-					case 11: //dr
+					case 11:  // dr
 						newbon->DRCapMod += base1;
 						break;
 				}
@@ -752,8 +667,7 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				newbon->CombatStability += base1;
 				break;
 			case SE_AddSingingMod:
-				switch (base2)
-				{
+				switch (base2) {
 					case EQ::item::ItemTypeWindInstrument:
 						newbon->windMod += base1;
 						break;
@@ -789,7 +703,7 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 			case SE_FrontalBackstabMinDmg:
 				newbon->FrontalBackstabMinDmg = true;
 				break;
-			
+
 			case SE_StrikeThrough:
 			case SE_StrikeThrough2:
 				newbon->StrikeThrough += base1;
@@ -822,71 +736,63 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				newbon->CrippBlowChance += base1;
 				break;
 
-			case SE_HitChance:
-			{
-				if(base2 == -1)
-					newbon->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] += base1;
+			case SE_HitChance: {
+				if (base2 == -1)
+					newbon->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] += base1;
 				else
 					newbon->HitChanceEffect[base2] += base1;
 
 				break;
 			}
 
-			case SE_CriticalHitChance:
-			{
+			case SE_CriticalHitChance: {
 				if (newbon->CriticalHitChance < base1)
 					newbon->CriticalHitChance = base1;
 
 				break;
 			}
 
-			case SE_CriticalSpellChance:
-			{
+			case SE_CriticalSpellChance: {
 				newbon->CriticalSpellChance += base1;
 				break;
 			}
 
-			case SE_ResistFearChance:
-			{
-				if(base1 == 100) // If we reach 100% in a single spell/item then we should be immune to negative fear resist effects until our immunity is over
+			case SE_ResistFearChance: {
+				if (base1 == 100)  // If we reach 100% in a single spell/item then we should be immune to negative fear resist effects until our immunity is over
 					newbon->Fearless = true;
 
-				newbon->ResistFearChance += base1; // these should stack
+				newbon->ResistFearChance += base1;  // these should stack
 				break;
 			}
 
-			case SE_DamageModifier:
-			{
-				if(base2 == -1)
-					newbon->DamageModifier[EQ::skills::HIGHEST_SKILL+1] += base1;
+			case SE_DamageModifier: {
+				if (base2 == -1)
+					newbon->DamageModifier[EQ::skills::HIGHEST_SKILL + 1] += base1;
 				else
 					newbon->DamageModifier[base2] += base1;
 				break;
 			}
 
-			case SE_SlayUndead:
-			{
-				if(newbon->SlayUndead[1] < base1)
-					newbon->SlayUndead[0] = base1; // Rate
-					newbon->SlayUndead[1] = base2; // Damage Modifier
+			case SE_SlayUndead: {
+				if (newbon->SlayUndead[1] < base1)
+					newbon->SlayUndead[0] = base1;  // Rate
+				newbon->SlayUndead[1] = base2;      // Damage Modifier
 				break;
 			}
 
-			case SE_DoubleRiposte:
-			{
+			case SE_DoubleRiposte: {
 				newbon->DoubleRiposte += base1;
 				break;
 			}
 
-			case SE_GiveDoubleRiposte:
-			{
-				//0=Regular Riposte 1=Skill Attack Riposte 2=Skill
-				if(base2 == 0){
-					if(newbon->GiveDoubleRiposte[0] < base1)
+			case SE_GiveDoubleRiposte: {
+				// 0=Regular Riposte 1=Skill Attack Riposte 2=Skill
+				if (base2 == 0) {
+					if (newbon->GiveDoubleRiposte[0] < base1)
 						newbon->GiveDoubleRiposte[0] = base1;
 				}
-				//Only for special attacks.
-				else if(base2 > 0 && (newbon->GiveDoubleRiposte[1] < base1)){
+				// Only for special attacks.
+				else if (base2 > 0 && (newbon->GiveDoubleRiposte[1] < base1)) {
 					newbon->GiveDoubleRiposte[1] = base1;
 					newbon->GiveDoubleRiposte[2] = base2;
 				}
@@ -894,68 +800,61 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				break;
 			}
 
-			//Kayen: Not sure best way to implement this yet.
-			//Physically raises skill cap ie if 55/55 it will raise to 55/60
-			case SE_RaiseSkillCap:
-			{
-				if(newbon->RaiseSkillCap[0] < base1){
-					newbon->RaiseSkillCap[0] = base1; //value
-					newbon->RaiseSkillCap[1] = base2; //skill
+			// Kayen: Not sure best way to implement this yet.
+			// Physically raises skill cap ie if 55/55 it will raise to 55/60
+			case SE_RaiseSkillCap: {
+				if (newbon->RaiseSkillCap[0] < base1) {
+					newbon->RaiseSkillCap[0] = base1;  // value
+					newbon->RaiseSkillCap[1] = base2;  // skill
 				}
 				break;
 			}
 
-			case SE_MasteryofPast:
-			{
-				if(newbon->MasteryofPast < base1)
+			case SE_MasteryofPast: {
+				if (newbon->MasteryofPast < base1)
 					newbon->MasteryofPast = base1;
 				break;
 			}
 
-			case SE_CastingLevel2:	// Jam Fest
+			case SE_CastingLevel2:  // Jam Fest
 			{
 				newbon->effective_casting_level += base1;
 				break;
 			}
-			case SE_CastingLevel:	// Brilliance of Ro, flappies
+			case SE_CastingLevel:  // Brilliance of Ro, flappies
 			{
 				newbon->effective_casting_level_for_fizzle_check += base1;
 				break;
 			}
 
-			case SE_DivineSave:
-			{
-				if(newbon->DivineSaveChance[0] < base1)
-				{
+			case SE_DivineSave: {
+				if (newbon->DivineSaveChance[0] < base1) {
 					newbon->DivineSaveChance[0] = base1;
 					newbon->DivineSaveChance[1] = base2;
 				}
 				break;
 			}
 
-			case SE_MitigateDamageShield:
-			{
+			case SE_MitigateDamageShield: {
 				if (base1 < 0)
-					base1 = base1*(-1);
+					base1 = base1 * (-1);
 
 				newbon->DSMitigationOffHand += base1;
 				break;
 			}
 
-			case SE_FinishingBlow:
-			{
-				//base1 = chance, base2 = damage
-				if (newbon->FinishingBlow[1] < base2){
+			case SE_FinishingBlow: {
+				// base1 = chance, base2 = damage
+				if (newbon->FinishingBlow[1] < base2) {
 					newbon->FinishingBlow[0] = base1;
 					newbon->FinishingBlow[1] = base2;
 				}
 				break;
 			}
 
-			case SE_FinishingBlowLvl:
-			{
-				//base1 = level, base2 = ??? (Set to 200 in AA data, possible proc rate mod?)
-				if (newbon->FinishingBlowLvl[0] < base1){
+			case SE_FinishingBlowLvl: {
+				// base1 = level, base2 = ??? (Set to 200 in AA data, possible proc rate mod?)
+				if (newbon->FinishingBlowLvl[0] < base1) {
 					newbon->FinishingBlowLvl[0] = base1;
 					newbon->FinishingBlowLvl[1] = base2;
 				}
@@ -974,20 +873,18 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				newbon->HealRate += base1;
 				break;
 
-			case SE_MeleeLifetap:
-			{
-
-				if((base1 < 0) && (newbon->MeleeLifetap > base1))
+			case SE_MeleeLifetap: {
+				if ((base1 < 0) && (newbon->MeleeLifetap > base1))
 					newbon->MeleeLifetap = base1;
 
-				else if(newbon->MeleeLifetap < base1)
+				else if (newbon->MeleeLifetap < base1)
 					newbon->MeleeLifetap = base1;
 				break;
 			}
 
 			case SE_Vampirism:
 				newbon->Vampirism += base1;
-				break;			
+				break;
 
 			case SE_Berserk:
 				newbon->BerserkSPA = true;
@@ -997,28 +894,25 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 				newbon->Metabolism += base1;
 				break;
 
-			case SE_ImprovedReclaimEnergy:
-			{
-				if((base1 < 0) && (newbon->ImprovedReclaimEnergy > base1))
+			case SE_ImprovedReclaimEnergy: {
+				if ((base1 < 0) && (newbon->ImprovedReclaimEnergy > base1))
 					newbon->ImprovedReclaimEnergy = base1;
 
-				else if(newbon->ImprovedReclaimEnergy < base1)
+				else if (newbon->ImprovedReclaimEnergy < base1)
 					newbon->ImprovedReclaimEnergy = base1;
 				break;
 			}
 
-			case SE_HeadShot:
-			{
-				if(newbon->HeadShot[1] < base2){
+			case SE_HeadShot: {
+				if (newbon->HeadShot[1] < base2) {
 					newbon->HeadShot[0] = base1;
 					newbon->HeadShot[1] = base2;
 				}
 				break;
 			}
 
-			case SE_HeadShotLevel:
-			{
-				if(newbon->HSLevel < base1)
+			case SE_HeadShotLevel: {
+				if (newbon->HSLevel < base1)
 					newbon->HSLevel = base1;
 				break;
 			}
@@ -1030,13 +924,11 @@ void Client::ApplyAABonuses(uint32 aaid, uint32 slots, StatBonuses* newbon)
 			case SE_MeleeMitigation:
 				newbon->MeleeMitigationEffect += base1;
 				break;
-
 		}
 	}
 }
 
-void Mob::CalcSpellBonuses(StatBonuses* newbon)
-{
+void Mob::CalcSpellBonuses(StatBonuses* newbon) {
 	int i;
 
 	memset(newbon, 0, sizeof(StatBonuses));
@@ -1044,160 +936,139 @@ void Mob::CalcSpellBonuses(StatBonuses* newbon)
 	newbon->AssistRange = -1;
 
 	int buff_count = GetMaxTotalSlots();
-	for(i = 0; i < buff_count; i++) {
-		if(buffs[i].spellid != SPELL_UNKNOWN){
-			uint8 caster_level = i == 15 ? GetLevel() : buffs[i].casterlevel; // disciplines are in a fake buff slot at index 15 and these need the current level
+	for (i = 0; i < buff_count; i++) {
+		if (buffs[i].spellid != SPELL_UNKNOWN) {
+			uint8 caster_level = i == 15 ? GetLevel() : buffs[i].casterlevel;  // disciplines are in a fake buff slot at index 15 and these need the current level
 			ApplySpellsBonuses(buffs[i].spellid, caster_level, newbon, buffs[i].casterid, false, buffs[i].instrumentmod, buffs[i].ticsremaining, i);
 		}
 	}
 
-	//Applies any perma NPC spell bonuses from npc_spells_effects table.
+	// Applies any perma NPC spell bonuses from npc_spells_effects table.
 	if (IsNPC())
 		CastToNPC()->ApplyAISpellEffects(newbon);
 
-	if (GetClass() == BARD) newbon->ManaRegen = 0; // Bards do not get mana regen from spells.
+	if (GetClass() == BARD) newbon->ManaRegen = 0;  // Bards do not get mana regen from spells.
 
 	if (newbon->Mana > 500)
 		newbon->Mana = 500;
 }
 
 void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* new_bonus, uint16 casterId, bool item_bonus, int16 instrumentmod, uint32 ticsremaining, int buffslot,
-							 bool IsAISpellEffect, uint16 effect_id, int32 se_base, int32 se_limit, int32 se_max)
-{
+                             bool IsAISpellEffect, uint16 effect_id, int32 se_base, int32 se_limit, int32 se_max) {
 	int i, effect_value, base2, max, effectid;
-	Mob *caster = nullptr;
+	Mob* caster = nullptr;
 
-	if(!IsAISpellEffect && !IsValidSpell(spell_id))
+	if (!IsAISpellEffect && !IsValidSpell(spell_id))
 		return;
 
-	if(casterId > 0)
+	if (casterId > 0)
 		caster = entity_list.GetMob(casterId);
 
-	for (i = 0; i < EFFECT_COUNT; i++)
-	{
-		//Buffs/Item effects
+	for (i = 0; i < EFFECT_COUNT; i++) {
+		// Buffs/Item effects
 		if (!IsAISpellEffect) {
-
-			if(IsBlankSpellEffect(spell_id, i))
+			if (IsBlankSpellEffect(spell_id, i))
 				continue;
 
-			if (i == 0) // focus effects only work in the first slot
+			if (i == 0)  // focus effects only work in the first slot
 			{
 				uint8 focus = IsFocusEffect(spell_id, i);
-				if (focus)
-				{
+				if (focus) {
 					new_bonus->FocusEffects[focus] = spells[spell_id].effectid[i];
 					continue;
 				}
 			}
-		
+
 			effectid = spells[spell_id].effectid[i];
 			effect_value = CalcSpellEffectValue(spell_id, i, casterlevel, ticsremaining, instrumentmod);
-			base2 = spells[spell_id].base2[i];		// limit value
+			base2 = spells[spell_id].base2[i];  // limit value
 			max = spells[spell_id].max[i];
 		}
-		//Use AISpellEffects
+		// Use AISpellEffects
 		else {
 			effectid = effect_id;
 			effect_value = se_base;
 			base2 = se_limit;
 			max = se_max;
-			i = EFFECT_COUNT; //End the loop
+			i = EFFECT_COUNT;  // End the loop
 		}
 
-		switch (effectid)
-		{
-			case SE_CurrentHP: //regens
-				if(effect_value > 0) {
+		switch (effectid) {
+			case SE_CurrentHP:  // regens
+				if (effect_value > 0) {
 					new_bonus->HPRegen += effect_value;
 				}
 				break;
 
-			case SE_ChangeFrenzyRad:
-			{
+			case SE_ChangeFrenzyRad: {
 				// redundant to have level check here
-				if(!PacifyImmune)
-				{
-					if(new_bonus->AggroRange == -1 || effect_value < new_bonus->AggroRange)
+				if (!PacifyImmune) {
+					if (new_bonus->AggroRange == -1 || effect_value < new_bonus->AggroRange)
 						new_bonus->AggroRange = static_cast<float>(effect_value);
-				}
-				else
-				{
+				} else {
 					Log(Logs::Moderate, Logs::Spells, "Cannot apply SE_ChangeFrenzyRad bonus on %s, Mob is immune to Pacify.", GetName());
 				}
 				break;
 			}
 
-			case SE_Harmony:
-			{
+			case SE_Harmony: {
 				// Harmony effect as buff - kinda tricky
 				// harmony could stack with a lull spell, which has better aggro range
 				// take the one with less range in any case
-				if(!PacifyImmune)
-				{
+				if (!PacifyImmune) {
 					if (new_bonus->AssistRange == -1 || effect_value < new_bonus->AssistRange)
 						new_bonus->AssistRange = static_cast<float>(effect_value);
-				}
-				else
-				{
+				} else {
 					Log(Logs::Moderate, Logs::Spells, "Cannot apply SE_Harmony bonus on %s, Mob is immune to Pacify.", GetName());
 				}
 				break;
 			}
 
-			case SE_AttackSpeed:
-			{
-
-				if (IsNPC())
-				{
+			case SE_AttackSpeed: {
+				if (IsNPC()) {
 					// Unsure how this mechanic worked. Should there be a roll? Perhaps on the resist check. ie instead of resisting slow, it reverses it?
-					if(GetSpecialAbility(REVERSE_SLOW) && effect_value < 100)
-					{
+					if (GetSpecialAbility(REVERSE_SLOW) && effect_value < 100) {
 						effect_value += 100;
 					}
 				}
 
-				if ((effect_value - 100) > 0) { // Haste
-					if (new_bonus->haste < 0) break; // Slowed - Don't apply haste
+				if ((effect_value - 100) > 0) {       // Haste
+					if (new_bonus->haste < 0) break;  // Slowed - Don't apply haste
 					if ((effect_value - 100) > new_bonus->haste) {
 						new_bonus->haste = effect_value - 100;
 					}
-				}
-				else if ((effect_value - 100) < 0) { // Slow
+				} else if ((effect_value - 100) < 0) {  // Slow
 					int real_slow_value = (100 - effect_value) * -1;
-					real_slow_value -= ((real_slow_value * GetSlowMitigation()/100));
+					real_slow_value -= ((real_slow_value * GetSlowMitigation() / 100));
 					if (real_slow_value < new_bonus->haste)
 						new_bonus->haste = real_slow_value;
 				}
 				break;
 			}
 
-			case SE_AttackSpeed2:
-			{
-				if ((effect_value - 100) > 0) { // Haste V2 - Stacks with V1 but does not Overcap
-					if (new_bonus->hastetype2 < 0) break; //Slowed - Don't apply haste2
+			case SE_AttackSpeed2: {
+				if ((effect_value - 100) > 0) {            // Haste V2 - Stacks with V1 but does not Overcap
+					if (new_bonus->hastetype2 < 0) break;  // Slowed - Don't apply haste2
 					if ((effect_value - 100) > new_bonus->hastetype2) {
 						new_bonus->hastetype2 = effect_value - 100;
 					}
-				}
-				else if ((effect_value - 100) < 0) { // Slow
+				} else if ((effect_value - 100) < 0) {  // Slow
 					int real_slow_value = (100 - effect_value) * -1;
-					real_slow_value -= ((real_slow_value * GetSlowMitigation()/100));
+					real_slow_value -= ((real_slow_value * GetSlowMitigation() / 100));
 					if (real_slow_value < new_bonus->hastetype2)
 						new_bonus->hastetype2 = real_slow_value;
 				}
 				break;
 			}
 
-			case SE_AttackSpeed3:
-			{
-				if (effect_value < 0){ //Slow
-					effect_value -= ((effect_value * GetSlowMitigation()/100));
+			case SE_AttackSpeed3: {
+				if (effect_value < 0) {  // Slow
+					effect_value -= ((effect_value * GetSlowMitigation() / 100));
 					if (effect_value < new_bonus->hastetype3)
 						new_bonus->hastetype3 = effect_value;
 				}
 
-				else if (effect_value > 0) { // Haste V3 - Stacks and Overcaps
+				else if (effect_value > 0) {  // Haste V3 - Stacks and Overcaps
 					if (effect_value > new_bonus->hastetype3) {
 						new_bonus->hastetype3 = effect_value;
 					}
@@ -1205,86 +1076,70 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 			}
 
-			case SE_TotalHP:
-			{
+			case SE_TotalHP: {
 				new_bonus->HP += effect_value;
 				break;
 			}
 
-			case SE_CurrentMana:
-			{
+			case SE_CurrentMana: {
 				new_bonus->ManaRegen += effect_value;
 				break;
 			}
 
-			case SE_ManaPool:
-			{
+			case SE_ManaPool: {
 				new_bonus->Mana += effect_value;
 				break;
 			}
 
-			case SE_Stamina:
-			{
+			case SE_Stamina: {
 				break;
 			}
 
-			case SE_ArmorClass:
-			{
-				if (!item_bonus)
-				{
+			case SE_ArmorClass: {
+				if (!item_bonus) {
 					new_bonus->AC += effect_value;
-				}
-				else
-				{
+				} else {
 					new_bonus->SpellAC += effect_value;
 				}
 				break;
 			}
 
-			case SE_ATK:
-			{
+			case SE_ATK: {
 				new_bonus->ATK += effect_value;
 				break;
 			}
 
-			case SE_STR:
-			{
+			case SE_STR: {
 				new_bonus->STR += effect_value;
 				break;
 			}
 
-			case SE_DEX:
-			{
+			case SE_DEX: {
 				new_bonus->DEX += effect_value;
 				break;
 			}
 
-			case SE_AGI:
-			{
+			case SE_AGI: {
 				new_bonus->AGI += effect_value;
 				break;
 			}
 
-			case SE_STA:
-			{
+			case SE_STA: {
 				new_bonus->STA += effect_value;
 				break;
 			}
 
-			case SE_INT:
-			{
+			case SE_INT: {
 				new_bonus->INT += effect_value;
 				break;
 			}
 
-			case SE_WIS:
-			{
+			case SE_WIS: {
 				new_bonus->WIS += effect_value;
 				break;
 			}
 
-			case SE_CHA:
-			{
+			case SE_CHA: {
 				// Effect 10 with base 0 and formula 0 or 100 is used as a spacer in spell data
 				// There are also some raid debuffs with formula 100 and base -6, not sure what that means
 				if (spells[spell_id].base[i] != 0 || (spells[spell_id].formula[i] != 0 && spells[spell_id].formula[i] != 100)) {
@@ -1293,8 +1148,7 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 			}
 
-			case SE_AllStats:
-			{
+			case SE_AllStats: {
 				new_bonus->STR += effect_value;
 				new_bonus->DEX += effect_value;
 				new_bonus->AGI += effect_value;
@@ -1305,38 +1159,32 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 			}
 
-			case SE_ResistFire:
-			{
+			case SE_ResistFire: {
 				new_bonus->FR += effect_value;
 				break;
 			}
 
-			case SE_ResistCold:
-			{
+			case SE_ResistCold: {
 				new_bonus->CR += effect_value;
 				break;
 			}
 
-			case SE_ResistPoison:
-			{
+			case SE_ResistPoison: {
 				new_bonus->PR += effect_value;
 				break;
 			}
 
-			case SE_ResistDisease:
-			{
+			case SE_ResistDisease: {
 				new_bonus->DR += effect_value;
 				break;
 			}
 
-			case SE_ResistMagic:
-			{
+			case SE_ResistMagic: {
 				new_bonus->MR += effect_value;
 				break;
 			}
 
-			case SE_ResistAll:
-			{
+			case SE_ResistAll: {
 				new_bonus->MR += effect_value;
 				new_bonus->DR += effect_value;
 				new_bonus->PR += effect_value;
@@ -1345,57 +1193,55 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 			}
 
-			case SE_RaiseStatCap:
-			{
-				switch(spells[spell_id].base2[i])
-				{
-					//are these #define'd somewhere?
-					case 0: //str
+			case SE_RaiseStatCap: {
+				switch (spells[spell_id].base2[i]) {
+					// are these #define'd somewhere?
+					case 0:  // str
 						new_bonus->STRCapMod += effect_value;
 						break;
-					case 1: //sta
+					case 1:  // sta
 						new_bonus->STACapMod += effect_value;
 						break;
-					case 2: //agi
+					case 2:  // agi
 						new_bonus->AGICapMod += effect_value;
 						break;
-					case 3: //dex
+					case 3:  // dex
 						new_bonus->DEXCapMod += effect_value;
 						break;
-					case 4: //wis
+					case 4:  // wis
 						new_bonus->WISCapMod += effect_value;
 						break;
-					case 5: //int
+					case 5:  // int
 						new_bonus->INTCapMod += effect_value;
 						break;
-					case 6: //cha
+					case 6:  // cha
 						new_bonus->CHACapMod += effect_value;
 						break;
-					case 7: //mr
+					case 7:  // mr
 						new_bonus->MRCapMod += effect_value;
 						break;
-					case 8: //cr
+					case 8:  // cr
 						new_bonus->CRCapMod += effect_value;
 						break;
-					case 9: //fr
+					case 9:  // fr
 						new_bonus->FRCapMod += effect_value;
 						break;
-					case 10: //pr
+					case 10:  // pr
 						new_bonus->PRCapMod += effect_value;
 						break;
-					case 11: //dr
+					case 11:  // dr
 						new_bonus->DRCapMod += effect_value;
 						break;
 				}
 				break;
 			}
 
-			case SE_CastingLevel2:	// Jam Fest
+			case SE_CastingLevel2:  // Jam Fest
 			{
 				new_bonus->effective_casting_level += effect_value;
 				break;
 			}
-			case SE_CastingLevel:	// Brilliance of Ro, flappies
+			case SE_CastingLevel:  // Brilliance of Ro, flappies
 			{
 				new_bonus->effective_casting_level_for_fizzle_check += effect_value;
 				break;
@@ -1409,35 +1255,29 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->SpellDamageShield += effect_value;
 				break;
 
-			case SE_DamageShield:
-			{
+			case SE_DamageShield: {
 				// Normal DS don't stack with reverse (healing) DS.
-				if (effect_value < 0 && new_bonus->DamageShield > 0)
-				{
+				if (effect_value < 0 && new_bonus->DamageShield > 0) {
 					break;
-				}
-				else if ((effect_value < 0 && new_bonus->DamageShield <= 0) || (effect_value > 0))
-				{
+				} else if ((effect_value < 0 && new_bonus->DamageShield <= 0) || (effect_value > 0)) {
 					int final_value = effect_value + new_bonus->DamageShield;
-					if (effect_value > 0 && new_bonus->DamageShield < 0)
-					{
+					if (effect_value > 0 && new_bonus->DamageShield < 0) {
 						final_value = effect_value;
 					}
 					new_bonus->DamageShield = final_value;
 					new_bonus->DamageShieldSpellID = spell_id;
 
-					//When using npc_spells_effects MAX value can be set to determine DS Type
+					// When using npc_spells_effects MAX value can be set to determine DS Type
 					if (IsAISpellEffect && max)
 						new_bonus->DamageShieldType = GetDamageShieldType(spell_id, max);
 					else
 						new_bonus->DamageShieldType = GetDamageShieldType(spell_id);
 				}
-				
+
 				break;
 			}
 
-			case SE_ReverseDS:
-			{
+			case SE_ReverseDS: {
 				new_bonus->ReverseDamageShield += effect_value;
 				new_bonus->ReverseDamageShieldSpellID = spell_id;
 
@@ -1464,21 +1304,17 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->MeleeMitigationEffect += effect_value;
 				break;
 
-			case SE_CriticalHitChance:
-			{
-				if (effect_value < 0)
-				{
+			case SE_CriticalHitChance: {
+				if (effect_value < 0) {
 					if (new_bonus->CriticalHitChance > effect_value)
 						new_bonus->CriticalHitChance = effect_value;
-				}
-				else if (new_bonus->CriticalHitChance < effect_value)
-						new_bonus->CriticalHitChance = effect_value;
+				} else if (new_bonus->CriticalHitChance < effect_value)
+					new_bonus->CriticalHitChance = effect_value;
 
 				break;
 			}
 
-			case SE_CrippBlowChance:
-			{
+			case SE_CrippBlowChance: {
 				if ((effect_value < 0) && (new_bonus->CrippBlowChance > effect_value))
 					new_bonus->CrippBlowChance = effect_value;
 				else if (new_bonus->CrippBlowChance < effect_value)
@@ -1487,113 +1323,104 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 			}
 
-			case SE_AvoidMeleeChance:
-			{
+			case SE_AvoidMeleeChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->AvoidMeleeChanceEffect += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->AvoidMeleeChanceEffect > effect_value))
+				else if ((effect_value < 0) && (new_bonus->AvoidMeleeChanceEffect > effect_value))
 					new_bonus->AvoidMeleeChanceEffect = effect_value;
 
-				else if(new_bonus->AvoidMeleeChanceEffect < effect_value)
+				else if (new_bonus->AvoidMeleeChanceEffect < effect_value)
 					new_bonus->AvoidMeleeChanceEffect = effect_value;
 				break;
 			}
 
-			case SE_RiposteChance:
-			{
+			case SE_RiposteChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->RiposteChance += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->RiposteChance > effect_value))
+				else if ((effect_value < 0) && (new_bonus->RiposteChance > effect_value))
 					new_bonus->RiposteChance = effect_value;
 
-				else if(new_bonus->RiposteChance < effect_value)
+				else if (new_bonus->RiposteChance < effect_value)
 					new_bonus->RiposteChance = effect_value;
 				break;
 			}
 
-			case SE_DodgeChance:
-			{
+			case SE_DodgeChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->DodgeChance += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->DodgeChance > effect_value))
+				else if ((effect_value < 0) && (new_bonus->DodgeChance > effect_value))
 					new_bonus->DodgeChance = effect_value;
 
-				if(new_bonus->DodgeChance < effect_value)
+				if (new_bonus->DodgeChance < effect_value)
 					new_bonus->DodgeChance = effect_value;
 				break;
 			}
 
-			case SE_ParryChance:
-			{
+			case SE_ParryChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->ParryChance += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->ParryChance > effect_value))
+				else if ((effect_value < 0) && (new_bonus->ParryChance > effect_value))
 					new_bonus->ParryChance = effect_value;
 
-				if(new_bonus->ParryChance < effect_value)
+				if (new_bonus->ParryChance < effect_value)
 					new_bonus->ParryChance = effect_value;
 				break;
 			}
 
-			case SE_DualWieldChance:
-			{
+			case SE_DualWieldChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->DualWieldChance += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->DualWieldChance > effect_value))
+				else if ((effect_value < 0) && (new_bonus->DualWieldChance > effect_value))
 					new_bonus->DualWieldChance = effect_value;
 
-				if(new_bonus->DualWieldChance < effect_value)
+				if (new_bonus->DualWieldChance < effect_value)
 					new_bonus->DualWieldChance = effect_value;
 				break;
 			}
 
-			case SE_DoubleAttackChance:
-			{
-
+			case SE_DoubleAttackChance: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->DoubleAttackChance += effect_value;
 
-				else if((effect_value < 0) && (new_bonus->DoubleAttackChance > effect_value))
+				else if ((effect_value < 0) && (new_bonus->DoubleAttackChance > effect_value))
 					new_bonus->DoubleAttackChance = effect_value;
 
-				if(new_bonus->DoubleAttackChance < effect_value)
+				if (new_bonus->DoubleAttackChance < effect_value)
 					new_bonus->DoubleAttackChance = effect_value;
 				break;
 			}
 
-			case SE_MeleeLifetap:
-			{
+			case SE_MeleeLifetap: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->MeleeLifetap += spells[spell_id].base[i];
 
-				else if((effect_value < 0) && (new_bonus->MeleeLifetap > effect_value))
+				else if ((effect_value < 0) && (new_bonus->MeleeLifetap > effect_value))
 					new_bonus->MeleeLifetap = effect_value;
 
-				else if(new_bonus->MeleeLifetap < effect_value)
+				else if (new_bonus->MeleeLifetap < effect_value)
 					new_bonus->MeleeLifetap = effect_value;
 				break;
 			}
 
 			case SE_Vampirism:
 				new_bonus->Vampirism += effect_value;
-				break;	
+				break;
 
-			case SE_AllInstrumentMod:
-			{
-				if(effect_value > new_bonus->singingMod)
+			case SE_AllInstrumentMod: {
+				if (effect_value > new_bonus->singingMod)
 					new_bonus->singingMod = effect_value;
-				if(effect_value > new_bonus->brassMod)
+				if (effect_value > new_bonus->brassMod)
 					new_bonus->brassMod = effect_value;
-				if(effect_value > new_bonus->percussionMod)
+				if (effect_value > new_bonus->percussionMod)
 					new_bonus->percussionMod = effect_value;
-				if(effect_value > new_bonus->windMod)
+				if (effect_value > new_bonus->windMod)
 					new_bonus->windMod = effect_value;
-				if(effect_value > new_bonus->stringedMod)
+				if (effect_value > new_bonus->stringedMod)
 					new_bonus->stringedMod = effect_value;
 				break;
 			}
@@ -1602,12 +1429,11 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->ResistSpellChance += effect_value;
 				break;
 
-			case SE_ResistFearChance:
-			{
-				if(effect_value == 100) // If we reach 100% in a single spell/item then we should be immune to negative fear resist effects until our immunity is over
+			case SE_ResistFearChance: {
+				if (effect_value == 100)  // If we reach 100% in a single spell/item then we should be immune to negative fear resist effects until our immunity is over
 					new_bonus->Fearless = true;
 
-				new_bonus->ResistFearChance += effect_value; // these should stack
+				new_bonus->ResistFearChance += effect_value;  // these should stack
 				break;
 			}
 
@@ -1615,83 +1441,73 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->Fearless = true;
 				break;
 
-			case SE_HundredHands:
-			{
+			case SE_HundredHands: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus)
 					new_bonus->HundredHands += effect_value;
 
 				if (effect_value > 0 && effect_value > new_bonus->HundredHands)
-					new_bonus->HundredHands = effect_value; //Increase Weapon Delay
+					new_bonus->HundredHands = effect_value;  // Increase Weapon Delay
 				else if (effect_value < 0 && effect_value < new_bonus->HundredHands)
-					new_bonus->HundredHands = effect_value; //Decrease Weapon Delay
+					new_bonus->HundredHands = effect_value;  // Decrease Weapon Delay
 				break;
 			}
 
-			case SE_MeleeSkillCheck:
-			{
-				if(new_bonus->MeleeSkillCheck < effect_value) {
+			case SE_MeleeSkillCheck: {
+				if (new_bonus->MeleeSkillCheck < effect_value) {
 					new_bonus->MeleeSkillCheck = effect_value;
-					new_bonus->MeleeSkillCheckSkill = base2==-1?255:base2;
+					new_bonus->MeleeSkillCheckSkill = base2 == -1 ? 255 : base2;
 				}
 				break;
 			}
 
 			case SE_IncreaseArchery:
-			case SE_HitChance:
-			{
-
-				if (RuleB(Spells, AdditiveBonusValues) && item_bonus){
-					if(base2 == -1)
-						new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] += effect_value;
+			case SE_HitChance: {
+				if (RuleB(Spells, AdditiveBonusValues) && item_bonus) {
+					if (base2 == -1)
+						new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] += effect_value;
 					else
 						new_bonus->HitChanceEffect[base2] += effect_value;
 				}
 
-				else if(base2 == -1){
+				else if (base2 == -1) {
+					if ((effect_value < 0) && (new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] > effect_value))
+						new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] = effect_value;
 
-					if ((effect_value < 0) && (new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] > effect_value))
-						new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] = effect_value;
-
-					else if (!new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] ||
-							((new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] > 0) && (new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] < effect_value)))
-							new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL+1] = effect_value;
+					else if (!new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] ||
+					         ((new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] > 0) && (new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] < effect_value)))
+						new_bonus->HitChanceEffect[EQ::skills::HIGHEST_SKILL + 1] = effect_value;
 				}
 
 				else {
-
 					if ((effect_value < 0) && (new_bonus->HitChanceEffect[base2] > effect_value))
 						new_bonus->HitChanceEffect[base2] = effect_value;
 
 					else if (!new_bonus->HitChanceEffect[base2] ||
-							((new_bonus->HitChanceEffect[base2] > 0) && (new_bonus->HitChanceEffect[base2] < effect_value)))
-							new_bonus->HitChanceEffect[base2] = effect_value;
+					         ((new_bonus->HitChanceEffect[base2] > 0) && (new_bonus->HitChanceEffect[base2] < effect_value)))
+						new_bonus->HitChanceEffect[base2] = effect_value;
 				}
 
 				break;
-
 			}
 
-			case SE_DamageModifier:
-			{
-				if(base2 == -1)
-					new_bonus->DamageModifier[EQ::skills::HIGHEST_SKILL+1] += effect_value;
+			case SE_DamageModifier: {
+				if (base2 == -1)
+					new_bonus->DamageModifier[EQ::skills::HIGHEST_SKILL + 1] += effect_value;
 				else
 					new_bonus->DamageModifier[base2] += effect_value;
 				break;
 			}
 
-			case SE_MinDamageModifier:
-			{
-				if(base2 == -1)
-					new_bonus->MinDamageModifier[EQ::skills::HIGHEST_SKILL+1] += effect_value;
+			case SE_MinDamageModifier: {
+				if (base2 == -1)
+					new_bonus->MinDamageModifier[EQ::skills::HIGHEST_SKILL + 1] += effect_value;
 				else
 					new_bonus->MinDamageModifier[base2] += effect_value;
 				break;
 			}
 
-			case SE_StunResist:
-			{
-				if(new_bonus->StunResist < effect_value)
+			case SE_StunResist: {
+				if (new_bonus->StunResist < effect_value)
 					new_bonus->StunResist = effect_value;
 				break;
 			}
@@ -1700,28 +1516,24 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->ExtraAttackChance += effect_value;
 				break;
 
-			case SE_DeathSave:
-			{
-				if(new_bonus->DeathSave[0] < effect_value)
-				{
-					new_bonus->DeathSave[0] = effect_value; //1='Partial' 2='Full'
+			case SE_DeathSave: {
+				if (new_bonus->DeathSave[0] < effect_value) {
+					new_bonus->DeathSave[0] = effect_value;  // 1='Partial' 2='Full'
 					new_bonus->DeathSave[1] = buffslot;
 				}
 				break;
 			}
 
-			case SE_DivineSave:
-			{
+			case SE_DivineSave: {
 				if (RuleB(Spells, AdditiveBonusValues) && item_bonus) {
 					new_bonus->DivineSaveChance[0] += effect_value;
 					new_bonus->DivineSaveChance[1] = 0;
 				}
 
-				else if(new_bonus->DivineSaveChance[0] < effect_value)
-				{
+				else if (new_bonus->DivineSaveChance[0] < effect_value) {
 					new_bonus->DivineSaveChance[0] = effect_value;
 					new_bonus->DivineSaveChance[1] = base2;
-					//SetDeathSaveChance(true);
+					// SetDeathSaveChance(true);
 				}
 				break;
 			}
@@ -1730,14 +1542,13 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->FlurryChance += effect_value;
 				break;
 
-			case SE_Accuracy:
-			{
-				if ((effect_value < 0) && (new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] > effect_value))
-						new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] = effect_value;
+			case SE_Accuracy: {
+				if ((effect_value < 0) && (new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] > effect_value))
+					new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] = effect_value;
 
-				else if (!new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] ||
-						((new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] > 0) && (new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] < effect_value)))
-							new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL+1] = effect_value;
+				else if (!new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] ||
+				         ((new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] > 0) && (new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] < effect_value)))
+					new_bonus->Accuracy[EQ::skills::HIGHEST_SKILL + 1] = effect_value;
 				break;
 			}
 
@@ -1745,7 +1556,7 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->MaxHPChange += effect_value;
 				break;
 
-			case SE_HealRate: // Balance of Zebuxoruk
+			case SE_HealRate:  // Balance of Zebuxoruk
 				new_bonus->HealRate += -(100 - effect_value);
 				break;
 
@@ -1753,8 +1564,7 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->CriticalSpellChance += effect_value;
 				break;
 
-			case SE_CriticalSpellChance:
-			{
+			case SE_CriticalSpellChance: {
 				new_bonus->CriticalSpellChance += effect_value;
 				break;
 			}
@@ -1767,9 +1577,8 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->CriticalDoTChance += effect_value;
 				break;
 
-			case SE_ReduceSkillTimer:
-			{
-				if(new_bonus->SkillReuseTime[base2] < effect_value)
+			case SE_ReduceSkillTimer: {
+				if (new_bonus->SkillReuseTime[base2] < effect_value)
 					new_bonus->SkillReuseTime[base2] = effect_value;
 				break;
 			}
@@ -1852,8 +1661,7 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 
 			case SE_AddSingingMod:
-				switch (base2)
-				{
+				switch (base2) {
 					case EQ::item::ItemTypeWindInstrument:
 						new_bonus->windMod += effect_value;
 						break;
@@ -1912,34 +1720,30 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->CriticalMend += effect_value;
 				break;
 
-			case SE_MasteryofPast:
-			{
-				if(new_bonus->MasteryofPast < effect_value)
+			case SE_MasteryofPast: {
+				if (new_bonus->MasteryofPast < effect_value)
 					new_bonus->MasteryofPast = effect_value;
 				break;
 			}
 
-			case SE_DoubleRiposte:
-			{
+			case SE_DoubleRiposte: {
 				new_bonus->DoubleRiposte += effect_value;
 				break;
 			}
 
-			case SE_GiveDoubleRiposte:
-			{
-				//Only allow for regular double riposte chance.
-				if(new_bonus->GiveDoubleRiposte[base2] == 0){
-					if(new_bonus->GiveDoubleRiposte[0] < effect_value)
+			case SE_GiveDoubleRiposte: {
+				// Only allow for regular double riposte chance.
+				if (new_bonus->GiveDoubleRiposte[base2] == 0) {
+					if (new_bonus->GiveDoubleRiposte[0] < effect_value)
 						new_bonus->GiveDoubleRiposte[0] = effect_value;
 				}
 				break;
 			}
 
-			case SE_SlayUndead:
-			{
-				if(new_bonus->SlayUndead[1] < effect_value)
-					new_bonus->SlayUndead[0] = effect_value; // Rate
-					new_bonus->SlayUndead[1] = base2; // Damage Modifier
+			case SE_SlayUndead: {
+				if (new_bonus->SlayUndead[1] < effect_value)
+					new_bonus->SlayUndead[0] = effect_value;  // Rate
+				new_bonus->SlayUndead[1] = base2;             // Damage Modifier
 				break;
 			}
 
@@ -1948,22 +1752,19 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				break;
 
 			case SE_Root:
-				if (new_bonus->Root[0] && (new_bonus->Root[1] > buffslot)){
+				if (new_bonus->Root[0] && (new_bonus->Root[1] > buffslot)) {
 					new_bonus->Root[0] = 1;
 					new_bonus->Root[1] = buffslot;
-				}
-				else if (!new_bonus->Root[0]){
+				} else if (!new_bonus->Root[0]) {
 					new_bonus->Root[0] = 1;
 					new_bonus->Root[1] = buffslot;
 				}
 				break;
 
-			case SE_Rune:
-			{
+			case SE_Rune: {
 				uint8 effect_slot = i + 1;
 				if ((new_bonus->MeleeRune[0] && (new_bonus->MeleeRune[2] < effect_slot)) ||
-					(!new_bonus->MeleeRune[0]))
-				{
+				    (!new_bonus->MeleeRune[0])) {
 					new_bonus->MeleeRune[0] = effect_value;
 					new_bonus->MeleeRune[1] = buffslot;
 					new_bonus->MeleeRune[2] = effect_slot;
@@ -1971,12 +1772,10 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 
 				break;
 			}
-			case SE_AbsorbMagicAtt:
-			{
+			case SE_AbsorbMagicAtt: {
 				uint8 effect_slot = i + 1;
 				if ((new_bonus->AbsorbMagicAtt[0] && (new_bonus->AbsorbMagicAtt[2] < effect_slot)) ||
-					(!new_bonus->AbsorbMagicAtt[0]))
-				{
+				    (!new_bonus->AbsorbMagicAtt[0])) {
 					new_bonus->AbsorbMagicAtt[0] = effect_value;
 					new_bonus->AbsorbMagicAtt[1] = buffslot;
 					new_bonus->AbsorbMagicAtt[2] = effect_slot;
@@ -1988,23 +1787,20 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->NegateIfCombat = true;
 				break;
 
-			case SE_Screech: 
+			case SE_Screech:
 				new_bonus->Screech = effect_value;
 				break;
 
 			case SE_AlterNPCLevel:
 
-				if (IsNPC()){
-					if (!new_bonus->AlterNPCLevel 
-					|| ((effect_value < 0) && (new_bonus->AlterNPCLevel > effect_value)) 
-					|| ((effect_value > 0) && (new_bonus->AlterNPCLevel < effect_value))) {
-	
-						int tmp_lv =  GetOrigLevel() + effect_value;
+				if (IsNPC()) {
+					if (!new_bonus->AlterNPCLevel || ((effect_value < 0) && (new_bonus->AlterNPCLevel > effect_value)) || ((effect_value > 0) && (new_bonus->AlterNPCLevel < effect_value))) {
+						int tmp_lv = GetOrigLevel() + effect_value;
 						if (tmp_lv < 1)
 							tmp_lv = 1;
 						else if (tmp_lv > 255)
 							tmp_lv = 255;
-						if ((GetLevel() != tmp_lv)){
+						if ((GetLevel() != tmp_lv)) {
 							new_bonus->AlterNPCLevel = effect_value;
 							SetLevel(tmp_lv);
 						}
@@ -2016,96 +1812,84 @@ void Mob::ApplySpellsBonuses(uint16 spell_id, uint8 casterlevel, StatBonuses* ne
 				new_bonus->BerserkSPA = true;
 				break;
 
-				
 			case SE_Metabolism:
 				new_bonus->Metabolism += effect_value;
 				break;
 
-			case SE_ImprovedReclaimEnergy:
-			{
-				if((effect_value < 0) && (new_bonus->ImprovedReclaimEnergy > effect_value))
+			case SE_ImprovedReclaimEnergy: {
+				if ((effect_value < 0) && (new_bonus->ImprovedReclaimEnergy > effect_value))
 					new_bonus->ImprovedReclaimEnergy = effect_value;
 
-				else if(new_bonus->ImprovedReclaimEnergy < effect_value)
+				else if (new_bonus->ImprovedReclaimEnergy < effect_value)
 					new_bonus->ImprovedReclaimEnergy = effect_value;
 				break;
 			}
 
-			case SE_HeadShot:
-			{
-				if(new_bonus->HeadShot[1] < base2){
+			case SE_HeadShot: {
+				if (new_bonus->HeadShot[1] < base2) {
 					new_bonus->HeadShot[0] = effect_value;
 					new_bonus->HeadShot[1] = base2;
 				}
 				break;
 			}
 
-			case SE_HeadShotLevel:
-			{
-				if(new_bonus->HSLevel < effect_value)
+			case SE_HeadShotLevel: {
+				if (new_bonus->HSLevel < effect_value)
 					new_bonus->HSLevel = effect_value;
 				break;
 			}
 
-			case SE_FinishingBlow:
-			{
-				//base1 = chance, base2 = damage
-				if (new_bonus->FinishingBlow[1] < base2){
+			case SE_FinishingBlow: {
+				// base1 = chance, base2 = damage
+				if (new_bonus->FinishingBlow[1] < base2) {
 					new_bonus->FinishingBlow[0] = effect_value;
 					new_bonus->FinishingBlow[1] = base2;
 				}
 				break;
 			}
 
-			case SE_FinishingBlowLvl:
-			{
-				//base1 = level, base2 = ??? (Set to 200 in AA data, possible proc rate mod?)
-				if (new_bonus->FinishingBlowLvl[0] < effect_value){
+			case SE_FinishingBlowLvl: {
+				// base1 = level, base2 = ??? (Set to 200 in AA data, possible proc rate mod?)
+				if (new_bonus->FinishingBlowLvl[0] < effect_value) {
 					new_bonus->FinishingBlowLvl[0] = effect_value;
 					new_bonus->FinishingBlowLvl[1] = base2;
 				}
 				break;
 			}
 
-			case SE_IllusionPersistence:
-			{
+			case SE_IllusionPersistence: {
 				new_bonus->IllusionPersistence = true;
 				break;
 			}
 
-			case SE_SeeInvis:
-			{
+			case SE_SeeInvis: {
 				new_bonus->SeeInvis = effect_value;
 				break;
 			}
 
-			case SE_WaterBreathing:
-			{
+			case SE_WaterBreathing: {
 				new_bonus->WaterBreathing = true;
 				break;
 			}
 
-			case SE_Hunger:
-			{
+			case SE_Hunger: {
 				new_bonus->FoodWater = effect_value;
 				break;
 			}
 
-			//Special custom cases for loading effects on to NPC from 'npc_spels_effects' table
-			//if (IsAISpellEffect) {
-			//}
+				// Special custom cases for loading effects on to NPC from 'npc_spels_effects' table
+				// if (IsAISpellEffect) {
+				// }
 		}
 	}
 }
 
-void NPC::CalcItemBonuses(StatBonuses *newbon)
-{
-	if(newbon){
-
-		for(int i = 0; i < EQ::invslot::EQUIPMENT_COUNT; i++){
-			const EQ::ItemData *cur = database.GetItem(equipment[i]);
-			if(cur){
-				//basic stats
+void NPC::CalcItemBonuses(StatBonuses* newbon) {
+	if (newbon) {
+		for (int i = 0; i < EQ::invslot::EQUIPMENT_COUNT; i++) {
+			const EQ::ItemData* cur = database.GetItem(equipment[i]);
+			if (cur) {
+				// basic stats
 				newbon->AC += cur->AC;
 				newbon->HP += cur->HP;
 				newbon->Mana += cur->Mana;
@@ -2122,69 +1906,65 @@ void NPC::CalcItemBonuses(StatBonuses *newbon)
 				newbon->PR += (cur->PR);
 				newbon->DR += (cur->DR);
 
-				//more complex stats
-				if (cur->Worn.Effect>0 && (cur->Worn.Type == EQ::item::ItemEffectWorn)) { // latent effects
+				// more complex stats
+				if (cur->Worn.Effect > 0 && (cur->Worn.Type == EQ::item::ItemEffectWorn)) {  // latent effects
 					ApplySpellsBonuses(cur->Worn.Effect, cur->Worn.Level > 0 ? cur->Worn.Level : GetLevel(), newbon, 0, true);
 				}
 
-				if (GetClass() == BARD)
-				{
-					switch (cur->BardType)
-					{
-					case 51: /* All (e.g. Singing Short Sword) */
-					{
-						if (cur->BardValue > newbon->singingMod)
-							newbon->singingMod = cur->BardValue;
-						if (cur->BardValue > newbon->brassMod)
-							newbon->brassMod = cur->BardValue;
-						if (cur->BardValue > newbon->stringedMod)
-							newbon->stringedMod = cur->BardValue;
-						if (cur->BardValue > newbon->percussionMod)
-							newbon->percussionMod = cur->BardValue;
-						if (cur->BardValue > newbon->windMod)
-							newbon->windMod = cur->BardValue;
-						break;
-					}
-					case 50: /* Singing */
-					{
-						if (cur->BardValue > newbon->singingMod)
-							newbon->singingMod = cur->BardValue;
-						break;
-					}
-					case 23: /* Wind */
-					{
-						if (cur->BardValue > newbon->windMod)
-							newbon->windMod = cur->BardValue;
-						break;
-					}
-					case 24: /* stringed */
-					{
-						if (cur->BardValue > newbon->stringedMod)
-							newbon->stringedMod = cur->BardValue;
-						break;
-					}
-					case 25: /* brass */
-					{
-						if (cur->BardValue > newbon->brassMod)
-							newbon->brassMod = cur->BardValue;
-						break;
-					}
-					case 26: /* Percussion */
-					{
-						if (cur->BardValue > newbon->percussionMod)
-							newbon->percussionMod = cur->BardValue;
-						break;
-					}
+				if (GetClass() == BARD) {
+					switch (cur->BardType) {
+						case 51: /* All (e.g. Singing Short Sword) */
+						{
+							if (cur->BardValue > newbon->singingMod)
+								newbon->singingMod = cur->BardValue;
+							if (cur->BardValue > newbon->brassMod)
+								newbon->brassMod = cur->BardValue;
+							if (cur->BardValue > newbon->stringedMod)
+								newbon->stringedMod = cur->BardValue;
+							if (cur->BardValue > newbon->percussionMod)
+								newbon->percussionMod = cur->BardValue;
+							if (cur->BardValue > newbon->windMod)
+								newbon->windMod = cur->BardValue;
+							break;
+						}
+						case 50: /* Singing */
+						{
+							if (cur->BardValue > newbon->singingMod)
+								newbon->singingMod = cur->BardValue;
+							break;
+						}
+						case 23: /* Wind */
+						{
+							if (cur->BardValue > newbon->windMod)
+								newbon->windMod = cur->BardValue;
+							break;
+						}
+						case 24: /* stringed */
+						{
+							if (cur->BardValue > newbon->stringedMod)
+								newbon->stringedMod = cur->BardValue;
+							break;
+						}
+						case 25: /* brass */
+						{
+							if (cur->BardValue > newbon->brassMod)
+								newbon->brassMod = cur->BardValue;
+							break;
+						}
+						case 26: /* Percussion */
+						{
+							if (cur->BardValue > newbon->percussionMod)
+								newbon->percussionMod = cur->BardValue;
+							break;
+						}
 					}
 				}
 			}
 		}
-
 	}
 }
 
-uint8 Mob::IsFocusEffect(uint16 spell_id,int effect_index, bool AA,uint32 aa_effect)
-{
+uint8 Mob::IsFocusEffect(uint16 spell_id, int effect_index, bool AA, uint32 aa_effect) {
 	uint16 effect = 0;
 
 	if (!AA)
@@ -2192,8 +1972,7 @@ uint8 Mob::IsFocusEffect(uint16 spell_id,int effect_index, bool AA,uint32 aa_eff
 	else
 		effect = aa_effect;
 
-	switch (effect)
-	{
+	switch (effect) {
 		case SE_ImprovedDamage:
 			return focusImprovedDamage;
 		case SE_ImprovedHeal:

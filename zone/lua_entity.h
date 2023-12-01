@@ -16,21 +16,21 @@ class Lua_Object;
 class Lua_Door;
 
 namespace luabind {
-	struct scope;
+struct scope;
 }
 
 luabind::scope lua_register_entity();
 
-class Lua_Entity : public Lua_Ptr<Entity>
-{
+class Lua_Entity : public Lua_Ptr<Entity> {
 	typedef Entity NativeType;
-public:
-	Lua_Entity() : Lua_Ptr(nullptr) { }
-	Lua_Entity(Entity *d) : Lua_Ptr(d) { }
-	virtual ~Lua_Entity() { }
 
-	operator Entity*() {
-		return reinterpret_cast<Entity*>(GetLuaPtrData());
+   public:
+	Lua_Entity() : Lua_Ptr(nullptr) {}
+	Lua_Entity(Entity *d) : Lua_Ptr(d) {}
+	virtual ~Lua_Entity() {}
+
+	operator Entity *() {
+		return reinterpret_cast<Entity *>(GetLuaPtrData());
 	}
 
 	bool IsClient();

@@ -8,8 +8,7 @@ FastMath g_Math;
 
 // This should match EQ's sin/cos LUTs
 // Some values didn't match on linux, but they were the "same" float :P
-FastMath::FastMath()
-{
+FastMath::FastMath() {
 	int ci = 0;
 	int si = 128;
 	float res;
@@ -32,4 +31,3 @@ FastMath::FastMath()
 	lut_cos[128] = 0.0f;
 	lut_cos[384] = 0.0f;
 }
-

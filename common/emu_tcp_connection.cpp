@@ -1,20 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2006 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 
 /*
 There are really two or three different objects shoe-hored into this
@@ -32,30 +15,28 @@ tremendously.
 #include "emu_tcp_server.h"
 #include "../common/servertalk.h"
 
-#ifdef FREEBSD //Timothy Whitman - January 7, 2003
-	#define MSG_NOSIGNAL 0
+#ifdef FREEBSD  // Timothy Whitman - January 7, 2003
+#define MSG_NOSIGNAL 0
 #endif
 
-#define TCPN_DEBUG				0
-#define TCPN_DEBUG_Console		0
-#define TCPN_DEBUG_Memory		0
-#define TCPN_LOG_PACKETS		0
-#define TCPN_LOG_RAW_DATA_OUT	0
-#define TCPN_LOG_RAW_DATA_IN	0
+#define TCPN_DEBUG 0
+#define TCPN_DEBUG_Console 0
+#define TCPN_DEBUG_Memory 0
+#define TCPN_LOG_PACKETS 0
+#define TCPN_LOG_RAW_DATA_OUT 0
+#define TCPN_LOG_RAW_DATA_IN 0
 
-//server side case
+// server side case
 EmuTCPConnection::EmuTCPConnection(uint32 ID, EmuTCPServer* iServer, SOCKET in_socket, uint32 irIP, uint16 irPort, bool iOldFormat)
-:	TCPConnection(ID, in_socket, irIP, irPort),
-	keepalive_timer(SERVER_TIMEOUT),
-	timeout_timer(SERVER_TIMEOUT * 2)
-{
+    : TCPConnection(ID, in_socket, irIP, irPort),
+      keepalive_timer(SERVER_TIMEOUT),
+      timeout_timer(SERVER_TIMEOUT * 2) {
 	id = 0;
 	Server = nullptr;
 	pOldFormat = iOldFormat;
-	if (pOldFormat){
+	if (pOldFormat) {
 		TCPMode = modePacket;
-	}
-	else{
+	} else {
 		TCPMode = modeConsole;
 		PacketMode = packetModeZone;
 	}
@@ -63,15 +44,13 @@ EmuTCPConnection::EmuTCPConnection(uint32 ID, EmuTCPServer* iServer, SOCKET in_s
 	RelayServer = false;
 	RelayCount = 0;
 	RemoteID = 0;
-
 }
 
-//client outgoing connection case (and client side relay)
+// client outgoing connection case (and client side relay)
 EmuTCPConnection::EmuTCPConnection(bool iOldFormat, EmuTCPServer* iRelayServer, eTCPMode iMode)
-:	TCPConnection(),
-	keepalive_timer(SERVER_TIMEOUT),
-	timeout_timer(SERVER_TIMEOUT * 4)
-{
+    : TCPConnection(),
+      keepalive_timer(SERVER_TIMEOUT),
+      timeout_timer(SERVER_TIMEOUT * 4) {
 	Server = iRelayServer;
 	if (Server)
 		RelayServer = true;
@@ -88,12 +67,11 @@ EmuTCPConnection::EmuTCPConnection(bool iOldFormat, EmuTCPServer* iRelayServer, 
 #endif
 }
 
-//server side relay case
+// server side relay case
 EmuTCPConnection::EmuTCPConnection(uint32 ID, EmuTCPServer* iServer, EmuTCPConnection* iRelayLink, uint32 iRemoteID, uint32 irIP, uint16 irPort)
-:	TCPConnection(ID, 0, irIP, irPort),
-	keepalive_timer(SERVER_TIMEOUT),
-	timeout_timer(SERVER_TIMEOUT * 2)
-{
+    : TCPConnection(ID, 0, irIP, irPort),
+      keepalive_timer(SERVER_TIMEOUT),
+      timeout_timer(SERVER_TIMEOUT * 2) {
 	Server = iServer;
 	RelayLink = iRelayLink;
 	RelayServer = true;
@@ -109,7 +87,7 @@ EmuTCPConnection::EmuTCPConnection(uint32 ID, EmuTCPServer* iServer, EmuTCPConne
 }
 
 EmuTCPConnection::~EmuTCPConnection() {
-	//the queues free their content right now I believe.
+	// the queues free their content right now I believe.
 }
 
 EmuTCPNetPacket_Struct* EmuTCPConnection::MakePacket(ServerPacket* pack, uint32 iDestination) {
@@ -120,19 +98,19 @@ EmuTCPNetPacket_Struct* EmuTCPConnection::MakePacket(ServerPacket* pack, uint32 
 	if (iDestination) {
 		size += 4;
 	}
-	EmuTCPNetPacket_Struct* tnps = (EmuTCPNetPacket_Struct*) new uchar[size];
+	EmuTCPNetPacket_Struct* tnps = (EmuTCPNetPacket_Struct*)new uchar[size];
 	tnps->size = size;
 	tnps->opcode = pack->opcode;
-	*((uint8*) &tnps->flags) = 0;
+	*((uint8*)&tnps->flags) = 0;
 	uchar* buffer = tnps->buffer;
 	if (pack->compressed) {
 		tnps->flags.compressed = 1;
-		*((int32*) buffer) = pack->InflatedSize;
+		*((int32*)buffer) = pack->InflatedSize;
 		buffer += 4;
 	}
 	if (iDestination) {
 		tnps->flags.destination = 1;
-		*((int32*) buffer) = iDestination;
+		*((int32*)buffer) = iDestination;
 		buffer += 4;
 	}
 	memcpy(buffer, pack->pBuffer, pack->size);
@@ -140,12 +118,12 @@ EmuTCPNetPacket_Struct* EmuTCPConnection::MakePacket(ServerPacket* pack, uint32 
 }
 
 SPackSendQueue* EmuTCPConnection::MakeOldPacket(ServerPacket* pack) {
-	SPackSendQueue* spsq = (SPackSendQueue*) new uchar[sizeof(SPackSendQueue) + pack->size + 4];
+	SPackSendQueue* spsq = (SPackSendQueue*)new uchar[sizeof(SPackSendQueue) + pack->size + 4];
 	if (pack->pBuffer != 0 && pack->size != 0)
-		memcpy((char *) &spsq->buffer[4], (char *) pack->pBuffer, pack->size);
-	memcpy((char *) &spsq->buffer[0], (char *) &pack->opcode, 2);
-	spsq->size = pack->size+4;
-	memcpy((char *) &spsq->buffer[2], (char *) &spsq->size, 2);
+		memcpy((char*)&spsq->buffer[4], (char*)pack->pBuffer, pack->size);
+	memcpy((char*)&spsq->buffer[0], (char*)&pack->opcode, 2);
+	spsq->size = pack->size + 4;
+	memcpy((char*)&spsq->buffer[2], (char*)&spsq->size, 2);
 	return spsq;
 }
 
@@ -159,51 +137,49 @@ bool EmuTCPConnection::SendPacket(ServerPacket* pack, uint32 iDestination) {
 	if (RemoteID)
 		return RelayLink->SendPacket(pack, RemoteID);
 	else if (pOldFormat) {
-		#if TCPN_LOG_PACKETS >= 1
-			if (pack && pack->opcode != 0) {
-				struct in_addr	in;
-				in.s_addr = GetrIP();
-				CoutTimestamp(true);
-				std::cout << ": Logging outgoing TCP OldPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
-				#if TCPN_LOG_PACKETS == 2
-					if (pack->size >= 32)
-						DumpPacket(pack->pBuffer, 32);
-					else
-						DumpPacket(pack);
-				#endif
-				#if TCPN_LOG_PACKETS >= 3
-					DumpPacket(pack);
-				#endif
-			}
-		#endif
+#if TCPN_LOG_PACKETS >= 1
+		if (pack && pack->opcode != 0) {
+			struct in_addr in;
+			in.s_addr = GetrIP();
+			CoutTimestamp(true);
+			std::cout << ": Logging outgoing TCP OldPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
+#if TCPN_LOG_PACKETS == 2
+			if (pack->size >= 32)
+				DumpPacket(pack->pBuffer, 32);
+			else
+				DumpPacket(pack);
+#endif
+#if TCPN_LOG_PACKETS >= 3
+			DumpPacket(pack);
+#endif
+		}
+#endif
 		SPackSendQueue* spsq = MakeOldPacket(pack);
 		ServerSendQueuePushEnd(spsq->buffer, spsq->size);
 		safe_delete_array(spsq);
-	}
-	else {
+	} else {
 		EmuTCPNetPacket_Struct* tnps = MakePacket(pack, iDestination);
 		if (tmp == modeTransition) {
 			InModeQueuePush(tnps);
-		}
-		else {
-			#if TCPN_LOG_PACKETS >= 1
-				if (pack && pack->opcode != 0) {
-					struct in_addr	in;
-					in.s_addr = GetrIP();
-					CoutTimestamp(true);
-					std::cout << ": Logging outgoing TCP packet. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
-					#if TCPN_LOG_PACKETS == 2
-						if (pack->size >= 32)
-							DumpPacket(pack->pBuffer, 32);
-						else
-							DumpPacket(pack);
-					#endif
-					#if TCPN_LOG_PACKETS >= 3
-						DumpPacket(pack);
-					#endif
-				}
-			#endif
-			ServerSendQueuePushEnd((uchar**) &tnps, tnps->size);
+		} else {
+#if TCPN_LOG_PACKETS >= 1
+			if (pack && pack->opcode != 0) {
+				struct in_addr in;
+				in.s_addr = GetrIP();
+				CoutTimestamp(true);
+				std::cout << ": Logging outgoing TCP packet. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
+#if TCPN_LOG_PACKETS == 2
+				if (pack->size >= 32)
+					DumpPacket(pack->pBuffer, 32);
+				else
+					DumpPacket(pack);
+#endif
+#if TCPN_LOG_PACKETS >= 3
+				DumpPacket(pack);
+#endif
+			}
+#endif
+			ServerSendQueuePushEnd((uchar**)&tnps, tnps->size);
 		}
 	}
 	return true;
@@ -220,32 +196,32 @@ bool EmuTCPConnection::SendPacket(EmuTCPNetPacket_Struct* tnps) {
 	LockMutex lock(&MState);
 	eTCPMode tmp = GetMode();
 	if (tmp == modeTransition) {
-		EmuTCPNetPacket_Struct* tnps2 = (EmuTCPNetPacket_Struct*) new uchar[tnps->size];
+		EmuTCPNetPacket_Struct* tnps2 = (EmuTCPNetPacket_Struct*)new uchar[tnps->size];
 		memcpy(tnps2, tnps, tnps->size);
 		InModeQueuePush(tnps2);
 		return true;
 	}
-	#if TCPN_LOG_PACKETS >= 1
-		if (tnps && tnps->opcode != 0) {
-			struct in_addr	in;
-			in.s_addr = GetrIP();
-			CoutTimestamp(true);
-			std::cout << ": Logging outgoing TCP NetPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << tnps->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << tnps->size << " " << inet_ntoa(in) << ":" << GetrPort();
-			if (pOldFormat)
-				std::cout << " (OldFormat)";
-			std::cout << std::endl;
-			#if TCPN_LOG_PACKETS == 2
-				if (tnps->size >= 32)
-					DumpPacket((uchar*) tnps, 32);
-				else
-					DumpPacket((uchar*) tnps, tnps->size);
-			#endif
-			#if TCPN_LOG_PACKETS >= 3
-				DumpPacket((uchar*) tnps, tnps->size);
-			#endif
-		}
-	#endif
-	ServerSendQueuePushEnd((const uchar*) tnps, tnps->size);
+#if TCPN_LOG_PACKETS >= 1
+	if (tnps && tnps->opcode != 0) {
+		struct in_addr in;
+		in.s_addr = GetrIP();
+		CoutTimestamp(true);
+		std::cout << ": Logging outgoing TCP NetPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << tnps->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << tnps->size << " " << inet_ntoa(in) << ":" << GetrPort();
+		if (pOldFormat)
+			std::cout << " (OldFormat)";
+		std::cout << std::endl;
+#if TCPN_LOG_PACKETS == 2
+		if (tnps->size >= 32)
+			DumpPacket((uchar*)tnps, 32);
+		else
+			DumpPacket((uchar*)tnps, tnps->size);
+#endif
+#if TCPN_LOG_PACKETS >= 3
+		DumpPacket((uchar*)tnps, tnps->size);
+#endif
+	}
+#endif
+	ServerSendQueuePushEnd((const uchar*)tnps, tnps->size);
 	return true;
 }
 
@@ -270,20 +246,19 @@ void EmuTCPConnection::OutQueuePush(ServerPacket* pack) {
 	MOutQueueLock.unlock();
 }
 
-
 bool EmuTCPConnection::LineOutQueuePush(char* line) {
-	#if defined(GOTFRAGS) && 0
-		if (strcmp(line, "**CRASHME**") == 0) {
-			int i = 0;
-			std::cout << (5 / i) << std::endl;
-		}
-	#endif
-	if(line[0] == '*') {
+#if defined(GOTFRAGS) && 0
+	if (strcmp(line, "**CRASHME**") == 0) {
+		int i = 0;
+		std::cout << (5 / i) << std::endl;
+	}
+#endif
+	if (line[0] == '*') {
 		if (strcmp(line, "**PACKETMODE**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODE**\r", 16);
+				Send((const uchar*)"\0**PACKETMODE**\r", 16);
 			TCPMode = modePacket;
 			PacketMode = packetModeLogin;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -293,13 +268,13 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 		if (strcmp(line, "**PACKETMODEZONE**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODEZONE**\r", 20);
+				Send((const uchar*)"\0**PACKETMODEZONE**\r", 20);
 			TCPMode = modePacket;
 			PacketMode = packetModeZone;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -309,13 +284,13 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 		if (strcmp(line, "**PACKETMODELAUNCHER**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODELAUNCHER**\r", 24);
+				Send((const uchar*)"\0**PACKETMODELAUNCHER**\r", 24);
 			TCPMode = modePacket;
 			PacketMode = packetModeLauncher;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -325,13 +300,13 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 		if (strcmp(line, "**PACKETMODEUCS**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODEUCS**\r", 19);
+				Send((const uchar*)"\0**PACKETMODEUCS**\r", 19);
 			TCPMode = modePacket;
 			PacketMode = packetModeUCS;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -341,13 +316,13 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 		if (strcmp(line, "**PACKETMODEQS**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODEQS**\r", 18);
+				Send((const uchar*)"\0**PACKETMODEQS**\r", 18);
 			TCPMode = modePacket;
 			PacketMode = packetModeQueryServ;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -357,13 +332,13 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 		if (strcmp(line, "**PACKETMODEWI**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
 			if (TCPMode == modeConsole)
-				Send((const uchar*) "\0**PACKETMODEWI**\r", 18);
+				Send((const uchar*)"\0**PACKETMODEWI**\r", 18);
 			TCPMode = modePacket;
 			PacketMode = packetModeWebInterface;
 			EmuTCPNetPacket_Struct* tnps = 0;
@@ -373,11 +348,11 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			}
 			MSendQueue.unlock();
 			safe_delete_array(line);
-			return(true);
+			return (true);
 		}
 	}
 
-	return(TCPConnection::LineOutQueuePush(line));
+	return (TCPConnection::LineOutQueuePush(line));
 }
 
 void EmuTCPConnection::Disconnect(bool iSendRelayDisconnect) {
@@ -390,50 +365,46 @@ void EmuTCPConnection::Disconnect(bool iSendRelayDisconnect) {
 }
 
 bool EmuTCPConnection::ConnectIP(uint32 irIP, uint16 irPort, char* errbuf) {
-	if(!TCPConnection::ConnectIP(irIP, irPort, errbuf))
-		return(false);
+	if (!TCPConnection::ConnectIP(irIP, irPort, errbuf))
+		return (false);
 
 	MSendQueue.lock();
 	if (pOldFormat) {
 		TCPMode = modePacket;
-	}
-	else if (TCPMode == modePacket || TCPMode == modeTransition) {
+	} else if (TCPMode == modePacket || TCPMode == modeTransition) {
 		TCPMode = modeTransition;
-		if(PacketMode == packetModeLauncher) {
+		if (PacketMode == packetModeLauncher) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 24;
 			sendbuf_used = sendbuf_size;
 			sendbuf = new uchar[sendbuf_size];
 			memcpy(sendbuf, "\0**PACKETMODELAUNCHER**\r", sendbuf_size);
-		} else if(PacketMode == packetModeLogin) {
+		} else if (PacketMode == packetModeLogin) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 16;
 			sendbuf_used = sendbuf_size;
 			sendbuf = new uchar[sendbuf_size];
 			memcpy(sendbuf, "\0**PACKETMODE**\r", sendbuf_size);
-		} else if(PacketMode == packetModeUCS) {
+		} else if (PacketMode == packetModeUCS) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 19;
 			sendbuf_used = sendbuf_size;
 			sendbuf = new uchar[sendbuf_size];
 			memcpy(sendbuf, "\0**PACKETMODEUCS**\r", sendbuf_size);
-		}
-		else if(PacketMode == packetModeQueryServ) {
+		} else if (PacketMode == packetModeQueryServ) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 18;
 			sendbuf_used = sendbuf_size;
 			sendbuf = new uchar[sendbuf_size];
 			memcpy(sendbuf, "\0**PACKETMODEQS**\r", sendbuf_size);
-		} 
-		else if (PacketMode == packetModeWebInterface) {
+		} else if (PacketMode == packetModeWebInterface) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 18;
 			sendbuf_used = sendbuf_size;
 			sendbuf = new uchar[sendbuf_size];
 			memcpy(sendbuf, "\0**PACKETMODEWI**\r", sendbuf_size);
-		}
-		else {
-			//default: packetModeZone
+		} else {
+			// default: packetModeZone
 			safe_delete_array(sendbuf);
 			sendbuf_size = 20;
 			sendbuf_used = sendbuf_size;
@@ -443,7 +414,7 @@ bool EmuTCPConnection::ConnectIP(uint32 irIP, uint16 irPort, char* errbuf) {
 	}
 	MSendQueue.unlock();
 
-	return(true);
+	return (true);
 }
 
 void EmuTCPConnection::ClearBuffers() {
@@ -463,14 +434,14 @@ void EmuTCPConnection::ClearBuffers() {
 }
 
 void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
-	#if TCPC_DEBUG >= 1
-		struct in_addr	in;
-		in.s_addr = GetrIP();
-		std::cout "NetError: '";
-		if (reason)
-			std::cout << reason;
-		std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
-	#endif
+#if TCPC_DEBUG >= 1
+	struct in_addr in;
+	in.s_addr = GetrIP();
+	std::cout "NetError: '";
+	if (reason)
+		std::cout << reason;
+	std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
+#endif
 	auto pack = new ServerPacket(0);
 	pack->size = 1;
 	if (reason != nullptr)
@@ -479,7 +450,7 @@ void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
 	memset(pack->pBuffer, 0, pack->size);
 	pack->pBuffer[0] = 255;
 	if (reason != nullptr)
-		strcpy((char*) &pack->pBuffer[1], reason);
+		strcpy((char*)&pack->pBuffer[1], reason);
 	else
 		strcpy((char*)&pack->pBuffer[1], "unknown");
 	SendPacket(pack);
@@ -490,14 +461,12 @@ void EmuTCPConnection::RemoveRelay(EmuTCPConnection* relay, bool iSendRelayDisco
 	if (iSendRelayDisconnect) {
 		auto pack = new ServerPacket(0, 5);
 		pack->pBuffer[0] = 3;
-		*((uint32*) &pack->pBuffer[1]) = relay->GetRemoteID();
+		*((uint32*)&pack->pBuffer[1]) = relay->GetRemoteID();
 		SendPacket(pack);
 		safe_delete(pack);
 	}
 	RelayCount--;
 }
-
-
 
 bool EmuTCPConnection::ProcessReceivedData(char* errbuf) {
 	if (errbuf)
@@ -511,15 +480,14 @@ bool EmuTCPConnection::ProcessReceivedData(char* errbuf) {
 		else
 			return ProcessReceivedDataAsPackets(errbuf);
 	}
-	//else, use the base class's text processing.
+	// else, use the base class's text processing.
 	bool ret = TCPConnection::ProcessReceivedData(errbuf);
-	//see if we made the transition to packet mode...
-	if(ret && TCPMode == modePacket) {
+	// see if we made the transition to packet mode...
+	if (ret && TCPMode == modePacket) {
 		return ProcessReceivedDataAsPackets(errbuf);
 	}
-	return(ret);
+	return (ret);
 }
-
 
 /*
 C28182	Dereferencing a copy of a null pointer	Dereferencing NULL pointer.
@@ -541,7 +509,7 @@ bool EmuTCPConnection::ProcessReceivedDataAsPackets(char* errbuf) {
 	uchar* buffer;
 	ServerPacket* pack = 0;
 	while ((recvbuf_used - base) >= size) {
-		EmuTCPNetPacket_Struct* tnps = (EmuTCPNetPacket_Struct*) &recvbuf[base];
+		EmuTCPNetPacket_Struct* tnps = (EmuTCPNetPacket_Struct*)&recvbuf[base];
 		buffer = tnps->buffer;
 		size = tnps->size;
 		if (size >= MaxTCPReceiveBuffferSize) {
@@ -577,57 +545,53 @@ bool EmuTCPConnection::ProcessReceivedDataAsPackets(char* errbuf) {
 					pack->compressed = false;
 					pack->pBuffer = new uchar[pack->InflatedSize];
 					pack->size = InflatePacket(buffer, pack->size, pack->pBuffer, pack->InflatedSize);
-				}
-				else {
+				} else {
 					pack->pBuffer = new uchar[pack->size];
 					memcpy(pack->pBuffer, buffer, pack->size);
 				}
 			}
 			if (pack->opcode == 0) {
 				if (pack->size) {
-					#if TCPN_DEBUG >= 2
-						std::cout << "Received TCP Network layer packet" << std::endl;
-					#endif
+#if TCPN_DEBUG >= 2
+					std::cout << "Received TCP Network layer packet" << std::endl;
+#endif
 					ProcessNetworkLayerPacket(pack);
 				}
-				#if TCPN_DEBUG >= 5
-					else {
-						std::cout << "Received TCP keepalive packet. (opcode=0)" << std::endl;
-					}
-				#endif
+#if TCPN_DEBUG >= 5
+				else {
+					std::cout << "Received TCP keepalive packet. (opcode=0)" << std::endl;
+				}
+#endif
 				// keepalive, no need to process
 				safe_delete(pack);
-			}
-			else {
-				#if TCPN_LOG_PACKETS >= 1
-					if (pack && pack->opcode != 0) {
-						struct in_addr	in;
-						in.s_addr = GetrIP();
-						CoutTimestamp(true);
-						std::cout << ": Logging incoming TCP packet. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
-						#if TCPN_LOG_PACKETS == 2
-							if (pack->size >= 32)
-								DumpPacket(pack->pBuffer, 32);
-							else
-								DumpPacket(pack);
-						#endif
-						#if TCPN_LOG_PACKETS >= 3
-							DumpPacket(pack);
-						#endif
-					}
-				#endif
+			} else {
+#if TCPN_LOG_PACKETS >= 1
+				if (pack && pack->opcode != 0) {
+					struct in_addr in;
+					in.s_addr = GetrIP();
+					CoutTimestamp(true);
+					std::cout << ": Logging incoming TCP packet. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
+#if TCPN_LOG_PACKETS == 2
+					if (pack->size >= 32)
+						DumpPacket(pack->pBuffer, 32);
+					else
+						DumpPacket(pack);
+#endif
+#if TCPN_LOG_PACKETS >= 3
+					DumpPacket(pack);
+#endif
+				}
+#endif
 				if (RelayServer && Server && pack->destination) {
 					EmuTCPConnection* con = Server->FindConnection(pack->destination);
 					if (!con) {
-						#if TCPN_DEBUG >= 1
-							std::cout << "Error relaying packet: con = 0" << std::endl;
-						#endif
+#if TCPN_DEBUG >= 1
+						std::cout << "Error relaying packet: con = 0" << std::endl;
+#endif
 						safe_delete(pack);
-					}
-					else
+					} else
 						con->OutQueuePush(pack);
-				}
-				else
+				} else
 					OutQueuePush(pack);
 			}
 			base += size;
@@ -677,7 +641,7 @@ bool EmuTCPConnection::ProcessReceivedDataAsOldPackets(char* errbuf) {
 			pack = new ServerPacket;
 			memcpy(&pack->opcode, &buffer[0], 2);
 			pack->size = size - 4;
-			if (size < 4) { // TODO: Checksum or size check or something similar
+			if (size < 4) {  // TODO: Checksum or size check or something similar
 				// Datastream corruption, get the hell outta here!
 				delete pack;
 				return true;
@@ -689,25 +653,24 @@ bool EmuTCPConnection::ProcessReceivedDataAsOldPackets(char* errbuf) {
 			if (pack->opcode == 0) {
 				// keepalive, no need to process
 				safe_delete(pack);
-			}
-			else {
-				#if TCPN_LOG_PACKETS >= 1
-					if (pack && pack->opcode != 0) {
-						struct in_addr	in;
-						in.s_addr = GetrIP();
-						CoutTimestamp(true);
-						std::cout << ": Logging incoming TCP OldPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
-						#if TCPN_LOG_PACKETS == 2
-							if (pack->size >= 32)
-								DumpPacket(pack->pBuffer, 32);
-							else
-								DumpPacket(pack);
-						#endif
-						#if TCPN_LOG_PACKETS >= 3
-							DumpPacket(pack);
-						#endif
-					}
-				#endif
+			} else {
+#if TCPN_LOG_PACKETS >= 1
+				if (pack && pack->opcode != 0) {
+					struct in_addr in;
+					in.s_addr = GetrIP();
+					CoutTimestamp(true);
+					std::cout << ": Logging incoming TCP OldPacket. OPCode: 0x" << std::hex << std::setw(4) << std::setfill('0') << pack->opcode << std::dec << ", size: " << std::setw(5) << std::setfill(' ') << pack->size << " " << inet_ntoa(in) << ":" << GetrPort() << std::endl;
+#if TCPN_LOG_PACKETS == 2
+					if (pack->size >= 32)
+						DumpPacket(pack->pBuffer, 32);
+					else
+						DumpPacket(pack);
+#endif
+#if TCPN_LOG_PACKETS >= 3
+					DumpPacket(pack);
+#endif
+				}
+#endif
 				OutQueuePush(pack);
 			}
 			base += size;
@@ -717,8 +680,7 @@ bool EmuTCPConnection::ProcessReceivedDataAsOldPackets(char* errbuf) {
 	if (base != 0) {
 		if (base >= recvbuf_used) {
 			safe_delete_array(recvbuf);
-		}
-		else {
+		} else {
 			auto tmpbuf = new uchar[recvbuf_size - base];
 			memcpy(tmpbuf, &recvbuf[base], recvbuf_used - base);
 			safe_delete_array(recvbuf);
@@ -737,7 +699,7 @@ void EmuTCPConnection::ProcessNetworkLayerPacket(ServerPacket* pack) {
 		case 0: {
 			break;
 		}
-		case 1: { // Switch to RelayServer mode
+		case 1: {  // Switch to RelayServer mode
 			if (pack->size != 1) {
 				SendNetErrorPacket("New RelayClient: wrong size, expected 1");
 				break;
@@ -754,15 +716,15 @@ void EmuTCPConnection::ProcessNetworkLayerPacket(ServerPacket* pack) {
 				SendNetErrorPacket("Switch to RelayServer mode on outgoing connection");
 				break;
 			}
-			#if TCPC_DEBUG >= 3
-				struct in_addr	in;
-				in.s_addr = GetrIP();
-				std::cout << "Switching to RelayServer mode: " << inet_ntoa(in) << ":" << GetPort() << std::endl;
-			#endif
+#if TCPC_DEBUG >= 3
+			struct in_addr in;
+			in.s_addr = GetrIP();
+			std::cout << "Switching to RelayServer mode: " << inet_ntoa(in) << ":" << GetPort() << std::endl;
+#endif
 			RelayServer = true;
 			break;
 		}
-		case 2: { // New Relay Client
+		case 2: {  // New Relay Client
 			if (!RelayServer) {
 				SendNetErrorPacket("New RelayClient when not in RelayServer mode");
 				break;
@@ -775,13 +737,13 @@ void EmuTCPConnection::ProcessNetworkLayerPacket(ServerPacket* pack) {
 				SendNetErrorPacket("New RelayClient: illegal on outgoing connection");
 				break;
 			}
-			auto con = new EmuTCPConnection(Server->GetNextID(), Server, this, *((uint32 *)data),
-							*((uint32 *)&data[4]), *((uint16 *)&data[8]));
+			auto con = new EmuTCPConnection(Server->GetNextID(), Server, this, *((uint32*)data),
+			                                *((uint32*)&data[4]), *((uint16*)&data[8]));
 			Server->AddConnection(con);
 			RelayCount++;
 			break;
 		}
-		case 3: { // Delete Relay Client
+		case 3: {  // Delete Relay Client
 			if (!RelayServer) {
 				SendNetErrorPacket("Delete RelayClient when not in RelayServer mode");
 				break;
@@ -803,44 +765,44 @@ void EmuTCPConnection::ProcessNetworkLayerPacket(ServerPacket* pack) {
 			break;
 		}
 		case 255: {
-			#if TCPC_DEBUG >= 1
-				struct in_addr	in;
-				in.s_addr = GetrIP();
-				std::cout "Received NetError: '";
-				if (pack->size > 1)
-					std::cout << (char*) data;
-				std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
-			#endif
+#if TCPC_DEBUG >= 1
+			struct in_addr in;
+			in.s_addr = GetrIP();
+			std::cout "Received NetError: '";
+			if (pack->size > 1)
+				std::cout << (char*)data;
+			std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
+#endif
 			break;
 		}
 	}
 }
 
-bool EmuTCPConnection::SendData(bool &sent_something, char* errbuf) {
+bool EmuTCPConnection::SendData(bool& sent_something, char* errbuf) {
 	sent_something = false;
-	if(!TCPConnection::SendData(sent_something, errbuf))
-		return(false);
+	if (!TCPConnection::SendData(sent_something, errbuf))
+		return (false);
 
-	if(sent_something)
+	if (sent_something)
 		keepalive_timer.Start();
 	else if (TCPMode == modePacket && keepalive_timer.Check()) {
 		auto pack = new ServerPacket(0, 0);
 		SendPacket(pack);
 		safe_delete(pack);
-		#if TCPN_DEBUG >= 5
+#if TCPN_DEBUG >= 5
 		std::cout << "Sending TCP keepalive packet. (timeout=" << timeout_timer.GetRemainingTime() << " remaining)" << std::endl;
-		#endif
+#endif
 	}
 
-	return(true);
+	return (true);
 }
 
 bool EmuTCPConnection::RecvData(char* errbuf) {
-	if(!TCPConnection::RecvData(errbuf)) {
+	if (!TCPConnection::RecvData(errbuf)) {
 		if (OutQueue.count())
-			return(true);
+			return (true);
 		else
-			return(false);
+			return (false);
 	}
 
 	if ((TCPMode == modePacket || TCPMode == modeTransition) && timeout_timer.Check()) {
@@ -849,6 +811,5 @@ bool EmuTCPConnection::RecvData(char* errbuf) {
 		return false;
 	}
 
-	return(true);
+	return (true);
 }
-

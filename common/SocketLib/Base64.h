@@ -1,14 +1,14 @@
 /** \file Base64.h
  **	\date  2004-02-13
  **	\author grymse@alhem.net
-**/
+ **/
 /*
 Copyright (C) 2004,2005  Anders Hedstrom
 
 This library is made available under the terms of the GNU GPL.
 
 If you would like to use this library in a closed-source application,
-a separate license agreement is available. For information about 
+a separate license agreement is available. For information about
 the closed-source license agreement for the C++ sockets library,
 please visit http://www.alhem.net/Sockets/license.html and/or
 email license@alhem.net.
@@ -39,29 +39,27 @@ namespace SOCKETS_NAMESPACE {
 
 /** \defgroup util Utilities */
 
-/** Base64 encode/decode. 
-	\ingroup util */
+/** Base64 encode/decode.
+    \ingroup util */
 class Base64 {
-public:
+   public:
+	static void encode(FILE*, std::string&, bool add_crlf = true);
+	static void encode(const std::string&, std::string&, bool add_crlf = true);
+	static void encode(const char*, size_t, std::string&, bool add_crlf = true);
+	static void encode(unsigned char*, size_t, std::string&, bool add_crlf = true);
 
-	static void encode(FILE *, std::string& , bool add_crlf = true);
-	static void encode(const std::string&, std::string& , bool add_crlf = true);
-	static void encode(const char *, size_t, std::string& , bool add_crlf = true);
-	static void encode(unsigned char *, size_t, std::string& , bool add_crlf = true);
+	static void decode(const std::string&, std::string&);
+	static void decode(const std::string& in, unsigned char* out, size_t&);
 
-	static void decode(const std::string&, std::string& );
-	static void decode(const std::string& in, unsigned char *out, size_t&);
+	static size_t decode_length(const std::string&);
 
-	static size_t decode_length(const std::string& );
-
-private:
-static	const char *bstr;
-static	const char rstr[128];
+   private:
+	static const char* bstr;
+	static const char rstr[128];
 };
-
 
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif // _BASE64_H
+#endif  // _BASE64_H

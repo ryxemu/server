@@ -1,21 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2006 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include "../common/global_define.h"
 #include "launcher_link.h"
 #include "launcher_list.h"
@@ -35,12 +17,11 @@
 extern LauncherList launcher_list;
 
 LauncherLink::LauncherLink(int id, EmuTCPConnection *c)
-: ID(id),
-	tcpc(c),
-	authenticated(false),
-	m_name(""),
-	m_bootTimer(2000)
-{
+    : ID(id),
+      tcpc(c),
+      authenticated(false),
+      m_name(""),
+      m_bootTimer(2000) {
 	m_dynamicCount = 0;
 	m_bootTimer.Disable();
 }
@@ -53,13 +34,13 @@ bool LauncherLink::Process() {
 	if (!tcpc->Connected())
 		return false;
 
-	if(m_bootTimer.Check(false)) {
-		//force a boot on any zone which isnt running.
+	if (m_bootTimer.Check(false)) {
+		// force a boot on any zone which isnt running.
 		std::map<std::string, ZoneState>::iterator cur, end;
 		cur = m_states.begin();
 		end = m_states.end();
-		for(; cur != end; ++cur) {
-			if(!cur->second.up) {
+		for (; cur != end; ++cur) {
+			if (!cur->second.up) {
 				StartZone(cur->first.c_str(), cur->second.port);
 			}
 		}
@@ -67,12 +48,12 @@ bool LauncherLink::Process() {
 	}
 
 	ServerPacket *pack = 0;
-	while((pack = tcpc->PopPacket())) {
+	while ((pack = tcpc->PopPacket())) {
 		if (!authenticated) {
 			if (WorldConfig::get()->SharedKey.length() > 0) {
 				if (pack->opcode == ServerOP_ZAAuth && pack->size == 16) {
 					uint8 tmppass[16];
-					MD5::Generate((const uchar*) WorldConfig::get()->SharedKey.c_str(), WorldConfig::get()->SharedKey.length(), tmppass);
+					MD5::Generate((const uchar *)WorldConfig::get()->SharedKey.c_str(), WorldConfig::get()->SharedKey.length(), tmppass);
 					if (memcmp(pack->pBuffer, tmppass, 16) == 0)
 						authenticated = true;
 					else {
@@ -85,8 +66,7 @@ bool LauncherLink::Process() {
 						Disconnect();
 						return false;
 					}
-				}
-				else {
+				} else {
 					struct in_addr in;
 					in.s_addr = GetIP();
 					Log(Logs::Detail, Logs::WorldServer, "Launcher authorization failed.");
@@ -96,94 +76,91 @@ bool LauncherLink::Process() {
 					Disconnect();
 					return false;
 				}
-			}
-			else
-			{
-				Log(Logs::Detail, Logs::WorldServer,"**WARNING** You have not configured a world shared key in your config file. You should add a <key>STRING</key> element to your <world> element to prevent unauthroized zone access.");
+			} else {
+				Log(Logs::Detail, Logs::WorldServer, "**WARNING** You have not configured a world shared key in your config file. You should add a <key>STRING</key> element to your <world> element to prevent unauthroized zone access.");
 				authenticated = true;
 			}
 			delete pack;
 			continue;
 		}
-		switch(pack->opcode) {
-		case 0:
-			break;
-		case ServerOP_KeepAlive: {
-			// ignore this
-			break;
-		}
-		case ServerOP_ZAAuth: {
-			Log(Logs::Detail, Logs::WorldServer, "Got authentication from %s when they are already authenticated.", m_name.c_str());
-			break;
-		}
-		case ServerOP_LauncherConnectInfo: {
-			const LauncherConnectInfo *it = (const LauncherConnectInfo *) pack->pBuffer;
-			if(HasName()) {
-				Log(Logs::Detail, Logs::WorldServer, "Launcher '%s' received an additional connect packet with name '%s'. Ignoring.", m_name.c_str(), it->name);
+		switch (pack->opcode) {
+			case 0:
+				break;
+			case ServerOP_KeepAlive: {
+				// ignore this
 				break;
 			}
-			m_name = it->name;
-
-			EQLConfig *config = launcher_list.GetConfig(m_name.c_str());
-			if(config == nullptr) {
-				Log(Logs::Detail, Logs::WorldServer, "Unknown launcher '%s' connected. Disconnecting.", it->name);
-				Disconnect();
+			case ServerOP_ZAAuth: {
+				Log(Logs::Detail, Logs::WorldServer, "Got authentication from %s when they are already authenticated.", m_name.c_str());
 				break;
 			}
+			case ServerOP_LauncherConnectInfo: {
+				const LauncherConnectInfo *it = (const LauncherConnectInfo *)pack->pBuffer;
+				if (HasName()) {
+					Log(Logs::Detail, Logs::WorldServer, "Launcher '%s' received an additional connect packet with name '%s'. Ignoring.", m_name.c_str(), it->name);
+					break;
+				}
+				m_name = it->name;
 
-			Log(Logs::Detail, Logs::WorldServer, "Launcher Identified itself as '%s'. Loading zone list.", it->name);
+				EQLConfig *config = launcher_list.GetConfig(m_name.c_str());
+				if (config == nullptr) {
+					Log(Logs::Detail, Logs::WorldServer, "Unknown launcher '%s' connected. Disconnecting.", it->name);
+					Disconnect();
+					break;
+				}
 
-			std::vector<LauncherZone> result;
-			//database.GetLauncherZones(it->name, result);
-			config->GetZones(result);
+				Log(Logs::Detail, Logs::WorldServer, "Launcher Identified itself as '%s'. Loading zone list.", it->name);
 
-			std::vector<LauncherZone>::iterator cur, end;
-			cur = result.begin();
-			end = result.end();
-			ZoneState zs;
-			for(; cur != end; cur++) {
-				zs.port = cur->port;
-				zs.up = false;
-				zs.starts = 0;
-				Log(Logs::Detail, Logs::WorldServer, "%s: Loaded zone '%s' on port %d", m_name.c_str(), cur->name.c_str(), zs.port);
-				m_states[cur->name] = zs;
-			}
+				std::vector<LauncherZone> result;
+				// database.GetLauncherZones(it->name, result);
+				config->GetZones(result);
 
-			//now we add all the dynamics.
-			BootDynamics(config->GetDynamicCount());
+				std::vector<LauncherZone>::iterator cur, end;
+				cur = result.begin();
+				end = result.end();
+				ZoneState zs;
+				for (; cur != end; cur++) {
+					zs.port = cur->port;
+					zs.up = false;
+					zs.starts = 0;
+					Log(Logs::Detail, Logs::WorldServer, "%s: Loaded zone '%s' on port %d", m_name.c_str(), cur->name.c_str(), zs.port);
+					m_states[cur->name] = zs;
+				}
 
-			m_bootTimer.Start();
+				// now we add all the dynamics.
+				BootDynamics(config->GetDynamicCount());
 
-			break;
-		}
-		case ServerOP_LauncherZoneStatus: {
-			const LauncherZoneStatus *it = (const LauncherZoneStatus *) pack->pBuffer;
-			std::map<std::string, ZoneState>::iterator res;
-			res = m_states.find(it->short_name);
-			if(res == m_states.end()) {
-				Log(Logs::Detail, Logs::WorldServer, "%s: reported state for zone %s which it does not have.", m_name.c_str(), it->short_name);
+				m_bootTimer.Start();
+
 				break;
 			}
-			Log(Logs::Detail, Logs::WorldServer, "%s: %s reported state %s (%d starts)", m_name.c_str(), it->short_name, it->running?"STARTED":"STOPPED", it->start_count);
-			res->second.up = it->running;
-			res->second.starts = it->start_count;
-			break;
-		}
-		default:
-		{
-			Log(Logs::Detail, Logs::WorldServer, "Unknown ServerOPcode from launcher 0x%04x, size %d",pack->opcode,pack->size);
-			DumpPacket(pack->pBuffer, pack->size);
-			break;
-		}
+			case ServerOP_LauncherZoneStatus: {
+				const LauncherZoneStatus *it = (const LauncherZoneStatus *)pack->pBuffer;
+				std::map<std::string, ZoneState>::iterator res;
+				res = m_states.find(it->short_name);
+				if (res == m_states.end()) {
+					Log(Logs::Detail, Logs::WorldServer, "%s: reported state for zone %s which it does not have.", m_name.c_str(), it->short_name);
+					break;
+				}
+				Log(Logs::Detail, Logs::WorldServer, "%s: %s reported state %s (%d starts)", m_name.c_str(), it->short_name, it->running ? "STARTED" : "STOPPED", it->start_count);
+				res->second.up = it->running;
+				res->second.starts = it->start_count;
+				break;
+			}
+			default: {
+				Log(Logs::Detail, Logs::WorldServer, "Unknown ServerOPcode from launcher 0x%04x, size %d", pack->opcode, pack->size);
+				DumpPacket(pack->pBuffer, pack->size);
+				break;
+			}
 		}
 
 		delete pack;
 	}
-	return(true);
+	return (true);
 }
 
 bool LauncherLink::ContainsZone(const char *short_name) const {
-	return(m_states.find(short_name) != m_states.end());
+	return (m_states.find(short_name) != m_states.end());
 }
 
 void LauncherLink::BootZone(const char *short_name, uint16 port) {
@@ -203,7 +180,7 @@ void LauncherLink::StartZone(const char *short_name) {
 
 void LauncherLink::StartZone(const char *short_name, uint16 port) {
 	auto pack = new ServerPacket(ServerOP_LauncherZoneRequest, sizeof(LauncherZoneRequest));
-	LauncherZoneRequest* s = (LauncherZoneRequest *) pack->pBuffer;
+	LauncherZoneRequest *s = (LauncherZoneRequest *)pack->pBuffer;
 
 	strn0cpy(s->short_name, short_name, 32);
 	s->command = ZR_Start;
@@ -215,7 +192,7 @@ void LauncherLink::StartZone(const char *short_name, uint16 port) {
 
 void LauncherLink::RestartZone(const char *short_name) {
 	auto pack = new ServerPacket(ServerOP_LauncherZoneRequest, sizeof(LauncherZoneRequest));
-	LauncherZoneRequest* s = (LauncherZoneRequest *) pack->pBuffer;
+	LauncherZoneRequest *s = (LauncherZoneRequest *)pack->pBuffer;
 
 	strn0cpy(s->short_name, short_name, 32);
 	s->command = ZR_Restart;
@@ -227,7 +204,7 @@ void LauncherLink::RestartZone(const char *short_name) {
 
 void LauncherLink::StopZone(const char *short_name) {
 	auto pack = new ServerPacket(ServerOP_LauncherZoneRequest, sizeof(LauncherZoneRequest));
-	LauncherZoneRequest* s = (LauncherZoneRequest *) pack->pBuffer;
+	LauncherZoneRequest *s = (LauncherZoneRequest *)pack->pBuffer;
 
 	strn0cpy(s->short_name, short_name, 32);
 	s->command = ZR_Stop;
@@ -238,12 +215,12 @@ void LauncherLink::StopZone(const char *short_name) {
 }
 
 void LauncherLink::BootDynamics(uint8 new_count) {
-	if(m_dynamicCount == new_count)
+	if (m_dynamicCount == new_count)
 		return;
 
 	ZoneState zs;
-	if(m_dynamicCount < new_count) {
-		//we are booting more dynamics.
+	if (m_dynamicCount < new_count) {
+		// we are booting more dynamics.
 
 		zs.port = 0;
 		zs.up = false;
@@ -253,11 +230,11 @@ void LauncherLink::BootDynamics(uint8 new_count) {
 		char nbuf[20];
 		uint8 index;
 		//"for each zone we need to boot"
-		for(r = m_dynamicCount; r < new_count; r++) {
-			//find an idle ID
-			for(index = m_dynamicCount+1; index < 255; index++) {
+		for (r = m_dynamicCount; r < new_count; r++) {
+			// find an idle ID
+			for (index = m_dynamicCount + 1; index < 255; index++) {
 				sprintf(nbuf, "dynamic_%02d", index);
-				if(m_states.find(nbuf) != m_states.end())
+				if (m_states.find(nbuf) != m_states.end())
 					continue;
 				m_states[nbuf] = zs;
 				StartZone(nbuf);
@@ -265,26 +242,26 @@ void LauncherLink::BootDynamics(uint8 new_count) {
 			}
 		}
 		m_dynamicCount = new_count;
-	} else if(new_count == 0) {
-		//kill all zones...
+	} else if (new_count == 0) {
+		// kill all zones...
 		std::map<std::string, ZoneState>::iterator cur, end;
 		cur = m_states.begin();
 		end = m_states.end();
-		for(; cur != end; cur++) {
+		for (; cur != end; cur++) {
 			StopZone(cur->first.c_str());
 		}
 	} else {
-		//need to get rid of some zones...
+		// need to get rid of some zones...
 
-		//quick and dirty way to do this.. should do better (like looking for idle zones)
+		// quick and dirty way to do this.. should do better (like looking for idle zones)
 		int found = 0;
 		std::map<std::string, ZoneState>::iterator cur, end;
 		cur = m_states.begin();
 		end = m_states.end();
-		for(; cur != end; cur++) {
-			if(cur->first.find("dynamic_") == 0) {
-				if(found >= new_count) {
-					//this zone exceeds the number of allowed booted zones.
+		for (; cur != end; cur++) {
+			if (cur->first.find("dynamic_") == 0) {
+				if (found >= new_count) {
+					// this zone exceeds the number of allowed booted zones.
 					StopZone(cur->first.c_str());
 				} else {
 					found++;
@@ -294,25 +271,23 @@ void LauncherLink::BootDynamics(uint8 new_count) {
 
 		m_dynamicCount = new_count;
 	}
-
 }
-
 
 void LauncherLink::GetZoneList(std::vector<std::string> &l) {
 	std::map<std::string, ZoneState>::iterator cur, end;
 	cur = m_states.begin();
 	end = m_states.end();
-	for(; cur != end; cur++) {
+	for (; cur != end; cur++) {
 		l.push_back(cur->first.c_str());
 	}
 }
 
-void LauncherLink::GetZoneDetails(const char *short_name, std::map<std::string,std::string> &res) {
+void LauncherLink::GetZoneDetails(const char *short_name, std::map<std::string, std::string> &res) {
 	res.clear();
 
 	std::map<std::string, ZoneState>::iterator r;
 	r = m_states.find(short_name);
-	if(r == m_states.end()) {
+	if (r == m_states.end()) {
 		res["error"] = "Zone Not Found";
 		res["name"] = short_name;
 		res["up"] = "0";
@@ -320,7 +295,7 @@ void LauncherLink::GetZoneDetails(const char *short_name, std::map<std::string,s
 		res["port"] = "0";
 	} else {
 		res["name"] = r->first;
-		res["up"] = r->second.up?"1":"0";
+		res["up"] = r->second.up ? "1" : "0";
 		res["starts"] = itoa(r->second.starts);
 		res["port"] = itoa(r->second.port);
 	}

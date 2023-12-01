@@ -1,14 +1,12 @@
 #include "mysql_request_result.h"
 
 MySQLRequestResult::MySQLRequestResult()
-	: m_CurrentRow(), m_OneBeyondRow()
-{
+    : m_CurrentRow(), m_OneBeyondRow() {
 	ZeroOut();
 }
 
-MySQLRequestResult::MySQLRequestResult(MYSQL_RES* result, uint32 rowsAffected, uint32 rowCount, uint32 columnCount, uint32 lastInsertedID, uint32 errorNumber, char *errorBuffer)
-	: m_CurrentRow(result), m_OneBeyondRow()
-{
+MySQLRequestResult::MySQLRequestResult(MYSQL_RES* result, uint32 rowsAffected, uint32 rowCount, uint32 columnCount, uint32 lastInsertedID, uint32 errorNumber, char* errorBuffer)
+    : m_CurrentRow(result), m_OneBeyondRow() {
 	m_Result = result;
 	m_RowsAffected = rowsAffected;
 	m_RowCount = rowCount;
@@ -29,9 +27,7 @@ MySQLRequestResult::MySQLRequestResult(MYSQL_RES* result, uint32 rowsAffected, u
 	m_ErrorBuffer = errorBuffer;
 }
 
-void MySQLRequestResult::FreeInternals()
-{
-
+void MySQLRequestResult::FreeInternals() {
 	safe_delete_array(m_ErrorBuffer);
 
 	if (m_Result != nullptr)
@@ -40,8 +36,7 @@ void MySQLRequestResult::FreeInternals()
 	ZeroOut();
 }
 
-void MySQLRequestResult::ZeroOut()
-{
+void MySQLRequestResult::ZeroOut() {
 	m_Success = false;
 	m_Result = nullptr;
 	m_ErrorBuffer = nullptr;
@@ -52,13 +47,11 @@ void MySQLRequestResult::ZeroOut()
 	m_LastInsertedID = 0;
 }
 
-MySQLRequestResult::~MySQLRequestResult()
-{
+MySQLRequestResult::~MySQLRequestResult() {
 	FreeInternals();
 }
 
-uint32 MySQLRequestResult::LengthOfColumn(int columnIndex)
-{
+uint32 MySQLRequestResult::LengthOfColumn(int columnIndex) {
 	if (m_ColumnLengths == nullptr && m_Result != nullptr)
 		m_ColumnLengths = mysql_fetch_lengths(m_Result);
 
@@ -79,8 +72,7 @@ uint32 MySQLRequestResult::LengthOfColumn(int columnIndex)
 	return m_ColumnLengths[columnIndex];
 }
 
-const std::string MySQLRequestResult::FieldName(int columnIndex)
-{
+const std::string MySQLRequestResult::FieldName(int columnIndex) {
 	if (columnIndex >= m_ColumnCount || m_Result == nullptr)
 		return std::string();
 
@@ -91,8 +83,7 @@ const std::string MySQLRequestResult::FieldName(int columnIndex)
 }
 
 MySQLRequestResult::MySQLRequestResult(MySQLRequestResult&& moveItem)
-	: m_CurrentRow(moveItem.m_CurrentRow), m_OneBeyondRow()
-{
+    : m_CurrentRow(moveItem.m_CurrentRow), m_OneBeyondRow() {
 	m_Result = moveItem.m_Result;
 	m_ErrorBuffer = moveItem.m_ErrorBuffer;
 	m_Success = moveItem.m_Success;
@@ -108,8 +99,7 @@ MySQLRequestResult::MySQLRequestResult(MySQLRequestResult&& moveItem)
 	moveItem.ZeroOut();
 }
 
-MySQLRequestResult& MySQLRequestResult::operator=(MySQLRequestResult&& other)
-{
+MySQLRequestResult& MySQLRequestResult::operator=(MySQLRequestResult&& other) {
 	// Assigning something to itself?
 	// Silly! (but happens)
 	if (this == &other)

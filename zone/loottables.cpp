@@ -1,21 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include "../common/global_define.h"
 #include "../common/loottable.h"
 #include "../common/misc_functions.h"
@@ -31,9 +13,8 @@
 #include <stdlib.h>
 
 #ifdef _WINDOWS
-#define snprintf	_snprintf
+#define snprintf _snprintf
 #endif
-
 
 // Queries the loottable: adds item & coin to the npc
 void ZoneDatabase::AddLootTableToNPC(NPC* npc, uint32 loottable_id, ItemList* itemlist, uint32* copper, uint32* silver, uint32* gold, uint32* plat) {
@@ -62,12 +43,10 @@ void ZoneDatabase::AddLootTableToNPC(NPC* npc, uint32 loottable_id, ItemList* it
 
 		if (avg_cash_roll < upper_chance) {
 			cash = zone->random.Int(lts->avgcoin, max_cash);
-		}
-		else {
+		} else {
 			cash = zone->random.Int(min_cash, lts->avgcoin);
 		}
-	}
-	else {
+	} else {
 		cash = zone->random.Int(min_cash, max_cash);
 	}
 
@@ -85,23 +64,21 @@ void ZoneDatabase::AddLootTableToNPC(NPC* npc, uint32 loottable_id, ItemList* it
 	}
 
 	// Do items
-	for (uint32 i = 0; i<lts->NumEntries; i++) {
+	for (uint32 i = 0; i < lts->NumEntries; i++) {
 		uint8 multiplier_count = 0;
 		for (uint32 k = 1; k <= lts->Entries[i].multiplier; k++) {
 			uint8 droplimit = lts->Entries[i].droplimit;
 			uint8 mindrop = lts->Entries[i].mindrop;
 			uint8 multiplier_min = lts->Entries[i].multiplier_min;
 
-			//LootTable Entry probability
+			// LootTable Entry probability
 			float ltchance = 0.0f;
 			ltchance = lts->Entries[i].probability;
 
 			float drop_chance = 0.0f;
 			if (ltchance > 0.0 && ltchance < 100.0 && multiplier_count >= multiplier_min) {
 				drop_chance = (float)zone->random.Real(0.0, 100.0);
-			}
-			else if (multiplier_count < multiplier_min)
-			{
+			} else if (multiplier_count < multiplier_min) {
 				drop_chance = 0.0f;
 			}
 
@@ -133,14 +110,13 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 					uint32 itemid = lds->Entries[i].item_id;
 					int8 charges = lds->Entries[i].item_charges;
 					const EQ::ItemData* db_item = GetItem(itemid);
-					if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges)
-					{
+					if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges) {
 						if (charges <= 1)
 							charges = db_item->MaxCharges;
 					}
 					bool force_equip = lds->Entries[i].equip_item == 2;
 					npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[i].minlevel,
-						lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
+					                 lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
 				}
 			}
 		}
@@ -162,8 +138,7 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 		uint32 itemid = lds->Entries[i].item_id;
 		int8 charges = lds->Entries[i].item_charges;
 		const EQ::ItemData* db_item = GetItem(itemid);
-		if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges)
-		{
+		if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges) {
 			if (charges <= 1)
 				charges = db_item->MaxCharges;
 		}
@@ -180,56 +155,13 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 		return;
 	}
 
-	for(int i = 0; i < mindrop; ++i) {
+	for (int i = 0; i < mindrop; ++i) {
 		float roll = (float)zone->random.Real(0.0, roll_t_min);
-		for(uint32 j = 0; j < lds->NumEntries; ++j) {
+		for (uint32 j = 0; j < lds->NumEntries; ++j) {
 			uint32 itemid = lds->Entries[j].item_id;
 			int8 charges = lds->Entries[j].item_charges;
 			const EQ::ItemData* db_item = GetItem(itemid);
-			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges)
-			{
-				if (charges <= 1)
-					charges = db_item->MaxCharges;
-			}
-			if (db_item) {
-				if(roll < lds->Entries[j].chance) {
-					bool force_equip = lds->Entries[j].equip_item == 2;
-					npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
-									 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
-
-					int multiplier = (int)lds->Entries[j].multiplier;
-					multiplier = EQ::ClampLower(multiplier, 1);
-
-					for (int k = 1; k < multiplier; ++k) {
-						float c_roll = (float)zone->random.Real(0.0, 100.0);
-						if(c_roll <= lds->Entries[j].chance) {
-							bool force_equip = lds->Entries[j].equip_item == 2;
-							npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
-											 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
-						}
-					}
-
-					j = lds->NumEntries;
-					break;
-				}
-				else {
-					roll -= lds->Entries[j].chance;
-				}
-			}
-		}
-	}
-
-	// drop limit handling has two loops to ensure that the table drop %s are indicative of what is seen in-game
-	if ((droplimit - mindrop) == 1)
-	{
-		float roll = (float)zone->random.Real(0.0, roll_t);
-		for (uint32 j = 0; j < lds->NumEntries; ++j)
-		{
-			uint32 itemid = lds->Entries[j].item_id;
-			int8 charges = lds->Entries[j].item_charges;
-			const EQ::ItemData* db_item = GetItem(itemid);
-			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges)
-			{
+			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges) {
 				if (charges <= 1)
 					charges = db_item->MaxCharges;
 			}
@@ -237,7 +169,7 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 				if (roll < lds->Entries[j].chance) {
 					bool force_equip = lds->Entries[j].equip_item == 2;
 					npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
-						lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
+					                 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
 
 					int multiplier = (int)lds->Entries[j].multiplier;
 					multiplier = EQ::ClampLower(multiplier, 1);
@@ -247,19 +179,54 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 						if (c_roll <= lds->Entries[j].chance) {
 							bool force_equip = lds->Entries[j].equip_item == 2;
 							npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
-								lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
+							                 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
 						}
 					}
+
+					j = lds->NumEntries;
 					break;
-				}
-				else {
+				} else {
 					roll -= lds->Entries[j].chance;
 				}
 			}
 		}
 	}
-	else if (droplimit > mindrop)
-	{
+
+	// drop limit handling has two loops to ensure that the table drop %s are indicative of what is seen in-game
+	if ((droplimit - mindrop) == 1) {
+		float roll = (float)zone->random.Real(0.0, roll_t);
+		for (uint32 j = 0; j < lds->NumEntries; ++j) {
+			uint32 itemid = lds->Entries[j].item_id;
+			int8 charges = lds->Entries[j].item_charges;
+			const EQ::ItemData* db_item = GetItem(itemid);
+			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges) {
+				if (charges <= 1)
+					charges = db_item->MaxCharges;
+			}
+			if (db_item) {
+				if (roll < lds->Entries[j].chance) {
+					bool force_equip = lds->Entries[j].equip_item == 2;
+					npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
+					                 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
+
+					int multiplier = (int)lds->Entries[j].multiplier;
+					multiplier = EQ::ClampLower(multiplier, 1);
+
+					for (int k = 1; k < multiplier; ++k) {
+						float c_roll = (float)zone->random.Real(0.0, 100.0);
+						if (c_roll <= lds->Entries[j].chance) {
+							bool force_equip = lds->Entries[j].equip_item == 2;
+							npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[j].minlevel,
+							                 lds->Entries[j].maxlevel, lds->Entries[j].equip_item > 0 ? true : false, false, false, false, force_equip);
+						}
+					}
+					break;
+				} else {
+					roll -= lds->Entries[j].chance;
+				}
+			}
+		}
+	} else if (droplimit > mindrop) {
 		// If droplimit is 2 or more higher than mindrop, then we run this other loop.
 		// This can't be used on droplimit=mindrop+1 without actual drop rates being lower than what the table %s
 		// would indicate; however the above solution doesn't work well for droplimits greater than 1 above mindrop.
@@ -268,26 +235,22 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 		int i = zone->random.Int(0, lds->NumEntries);
 		int loops = 0;
 
-		while (loops < lds->NumEntries)
-		{
+		while (loops < lds->NumEntries) {
 			if (dropCount >= droplimit)
 				break;
 
 			uint32 itemid = lds->Entries[i].item_id;
 			int8 charges = lds->Entries[i].item_charges;
 			const EQ::ItemData* db_item = GetItem(itemid);
-			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges)
-			{
+			if (database.ItemQuantityType(itemid) == EQ::item::Quantity_Charges) {
 				if (charges <= 1)
 					charges = db_item->MaxCharges;
 			}
-			if (db_item)
-			{
-				if (zone->random.Real(0.0, 100.0) <= lds->Entries[i].chance)
-				{
+			if (db_item) {
+				if (zone->random.Real(0.0, 100.0) <= lds->Entries[i].chance) {
 					bool force_equip = lds->Entries[i].equip_item == 2;
 					npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[i].minlevel,
-						lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
+					                 lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
 
 					int multiplier = (int)lds->Entries[i].multiplier;
 					multiplier = EQ::ClampLower(multiplier, 1);
@@ -297,7 +260,7 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 						if (c_roll <= lds->Entries[i].chance) {
 							bool force_equip = lds->Entries[i].equip_item == 2;
 							npc->AddLootDrop(db_item, itemlist, charges, lds->Entries[i].minlevel,
-								lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
+							                 lds->Entries[i].maxlevel, lds->Entries[i].equip_item > 0 ? true : false, false, false, false, force_equip);
 						}
 					}
 					dropCount = dropCount + 1;
@@ -312,35 +275,34 @@ void ZoneDatabase::AddLootDropToNPC(NPC* npc, uint32 lootdrop_id, ItemList* item
 
 	npc->UpdateEquipmentLight();
 	// no wearchange associated with this function..so, this should not be needed
-	//if (npc->UpdateActiveLightValue())
+	// if (npc->UpdateActiveLightValue())
 	//	npc->SendAppearancePacket(AT_Light, npc->GetActiveLightValue());
 }
 
-//if itemlist is null, just send wear changes
-void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charges, uint8 minlevel, uint8 maxlevel, bool equipit, bool wearchange, bool quest, bool pet, bool force_equip) {
-	if(item2 == nullptr)
+// if itemlist is null, just send wear changes
+void NPC::AddLootDrop(const EQ::ItemData* item2, ItemList* itemlist, int8 charges, uint8 minlevel, uint8 maxlevel, bool equipit, bool wearchange, bool quest, bool pet, bool force_equip) {
+	if (item2 == nullptr)
 		return;
 
-	//make sure we are doing something...
-	if(!itemlist && !wearchange)
+	// make sure we are doing something...
+	if (!itemlist && !wearchange)
 		return;
 
-	
-	if(CountQuestItems() >= MAX_NPC_QUEST_INVENTORY)
+	if (CountQuestItems() >= MAX_NPC_QUEST_INVENTORY)
 		return;
 
 	auto item = new ServerLootItem_Struct;
 
-	if(quest || pet)
+	if (quest || pet)
 		Log(Logs::Detail, Logs::Trading, "Adding %s to npc: %s. Wearchange: %d Equipit: %d Multiquest: %d Pet: %d", item2->Name, GetName(), wearchange, equipit, quest, pet);
 
 	EQApplicationPacket* outapp = nullptr;
 	WearChange_Struct* wc = nullptr;
-	if(wearchange) {
+	if (wearchange) {
 		outapp = new EQApplicationPacket(OP_WearChange, sizeof(WearChange_Struct));
 		wc = (WearChange_Struct*)outapp->pBuffer;
 		wc->spawn_id = GetID();
-		wc->material=0;
+		wc->material = 0;
 	}
 
 	item->item_id = item2->ID;
@@ -348,7 +310,7 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 	item->min_level = minlevel;
 	item->max_level = maxlevel;
 	item->quest = quest;
-	item->equip_slot = EQ::invslot::slotGeneral1; //Set default slot to general inventory. NPCs can have multiple items in the same slot.
+	item->equip_slot = EQ::invslot::slotGeneral1;  // Set default slot to general inventory. NPCs can have multiple items in the same slot.
 	item->pet = pet;
 	item->forced = false;
 
@@ -361,8 +323,7 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 		SetArrowEquipped(true);
 	}
 
-	if(pet && quest)
-	{
+	if (pet && quest) {
 		Log(Logs::Detail, Logs::Trading, "Error: Item %s is being added to %s as both a pet and a quest.", item2->Name, GetName());
 		item->pet = 0;
 	}
@@ -379,12 +340,12 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 	bool send_wearchange = false;
 	if (equipit && item2->ItemClass == EQ::item::ItemClassCommon && !GetSpecialAbility(DO_NOT_EQUIP)) {
 		uint8 eslot = EQ::textures::materialInvalid;
-		const EQ::ItemData* compitem = nullptr; 
+		const EQ::ItemData* compitem = nullptr;
 		ServerLootItem_Struct* sitem = nullptr;
-		bool found = false; // track if we found an empty slot we fit into
-		int32 foundslot = INVALID_INDEX; // for multi-slot items
+		bool found = false;               // track if we found an empty slot we fit into
+		int32 foundslot = INVALID_INDEX;  // for multi-slot items
 		bool upgrade = false;
-		bool special_slot = false; // Ear, Ring, and Wrist only allows 1 item for NPCs.
+		bool special_slot = false;  // Ear, Ring, and Wrist only allows 1 item for NPCs.
 
 		// Equip rules are as follows:
 		// An empty slot takes priority. The first empty one that an item can
@@ -396,30 +357,25 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 		// If an item can fit into multiple slots we'll pick the last one where
 		// it is an improvement.
 
-		for (int i = 0; !found && i <= EQ::invslot::EQUIPMENT_COUNT; ++i)
-		{
+		for (int i = 0; !found && i <= EQ::invslot::EQUIPMENT_COUNT; ++i) {
 			uint32 slots = (1 << i);
 
 			// If the item is ranged, and has other equip slots prefer to use another slot so
 			// the weapon graphic shows in-game.
-			if (i == EQ::invslot::slotRange && item2->Slots != slots)
-			{
+			if (i == EQ::invslot::slotRange && item2->Slots != slots) {
 				continue;
 			}
 
-			if (item2->Slots & slots)
-			{
-				if (equipment[i])
-				{
+			if (item2->Slots & slots) {
+				if (equipment[i]) {
 					sitem = GetItem(i);
-					if (sitem && sitem->forced)
-					{
+					if (sitem && sitem->forced) {
 						// Existing item is forced. Try another slot.
 						sitem = nullptr;
 						continue;
 					}
 
-					if (item2->ItemType == EQ::item::ItemTypeShield)	// prevent shields from replacing weapons
+					if (item2->ItemType == EQ::item::ItemTypeShield)  // prevent shields from replacing weapons
 						break;
 
 					compitem = database.GetItem(equipment[i]);
@@ -427,30 +383,22 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 						continue;
 
 					// If we're not a pet and this is an armor item, or if this is a weapon for any npc, or if this is a forced item check then for upgrade slot.
-					if ((item->pet == 0 && (i != EQ::invslot::slotPrimary && i != EQ::invslot::slotSecondary && i != EQ::invslot::slotRange && (item2->AC > compitem->AC || (item2->AC == compitem->AC && item2->HP > compitem->HP))))
-						|| (i == EQ::invslot::slotPrimary || i == EQ::invslot::slotSecondary || i == EQ::invslot::slotRange) || force_equip
-					)
-					{
+					if ((item->pet == 0 && (i != EQ::invslot::slotPrimary && i != EQ::invslot::slotSecondary && i != EQ::invslot::slotRange && (item2->AC > compitem->AC || (item2->AC == compitem->AC && item2->HP > compitem->HP)))) || (i == EQ::invslot::slotPrimary || i == EQ::invslot::slotSecondary || i == EQ::invslot::slotRange) || force_equip) {
 						// item would be an upgrade
 						// check if we're multi-slot, if yes then we have to keep
 						// looking in case any of the other slots we can fit into are empty.
-						if (item2->Slots != slots)
-						{
+						if (item2->Slots != slots) {
 							foundslot = i;
 							upgrade = true;
 							if (itemIs1h && !mainhandIs1h)
 								found = true;
-						}
-						else
-						{
+						} else {
 							foundslot = i;
 							found = true;
 							upgrade = true;
 						}
 					}
-				}
-				else
-				{
+				} else {
 					foundslot = i;
 					found = (item2->Slots == slots) || i == EQ::invslot::slotPrimary;
 				}
@@ -459,32 +407,24 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 
 		bool range_forced = false;
 		sitem = GetItem(EQ::invslot::slotRange);
-		if (sitem && sitem->forced)
-		{
+		if (sitem && sitem->forced) {
 			range_forced = true;
 			sitem = nullptr;
 		}
 
-		if (foundslot == EQ::invslot::slotPrimary && !range_forced)
-		{
-			if (mainhandIs1h && itemIs1h && offhandEmpty && GetSpecialAbility(INNATE_DUAL_WIELD))
-			{
-				foundslot = EQ::invslot::slotSecondary;	// level 66+ NPCs seem to ignore Primary/Secondary restrictions for 1handers. (e.g. elite diakus)  if MH is full, check offhand
+		if (foundslot == EQ::invslot::slotPrimary && !range_forced) {
+			if (mainhandIs1h && itemIs1h && offhandEmpty && GetSpecialAbility(INNATE_DUAL_WIELD)) {
+				foundslot = EQ::invslot::slotSecondary;  // level 66+ NPCs seem to ignore Primary/Secondary restrictions for 1handers. (e.g. elite diakus)  if MH is full, check offhand
 				upgrade = false;
-			}
-			else if (!itemIs2h || (offhandEmpty && !GetSpecialAbility(INNATE_DUAL_WIELD)))
-			{
-				if (d_melee_texture1 > 0)
-				{
+			} else if (!itemIs2h || (offhandEmpty && !GetSpecialAbility(INNATE_DUAL_WIELD))) {
+				if (d_melee_texture1 > 0) {
 					d_melee_texture1 = 0;
 					WearChange(EQ::textures::weaponPrimary, 0, 0);
 				}
 
-				if (equipment[EQ::invslot::slotRange])
-				{
+				if (equipment[EQ::invslot::slotRange]) {
 					sitem = GetItem(EQ::invslot::slotRange);
-					if (sitem)
-					{
+					if (sitem) {
 						MoveItemToGeneralInventory(sitem);
 						sitem = nullptr;
 					}
@@ -495,37 +435,29 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 			}
 		}
 
-		if (foundslot == EQ::invslot::slotSecondary && !range_forced)
-		{
-			if (!GetSpecialAbility(INNATE_DUAL_WIELD) || item2->ItemType != EQ::item::ItemTypeShield)
-			{
+		if (foundslot == EQ::invslot::slotSecondary && !range_forced) {
+			if (!GetSpecialAbility(INNATE_DUAL_WIELD) || item2->ItemType != EQ::item::ItemTypeShield) {
 				// some 2handers are erroneously flagged as secondary; don't want to equip these in offhand
 				bool itemIs2h = item2->ItemType == EQ::item::ItemType2HBlunt || item2->ItemType == EQ::item::ItemType2HPiercing || item2->ItemType == EQ::item::ItemType2HSlash;
 
-				if (!itemIs2h && (GetSkill(EQ::skills::SkillDualWield) || (item2->ItemType != EQ::item::ItemType1HSlash && item2->ItemType != EQ::item::ItemType1HBlunt && item2->ItemType != EQ::item::ItemType1HPiercing)))
-				{
+				if (!itemIs2h && (GetSkill(EQ::skills::SkillDualWield) || (item2->ItemType != EQ::item::ItemType1HSlash && item2->ItemType != EQ::item::ItemType1HBlunt && item2->ItemType != EQ::item::ItemType1HPiercing))) {
 					const EQ::ItemData* mainHand = nullptr;
 					if (equipment[EQ::invslot::slotPrimary] > 0)
 						mainHand = database.GetItem(equipment[EQ::invslot::slotPrimary]);
 
-					if (!mainHand || (mainHand->ItemType != EQ::item::ItemType2HSlash && mainHand->ItemType != EQ::item::ItemType2HBlunt && mainHand->ItemType != EQ::item::ItemType2HPiercing))
-					{
-						if (item2->ItemType == EQ::item::ItemTypeShield)
-						{
+					if (!mainHand || (mainHand->ItemType != EQ::item::ItemType2HSlash && mainHand->ItemType != EQ::item::ItemType2HBlunt && mainHand->ItemType != EQ::item::ItemType2HPiercing)) {
+						if (item2->ItemType == EQ::item::ItemTypeShield) {
 							ShieldEquiped(true);
 						}
 
-						if (d_melee_texture2 > 0)
-						{
+						if (d_melee_texture2 > 0) {
 							d_melee_texture2 = 0;
 							WearChange(EQ::textures::weaponSecondary, 0, 0);
 						}
 
-						if (equipment[EQ::invslot::slotRange])
-						{
+						if (equipment[EQ::invslot::slotRange]) {
 							sitem = GetItem(EQ::invslot::slotRange);
-							if (sitem)
-							{
+							if (sitem) {
 								MoveItemToGeneralInventory(sitem);
 								sitem = nullptr;
 							}
@@ -536,26 +468,19 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 					}
 				}
 			}
-		}
-		else if (foundslot == EQ::invslot::slotRange)
-		{
-			if (force_equip)
-			{
-				if (equipment[EQ::invslot::slotPrimary])
-				{
+		} else if (foundslot == EQ::invslot::slotRange) {
+			if (force_equip) {
+				if (equipment[EQ::invslot::slotPrimary]) {
 					sitem = GetItem(EQ::invslot::slotPrimary);
-					if (sitem)
-					{
+					if (sitem) {
 						MoveItemToGeneralInventory(sitem);
 						sitem = nullptr;
 					}
 				}
 
-				if (equipment[EQ::invslot::slotSecondary])
-				{
+				if (equipment[EQ::invslot::slotSecondary]) {
 					sitem = GetItem(EQ::invslot::slotSecondary);
-					if (sitem)
-					{
+					if (sitem) {
 						MoveItemToGeneralInventory(sitem);
 						sitem = nullptr;
 					}
@@ -564,122 +489,87 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 
 			eslot = EQ::textures::textureRange;
 			item->equip_slot = EQ::invslot::slotRange;
-		}
-		else if (foundslot == EQ::invslot::slotHead)
-		{
+		} else if (foundslot == EQ::invslot::slotHead) {
 			eslot = EQ::textures::armorHead;
 			item->equip_slot = EQ::invslot::slotHead;
-		}
-		else if (foundslot == EQ::invslot::slotChest)
-		{
+		} else if (foundslot == EQ::invslot::slotChest) {
 			eslot = EQ::textures::armorChest;
 			item->equip_slot = EQ::invslot::slotChest;
-		}
-		else if (foundslot == EQ::invslot::slotArms)
-		{
+		} else if (foundslot == EQ::invslot::slotArms) {
 			eslot = EQ::textures::armorArms;
 			item->equip_slot = EQ::invslot::slotArms;
-		}
-		else if (foundslot == EQ::invslot::slotWrist1 || foundslot == EQ::invslot::slotWrist2)
-		{
+		} else if (foundslot == EQ::invslot::slotWrist1 || foundslot == EQ::invslot::slotWrist2) {
 			foundslot = EQ::invslot::slotWrist1;
 			special_slot = true;
 			eslot = EQ::textures::armorWrist;
 			item->equip_slot = EQ::invslot::slotWrist1;
-		}
-		else if (foundslot == EQ::invslot::slotHands)
-		{
+		} else if (foundslot == EQ::invslot::slotHands) {
 			eslot = EQ::textures::armorHands;
 			item->equip_slot = EQ::invslot::slotHands;
-		}
-		else if (foundslot == EQ::invslot::slotLegs)
-		{
+		} else if (foundslot == EQ::invslot::slotLegs) {
 			eslot = EQ::textures::armorLegs;
 			item->equip_slot = EQ::invslot::slotLegs;
-		}
-		else if (foundslot == EQ::invslot::slotFeet)
-		{
+		} else if (foundslot == EQ::invslot::slotFeet) {
 			eslot = EQ::textures::armorFeet;
 			item->equip_slot = EQ::invslot::slotFeet;
-		}
-		else if (foundslot == EQ::invslot::slotEar1 || foundslot == EQ::invslot::slotEar2)
-		{
+		} else if (foundslot == EQ::invslot::slotEar1 || foundslot == EQ::invslot::slotEar2) {
 			foundslot = EQ::invslot::slotEar1;
 			special_slot = true;
 			item->equip_slot = EQ::invslot::slotEar1;
-		}
-		else if (foundslot == EQ::invslot::slotFinger1 || foundslot == EQ::invslot::slotFinger2)
-		{
+		} else if (foundslot == EQ::invslot::slotFinger1 || foundslot == EQ::invslot::slotFinger2) {
 			foundslot = EQ::invslot::slotFinger1;
 			special_slot = true;
 			item->equip_slot = EQ::invslot::slotFinger1;
-		}
-		else if (foundslot == EQ::invslot::slotFace || foundslot == EQ::invslot::slotNeck || foundslot == EQ::invslot::slotShoulders ||
-			foundslot == EQ::invslot::slotBack || foundslot == EQ::invslot::slotWaist || foundslot == EQ::invslot::slotAmmo)
-		{
+		} else if (foundslot == EQ::invslot::slotFace || foundslot == EQ::invslot::slotNeck || foundslot == EQ::invslot::slotShoulders ||
+		           foundslot == EQ::invslot::slotBack || foundslot == EQ::invslot::slotWaist || foundslot == EQ::invslot::slotAmmo) {
 			item->equip_slot = foundslot;
 		}
 
 		// We found an item, handle unequipping old items and forced column here.
-		if (foundslot != INVALID_INDEX && item->equip_slot <= EQ::invslot::EQUIPMENT_COUNT)
-		{
-			if (upgrade || special_slot)
-			{
+		if (foundslot != INVALID_INDEX && item->equip_slot <= EQ::invslot::EQUIPMENT_COUNT) {
+			if (upgrade || special_slot) {
 				sitem = GetItem(foundslot);
-				if (sitem)
-				{
+				if (sitem) {
 					MoveItemToGeneralInventory(sitem);
 					sitem = nullptr;
 				}
 			}
 
-			if (force_equip)
-			{
+			if (force_equip) {
 				item->forced = true;
 			}
 		}
 
 		// We found an item, handle wearchange variables here.
-		if(eslot != EQ::textures::materialInvalid && wearchange)
-		{
+		if (eslot != EQ::textures::materialInvalid && wearchange) {
 			// Don't equip a ranged item if we already have primary or secondary.
-			if (eslot == EQ::textures::textureRange && (equipment[EQ::invslot::slotPrimary] || equipment[EQ::invslot::slotSecondary]))
-			{
+			if (eslot == EQ::textures::textureRange && (equipment[EQ::invslot::slotPrimary] || equipment[EQ::invslot::slotSecondary])) {
 				send_wearchange = false;
-			}
-			else
-			{
-				if (eslot == EQ::textures::textureRange)
-				{
+			} else {
+				if (eslot == EQ::textures::textureRange) {
 					eslot = EQ::textures::weaponPrimary;
 				}
 
 				uint16 emat = 0;
 				if (item2->Material <= 0 ||
-					eslot == EQ::textures::weaponPrimary ||
-					eslot == EQ::textures::weaponSecondary)
-				{
-					if (strlen(item2->IDFile) > 2)
-					{
+				    eslot == EQ::textures::weaponPrimary ||
+				    eslot == EQ::textures::weaponSecondary) {
+					if (strlen(item2->IDFile) > 2) {
 						emat = atoi(&item2->IDFile[2]);
 					}
 				}
 
 				// Hack to force custom crowns to show correctly.
-				if (eslot == EQ::textures::armorHead)
-				{
-					if (strlen(item2->IDFile) > 2)
-					{
+				if (eslot == EQ::textures::armorHead) {
+					if (strlen(item2->IDFile) > 2) {
 						uint16 hmat = atoi(&item2->IDFile[2]);
-						if (hmat == 240 && item2->Material == TextureCloth)
-						{
+						if (hmat == 240 && item2->Material == TextureCloth) {
 							emat = hmat;
 						}
 					}
 				}
 
-				if (emat == 0)
-				{
+				if (emat == 0) {
 					emat = item2->Material;
 				}
 
@@ -691,21 +581,18 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 		}
 	}
 
-	if (item->equip_slot <= EQ::invslot::EQUIPMENT_COUNT)
-	{
+	if (item->equip_slot <= EQ::invslot::EQUIPMENT_COUNT) {
 		equipment[item->equip_slot] = item2->ID;
 		CalcBonuses();
 	}
 
-	if(itemlist != nullptr)
+	if (itemlist != nullptr)
 		itemlist->push_back(item);
 	else
 		safe_delete(item);
 
-	if(wearchange && outapp)
-	{
-		if (send_wearchange)
-		{
+	if (wearchange && outapp) {
+		if (send_wearchange) {
 			Log(Logs::Detail, Logs::Trading, "%s is sending a wearchange to the zone for slot %d with material %d", GetName(), wc->wear_slot_id, wc->material);
 			entity_list.QueueClients(this, outapp);
 		}
@@ -718,43 +605,40 @@ void NPC::AddLootDrop(const EQ::ItemData *item2, ItemList* itemlist, int8 charge
 }
 
 void NPC::AddItem(uint32 itemid, int8 charges, bool equipitem, bool quest) {
-	//slot isnt needed, its determined from the item.
-	const EQ::ItemData * i = database.GetItem(itemid);
-	if(i == nullptr)
+	// slot isnt needed, its determined from the item.
+	const EQ::ItemData* i = database.GetItem(itemid);
+	if (i == nullptr)
 		return;
 	AddLootDrop(i, &itemlist, charges, 0, 255, equipitem, equipitem, quest);
 }
 
 void NPC::AddLootTable() {
-	if (npctype_id != 0) { // check if it's a GM spawn
-		database.AddLootTableToNPC(this,loottable_id, &itemlist, &copper, &silver, &gold, &platinum);
+	if (npctype_id != 0) {  // check if it's a GM spawn
+		database.AddLootTableToNPC(this, loottable_id, &itemlist, &copper, &silver, &gold, &platinum);
 	}
 }
 
 void NPC::AddLootTable(uint32 ldid) {
-	if (npctype_id != 0) { // check if it's a GM spawn
-	  database.AddLootTableToNPC(this,ldid, &itemlist, &copper, &silver, &gold, &platinum);
+	if (npctype_id != 0) {  // check if it's a GM spawn
+		database.AddLootTableToNPC(this, ldid, &itemlist, &copper, &silver, &gold, &platinum);
 	}
 }
 
 // itemid only needs to be passed here if the item is in general inventory (slot 22) since that can contain multiple items.
-ServerLootItem_Struct* NPC::GetItem(int slot_id, int16 itemid) 
-{
+ServerLootItem_Struct* NPC::GetItem(int slot_id, int16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* item = *cur;
-		if (item->equip_slot == slot_id && (itemid == 0 || itemid == item->item_id)) 
-		{
+		if (item->equip_slot == slot_id && (itemid == 0 || itemid == item->item_id)) {
 			return item;
 		}
 	}
-	return(nullptr);
+	return (nullptr);
 }
 
-ServerLootItem_Struct* NPC::GetItemByID(int16 itemid) 
-{
+ServerLootItem_Struct* NPC::GetItemByID(int16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
@@ -764,34 +648,16 @@ ServerLootItem_Struct* NPC::GetItemByID(int16 itemid)
 			return item;
 		}
 	}
-	return(nullptr);
+	return (nullptr);
 }
 
-bool NPC::HasQuestLootItem(int16 itemid)
-{
-	ItemList::iterator cur, end;
-	cur = itemlist.begin();
-	end = itemlist.end();
-	for(; cur != end; ++cur) {
-		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && sitem->quest == 1 && sitem->item_id == itemid) 
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool NPC::HasPetLootItem(int16 itemid)
-{
+bool NPC::HasQuestLootItem(int16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if (sitem && sitem->pet == 1 && sitem->item_id == itemid)
-		{
+		if (sitem && sitem->quest == 1 && sitem->item_id == itemid) {
 			return true;
 		}
 	}
@@ -799,54 +665,61 @@ bool NPC::HasPetLootItem(int16 itemid)
 	return false;
 }
 
-bool NPC::HasRequiredQuestLoot(int16 itemid1, int16 itemid2, int16 itemid3, int16 itemid4)
-{
-	if(itemid2 == 0 && itemid3 == 0 && itemid4 == 0)
+bool NPC::HasPetLootItem(int16 itemid) {
+	ItemList::iterator cur, end;
+	cur = itemlist.begin();
+	end = itemlist.end();
+	for (; cur != end; ++cur) {
+		ServerLootItem_Struct* sitem = *cur;
+		if (sitem && sitem->pet == 1 && sitem->item_id == itemid) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool NPC::HasRequiredQuestLoot(int16 itemid1, int16 itemid2, int16 itemid3, int16 itemid4) {
+	if (itemid2 == 0 && itemid3 == 0 && itemid4 == 0)
 		return true;
 
 	uint8 item2count = 0, item3count = 0, item4count = 0, item1npc = 0, item2npc = 0, item3npc = 0, item4npc = 0;
-	uint8 item1count = 1; 
-	if(itemid2 > 0)
+	uint8 item1count = 1;
+	if (itemid2 > 0)
 		item2count = 1;
-	if(itemid3 > 0)
+	if (itemid3 > 0)
 		item3count = 1;
-	if(itemid4 > 0)
+	if (itemid4 > 0)
 		item4count = 1;
 
-	if(itemid1 == itemid2 && itemid2 > 0)
-	{
+	if (itemid1 == itemid2 && itemid2 > 0) {
 		item2count = item1count;
 		++item1count;
 		++item2count;
 	}
-	if(itemid1 == itemid3 && itemid3 > 0)
-	{
+	if (itemid1 == itemid3 && itemid3 > 0) {
 		item3count = item1count;
 		++item1count;
 		++item3count;
 	}
-	if(itemid1 == itemid4 && itemid4 > 0)
-	{
+	if (itemid1 == itemid4 && itemid4 > 0) {
 		item4count = item1count;
 		++item1count;
 		++item4count;
 	}
 
-	if(itemid2 == itemid3  && itemid2 > 0 && itemid3 > 0)
-	{
+	if (itemid2 == itemid3 && itemid2 > 0 && itemid3 > 0) {
 		item3count = item2count;
 		++item2count;
 		++item3count;
 	}
-	if(itemid2 == itemid4  && itemid2 > 0 && itemid4 > 0)
-	{
+	if (itemid2 == itemid4 && itemid2 > 0 && itemid4 > 0) {
 		item4count = item2count;
 		++item2count;
 		++item4count;
 	}
 
-	if(itemid3 == itemid4 && itemid3 > 0 && itemid4 > 0)
-	{
+	if (itemid3 == itemid4 && itemid3 > 0 && itemid4 > 0) {
 		item4count = item3count;
 		++item3count;
 		++item4count;
@@ -855,50 +728,46 @@ bool NPC::HasRequiredQuestLoot(int16 itemid1, int16 itemid2, int16 itemid3, int1
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
-	for(; cur != end; ++cur) {
+	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && sitem->quest == 1) 
-		{
-			if(sitem->item_id == itemid1)
+		if (sitem && sitem->quest == 1) {
+			if (sitem->item_id == itemid1)
 				++item1npc;
 
-			if(sitem->item_id == itemid2 && itemid2 > 0)
+			if (sitem->item_id == itemid2 && itemid2 > 0)
 				++item2npc;
 
-			if(sitem->item_id == itemid3 && itemid3 > 0)
+			if (sitem->item_id == itemid3 && itemid3 > 0)
 				++item3npc;
 
-			if(sitem->item_id == itemid4 && itemid4 > 0)
+			if (sitem->item_id == itemid4 && itemid4 > 0)
 				++item4npc;
 		}
 	}
 
-	if(item1npc < item1count)
-	{
+	if (item1npc < item1count) {
 		return false;
 	}
 
-	if(itemid2 > 0 && item2npc < item2count)
+	if (itemid2 > 0 && item2npc < item2count)
 		return false;
 
-	if(itemid3 > 0 && item3npc < item3count)
+	if (itemid3 > 0 && item3npc < item3count)
 		return false;
 
-	if(itemid4 > 0 && item4npc < item4count)
+	if (itemid4 > 0 && item4npc < item4count)
 		return false;
 
 	return true;
 }
 
-bool NPC::HasQuestLoot() 
-{
+bool NPC::HasQuestLoot() {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
-	for(; cur != end; ++cur) {
+	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && sitem->quest == 1) 
-		{
+		if (sitem && sitem->quest == 1) {
 			return true;
 		}
 	}
@@ -906,29 +775,23 @@ bool NPC::HasQuestLoot()
 	return false;
 }
 
-void NPC::CleanQuestLootItems() 
-{
-	//Removes nodrop or multiple quest loot items from a NPC before sending the corpse items to the client.
+void NPC::CleanQuestLootItems() {
+	// Removes nodrop or multiple quest loot items from a NPC before sending the corpse items to the client.
 
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	uint8 count = 0;
-	for(; cur != end; ++cur) {
+	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && (sitem->quest == 1 || sitem->pet == 1))
-		{
+		if (sitem && (sitem->quest == 1 || sitem->pet == 1)) {
 			uint8 count = CountQuestItem(sitem->item_id);
-			if(count > 1 && sitem->pet != 1)
-			{
+			if (count > 1 && sitem->pet != 1) {
 				RemoveItem(sitem);
 				return;
-			}
-			else
-			{
+			} else {
 				const EQ::ItemData* item = database.GetItem(sitem->item_id);
-				if(item && item->NoDrop == 0)
-				{
+				if (item && item->NoDrop == 0) {
 					RemoveItem(sitem);
 					return;
 				}
@@ -937,17 +800,14 @@ void NPC::CleanQuestLootItems()
 	}
 }
 
-uint8 NPC::CountQuestItem(uint16 itemid)
-{
+uint8 NPC::CountQuestItem(uint16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	uint8 count = 0;
-	for(; cur != end; ++cur) 
-	{
+	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && sitem->item_id == itemid)
-		{
+		if (sitem && sitem->item_id == itemid) {
 			++count;
 		}
 	}
@@ -955,17 +815,14 @@ uint8 NPC::CountQuestItem(uint16 itemid)
 	return count;
 }
 
-uint8 NPC::CountQuestItems()
-{
+uint8 NPC::CountQuestItems() {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	uint8 count = 0;
-	for(; cur != end; ++cur) 
-	{
+	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
-		if(sitem && sitem->quest == 1)
-		{
+		if (sitem && sitem->quest == 1) {
 			++count;
 		}
 	}
@@ -973,16 +830,14 @@ uint8 NPC::CountQuestItems()
 	return count;
 }
 
-bool NPC::RemoveQuestLootItems(int16 itemid) 
-{
+bool NPC::RemoveQuestLootItems(int16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
 		if (sitem && sitem->quest == 1) {
-			if(itemid == 0 || itemid == sitem->item_id)
-			{
+			if (itemid == 0 || itemid == sitem->item_id) {
 				RemoveItem(sitem);
 				return true;
 			}
@@ -992,16 +847,14 @@ bool NPC::RemoveQuestLootItems(int16 itemid)
 	return false;
 }
 
-bool NPC::RemovePetLootItems(int16 itemid)
-{
+bool NPC::RemovePetLootItems(int16 itemid) {
 	ItemList::iterator cur, end;
 	cur = itemlist.begin();
 	end = itemlist.end();
 	for (; cur != end; ++cur) {
 		ServerLootItem_Struct* sitem = *cur;
 		if (sitem && sitem->pet == 1) {
-			if (itemid == 0 || itemid == sitem->item_id)
-			{
+			if (itemid == 0 || itemid == sitem->item_id) {
 				RemoveItem(sitem);
 				return true;
 			}
@@ -1011,9 +864,7 @@ bool NPC::RemovePetLootItems(int16 itemid)
 	return false;
 }
 
-bool NPC::MoveItemToGeneralInventory(ServerLootItem_Struct* weapon)
-{
-
+bool NPC::MoveItemToGeneralInventory(ServerLootItem_Struct* weapon) {
 	if (!weapon)
 		return false;
 
@@ -1027,8 +878,7 @@ bool NPC::MoveItemToGeneralInventory(ServerLootItem_Struct* weapon)
 
 	const EQ::ItemData* item = database.GetItem(weaponid);
 
-	if (item)
-	{
+	if (item) {
 		RemoveItem(weapon);
 
 		Log(Logs::Detail, Logs::Trading, "%s is moving %d in slot %d to general inventory. quantity: %d", GetCleanName(), weaponid, slot, charges);
@@ -1040,25 +890,22 @@ bool NPC::MoveItemToGeneralInventory(ServerLootItem_Struct* weapon)
 	return false;
 }
 
-void NPC::RemoveItem(ServerLootItem_Struct* item_data, uint8 quantity)
-{
-
-	if (!item_data)
-	{
+void NPC::RemoveItem(ServerLootItem_Struct* item_data, uint8 quantity) {
+	if (!item_data) {
 		return;
 	}
 
-	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter) 
-	{
+	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		ServerLootItem_Struct* sitem = *iter;
-		if (sitem != item_data) { continue; }
+		if (sitem != item_data) {
+			continue;
+		}
 
 		if (!sitem)
 			return;
 
 		int16 eslot = sitem->equip_slot;
-		if (sitem->charges <= 1 || quantity == 0)
-		{
+		if (sitem->charges <= 1 || quantity == 0) {
 			DeleteEquipment(eslot);
 
 			Log(Logs::General, Logs::Trading, "%s is deleting item %d from slot %d", GetName(), sitem->item_id, eslot);
@@ -1067,9 +914,7 @@ void NPC::RemoveItem(ServerLootItem_Struct* item_data, uint8 quantity)
 			UpdateEquipmentLight();
 			if (UpdateActiveLight())
 				SendAppearancePacket(AT_Light, GetActiveLightType());
-		}
-		else
-		{
+		} else {
 			sitem->charges -= quantity;
 			Log(Logs::General, Logs::Trading, "%s is deleting %d charges from item %d in slot %d", GetName(), quantity, sitem->item_id, eslot);
 		}
@@ -1078,20 +923,17 @@ void NPC::RemoveItem(ServerLootItem_Struct* item_data, uint8 quantity)
 	}
 }
 
-void NPC::CheckMinMaxLevel(Mob *them)
-{
+void NPC::CheckMinMaxLevel(Mob* them) {
 	if (them == nullptr || !them->IsClient())
 		return;
 
 	uint16 themlevel = them->GetLevel();
 
-	for (auto iter = itemlist.begin(); iter != itemlist.end();)
-	{
+	for (auto iter = itemlist.begin(); iter != itemlist.end();) {
 		if (!(*iter))
 			return;
 
-		if (themlevel < (*iter)->min_level || themlevel >(*iter)->max_level)
-		{
+		if (themlevel < (*iter)->min_level || themlevel > (*iter)->max_level) {
 			int16 eslot = (*iter)->equip_slot;
 			DeleteEquipment(eslot);
 			iter = itemlist.erase(iter);
@@ -1106,10 +948,8 @@ void NPC::CheckMinMaxLevel(Mob *them)
 		SendAppearancePacket(AT_Light, GetActiveLightType());
 }
 
-void NPC::ClearItemList()
-{
-	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter)
-	{
+void NPC::ClearItemList() {
+	for (auto iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		if (!(*iter))
 			return;
 
@@ -1124,23 +964,18 @@ void NPC::ClearItemList()
 		SendAppearancePacket(AT_Light, GetActiveLightType());
 }
 
-void NPC::DeleteEquipment(int16 slotid)
-{
-	if (slotid <= EQ::invslot::EQUIPMENT_COUNT)
-	{
+void NPC::DeleteEquipment(int16 slotid) {
+	if (slotid <= EQ::invslot::EQUIPMENT_COUNT) {
 		equipment[slotid] = 0;
 		uint8 material = EQ::InventoryProfile::CalcMaterialFromSlot(slotid);
 
-		if (slotid == EQ::invslot::slotRange && material == EQ::textures::materialInvalid)
-		{
+		if (slotid == EQ::invslot::slotRange && material == EQ::textures::materialInvalid) {
 			material = EQ::textures::weaponPrimary;
 		}
 
-		if (material != EQ::textures::materialInvalid)
-		{
+		if (material != EQ::textures::materialInvalid) {
 			WearChange(material, 0, 0);
-			if (!equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange])
-			{
+			if (!equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange]) {
 				SendWearChange(EQ::textures::weaponPrimary);
 			}
 		}
@@ -1149,18 +984,16 @@ void NPC::DeleteEquipment(int16 slotid)
 	}
 }
 
-void NPC::QueryLoot(Client* to)
-{
+void NPC::QueryLoot(Client* to) {
 	if (itemlist.size() > 0) {
 		to->Message(
-			CC_Default,
-			fmt::format(
-				"Loot | Name: {} ID: {} Loottable ID: {}",
-				GetName(),
-				GetNPCTypeID(),
-				GetLoottableID()
-			).c_str()
-		);
+		    CC_Default,
+		    fmt::format(
+		        "Loot | Name: {} ID: {} Loottable ID: {}",
+		        GetName(),
+		        GetNPCTypeID(),
+		        GetLoottableID())
+		        .c_str());
 
 		int item_count = 0;
 		for (auto current_item : itemlist) {
@@ -1180,49 +1013,39 @@ void NPC::QueryLoot(Client* to)
 			linker.SetLootData(current_item);
 
 			to->Message(
-				CC_Default,
-				fmt::format(
-					"Item {} | Name: {} ({}){}",
-					item_number,
-					linker.GenerateLink().c_str(),
-					current_item->item_id,
-					(
-						current_item->charges > 1 ?
-						fmt::format(
-							" Amount: {}",
-							current_item->charges
-						) :
-						""
-						)
-				).c_str()
-			);
+			    CC_Default,
+			    fmt::format(
+			        "Item {} | Name: {} ({}){}",
+			        item_number,
+			        linker.GenerateLink().c_str(),
+			        current_item->item_id,
+			        (
+			            current_item->charges > 1 ? fmt::format(
+			                                            " Amount: {}",
+			                                            current_item->charges)
+			                                      : ""))
+			        .c_str());
 			item_count++;
 		}
-	}
-	else
-	{
+	} else {
 		to->Message(CC_Default, "NPC::QueryLoot() - Does not have any item loot");
 	}
 
-	bool has_money = (
-		platinum > 0 ||
-		gold > 0 ||
-		silver > 0 ||
-		copper > 0
-		);
+	bool has_money = (platinum > 0 ||
+	                  gold > 0 ||
+	                  silver > 0 ||
+	                  copper > 0);
 	if (has_money) {
 		to->Message(
-			CC_Default,
-			fmt::format(
-				"Money | {}",
-				Strings::Money(
-					platinum,
-					gold,
-					silver,
-					copper
-				)
-			).c_str()
-		);
+		    CC_Default,
+		    fmt::format(
+		        "Money | {}",
+		        Strings::Money(
+		            platinum,
+		            gold,
+		            silver,
+		            copper))
+		        .c_str());
 	}
 }
 
@@ -1262,44 +1085,35 @@ void NPC::RemoveCash() {
 	platinum = 0;
 }
 
-bool NPC::AddQuestLoot(int16 itemid, int8 charges)
-{
+bool NPC::AddQuestLoot(int16 itemid, int8 charges) {
 	const EQ::ItemData* item = database.GetItem(itemid);
-	if (item)
-	{
+	if (item) {
 		AddLootDrop(item, &itemlist, charges, 0, 255, false, false, true);
 		Log(Logs::General, Logs::Trading, "Adding item %d to the NPC's loot marked as quest.", itemid);
-		if (itemid > 0 && HasPetLootItem(itemid))
-		{
+		if (itemid > 0 && HasPetLootItem(itemid)) {
 			Log(Logs::General, Logs::Trading, "Deleting quest item %d from NPC's pet loot.", itemid);
 			RemovePetLootItems(itemid);
 		}
-	}
-	else
+	} else
 		return false;
 
 	return true;
 }
 
-bool NPC::AddPetLoot(int16 itemid, int8 charges, bool fromquest)
-{
+bool NPC::AddPetLoot(int16 itemid, int8 charges, bool fromquest) {
 	const EQ::ItemData* item = database.GetItem(itemid);
 
 	if (!item)
 		return false;
 
 	bool valid = (item->NoDrop != 0 && (!IsCharmedPet() || (IsCharmedPet() && CountQuestItem(item->ID) == 0)));
-	if (!fromquest || valid)
-	{
-		if (item)
-		{
+	if (!fromquest || valid) {
+		if (item) {
 			AddLootDrop(item, &itemlist, charges, 0, 255, true, true, false, true);
 			Log(Logs::General, Logs::Trading, "Adding item %d to the NPC's loot marked as pet.", itemid);
 			return true;
 		}
-	}
-	else
-	{
+	} else {
 		Log(Logs::General, Logs::Trading, "Item %d is a duplicate or no drop. Deleting...", itemid);
 		return false;
 	}
@@ -1307,55 +1121,42 @@ bool NPC::AddPetLoot(int16 itemid, int8 charges, bool fromquest)
 	return false;
 }
 
-void NPC::DeleteQuestLoot(int16 itemid1, int16 itemid2, int16 itemid3, int16 itemid4)
-{
+void NPC::DeleteQuestLoot(int16 itemid1, int16 itemid2, int16 itemid3, int16 itemid4) {
 	int16 items = itemlist.size();
-	for (int i = 0; i < items; ++i)
-	{
-		if (itemid1 == 0)
-		{
+	for (int i = 0; i < items; ++i) {
+		if (itemid1 == 0) {
 			if (!RemoveQuestLootItems(itemid1))
 				break;
-		}
-		else
-		{
-			if (itemid1 != 0)
-			{
+		} else {
+			if (itemid1 != 0) {
 				RemoveQuestLootItems(itemid1);
 			}
-			if (itemid2 != 0)
-			{
+			if (itemid2 != 0) {
 				RemoveQuestLootItems(itemid2);
 			}
-			if (itemid3 != 0)
-			{
+			if (itemid3 != 0) {
 				RemoveQuestLootItems(itemid3);
 			}
-			if (itemid4 != 0)
-			{
+			if (itemid4 != 0) {
 				RemoveQuestLootItems(itemid4);
 			}
 		}
 	}
 }
 
-void NPC::DeleteInvalidQuestLoot()
-{
+void NPC::DeleteInvalidQuestLoot() {
 	int16 items = itemlist.size();
-	for (int i = 0; i < items; ++i)
-	{
+	for (int i = 0; i < items; ++i) {
 		CleanQuestLootItems();
 	}
 }
 
-uint32 NPC::GetEquipment(uint8 material_slot) const
-{
+uint32 NPC::GetEquipment(uint8 material_slot) const {
 	if (material_slot > 8)
 		return 0;
 	int invslot = EQ::InventoryProfile::CalcSlotFromMaterial(material_slot);
 
-	if (material_slot == EQ::textures::weaponPrimary && !equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange])
-	{
+	if (material_slot == EQ::textures::weaponPrimary && !equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange]) {
 		invslot = EQ::invslot::slotRange;
 	}
 
@@ -1364,15 +1165,13 @@ uint32 NPC::GetEquipment(uint8 material_slot) const
 	return equipment[invslot];
 }
 
-int32 NPC::GetEquipmentMaterial(uint8 material_slot) const
-{
+int32 NPC::GetEquipmentMaterial(uint8 material_slot) const {
 	if (material_slot >= EQ::textures::materialCount)
 		return 0;
 
 	int inv_slot = EQ::InventoryProfile::CalcSlotFromMaterial(material_slot);
 
-	if (material_slot == EQ::textures::weaponPrimary && !equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange])
-	{
+	if (material_slot == EQ::textures::weaponPrimary && !equipment[EQ::invslot::slotPrimary] && !equipment[EQ::invslot::slotSecondary] && equipment[EQ::invslot::slotRange]) {
 		inv_slot = EQ::invslot::slotRange;
 	}
 
@@ -1380,30 +1179,30 @@ int32 NPC::GetEquipmentMaterial(uint8 material_slot) const
 		return 0;
 	if (equipment[inv_slot] == 0) {
 		switch (material_slot) {
-		case EQ::textures::armorHead:
-			return helmtexture;
-		case EQ::textures::armorChest:
-			return chesttexture;
-		case EQ::textures::armorArms:
-			return armtexture;
-		case EQ::textures::armorWrist:
-			return bracertexture;
-		case EQ::textures::armorHands:
-			return handtexture;
-		case EQ::textures::armorLegs:
-			return legtexture;
-		case EQ::textures::armorFeet:
-			return feettexture;
-		case EQ::textures::weaponPrimary:
-			return d_melee_texture1;
-		case EQ::textures::weaponSecondary:
-			return d_melee_texture2;
-		default:
-			//they have nothing in the slot, and its not a special slot... they get nothing.
-			return(0);
+			case EQ::textures::armorHead:
+				return helmtexture;
+			case EQ::textures::armorChest:
+				return chesttexture;
+			case EQ::textures::armorArms:
+				return armtexture;
+			case EQ::textures::armorWrist:
+				return bracertexture;
+			case EQ::textures::armorHands:
+				return handtexture;
+			case EQ::textures::armorLegs:
+				return legtexture;
+			case EQ::textures::armorFeet:
+				return feettexture;
+			case EQ::textures::weaponPrimary:
+				return d_melee_texture1;
+			case EQ::textures::weaponSecondary:
+				return d_melee_texture2;
+			default:
+				// they have nothing in the slot, and its not a special slot... they get nothing.
+				return (0);
 		}
 	}
 
-	//they have some loot item in this slot, pass it up to the default handler
-	return(Mob::GetEquipmentMaterial(material_slot));
+	// they have some loot item in this slot, pass it up to the default handler
+	return (Mob::GetEquipmentMaterial(material_slot));
 }

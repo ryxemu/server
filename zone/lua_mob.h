@@ -10,25 +10,25 @@ class Lua_Item;
 class Lua_ItemInst;
 
 namespace luabind {
-	struct scope;
-	namespace adl {
-		class object;
-	}
+struct scope;
+namespace adl {
+class object;
 }
+}  // namespace luabind
 
 luabind::scope lua_register_mob();
 luabind::scope lua_register_special_abilities();
 
-class Lua_Mob : public Lua_Entity
-{
+class Lua_Mob : public Lua_Entity {
 	typedef Mob NativeType;
-public:
-	Lua_Mob() { SetLuaPtrData(nullptr); }
-	Lua_Mob(Mob *d) { SetLuaPtrData(reinterpret_cast<Entity*>(d)); }
-	virtual ~Lua_Mob() { }
 
-	operator Mob*() {
-		return reinterpret_cast<Mob*>(GetLuaPtrData());
+   public:
+	Lua_Mob() { SetLuaPtrData(nullptr); }
+	Lua_Mob(Mob *d) { SetLuaPtrData(reinterpret_cast<Entity *>(d)); }
+	virtual ~Lua_Mob() {}
+
+	operator Mob *() {
+		return reinterpret_cast<Mob *>(GetLuaPtrData());
 	}
 
 	const char *GetName();
@@ -74,9 +74,9 @@ public:
 	bool HasProcs();
 	bool IsInvisible();
 	bool IsInvisible(Lua_Mob other);
-    void SetInvisible(int state);
+	void SetInvisible(int state);
 	bool FindBuff(int spell_id);
-    bool FindType(int type);
+	bool FindType(int type);
 	bool FindType(int type, bool offensive);
 	bool FindType(int type, bool offensive, int threshold);
 	uint32 GetAppearance();
@@ -170,8 +170,8 @@ public:
 	bool CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost);
 	bool CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot);
 	bool CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot, int timer, int timer_duration);
-	bool CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot, int timer, int timer_duration, 
-		int resist_adjust);
+	bool CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot, int timer, int timer_duration,
+	               int resist_adjust);
 	bool SpellFinished(int spell_id, Lua_Mob target);
 	bool SpellFinished(int spell_id, Lua_Mob target, int slot);
 	bool SpellFinished(int spell_id, Lua_Mob target, int slot, int mana_used);
@@ -248,7 +248,7 @@ public:
 	int GetAA(int id);
 	bool DivineAura();
 	void SetOOCRegen(int regen);
-	const char* GetEntityVariable(const char *name);
+	const char *GetEntityVariable(const char *name);
 	void SetEntityVariable(const char *name, const char *value);
 	bool EntityVariableExists(const char *name);
 	void Signal(uint32 id);

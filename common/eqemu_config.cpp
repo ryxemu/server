@@ -1,21 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2006 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include "../common/global_define.h"
 #include "eqemu_config.h"
 #include "misc_functions.h"
@@ -42,9 +24,7 @@ void EQEmuConfig::parse_config() {
 		LoginPassword = _root["server"]["world"]["loginserver"].get("password", "").asString();
 		LoginType = atoi(_root["server"]["world"]["loginserver"].get("type", "").asString().c_str());
 
-
-	}
-	else {
+	} else {
 		char str[32];
 		loginlist.Clear();
 		do {
@@ -65,8 +45,8 @@ void EQEmuConfig::parse_config() {
 		} while (LoginCount < 100);
 	}
 
-	//<locked> from xml converts to json as locked: "", so i default to "false". 
-	//The only way to enable locked is by switching to true, meaning this value is always false until manually set true
+	//<locked> from xml converts to json as locked: "", so i default to "false".
+	// The only way to enable locked is by switching to true, meaning this value is always false until manually set true
 	Locked = false;
 	if (_root["server"]["world"].get("locked", "false").asString() == "true") Locked = true;
 	WorldIP = _root["server"]["world"]["tcp"].get("host", "127.0.0.1").asString();
@@ -115,11 +95,9 @@ void EQEmuConfig::parse_config() {
 #else
 	ZoneExe = _root["server"]["launcher"].get("exe", "./zone").asString();
 #endif
-
 }
 
-std::string EQEmuConfig::GetByName(const std::string &var_name) const
-{
+std::string EQEmuConfig::GetByName(const std::string &var_name) const {
 	if (var_name == "ShortName") {
 		return (ShortName);
 	}
@@ -231,15 +209,12 @@ std::string EQEmuConfig::GetByName(const std::string &var_name) const
 	if (var_name == "DefaultStatus") {
 		return (itoa(DefaultStatus));
 	}
-//	if(var_name == "DynamicCount")
-//		return(itoa(DynamicCount));
-	return("");
+	//	if(var_name == "DynamicCount")
+	//		return(itoa(DynamicCount));
+	return ("");
 }
 
-
-
-void EQEmuConfig::Dump() const
-{
+void EQEmuConfig::Dump() const {
 	std::cout << "ShortName = " << ShortName << std::endl;
 	std::cout << "LongName = " << LongName << std::endl;
 	std::cout << "WorldAddress = " << WorldAddress << std::endl;
@@ -276,4 +251,3 @@ void EQEmuConfig::Dump() const
 	std::cout << "ZonePortHigh = " << ZonePortHigh << std::endl;
 	std::cout << "DefaultStatus = " << (int)DefaultStatus << std::endl;
 }
-
