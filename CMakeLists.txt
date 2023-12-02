@@ -64,10 +64,10 @@ ADD_DEFINITIONS(-DGLM_ENABLE_EXPERIMENTAL)
 #	INCLUDE("${CMAKE_SOURCE_DIR}/cmake/DependencyHelperMSVC.cmake") #This does not exist
 #ENDIF()
 
-#Find everything we need
+#Find everything we need.. Either use a apt/yum or a docker. Preferably a docker to have it the same across the board.
 FIND_PACKAGE(Boost REQUIRED)
-FIND_PACKAGE(MySQL)
-FIND_PACKAGE(MariaDB)
+FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
+FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(OpenSSL)
 FIND_PACKAGE(Lua51)
