@@ -68,7 +68,7 @@ class ProcLauncher {
    private:
 	static ProcLauncher s_launcher;
 #ifndef WIN32
-	uint m_signalCount;
+	uint8 m_signalCount;
 	static void HandleSigChild(int signum);
 #endif
 };

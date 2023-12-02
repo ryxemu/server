@@ -19,26 +19,31 @@
 std::map<int, std::string> DBFieldNames;
 
 #ifndef WIN32
-#if defined(FREEBSD) || defined(__CYGWIN__)
+#if defined(FREEBSD) || defined(__CYGWIN__) || defined(__MUSL__)
 int print_stacktrace() {
 	printf("Insert stack trace here...\n");
 	return (0);
 }
-#else  //! WIN32 && !FREEBSD == linux
-#include <execinfo.h>
+#else   //! WIN32 && !FREEBSD == linux
+/*#include <execinfo.h>
 int print_stacktrace() {
-	void *ba[20];
-	int n = backtrace(ba, 20);
-	if (n != 0) {
-		char **names = backtrace_symbols(ba, n);
-		if (names != nullptr) {
-			int i;
-			std::cerr << "called from " << (char *)names[0] << std::endl;
-			for (i = 1; i < n; ++i)
-				std::cerr << "            " << (char *)names[i] << std::endl;
-			free(names);
-		}
-	}
+    void *ba[20];
+    int n = backtrace(ba, 20);
+    if (n != 0) {
+        char **names = backtrace_symbols(ba, n);
+        if (names != nullptr) {
+            int i;
+            std::cerr << "called from " << (char *)names[0] << std::endl;
+            for (i = 1; i < n; ++i)
+                std::cerr << "            " << (char *)names[i] << std::endl;
+            free(names);
+        }
+    }
+    return (0);
+}
+*/
+int print_stacktrace() {
+	printf("Insert stack trace here...\n");
 	return (0);
 }
 #endif  //! FREEBSD

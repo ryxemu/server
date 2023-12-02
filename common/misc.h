@@ -1,9 +1,10 @@
 #ifndef _MISC_H
-
 #define _MISC_H
+
 #include <stdio.h>
 #include <string>
 #include <map>
+
 
 #define ITEMFIELDCOUNT 116
 

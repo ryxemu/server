@@ -26,6 +26,8 @@
 		"LOCALWSF": "${localWorkspaceFolder}",
 		"CONTAINERWSF": "${containerWorkspaceFolder}"
 	},
+	"containerUser": "root",
+	"remoteUser": "root",
 	// add ptrace
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
