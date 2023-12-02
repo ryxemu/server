@@ -43,15 +43,19 @@ EQDBRes *EQDB::query(Const_char *q) {
 	return nullptr;
 }
 
-// NOT THREAD SAFE!
-Const_char *EQDB::escape_string(Const_char *from) {
-	int len = strlen(from);
-	auto res = new char[len * 2 + 1];
+// Re-Write to make thread safe
+std::string EQDB::escape_string(const char* from) {
+    int len = strlen(from);
+    char* res = new char[len * 2 + 1];
 
-	mysql_real_escape_string(mysql_ref, res, from, len);
+    // Use a local buffer for escaping
+    mysql_real_escape_string(mysql_ref, res, from, len);
 
-	res[len * 2] = '\0';
-	m_escapeBuffer = res;
-	delete[] res;
-	return (m_escapeBuffer.c_str());
+    // Create a string from the escaped char array
+    std::string escapedString(res);
+
+    // Clean up allocated memory
+    delete[] res;
+
+    return escapedString;
 }
