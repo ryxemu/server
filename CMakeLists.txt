@@ -18,17 +18,17 @@ SET(CMAKE_CXX_EXTENSIONS OFF)
 
 IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. Should also consider global variables on OS.
 	IF(CMAKE_CL_64)
-		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the depenencies folder.
-		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x64") #We should not just be looking for this within the depenencies folder.
-		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x64") #We should not just be looking for this within the depenencies folder.
-		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x64") #We should not just be looking for this within the depenencies folder.
-		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x64") #We should not just be looking for this within the depenencies folder.
+		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
+		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x64") #We should not just be looking for this within the dependencies folder.
+		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x64") #We should not just be looking for this within the dependencies folder.
+		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x64") #We should not just be looking for this within the dependencies folder.
+		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x64") #We should not just be looking for this within the dependencies folder.
 	ELSE(CMAKE_CL_64)
-		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the depenencies folder.
-		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x86") #We should not just be looking for this within the depenencies folder.
-		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x86") #We should not just be looking for this within the depenencies folder.
-		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x86") #We should not just be looking for this within the depenencies folder.
-		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x86") #We should not just be looking for this within the depenencies folder.
+		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
+		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x86") #We should not just be looking for this within the dependencies folder.
+		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x86") #We should not just be looking for this within the dependencies folder.
+		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x86") #We should not just be looking for this within the dependencies folder.
+		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x86") #We should not just be looking for this within the dependencies folder.
 	ENDIF(CMAKE_CL_64)
 	
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
