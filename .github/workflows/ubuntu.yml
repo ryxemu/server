@@ -1,0 +1,55 @@
+name: ubuntu-22.04
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - uses: lukka/get-cmake@latest
+
+    - name: Get dependencies
+      run: sudo apt install -y --no-install-recommends \
+  build-essential libtool cmake curl debconf-utils \
+	git liblua5.1-0 liblua5.1-0-dev libluabind-dev \
+	libmysql++-dev libsodium-dev \
+	libmysqlclient-dev libssl-dev lua5.1 minizip make mariadb-client locales \
+	nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb \
+	libyaml-cpp-dev libgtest-dev
+
+    - name: Install libsodium
+      run: wget http://ftp.us.debian.org/debian/pool/main/libs/libsodium/libsodium-dev_1.0.11-2_amd64.deb -O /tmp/libsodium-dev.deb && wget http://ftp.us.debian.org/debian/pool/main/libs/libsodium/libsodium18_1.0.11-2_amd64.deb -O /tmp/libsodium18.deb && sudo dpkg -i /tmp/libsodium*.deb
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Archive Release
+      uses: thedoctor0/zip-release@main
+      with:
+        path: './build/bin/'
+        type: 'tar'
+        filename: 'linux-latest.tar.gz'
+
+    - name: Upload Latest Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'linux-latest.tar.gz'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        tag: latest
