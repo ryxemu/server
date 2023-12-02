@@ -16,7 +16,7 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
-IF(MSVC)
+IF(MSVC) #Need these pulled for Windows OS.
 	IF(CMAKE_CL_64)
 		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost")
 		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x64")
@@ -61,7 +61,7 @@ ADD_DEFINITIONS(-DGLM_ENABLE_EXPERIMENTAL)
 
 #MSVC can fetch dependencies automatically.
 #IF(MSVC)
-#	INCLUDE("${CMAKE_SOURCE_DIR}/cmake/DependencyHelperMSVC.cmake")
+#	INCLUDE("${CMAKE_SOURCE_DIR}/cmake/DependencyHelperMSVC.cmake") #This does not exist
 #ENDIF()
 
 #Find everything we need
