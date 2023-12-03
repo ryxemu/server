@@ -98,10 +98,10 @@ bool ZoneServer::SetZone(uint32 iZoneID, bool iStaticZone) {
 			strn0cpy(long_name, longname, sizeof(long_name));
 			safe_delete_array(longname);
 		} else
-			strcpy(long_name, "");
+			long_name.fill('\0');
 	} else {
-		strcpy(zone_name, "");
-		strcpy(long_name, "");
+		zone_name.fill('\0');
+		long_name.fill('\0');
 	}
 
 	client_list.ZoneBootup(this);
@@ -736,7 +736,8 @@ bool ZoneServer::Process() {
 				}
 
 				if (sci->address[0]) {
-					strn0cpy(client_address, sci->address, 250);
+					strncpy(client_address.data(), sci->address, 249);
+					client_address[249] = '\0';
 					Log(Logs::Detail, Logs::WorldServer, "Zone specified address %s.", sci->address);
 				}
 
