@@ -2,7 +2,7 @@ name: ubuntu-22.04
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   BUILD_TYPE: Release
