@@ -28,15 +28,15 @@ This will create a `build` subfolder and compile all binaries to `build/bin` usi
 
 This is recommended if you plan to edit source code.
 
-If you open the folder in vscode, you may get a notification asking if you'd like to reopen it in a dev container. If you do not, you can click the bottom left area of vscode and look for either the option to `Reopen in Container``, or `Install Dev Container Extension``. If the install option is available, install it and then Reopen in Container.
+If you open the folder in vscode, you may get a notification asking if you'd like to reopen it in a dev container. If you do not, you can click the bottom left area of vscode and look for either the option to `Reopen in Container`, or `Install Dev Container Extension`. If the install option is available, install it and then select `Reopen in Container`.
 
-Once open in a dev container, you will get intellisense, and a suite of extensions that allow you to work on the source code. You can press the `build` text located at the bottom bar of vscode to build the source code.
+Once reopened in a dev container, you will get intellisense, syntax checking, and an entire environment to debug and build binaries. You can press the `build` text located at the bottom bar of vscode to build the source code. If a prompt for which kit to use, select the bottom GCC option and continue.
 
 ## Build Baremetal
 
 This is not recommended.
 
-If you'd like to build the binaries natively inside linux without docker, you can use the .devonctainer subfolder for inspiration of what packages are required. `Each Dockerfile.<name>.dev` folder will list the packages known to be needed for a dev environment. Also, the `devcontainer.json` contains extensions that you may want to consider installing. Once done, you should be able to run the build command similar to the dev container final steps.
+If you'd like to build the binaries natively inside linux without docker, you can use the .devcontainer subfolder for inspiration of what packages are required. Each `Dockerfile.<name>.dev` folder will list the packages known to be needed for a dev environment. Also, `devcontainer.json` contains extensions that you may want to consider installing. Once done, you should be able to run the `build` shortcut on the bottom of vscode. Alternatively, you can run `make build` from a command prompt at the root path of this repository.
 
 ## Advanced Building for Other Linux Distributions
 
