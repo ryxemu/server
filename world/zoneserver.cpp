@@ -741,10 +741,11 @@ bool ZoneServer::Process() {
 				}
 
 				if (sci->local_address[0]) {
-					strn0cpy(client_local_address, sci->local_address, 250);
-					Log(Logs::Detail, Logs::WorldServer, "Zone specified local address %s.", sci->address);
-				}
-
+                                        strncpy(client_local_address.data(), sci->local_address, 249);
+                                        client_local_address[249] = '\0';
+                                        Log(Logs::Detail, Logs::WorldServer, "Zone specified local address %s.", sci->address);
+                                }
+				
 				if (sci->process_id) {
 					zone_os_process_id = sci->process_id;
 				}
