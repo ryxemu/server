@@ -29,3 +29,5 @@ Launch and Ongoing Support: Deploying the revamped EverQuest to the public, acco
 ### Team and Resources:
 
 This Untitled Project brings together a dedicated team of developers, designers, artists, and community managers committed to delivering a revitalized EverQuest experience. Leveraging cutting-edge tools, technologies, and resources, the project aims to meet and exceed player expectations.
+
+[Learn how to build RyXEmu](BUILDING.md)
