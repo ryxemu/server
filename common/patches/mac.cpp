@@ -1,5 +1,5 @@
 #include "../global_define.h"
-#include "../eqemu_config.h"
+#include "../config.h"
 #include "../eqemu_logsys.h"
 #include "mac.h"
 #include "../opcodemgr.h"
@@ -30,7 +30,7 @@ static inline uint32 MacToServerSlot(int16 MacSlot);
 static inline uint32 MacToServerCorpseSlot(int16 MacCorpse);
 
 void Register(EQStreamIdentifier &into) {
-	auto Config = EQEmuConfig::get();
+	auto Config = Config::get();
 	// create our opcode manager if we havent already
 	if (opcodes == nullptr) {
 		std::string opfile = Config->PatchDir;
@@ -83,7 +83,7 @@ void Reload() {
 
 	if (opcodes != nullptr) {
 		// TODO: get this file name from the config file
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		std::string opfile = Config->PatchDir;
 		opfile += "patch_";
 		opfile += name;

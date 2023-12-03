@@ -26,7 +26,7 @@ class EQDB {
 	unsigned int get_errno();
 	Const_char *error();
 	EQDBRes *query(Const_char *q);
-	Const_char *escape_string(Const_char *from);  // NOT THREAD SAFE! (m_escapeBuffer)
+	std::string escape_string(const char *from);
 	// END PERL EXPORT
 
    private:

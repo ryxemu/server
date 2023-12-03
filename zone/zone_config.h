@@ -1,9 +1,9 @@
 #ifndef __ZoneConfig_H
 #define __ZoneConfig_H
 
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 
-class ZoneConfig : public EQEmuConfig {
+class ZoneConfig : public Config {
    public:
 	uint16 ZonePort;
 	std::string ZoneAddress;
@@ -11,7 +11,7 @@ class ZoneConfig : public EQEmuConfig {
    private:
 	static ZoneConfig *_zone_config;
 
-	ZoneConfig() : EQEmuConfig() {
+	ZoneConfig() : Config() {
 		ZonePort = 0;
 	}
 
@@ -24,7 +24,7 @@ class ZoneConfig : public EQEmuConfig {
 	}
 
 	// Load the config
-	static bool LoadConfig() {
+	static std::string LoadConfig() {
 		if (_zone_config != nullptr)
 			delete _zone_config;
 		_zone_config = new ZoneConfig;

@@ -8,5 +8,5 @@ std::string WorldConfig::GetByName(const std::string &var_name) const {
 		return (UpdateStats ? "true" : "false");
 	if (var_name == "LoginDisabled")
 		return (LoginDisabled ? "true" : "false");
-	return (EQEmuConfig::GetByName(var_name));
+	return (Config::GetByName(var_name));
 }

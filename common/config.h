@@ -1,9 +1,14 @@
 #ifndef __EQEmuConfig_H
 #define __EQEmuConfig_H
 
-#include "json/json.h"
 #include "linked_list.h"
 #include <fstream>
+#include <iostream>
+#include <yaml-cpp/yaml.h>
+#ifndef _WIN32
+// this doesn't appear to affect linux-based systems..need feedback for _WIN64
+#include <fmt/format.h>
+#endif
 
 struct LoginConfig {
 	std::string LoginHost;
@@ -13,7 +18,7 @@ struct LoginConfig {
 	uint8 LoginType;
 };
 
-class EQEmuConfig {
+class Config {
    public:
 	virtual std::string GetByName(const std::string &var_name) const;
 
@@ -54,26 +59,13 @@ class EQEmuConfig {
 	std::string QSDatabaseDB;
 	uint16 QSDatabasePort;
 
-	// From <files/>
-	std::string SpellsFile;
-	std::string OpCodesFile;
-
-	// From <directories/>
+	// From dir
 	std::string MapDir;
 	std::string QuestDir;
 	std::string LuaModuleDir;
 	std::string PatchDir;
 	std::string SharedMemDir;
 	std::string LogDir;
-
-	// From <launcher/>
-	std::string LogPrefix;
-	std::string LogSuffix;
-	std::string ZoneExe;
-	uint32 RestartWait;
-	uint32 TerminateWait;
-	uint32 InitialBootWait;
-	uint32 ZoneBootInterval;
 
 	// From <zones/>
 	uint16 ZonePortLow;
@@ -82,48 +74,55 @@ class EQEmuConfig {
 	//	uint16 DynamicCount;
 	//	map<string,uint16> StaticZones;
    protected:
-	static EQEmuConfig *_config;
-	Json::Value _root;
+	static Config *_config;
+	YAML::Node _root;
 	static std::string ConfigFile;
 
 	void parse_config();
 
-	EQEmuConfig() {
-	}
-	virtual ~EQEmuConfig() {}
+	Config() {}
+	virtual ~Config() {}
 
    public:
 	// Produce a const singleton
-	static const EQEmuConfig *get() {
+	static const Config *get() {
 		LoadConfig();
 		return (_config);
 	}
 	// Allow the use to set the conf file to be used.
-	static void SetConfigFile(std::string file) { EQEmuConfig::ConfigFile = file; }
+	static void SetConfigFile(std::string file) {
+		Config::ConfigFile = file;
+	}
 	// Load the config
-	static bool LoadConfig() {
-		if (_config != nullptr)
-			return true;
+	static std::string LoadConfig() {
+		if (_config != nullptr) return "";
 
-		_config = new EQEmuConfig;
+		_config = new Config;
 
 		return parseFile();
 	}
 
 	// Load config file and parse data
-	static bool parseFile() {
+	static std::string parseFile() {
 		if (_config == nullptr) {
 			return LoadConfig();
 		}
 
-		std::ifstream fconfig(EQEmuConfig::ConfigFile, std::ifstream::binary);
 		try {
-			fconfig >> _config->_root;
+			_config->_root = YAML::LoadFile(Config::ConfigFile);
 			_config->parse_config();
-		} catch (std::exception) {
-			return false;
+		} catch (YAML::BadFile &e) {
+			return fmt::format("Failed opening {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+		} catch (YAML::RepresentationException &e) {
+			return fmt::format("Failed with {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+		} catch (YAML::ParserException &e) {
+			return fmt::format("Failed parsing {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+		} catch (YAML::Exception &e) {
+			return fmt::format("Failed loading {}: {}", Config::ConfigFile, e.msg);
+		} catch (std::exception &e) {
+			return "Failed during " + Config::ConfigFile + ": " + e.what();
 		}
-		return true;
+		return "";
 	}
 
 	void Dump() const;

@@ -29,13 +29,13 @@
 #include "string_util_test.h"
 #include "data_verification_test.h"
 #include "skills_util_test.h"
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 
-const EQEmuConfig *Config;
+const Config *Config;
 
 int main() {
-	auto ConfigLoadResult = EQEmuConfig::LoadConfig();
-        Config = EQEmuConfig::get();
+	auto ConfigLoadResult = Config::LoadConfig();
+        Config = Config::get();
 	try {
 		std::ofstream outfile("test_output.txt");
 		std::unique_ptr<Test::Output> output(new Test::TextOutput(Test::TextOutput::Verbose, outfile));

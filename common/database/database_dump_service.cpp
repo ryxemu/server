@@ -4,7 +4,7 @@
 #include "database_dump_service.h"
 #include "../eqemu_logsys.h"
 #include "../strings.h"
-#include "../eqemu_config.h"
+#include "../config.h"
 #include "../database_schema.h"
 #include "../file_util.h"
 #include "../process/process.h"
@@ -70,7 +70,7 @@ std::string DatabaseDumpService::GetMySQLVersion() {
  * @return
  */
 std::string DatabaseDumpService::GetBaseMySQLDumpCommand() {
-	auto config = EQEmuConfig::get();
+	auto config = Config::get();
 
 	return fmt::format(
 	    "mysqldump -u {} -p{} -h {} {}",
@@ -172,9 +172,9 @@ void DatabaseDumpService::Dump() {
 
 	LogInfo("MySQL installed [{}]", GetMySQLVersion());
 
-	SetDumpFileName(EQEmuConfig::get()->DatabaseDB + '-' + GetDumpDate());
+	SetDumpFileName(Config::get()->DatabaseDB + '-' + GetDumpDate());
 
-	auto config = EQEmuConfig::get();
+	auto config = Config::get();
 
 	LogInfo(
 	    "Database [{}] Host [{}] Username [{}]",

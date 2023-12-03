@@ -3,7 +3,7 @@
 #include <iomanip>
 
 #include "worldconn.h"
-#include "eqemu_config.h"
+#include "config.h"
 #include "md5.h"
 #include "servertalk.h"
 
@@ -24,7 +24,7 @@ bool WorldConnection::SendPacket(ServerPacket *pack) {
 }
 
 void WorldConnection::OnConnected() {
-	const EQEmuConfig *Config = EQEmuConfig::get();
+	const Config *Config = Config::get();
 	Log(Logs::General, Logs::Netcode, "[WORLD] Connected to World: %s:%d", Config->WorldIP.c_str(), Config->WorldTCPPort);
 
 	auto pack = new ServerPacket(ServerOP_ZAAuth, 16);
@@ -45,12 +45,12 @@ void WorldConnection::Process() {
 }
 
 void WorldConnection::AsyncConnect() {
-	const EQEmuConfig *Config = EQEmuConfig::get();
+	const Config *Config = Config::get();
 	tcpc.AsyncConnect(Config->WorldIP.c_str(), Config->WorldTCPPort);
 }
 
 bool WorldConnection::Connect() {
-	const EQEmuConfig *Config = EQEmuConfig::get();
+	const Config *Config = Config::get();
 	char errbuf[TCPConnection_ErrorBufferSize];
 	if (tcpc.Connect(Config->WorldIP.c_str(), Config->WorldTCPPort, errbuf)) {
 		return true;

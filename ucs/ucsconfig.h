@@ -1,9 +1,9 @@
 #ifndef __ucsconfig_H
 #define __ucsconfig_H
 
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 
-class ucsconfig : public EQEmuConfig {
+class ucsconfig : public Config {
    public:
 	virtual std::string GetByName(const std::string &var_name) const;
 
@@ -19,7 +19,7 @@ class ucsconfig : public EQEmuConfig {
 	}
 
 	// Load the config
-	static bool LoadConfig() {
+	static std::string LoadConfig() {
 		if (_chat_config != nullptr)
 			delete _chat_config;
 		_chat_config = new ucsconfig;

@@ -16,7 +16,7 @@ void LoadSpells(SharedDatabase *database, const std::string &prefix) {
 
 	uint32 size = records * sizeof(SPDat_Spell_Struct) + sizeof(uint32);
 
-	auto Config = EQEmuConfig::get();
+	auto Config = Config::get();
 	std::string file_name = Config->SharedMemDir + prefix + std::string("spells");
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
