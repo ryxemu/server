@@ -3,7 +3,7 @@
 {
 	"name": "ryxemu",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile.ubuntu.dev"
 	},
 	"forwardPorts": [
 		3306,

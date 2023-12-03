@@ -1,29 +1,55 @@
 NAME := ryxemu-server
+VERSION ?= 0.0.1
 
 DOCKER_ARGS := --rm -v ${PWD}:/src -w /src ${NAME}
 
+# Run 'ninja' in build directory
 .PHONY: build
 build:
-	cd build && make
+	@if [ ! -d "build$$BUILD_SUFFIX" ]; then \
+		make cmake; \
+	fi
 
+	cd build$$BUILD_SUFFIX && ninja
+
+# Run 'cmake' in build directory
 .PHONY: cmake
 cmake:
-	mkdir -p build
-	cd build && cmake -DEQEMU_BUILD_LOGIN=ON \
-			-DEQEMU_BUILD_TESTS=ON \
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
+	mkdir -p build$$BUILD_SUFFIX
+	cd build$$BUILD_SUFFIX && cmake -DEQEMU_BUILD_LOGIN=ON \
+			-DEQEMU_BUILD_TESTS=OFF \
+			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
-docker-cmake: docker-image-check
+# Run 'cmake' in ubuntu docker container
+docker-cmake: docker-image-build
 	docker run ${DOCKER_ARGS} make cmake
 
-docker-build: docker-image-check
+# Run 'ninja' in ubuntu docker container
+docker-build: docker-image-build
 	docker run ${DOCKER_ARGS} make build
 
-docker-image-check:
+# Build image if it doesn't exist
+docker-image-build:
 ifeq ($(shell docker images -q ${NAME} 2> /dev/null),)
 	@echo "Docker image not found. Building..."
-	make docker-image-build
+	cd .devcontainer && docker build -f Dockerfile.ubuntu.dev -t ${NAME} .
 endif
 
-docker-image-build:
-	cd .devcontainer && docker build -t ${NAME} .
+# Run 'cmake' in passed docker container
+docker-cmake-%: docker-image-build-%
+	docker run ${DOCKER_ARGS}-$* make cmake BUILD_SUFFIX=-$*
+
+# Run 'ninja' in passed docker container
+docker-build-%: docker-image-build-%
+	docker run ${DOCKER_ARGS}-$* make build BUILD_SUFFIX=-$*
+
+# Build image if it doesn't exist
+docker-image-build-%:
+ifeq ($(shell docker images -q ${NAME}-$* 2> /dev/null),)
+	@echo "Docker image ${NAME}-$* not found. Building..."
+	cd .devcontainer && docker build -f Dockerfile.$*.dev -t ${NAME}-$* .
+endif
+
+# CICD triggers this
+set-version-%:
+	@echo "VERSION=${VERSION}.$*" >> $$GITHUB_ENV

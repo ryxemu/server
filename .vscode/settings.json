@@ -16,13 +16,11 @@
 	"cmake.buildDirectory": "${workspaceFolder}/build",
 	"cmake.configureArgs": [
 		"-DEQEMU_BUILD_LOGIN=ON",
-		"-DEQEMU_BUILD_LUA=ON",
-		"-DYAML_BUILD_SHARED_LIBS=ON",
-		"-DYAML_CPP_BUILD_TOOLS=OFF",
-		"Unix Makefiles"
+		"-DEQEMU_BUILD_TESTS=ON",
+		"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
+		"Ninja"
 	],
 	"cmake.skipConfigureIfCachePresent": true,
-	"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
 	"cmake.configureOnOpen": false,
 	"files.associations": {
 		"*.ipp": "cpp",
@@ -104,7 +102,8 @@
 		"valarray": "cpp",
 		"variant": "cpp",
 		"csetjmp": "cpp",
-		"charconv": "cpp"
+		"charconv": "cpp",
+		"format": "cpp"
 	},
 	"cmake.statusbar.advanced": {
 		"kit": {
