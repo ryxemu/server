@@ -16,9 +16,8 @@
 	"cmake.buildDirectory": "${workspaceFolder}/build",
 	"cmake.configureArgs": [
 		"-DEQEMU_BUILD_LOGIN=ON",
-		"-DEQEMU_BUILD_LUA=ON",
-		"-DYAML_BUILD_SHARED_LIBS=ON",
-		"-DYAML_CPP_BUILD_TOOLS=OFF",
+		"-DEQEMU_BUILD_TESTS=ON",
+		"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
 		"Unix Makefiles"
 	],
 	"cmake.skipConfigureIfCachePresent": true,

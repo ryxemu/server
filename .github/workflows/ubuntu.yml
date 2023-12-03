@@ -22,13 +22,10 @@ jobs:
       run: sudo apt install -y --no-install-recommends \
   build-essential libtool cmake curl debconf-utils \
 	git liblua5.1-0 liblua5.1-0-dev libluabind-dev \
-	libmysql++-dev libsodium-dev \
+	libmysql++-dev \
 	libmysqlclient-dev libssl-dev lua5.1 minizip make mariadb-client locales \
 	nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb \
-	libyaml-cpp-dev libgtest-dev
-
-    - name: Install libsodium
-      run: wget http://ftp.us.debian.org/debian/pool/main/libs/libsodium/libsodium-dev_1.0.11-2_amd64.deb -O /tmp/libsodium-dev.deb && wget http://ftp.us.debian.org/debian/pool/main/libs/libsodium/libsodium18_1.0.11-2_amd64.deb -O /tmp/libsodium18.deb && sudo dpkg -i /tmp/libsodium*.deb
+	libyaml-cpp-dev
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

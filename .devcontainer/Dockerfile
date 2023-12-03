@@ -1,3 +1,9 @@
-FROM mcr.microsoft.com/devcontainers/base:alpine-3.14
-RUN apk add --no-cache cmake ninja libsodium-dev boost-dev lua5.1-dev mariadb-dev ccache util-linux-dev wget unzip gdb
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+RUN sudo apt update && sudo apt install -y --no-install-recommends \
+  build-essential libtool cmake curl debconf-utils \
+	git liblua5.1-0 liblua5.1-0-dev libluabind-dev \
+	libmysql++-dev \
+	libmysqlclient-dev libssl-dev lua5.1 minizip make mariadb-client locales \
+	nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb \
+	libyaml-cpp-dev
 USER root
