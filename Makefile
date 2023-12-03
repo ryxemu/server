@@ -11,7 +11,7 @@ cmake:
 	mkdir -p build
 	cd build && cmake -DEQEMU_BUILD_LOGIN=ON \
 			-DEQEMU_BUILD_TESTS=ON \
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
+			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
 docker-cmake: docker-image-check
 	docker run ${DOCKER_ARGS} make cmake
@@ -26,4 +26,4 @@ ifeq ($(shell docker images -q ${NAME} 2> /dev/null),)
 endif
 
 docker-image-build:
-	cd .devcontainer && docker build -t ${NAME} .
+	cd .devcontainer && docker build -f Dockerfile.ubuntu.dev -t ${NAME} .
