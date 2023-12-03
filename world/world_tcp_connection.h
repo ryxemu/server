@@ -4,14 +4,14 @@
 #include "../common/types.h"
 
 class WorldTCPConnection {
-   public:
-	WorldTCPConnection() {}
-	virtual ~WorldTCPConnection() {}
-	virtual void SendEmoteMessage(const char* to, uint32 to_guilddbid, int16 to_minstatus, uint32 type, const char* message, ...) {}
-	virtual void SendEmoteMessageRaw(const char* to, uint32 to_guilddbid, int16 to_minstatus, uint32 type, const char* message) {}
+public:
+    WorldTCPConnection() {}
+    virtual ~WorldTCPConnection() {}
+    virtual void SendEmoteMessage(const char* to, uint32 to_guilddbid, int16 to_minstatus, uint32 type, const char* message, ...) {}
+    virtual void SendEmoteMessageRaw(const char* to, uint32 to_guilddbid, int16 to_minstatus, uint32 type, const char* message) {}
 
-	virtual inline bool IsConsole() { return false; }
-	virtual inline bool IsZoneServer() { return false; }
+    virtual inline bool IsConsole() { return false; }
+    virtual inline bool IsZoneServer() const { return false; } // Add const specifier to match the derived class
 };
 
 #endif
