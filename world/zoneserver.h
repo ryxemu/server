@@ -46,7 +46,7 @@ public:
 
     const char* GetZoneName() const { return zone_name.c_str(); }
     const char* GetZoneLongName() const { return long_name.c_str(); }
-    const char* GetCompileTime() const { return compiled.c_str(); }
+    const char* GetCompileTime() const { return compiled.data(); }
     uint32 GetPrevZoneID() const { return zone_server_previous_zone_id; }
     uint32 GetZoneID() const { return zone_server_zone_id; }
     uint32 GetIP() const { return tcpc->GetrIP(); }
