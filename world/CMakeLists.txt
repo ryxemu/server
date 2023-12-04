@@ -10,7 +10,7 @@ SET(world_sources
 	launcher_list.cpp
 	login_server.cpp
 	login_server_list.cpp
-	net.cpp
+	main.cpp
 	queryserv.cpp
 	ucs.cpp
 	wguild_mgr.cpp
@@ -30,7 +30,7 @@ SET(world_headers
 	launcher_list.h
 	login_server.h
 	login_server_list.h
-	net.h
+	main.h
 	queryserv.h
 	char_create_data.h
 	ucs.h

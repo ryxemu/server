@@ -4,7 +4,7 @@ SET(ucs_sources
 	chatchannel.cpp
 	clientlist.cpp
 	database.cpp
-	ucs.cpp
+	main.cpp
 	ucsconfig.cpp
 	worldserver.cpp
 )

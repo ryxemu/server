@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 SET(qserv_sources
 	database.cpp
 	dbupdate.cpp
-	queryserv.cpp
+	main.cpp
 	queryservconfig.cpp
 	worldserver.cpp
 )
