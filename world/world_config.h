@@ -1,9 +1,9 @@
 #ifndef __WorldConfig_H
 #define __WorldConfig_H
 
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 
-class WorldConfig : public EQEmuConfig {
+class WorldConfig : public Config {
    public:
 	virtual std::string GetByName(const std::string &var_name) const;
 
@@ -13,7 +13,7 @@ class WorldConfig : public EQEmuConfig {
    private:
 	static WorldConfig *_world_config;
 
-	WorldConfig() : EQEmuConfig() {
+	WorldConfig() : Config() {
 		LoginDisabled = false;
 		UpdateStats = true;
 	}
@@ -27,7 +27,7 @@ class WorldConfig : public EQEmuConfig {
 	}
 
 	// Load the config
-	static bool LoadConfig() {
+	static std::string LoadConfig() {
 		if (_world_config != nullptr)
 			delete _world_config;
 		_world_config = new WorldConfig;

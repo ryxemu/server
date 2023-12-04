@@ -1,0 +1,47 @@
+world:
+  is_locked: false
+  short_name: req
+  long_name: RebuildEQ
+  wan_address: 0.0.0.0
+  lan_address: 0.0.0.0
+  max_clients: -1
+  intranet_ip: 127.0.0.1
+  intranet_port: 9001
+  telnet_is_enabled: true
+  telnet_ip: 127.0.0.1
+  telnet_port: 9000
+  shared_key: iasodjaoisjdiaosjdsaiojdsa
+ucs:
+  host: 0.0.0.0
+  port: 7778
+database:
+  db: takp
+  host: 127.0.0.1
+  port: 3306
+  username: takp
+  password: takppass
+query_serv:
+  db: takp
+  host: 127.0.0.1
+  port: 3306
+  username: takp
+  password: takppass
+zone:
+  default_status: 0
+  port_min: 7000
+  port_max: 6400
+login_server:
+- port: 5998
+  account:
+  password:
+  host: login.projecteq.net
+  type: 0
+dir:
+  patches: assets/patches/
+  opcodes: assets/opcodes/
+  shared_memory: shared/
+  lua_modules: quests/lua_modules/
+  quests: quests/
+  plugins: quests/plugins/
+  maps: maps/
+  logs: logs/

@@ -20,7 +20,6 @@ bool OpcodeManager::LoadOpcodesFile(const char *filename, OpcodeSetStrategy *s, 
 
 	std::map<std::string, uint16> eq;
 
-	// load the opcode file into eq, could swap in a nice XML parser here
 	char line[2048];
 	int lineno = 0;
 	uint16 curop;
