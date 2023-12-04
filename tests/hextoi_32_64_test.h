@@ -1,21 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2013 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #ifndef __EQEMU_TESTS_HEXTOI_32_64_H
 #define __EQEMU_TESTS_HEXTOI_32_64_H
 
@@ -23,8 +5,9 @@
 #include "../common/strings.h"
 
 class hextoi_32_64_Test : public Test::Suite {
-	typedef void(hextoi_32_64_Test::*TestFunction)(void);
-public:
+	typedef void (hextoi_32_64_Test::*TestFunction)(void);
+
+   public:
 	hextoi_32_64_Test() {
 		TEST_ADD(hextoi_32_64_Test::nullptr32Test);
 		TEST_ADD(hextoi_32_64_Test::ShortString32Test);
@@ -44,8 +27,7 @@ public:
 	~hextoi_32_64_Test() {
 	}
 
-	private:
-
+   private:
 	void nullptr32Test() {
 		TEST_ASSERT(hextoi(nullptr) == 0);
 	}
@@ -100,12 +82,11 @@ public:
 	// A bit excessive to do an exhaustive test like this
 	// but it usefully tests multi digit hex.
 	void DoubleDigitUpper32Test() {
-		
 		std::string prepend = "0x";
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789ABCDEF";
-		uint32 value = 0; 
+		uint32 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			for (std::string::iterator secondDigitIter = hexElements.begin(); secondDigitIter != hexElements.end(); ++secondDigitIter) {
 				std::string hexToTest = prepend + *firstDigitIter + *secondDigitIter;
@@ -122,7 +103,7 @@ public:
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789abcdef";
-		uint32 value = 0; 
+		uint32 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			for (std::string::iterator secondDigitIter = hexElements.begin(); secondDigitIter != hexElements.end(); ++secondDigitIter) {
 				std::string hexToTest = prepend + *firstDigitIter + *secondDigitIter;
@@ -131,7 +112,6 @@ public:
 			}
 		}
 	}
-
 
 	void nullptr64Test() {
 		TEST_ASSERT(hextoi64(nullptr) == 0);
@@ -151,7 +131,7 @@ public:
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789ABCDEF";
-		uint64 value = 0; 
+		uint64 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			std::string hexToTest = prepend + *firstDigitIter;
 			TEST_ASSERT(hextoi64(hexToTest.c_str()) == value);
@@ -160,12 +140,11 @@ public:
 	}
 
 	void SingleDigitLower64Test() {
-
 		std::string prepend = "0x";
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789abcdef";
-		uint64 value = 0; 
+		uint64 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			std::string hexToTest = prepend + *firstDigitIter;
 			TEST_ASSERT(hextoi64(hexToTest.c_str()) == value);
@@ -176,12 +155,11 @@ public:
 	// A bit excessive to do an exhaustive test like this
 	// but it usefully tests multi digit hex.
 	void DoubleDigitUpper64Test() {
-		
 		std::string prepend = "0x";
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789ABCDEF";
-		uint64 value = 0; 
+		uint64 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			for (std::string::iterator secondDigitIter = hexElements.begin(); secondDigitIter != hexElements.end(); ++secondDigitIter) {
 				std::string hexToTest = prepend + *firstDigitIter + *secondDigitIter;
@@ -198,7 +176,7 @@ public:
 		std::string hexToTest;
 
 		std::string hexElements = "0123456789abcdef";
-		uint64 value = 0; 
+		uint64 value = 0;
 		for (std::string::iterator firstDigitIter = hexElements.begin(); firstDigitIter != hexElements.end(); ++firstDigitIter) {
 			for (std::string::iterator secondDigitIter = hexElements.begin(); secondDigitIter != hexElements.end(); ++secondDigitIter) {
 				std::string hexToTest = prepend + *firstDigitIter + *secondDigitIter;
@@ -207,7 +185,6 @@ public:
 			}
 		}
 	}
-
 };
 
 #endif
