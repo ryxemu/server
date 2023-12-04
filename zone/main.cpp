@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	LogInfo("CURRENT_VERSION: {} ", CURRENT_VERSION);
+	LogInfo("VERSION: {} ", VERSION);
 
 	/*
 	 * Setup nice signal handlers

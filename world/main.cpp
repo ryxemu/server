@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
 
 	Config = WorldConfig::get();
 
-	LogInfo("CURRENT_VERSION: [{0}]", CURRENT_VERSION);
+	LogInfo("VERSION: [{0}]", VERSION);
 
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

@@ -29,14 +29,14 @@ jobs:
       with:
         path: './build/bin/'
         type: 'tar'
-        filename: 'linux-latest.tar.gz'
+        filename: 'linux-${{env.VERSION}}.tar.gz'
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       if: github.ref == 'refs/heads/main'
       with:
         repo_token: "${{secrets.GITHUB_TOKEN}}"
         automatic_release_tag: "${{env.VERSION}}"
-        prerelease: true
+        prerelease: false
         title: "${{env.VERSION}}"
         files: |
-          linux-latest.tar.gz
+          linux-${{env.VERSION}}.tar.gz

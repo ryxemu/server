@@ -1,10 +1,10 @@
 #ifndef _EQEMU_VERSION_H
 #define _EQEMU_VERSION_H
 
+#define VERSION "0.0.2"
+
 #define LOGIN_VERSION "0.8.0"
 #define EQEMU_PROTOCOL_VERSION "0.3.10"
-
-#define CURRENT_VERSION "2.0"
 
 /**
  * Every time a Database SQL is added to Github increment CURRENT_BINARY_DATABASE_VERSION

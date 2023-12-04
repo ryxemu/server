@@ -51,5 +51,12 @@ ifeq ($(shell docker images -q ${NAME}-$* 2> /dev/null),)
 endif
 
 # CICD triggers this
-set-version-%:
-	@echo "VERSION=${VERSION}.$*" >> $$GITHUB_ENV
+.PHONY: update-version
+update-version:
+	sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
+
+# CICD triggers this
+.PHONY: set-version
+set-version: update-version
+	sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
+	@echo "VERSION=${VERSION}" >> $$GITHUB_ENV
