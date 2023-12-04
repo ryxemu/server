@@ -724,8 +724,7 @@ bool ZoneServer::Process() {
 				}
 
 				if (sci->local_address[0]) {
-					strncpy(client_local_address.data(), sci->local_address, 249);
-					client_local_address[249] = '\0';
+					strn0cpy(client_local_address, sci->local_address, 250);
 					Log(Logs::Detail, Logs::WorldServer, "Zone specified local address %s.", sci->address);
 				}
 

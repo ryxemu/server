@@ -10,13 +10,13 @@ build:
 		make cmake; \
 	fi
 
-	cd build$$BUILD_SUFFIX && ninja
+	@cd build$$BUILD_SUFFIX && ninja
 
 # Run 'cmake' in build directory
 .PHONY: cmake
 cmake:
 	mkdir -p build$$BUILD_SUFFIX
-	cd build$$BUILD_SUFFIX && cmake -DEQEMU_BUILD_LOGIN=ON \
+	@cd build$$BUILD_SUFFIX && cmake -DEQEMU_BUILD_LOGIN=ON \
 			-DEQEMU_BUILD_TESTS=OFF \
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
