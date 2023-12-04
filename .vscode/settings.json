@@ -12,6 +12,9 @@
 		"submodules": true,
 		"libs": true,
 	},
+	"C_Cpp.default.includePath": [
+		"/usr/include/x86_64-linux-gnu",
+	],
 	"telemetry.enableTelemetry": false,
 	"cmake.buildDirectory": "${workspaceFolder}/build",
 	"cmake.configureArgs": [
