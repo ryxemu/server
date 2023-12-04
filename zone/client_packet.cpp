@@ -2349,10 +2349,12 @@ void Client::Handle_OP_CastSpell(const EQApplicationPacket *app) {
 	}
 
 	if (Admin() > 20 && GetGM() && IsValidSpell(castspell->spell_id)) {
-		Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
-		char szArguments[64];
-		sprintf(szArguments, "ID %i (%s), Slot %i, InvSlot %i", castspell->spell_id, spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
-		QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
+        Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
+        char szArguments[64];
+        snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
+        QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
+}
+
 	}
 
 	/* Memorized Spell */
