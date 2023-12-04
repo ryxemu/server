@@ -1,7 +1,7 @@
 world:
   is_locked: false
-  short_name: req
-  long_name: RebuildEQ
+  short_name: ryx
+  long_name: RyXEmu
   wan_address: 0.0.0.0
   lan_address: 0.0.0.0
   max_clients: -1
@@ -10,22 +10,22 @@ world:
   telnet_is_enabled: true
   telnet_ip: 127.0.0.1
   telnet_port: 9000
-  shared_key: iasodjaoisjdiaosjdsaiojdsa
+  shared_key: pleasegenerateakey
 ucs:
   host: 0.0.0.0
   port: 7778
 database:
-  db: takp
+  db: ryx
   host: 127.0.0.1
   port: 3306
-  username: takp
-  password: takppass
+  username: ryx
+  password: ryxpass
 query_serv:
-  db: takp
+  db: ryx
   host: 127.0.0.1
   port: 3306
-  username: takp
-  password: takppass
+  username: ryx
+  password: ryxpass
 zone:
   default_status: 0
   port_min: 7000

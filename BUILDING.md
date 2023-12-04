@@ -45,3 +45,35 @@ If you'd like to build for another distribution, you can see a list inside the .
 A new folder called `build-alpine` will appear, and your binaries will be built inside the bin subfolder.
 
 If you don't see a distribution you'd like your binaries built for, feel free to PR your own or ask in discord for it's support.
+
+
+## Database Creation
+
+We'll be using a standalone binary mysql install for dev purposes. It is suggested to do this inside your dev container. If your dev container is deleted, you'll need to rerun this.
+- `make init-mariadb`. This will create build/bin/db and download/create a standalone copy of mariadb.
+
+## Database Inject
+
+- Two ways to do this: run `make inject-mariadb`, OR follow steps manually below.
+- `mysql -u vscode -S build/bin/db/mysql/mysqld.sock`, Starts a mysql root console
+- `CREATE DATABASE ryx;` Create a database called ryx
+- `CREATE USER 'ryx'@'127.0.0.1' IDENTIFIED BY 'ryxpass';` Create a user named ryx with password ryxpass
+- `GRANT ALL PRIVILEGES ON *.* TO 'ryx'@'127.0.0.1';` Give it access to everything.
+- Exit the console by pressing CTRL+C.
+- `mysql -u ryx -h 127.0.0.1 -p` Starts a myql ryx user console, will prompt for password, type `ryxpass` and enter.
+- Above worked? Awesome. CTRL+C to exit
+- `unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database ryx` Source a database
+- Or if you're lazy, copy paste th
+
+
+## Content Prep
+
+- `make prep` This will create a build subfolder, and copy files from base. This can be ran multiple times, files are checked prior to copying.
+- `make shared` This should show 2 messages in yellow and exit quickly.
+- `make loginserver` This will lock the window on success, open a new terminal.
+- `make world` Will spin up world, open a new terminal
+- `make zone` Now we have a fully running server
+
+## Debugging
+
+Use the (gdb) prefixed debuggers to start each process.
