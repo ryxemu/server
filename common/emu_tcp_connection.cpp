@@ -442,19 +442,35 @@ void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
 		std::cout << reason;
 	std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
 #endif
+	
 	auto pack = new ServerPacket(0);
-	pack->size = 1;
-	if (reason != nullptr)
-		pack->size += strlen(reason) + 1;
-	pack->pBuffer = new uchar[pack->size];
-	memset(pack->pBuffer, 0, pack->size);
-	pack->pBuffer[0] = 255;
-	if (reason != nullptr)
-		strcpy((char*)&pack->pBuffer[1], reason);
-	else
-		strcpy((char*)&pack->pBuffer[1], "unknown");
-	SendPacket(pack);
-	safe_delete(pack);
+        pack->size = 1;
+
+        if (reason != nullptr)
+        pack->size += strlen(reason) + 1;
+
+       // Allocate memory for pBuffer
+       pack->pBuffer = new uchar[pack->size];
+       memset(pack->pBuffer, 0, pack->size);
+       pack->pBuffer[0] = 255;
+
+       if (reason != nullptr) {
+       // Check if there's enough space for the reason
+       size_t remainingSpace = pack->size - 1;
+       size_t reasonLength = strlen(reason);
+       if (reasonLength <= remainingSpace) {
+       strcpy((char*)&pack->pBuffer[1], reason);
+} else {
+         strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+         pack->pBuffer[pack->size - 1] = '\0';
+    }
+} else {
+    strcpy((char*)&pack->pBuffer[1], "unknown");
+}
+
+SendPacket(pack);
+safe_delete(pack);
+	
 }
 
 void EmuTCPConnection::RemoveRelay(EmuTCPConnection* relay, bool iSendRelayDisconnect) {
