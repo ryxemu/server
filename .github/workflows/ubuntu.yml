@@ -3,6 +3,8 @@ name: ubuntu-22.04
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   BUILD_TYPE: Release
@@ -22,13 +24,14 @@ jobs:
           ${{github.workspace}}/build/
           !${{github.workspace}}/build/bin
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
-    
+
     - run: sudo apt-get update
     - run: sudo apt install -y --no-install-recommends build-essential libtool cmake curl ccache debconf-utils git liblua5.1-0 liblua5.1-0-dev libluabind-dev libmysql++-dev libmysqlclient-dev libssl-dev lua5.1 minizip make mariadb-client locales nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb libyaml-cpp-dev ninja-build
     - run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DEQEMU_BUILD_LOGIN=ON -DEQEMU_BUILD_TESTS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja
 
     - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - uses: actions/cache/save@v3
+      if: github.ref == 'refs/heads/main'
       with:
         path: |
           ${{github.workspace}}/build/
@@ -36,6 +39,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
 
     - name: Archive Release
+      if: github.ref == 'refs/heads/main'
       uses: thedoctor0/zip-release@main
       with:
         path: './build/bin/'
