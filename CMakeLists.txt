@@ -16,6 +16,8 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
+ADD_COMPILE_OPTIONS(/bigobj) # sol2 templates can use lots of memory
+
 IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. Should also consider global variables on OS.
 	IF(CMAKE_CL_64)
 		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
@@ -35,7 +37,7 @@ IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. 
 	ADD_DEFINITIONS(-DNOMINMAX)
 	ADD_DEFINITIONS(-DCRASH_LOGGING)
 
-	ADD_DEFINITIONS(-D_HAS_AUTO_PTR_ETC) # for Luabind on C++17
+	# ADD_DEFINITIONS(-D_HAS_AUTO_PTR_ETC) # for Luabind on C++17
 
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 ELSE(MSVC)
@@ -70,7 +72,7 @@ FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(OpenSSL)
-FIND_PACKAGE(Lua51)
+FIND_PACKAGE(LuaJit)
 FIND_PACKAGE(mbedTLS)
 FIND_PACKAGE(CURL REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
@@ -97,7 +99,7 @@ ELSE()
 	MESSAGE(STATUS "* ZLIB:                                  MISSING *")
 ENDIF()
 
-IF(Lua51_FOUND)
+IF(Lua_FOUND)
 	MESSAGE(STATUS "* Lua:                                     FOUND *")
 ELSE()
 	MESSAGE(STATUS "* Lua:                                   MISSING *")
@@ -241,14 +243,22 @@ ELSE()
 	SET(TLS_LIBRARY_ENABLED OFF)
 ENDIF()
 
-IF(Lua51_FOUND)
-	SET(LUA_LIBRARY_TYPE " Lua 5.1")
+IF(Lua_FOUND)
+	SET(LUA_LIBRARY_TYPE " Lua ${LUA_VERSION_STRING}")
 	SET(LUA_LIBRARY_ENABLED ON)
-	SET(LUA_LIBRARY_LIBS ${LUA_LIBRARY} luabind)
-	SET(LUA_LIBRARY_INCLUDE ${LUA_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luabind")
+	SET(LUA_LIBRARY_LIBS ${LUA_LIBRARY})
+	SET(LUA_LIBRARY_INCLUDE ${LUA_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/libs/sol2")
 ELSE()
 	SET(LUA_LIBRARY_TYPE "Disabled")
 	SET(LUA_LIBRARY_ENABLED OFF)
+ENDIF()
+
+IF(LUA_LIBRARY_ENABLED)
+	# this is what OpenMW sets, might want to enable more
+	ADD_DEFINITIONS(-DSOL_SAFE_USERTYPE)
+	ADD_DEFINITIONS(-DSOL_SAFE_REFERENCES)
+	ADD_DEFINITIONS(-DSOL_SAFE_FUNCTION_CALLS)
+	ADD_DEFINITIONS(-DSOL_SAFE_FUNCTION)
 ENDIF()
 
 #use zlib if exists

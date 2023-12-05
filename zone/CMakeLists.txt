@@ -27,28 +27,44 @@ SET(zone_sources
 	horse.cpp
 	inventory.cpp
 	loottables.cpp
-	lua_bit.cpp
-	lua_corpse.cpp
-	lua_client.cpp
-	lua_door.cpp
-	lua_encounter.cpp
-	lua_entity.cpp
-	lua_entity_list.cpp
-	lua_general.cpp
-	lua_group.cpp
-	lua_hate_list.cpp
-	lua_inventory.cpp
-	lua_item.cpp
-	lua_iteminst.cpp
-	lua_mob.cpp
-	lua_npc.cpp
-	lua_object.cpp
-	lua_packet.cpp
-	lua_parser.cpp
-	lua_parser_events.cpp
-	lua_raid.cpp
-	lua_spawn.cpp
-	lua_spell.cpp
+	lua/lua_corpse.cpp
+	lua/lua_corpse_impl.cpp
+	lua/lua_client.cpp
+	lua/lua_client_impl.cpp
+	lua/lua_door.cpp
+	lua/lua_door_impl.cpp
+	lua/lua_encounter.cpp
+	lua/lua_entity.cpp
+	lua/lua_entity_impl.cpp
+	lua/lua_entity_list.cpp
+	lua/lua_entity_list_impl.cpp
+	lua/lua_general.cpp
+	lua/lua_group.cpp
+	lua/lua_group_impl.cpp
+	lua/lua_hate_list.cpp
+	lua/lua_hate_list_impl.cpp
+	lua/lua_inventory.cpp
+	lua/lua_inventory_impl.cpp
+	lua/lua_item.cpp
+	lua/lua_item_impl.cpp
+	lua/lua_iteminst.cpp
+	lua/lua_iteminst_impl.cpp
+	lua/lua_mob.cpp
+	lua/lua_mob_impl.cpp
+	lua/lua_npc.cpp
+	lua/lua_npc_impl.cpp
+	lua/lua_object.cpp
+	lua/lua_object_impl.cpp
+	lua/lua_packet.cpp
+	lua/lua_packet_impl.cpp
+	lua/lua_parser.cpp
+	lua/lua_parser_events.cpp
+	lua/lua_raid.cpp
+	lua/lua_raid_impl.cpp
+	lua/lua_spawn.cpp
+	lua/lua_spawn_impl.cpp
+	lua/lua_spell.cpp
+	lua/lua_spell_impl.cpp
 	entity.cpp
 	exp.cpp
 	fearpath.cpp
@@ -120,28 +136,28 @@ SET(zone_headers
 	guild_mgr.h
 	hate_list.h
 	horse.h
-	lua_bit.h
-	lua_client.h
-	lua_corpse.h
-	lua_encounter.h
-	lua_entity.h
-	lua_entity_list.h
-	lua_general.h
-	lua_group.h
-	lua_hate_list.h
-	lua_inventory.h
-	lua_item.h
-	lua_iteminst.h
-	lua_mob.h
-	lua_npc.h
-	lua_object.h
-	lua_packet.h
-	lua_parser.h
-	lua_parser_events.h
-	lua_ptr.h
-	lua_raid.h
-	lua_spawn.h
-	lua_spell.h
+	lua/lua_client.h
+	lua/lua_corpse.h
+	lua/lua_encounter.h
+	lua/lua_entity.h
+	lua/lua_entity_list.h
+	lua/lua_forward.h
+	lua/lua_general.h
+	lua/lua_group.h
+	lua/lua_hate_list.h
+	lua/lua_inventory.h
+	lua/lua_item.h
+	lua/lua_iteminst.h
+	lua/lua_mob.h
+	lua/lua_npc.h
+	lua/lua_object.h
+	lua/lua_packet.h
+	lua/lua_parser.h
+	lua/lua_parser_events.h
+	lua/lua_ptr.h
+	lua/lua_raid.h
+	lua/lua_spawn.h
+	lua/lua_spell.h
 	map.h
 	masterentity.h
 	mob.h
