@@ -1410,7 +1410,7 @@ void NPC::FillSpawnStruct(NewSpawn_Struct* ns, Mob* ForWho) {
             ns->spawn.lastName[sizeof(ns->spawn.lastName) - 1] = '\0'; // Ensure null-termination
         }
     }
-        } else {
+} else {
     ns->spawn.is_pet = 0;
 }
 
