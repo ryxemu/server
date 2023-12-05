@@ -460,12 +460,12 @@ void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
        size_t reasonLength = strlen(reason);
        if (reasonLength <= remainingSpace) {
        strcpy((char*)&pack->pBuffer[1], reason);
-} else {
-         strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
-         // Ensure null termination
-         pack->pBuffer[pack->size - 1] = '\0';
-    }
-} else {
+       } else {
+       strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+       // Ensure null termination
+       pack->pBuffer[pack->size - 1] = '\0';
+}
+       } else {
     strcpy((char*)&pack->pBuffer[1], "unknown");
 }
 
