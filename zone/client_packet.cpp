@@ -2353,7 +2353,6 @@ void Client::Handle_OP_CastSpell(const EQApplicationPacket *app) {
         char szArguments[64];
         snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
         QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
-}
 
 	}
 
