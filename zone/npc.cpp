@@ -1383,39 +1383,47 @@ void NPC::FillSpawnStruct(NewSpawn_Struct* ns, Mob* ForWho) {
 	UpdateActiveLight();
 	ns->spawn.light = GetActiveLightType();
 
-	// Not recommended if using above (However, this will work better on older clients).
+	ns->spawn.is_npc = 1;
+	ns->spawn.is_pet = 0;
+	if (GetOwnerID() || GetSwarmOwner()) {
+		ns->spawn.is_pet = 1;
+	}
+
 	if (RuleB(Pets, UnTargetableSwarmPet)) {
-		if (GetOwnerID() || GetSwarmOwner()) {
-			ns->spawn.is_pet = 1;
-			if (!IsCharmedPet() && GetOwnerID()) {
-				Client* c = entity_list.GetClientByID(GetOwnerID());
-				if (c)
-					sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
-			} else if (GetSwarmOwner()) {
-				ns->spawn.bodytype = 11;
-				if (!IsCharmedPet()) {
-					Client* c = entity_list.GetClientByID(GetSwarmOwner());
-					if (c)
-						sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
-			}
+		if (!GetOwnerID() && !GetSwarmOwner()) {
+			return;
 		}
-	} else {
-		if (GetOwnerID()) {
-    ns->spawn.is_pet = 1;
-    if (!IsCharmedPet() && GetOwnerID()) {
-        Client* c = entity_list.GetClientByID(GetOwnerID());
-        if (c) {
-            // Use snprintf to safely format the string
-            snprintf(ns->spawn.lastName, sizeof(ns->spawn.lastName), "%s's Pet", c->GetName());
-            ns->spawn.lastName[sizeof(ns->spawn.lastName) - 1] = '\0'; // Ensure null-termination
-        }
-    }
-} else {
-    ns->spawn.is_pet = 0;
-}
 
-ns->spawn.is_npc = 1;
+		if (!IsCharmedPet() && GetOwnerID()) {
+			Client* c = entity_list.GetClientByID(GetOwnerID());
+			if (c) {
+				sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
+			}
+			return;
+		}
 
+		if (GetSwarmOwner()) {
+			ns->spawn.bodytype = 11;
+			if (!IsCharmedPet()) {
+				Client* c = entity_list.GetClientByID(GetSwarmOwner());
+				if (c) {
+					sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
+				}
+			}
+			return;
+		}
+		return;
+	}
+
+	if (!IsCharmedPet() && GetOwnerID()) {
+		Client* c = entity_list.GetClientByID(GetOwnerID());
+		if (c) {
+			// Use snprintf to safely format the string
+			snprintf(ns->spawn.lastName, sizeof(ns->spawn.lastName), "%s's Pet", c->GetName());
+			ns->spawn.lastName[sizeof(ns->spawn.lastName) - 1] = '\0';  // Ensure null-termination
+		}
+		return;
+	}
 }
 
 void NPC::SetLevel(uint8 in_level, bool command) {
@@ -2300,10 +2308,10 @@ float NPC::ApplyPushVector(bool noglance) {
 						newLoc.z += magnitude / hitNormal.z;
 				}
 			}  // if (hitNormal.x != 0.0f || hitNormal.y != 0.0f)
-			   /*else
-			   {
-			   Shout("Error: hitNormal x and y both 0");
-			   }*/
+			/*else
+			{
+			Shout("Error: hitNormal x and y both 0");
+			}*/
 		}
 	}
 
