@@ -1402,17 +1402,21 @@ void NPC::FillSpawnStruct(NewSpawn_Struct* ns, Mob* ForWho) {
 		}
 	} else {
 		if (GetOwnerID()) {
-			ns->spawn.is_pet = 1;
-			if (!IsCharmedPet() && GetOwnerID()) {
-				Client* c = entity_list.GetClientByID(GetOwnerID());
-				if (c)
-					sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
-			}
-		} else
-			ns->spawn.is_pet = 0;
-	}
+    ns->spawn.is_pet = 1;
+    if (!IsCharmedPet() && GetOwnerID()) {
+        Client* c = entity_list.GetClientByID(GetOwnerID());
+        if (c) {
+            // Use snprintf to safely format the string
+            snprintf(ns->spawn.lastName, sizeof(ns->spawn.lastName), "%s's Pet", c->GetName());
+            ns->spawn.lastName[sizeof(ns->spawn.lastName) - 1] = '\0'; // Ensure null-termination
+        }
+    }
+        } else {
+    ns->spawn.is_pet = 0;
+}
 
-	ns->spawn.is_npc = 1;
+ns->spawn.is_npc = 1;
+
 }
 
 void NPC::SetLevel(uint8 in_level, bool command) {
