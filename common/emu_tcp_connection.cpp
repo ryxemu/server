@@ -462,6 +462,7 @@ void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
        strcpy((char*)&pack->pBuffer[1], reason);
 } else {
          strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+         // Ensure null termination
          pack->pBuffer[pack->size - 1] = '\0';
     }
 } else {
