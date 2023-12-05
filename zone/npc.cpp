@@ -1397,7 +1397,6 @@ void NPC::FillSpawnStruct(NewSpawn_Struct* ns, Mob* ForWho) {
 					Client* c = entity_list.GetClientByID(GetSwarmOwner());
 					if (c)
 						sprintf(ns->spawn.lastName, "%s's Pet", c->GetName());
-				}
 			}
 		}
 	} else {
