@@ -19,7 +19,7 @@
 	"cmake.buildDirectory": "${workspaceFolder}/build",
 	"cmake.configureArgs": [
 		"-DEQEMU_BUILD_LOGIN=ON",
-		"-DEQEMU_BUILD_TESTS=ON",
+		"-DEQEMU_BUILD_TESTS=OFF",
 		"-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
 		"Ninja"
 	],
