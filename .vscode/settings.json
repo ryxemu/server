@@ -7,6 +7,9 @@
 	"files.trimTrailingWhitespace": true,
 	"editor.formatOnSave": true,
 	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4, IncludeBlocks: Preserve, ColumnLimit: 0, SortIncludes: false}",
+	"C_Cpp.default.defines": [
+		"LUA_EQEMU=1",
+	],
 	"search.exclude": {
 		"dependencies": true,
 		"submodules": true,

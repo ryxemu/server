@@ -1,0 +1,24 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${default}",
+				"${workspaceFolder}/dependencies/cereal",
+				"${workspaceFolder}/dependencies/curl_x64",
+				"${workspaceFolder}/dependencies/fmt",
+				"${workspaceFolder}/dependencies/glm",
+				"${workspaceFolder}/dependencies/libuv",
+				"${workspaceFolder}/dependencies/recastnavigation",
+				"${workspaceFolder}/dependencies/sol2",
+				"${workspaceFolder}/dependencies/websocketpp",
+				"${workspaceFolder}/dependencies/zlibng"
+			],
+			"compilerPath": "/usr/bin/gcc",
+			"cStandard": "c17",
+			"cppStandard": "gnu++17",
+			"intelliSenseMode": "linux-gcc-x64"
+		}
+	],
+	"version": 4
+}
