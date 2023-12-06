@@ -10,7 +10,7 @@ build:
 		make cmake; \
 	fi
 
-	@cd build$$BUILD_SUFFIX && ninja
+	@cd build$$BUILD_SUFFIX && cmake --build . --config Debug --target all --
 
 # Run 'cmake' in build directory
 .PHONY: cmake

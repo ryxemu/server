@@ -69,7 +69,7 @@ FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(OpenSSL)
-FIND_PACKAGE(Lua 5.1)
+FIND_PACKAGE(Lua 5.2)
 FIND_PACKAGE(LuaJit)
 FIND_PACKAGE(mbedTLS)
 FIND_PACKAGE(CURL REQUIRED)

@@ -847,7 +847,7 @@ void LuaParser::ReloadQuests() {
 #if defined(LUA_VERSION_MAJOR) && defined(LUA_VERSION_MINOR)
 	const char lua_version[] = LUA_VERSION_MAJOR "." LUA_VERSION_MINOR;
 #elif LUA_VERSION_NUM == 501
-	const char lua_version[] = "5.1";
+	const char lua_version[] = "5.2";
 #else
 #error Incompatible lua version
 #endif
@@ -864,7 +864,7 @@ void LuaParser::ReloadQuests() {
 	std::string module_path = lua_tostring(L, -1);
 	module_path += ";./" + Config->LuaModuleDir + "?.lua;./" + Config->LuaModuleDir + "?/init.lua";
 	// luarock paths using lua_modules as tree
-	// to path it adds foo/share/lua/5.1/?.lua and foo/share/lua/5.1/?/init.lua
+	// to path it adds foo/share/lua/5.2/?.lua and foo/share/lua/5.2/?/init.lua
 	module_path += ";./" + Config->LuaModuleDir + "share/lua/" + lua_version + "/?.lua";
 	module_path += ";./" + Config->LuaModuleDir + "share/lua/" + lua_version + "/?/init.lua";
 	lua_pop(L, 1);
@@ -877,7 +877,7 @@ void LuaParser::ReloadQuests() {
 	module_path = lua_tostring(L, -1);
 	module_path += ";./" + Config->LuaModuleDir + "?" + libext;
 	// luarock paths using lua_modules as tree
-	// luarocks adds foo/lib/lua/5.1/?.so for cpath
+	// luarocks adds foo/lib/lua/5.2/?.so for cpath
 	module_path += ";./" + Config->LuaModuleDir + "lib/lua/" + lua_version + "/?" + libext;
 	lua_pop(L, 1);
 	lua_pushstring(L, module_path.c_str());
