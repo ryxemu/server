@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_MODULE_PATH})
 
@@ -16,7 +16,6 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
-ADD_COMPILE_OPTIONS(/bigobj) # sol2 templates can use lots of memory
 
 IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. Should also consider global variables on OS.
 	IF(CMAKE_CL_64)
@@ -26,22 +25,20 @@ IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. 
 		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x64") #We should not just be looking for this within the dependencies folder.
 		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x64") #We should not just be looking for this within the dependencies folder.
 	ELSE(CMAKE_CL_64)
-		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
-		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x86") #We should not just be looking for this within the dependencies folder.
-		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x86") #We should not just be looking for this within the dependencies folder.
-		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x86") #We should not just be looking for this within the dependencies folder.
-		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x86") #We should not just be looking for this within the dependencies folder.
+		MESSAGE(FATAL_ERROR "x86 is no longer supported. Change to x64")
 	ENDIF(CMAKE_CL_64)
 
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 	ADD_DEFINITIONS(-DNOMINMAX)
 	ADD_DEFINITIONS(-DCRASH_LOGGING)
+	ADD_COMPILE_OPTIONS(/bigobj) # sol2 templates can use lots of memory
 
 	# ADD_DEFINITIONS(-D_HAS_AUTO_PTR_ETC) # for Luabind on C++17
 
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 ELSE(MSVC)
 	ADD_DEFINITIONS(-DHAS_UNION_SEMUN)
+	# ADD_COMPILE_OPTIONS(-Wa,-mbig-obj) # sol2 templates can use lots of memory
 ENDIF(MSVC)
 
 #FreeBSD support
@@ -72,6 +69,7 @@ FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(OpenSSL)
+FIND_PACKAGE(Lua 5.1)
 FIND_PACKAGE(LuaJit)
 FIND_PACKAGE(mbedTLS)
 FIND_PACKAGE(CURL REQUIRED)
