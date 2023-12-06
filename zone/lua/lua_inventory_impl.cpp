@@ -17,7 +17,7 @@ Lua_ItemInst Lua_Inventory::GetItem(int slot_id, int bag_slot) {
 int Lua_Inventory::PutItem(int slot_id, Lua_ItemInst item) {
 	Lua_Safe_Call_Int();
 	EQ::ItemInstance *inst = item;
-	if(!inst) {
+	if (!inst) {
 		return 0;
 	}
 
@@ -27,7 +27,7 @@ int Lua_Inventory::PutItem(int slot_id, Lua_ItemInst item) {
 int Lua_Inventory::PushCursor(Lua_ItemInst item) {
 	Lua_Safe_Call_Int();
 	EQ::ItemInstance *inst = item;
-	if(!inst) {
+	if (!inst) {
 		return 0;
 	}
 

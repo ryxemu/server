@@ -39,6 +39,8 @@ SET(zone_sources
 	lua/lua_entity_list.cpp
 	lua/lua_entity_list_impl.cpp
 	lua/lua_general.cpp
+	lua/lua_general_enums.cpp
+	lua/lua_general_rule.cpp
 	lua/lua_group.cpp
 	lua/lua_group_impl.cpp
 	lua/lua_hate_list.cpp

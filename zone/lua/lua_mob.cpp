@@ -1,7 +1,6 @@
 #ifdef LUA_EQEMU
 
-#include "lua.hpp"
-#include <luabind/luabind.hpp>
+#include <sol/sol.hpp>
 
 #include "client.h"
 #include "npc.h"
@@ -1217,7 +1216,7 @@ void Lua_Mob::SetGender(int in) {
 	self->SendIllusionPacket(self->GetRace(), in);
 }
 
-void Lua_Mob::SendIllusionPacket(luabind::adl::object illusion) {
+void Lua_Mob::SendIllusionPacket(sol::table illusion) {
 	Lua_Safe_Call_Void();
 
 	if (luabind::type(illusion) != LUA_TTABLE) {
@@ -1810,7 +1809,7 @@ luabind::scope lua_register_mob() {
 	    .def("SetTexture", (void(Lua_Mob::*)(int)) & Lua_Mob::SetTexture)
 	    .def("SetRace", (void(Lua_Mob::*)(int)) & Lua_Mob::SetRace)
 	    .def("SetGender", (void(Lua_Mob::*)(int)) & Lua_Mob::SetGender)
-	    .def("SendIllusionPacket", (void(Lua_Mob::*)(luabind::adl::object)) & Lua_Mob::SendIllusionPacket)
+	    .def("SendIllusionPacket", (void(Lua_Mob::*)(sol::table)) & Lua_Mob::SendIllusionPacket)
 	    .def("GetGlobal", (std::string(Lua_Mob::*)(const char *)) & Lua_Mob::GetGlobal)
 	    .def("SetGlobal", (void(Lua_Mob::*)(const char *, const char *, int, const char *)) & Lua_Mob::SetGlobal)
 	    .def("SetGlobal", (void(Lua_Mob::*)(const char *, const char *, int, const char *, Lua_Mob)) & Lua_Mob::SetGlobal)

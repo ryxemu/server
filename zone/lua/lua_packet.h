@@ -7,10 +7,6 @@
 
 class EQApplicationPacket;
 
-namespace luabind {
-struct scope;
-}
-
 luabind::scope lua_register_packet();
 luabind::scope lua_register_packet_opcodes();
 

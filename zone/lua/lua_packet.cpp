@@ -1,8 +1,6 @@
 #ifdef LUA_EQEMU
 
-#include "lua.hpp"
-#include <luabind/luabind.hpp>
-#include <luabind/object.hpp>
+#include <sol/sol.hpp>
 
 #include "masterentity.h"
 #include "lua_packet.h"

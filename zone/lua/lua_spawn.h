@@ -7,10 +7,6 @@
 class Spawn2;
 class Lua_NPC;
 
-namespace luabind {
-struct scope;
-}
-
 luabind::scope lua_register_spawn();
 
 class Lua_Spawn : public Lua_Ptr<Spawn2> {

@@ -1,7 +1,6 @@
 #ifdef LUA_EQEMU
 
-#include "lua.hpp"
-#include <luabind/luabind.hpp>
+#include <sol/sol.hpp>
 
 #include "spawn2.h"
 #include "lua_npc.h"

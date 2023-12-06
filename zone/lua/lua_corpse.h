@@ -6,12 +6,7 @@
 
 class Corpse;
 class Lua_Client;
-
-namespace luabind {
-struct scope;
-}
-
-luabind::scope lua_register_corpse();
+struct Lua_Corpse_Loot_List;
 
 class Lua_Corpse : public Lua_Mob {
 	typedef Corpse NativeType;
@@ -37,12 +32,13 @@ class Lua_Corpse : public Lua_Mob {
 	bool Save();
 	void Delete();
 	void Bury();
-	void MoveToGraveyard();
 	void Depop();
 	uint32 CountItems();
-	void AddItem(uint32 itemnum, int8 charges, int16 slot);
+	void AddItem(uint32 itemnum, uint16 charges, int16 slot, uint32 aug1, uint32 aug2, uint32 aug3, uint32 aug4, uint32 aug5);
 	uint32 GetWornItem(int16 equipSlot);
 	void RemoveItem(uint16 lootslot);
+	void RemoveItemByID(uint32 item_id);
+	void RemoveItemByID(uint32 item_id, int quantity);
 	void SetCash(uint32 copper, uint32 silver, uint32 gold, uint32 platinum);
 	void RemoveCash();
 	bool IsEmpty();
@@ -55,6 +51,11 @@ class Lua_Corpse : public Lua_Mob {
 	uint32 GetGold();
 	uint32 GetPlatinum();
 	void AddLooter(Lua_Mob who);
+	bool HasItem(uint32 item_id);
+	uint16 CountItem(uint32 item_id);
+	uint32 GetItemIDBySlot(uint16 loot_slot);
+	uint16 GetFirstSlotByItemID(uint32 item_id);
+	Lua_Corpse_Loot_List GetLootList();
 };
 
 #endif

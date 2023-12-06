@@ -6,10 +6,6 @@
 
 struct ItemData;
 
-namespace luabind {
-struct scope;
-}
-
 luabind::scope lua_register_item();
 
 class Lua_Item : public Lua_Ptr<const EQ::ItemData> {

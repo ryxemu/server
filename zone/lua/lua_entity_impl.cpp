@@ -85,44 +85,44 @@ int Lua_Entity::GetID() {
 
 Lua_Client Lua_Entity::CastToClient() {
 	void *d = GetLuaPtrData();
-	Client *m = reinterpret_cast<Client *>(d);
+	Client *m = reinterpret_cast<Client*>(d);
 	return Lua_Client(m);
 }
 
 Lua_NPC Lua_Entity::CastToNPC() {
 	void *d = GetLuaPtrData();
-	NPC *m = reinterpret_cast<NPC *>(d);
+	NPC *m = reinterpret_cast<NPC*>(d);
 	return Lua_NPC(m);
 }
 
 Lua_Mob Lua_Entity::CastToMob() {
 	void *d = GetLuaPtrData();
-	Mob *m = reinterpret_cast<Mob *>(d);
+	Mob *m = reinterpret_cast<Mob*>(d);
 	return Lua_Mob(m);
 }
 
 Lua_Corpse Lua_Entity::CastToCorpse() {
 	void *d = GetLuaPtrData();
-	Corpse *m = reinterpret_cast<Corpse *>(d);
+	Corpse *m = reinterpret_cast<Corpse*>(d);
 	return Lua_Corpse(m);
 }
 
 Lua_Object Lua_Entity::CastToObject() {
 	void *d = GetLuaPtrData();
-	Object *m = reinterpret_cast<Object *>(d);
+	Object *m = reinterpret_cast<Object*>(d);
 	return Lua_Object(m);
 }
 
 Lua_Door Lua_Entity::CastToDoor() {
 	void *d = GetLuaPtrData();
-	Doors *m = reinterpret_cast<Doors *>(d);
+	Doors *m = reinterpret_cast<Doors*>(d);
 	return Lua_Door(m);
 }
 
 #ifdef BOTS
 Lua_Bot Lua_Entity::CastToBot() {
 	void *d = GetLuaPtrData();
-	Bot *b = reinterpret_cast<Bot *>(d);
+	Bot *b = reinterpret_cast<Bot*>(d);
 	return Lua_Bot(b);
 }
 #endif

@@ -2,34 +2,33 @@
 #define EQEMU_LUA_HATE_LIST_H
 #ifdef LUA_EQEMU
 
+#include <sol/sol.hpp>
 #include "lua_ptr.h"
 
 class Lua_Mob;
-struct tHateEntry;
+struct struct_HateList;
 
-luabind::scope lua_register_hate_entry();
-luabind::scope lua_register_hate_list();
-
-class Lua_HateEntry : public Lua_Ptr<tHateEntry> {
-	typedef tHateEntry NativeType;
+class Lua_HateEntry : public Lua_Ptr<struct_HateList> {
+	typedef struct_HateList NativeType;
 
    public:
 	Lua_HateEntry() : Lua_Ptr(nullptr) {}
-	Lua_HateEntry(tHateEntry *d) : Lua_Ptr(d) {}
+	Lua_HateEntry(struct_HateList *d) : Lua_Ptr(d) {}
 	virtual ~Lua_HateEntry() {}
 
 	Lua_Mob GetEnt();
 	void SetEnt(Lua_Mob e);
-	int GetDamage();
-	void SetDamage(int value);
-	int GetHate();
-	void SetHate(int value);
+	int64 GetDamage();
+	void SetDamage(int64 value);
+	int64 GetHate();
+	void SetHate(int64 value);
 	int GetFrenzy();
 	void SetFrenzy(bool value);
 };
 
 struct Lua_HateList {
 	std::vector<Lua_HateEntry> entries;
+	sol::as_table_t<std::vector<Lua_HateEntry>> get_entries() { return sol::as_table(entries); }
 };
 
 #endif

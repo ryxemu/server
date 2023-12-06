@@ -7,12 +7,6 @@
 class Doors;
 class Lua_Mob;
 
-namespace luabind {
-struct scope;
-}
-
-luabind::scope lua_register_door();
-
 class Lua_Door : public Lua_Entity {
 	typedef Doors NativeType;
 
@@ -49,13 +43,15 @@ class Lua_Door : public Lua_Entity {
 	uint32 GetIncline();
 	void SetOpenType(uint32 type);
 	uint32 GetOpenType();
+	void SetDisableTimer(bool flag);
+	bool GetDisableTimer();
 	void SetLockPick(uint32 pick);
 	uint32 GetLockPick();
 	void SetKeyItem(uint32 key);
 	uint32 GetKeyItem();
-	uint32 GetAltKeyItem();
 	void SetNoKeyring(int type);
 	int GetNoKeyring();
+	void CreateDatabaseEntry();
 	void ForceOpen(Lua_Mob sender);
 	void ForceOpen(Lua_Mob sender, bool alt_mode);
 	void ForceClose(Lua_Mob sender);

@@ -9,10 +9,6 @@ class Lua_Mob;
 class Lua_NPC;
 class Lua_Client;
 
-namespace luabind {
-struct scope;
-}
-
 luabind::scope lua_register_npc();
 
 class Lua_NPC : public Lua_Mob {

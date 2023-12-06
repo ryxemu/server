@@ -1,8 +1,6 @@
 #ifdef LUA_EQEMU
 
-#include "lua.hpp"
-#include <luabind/luabind.hpp>
-#include <luabind/object.hpp>
+#include <sol/sol.hpp>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -117,7 +115,7 @@ extern Zone *zone;
 
 struct lua_registered_event {
 	std::string encounter_name;
-	luabind::adl::object lua_reference;
+	sol::table lua_reference;
 	QuestEventID event_id;
 };
 
@@ -259,7 +257,7 @@ int LuaParser::EventGlobalNPC(QuestEventID evt, NPC *npc, Mob *init, std::string
 }
 
 int LuaParser::_EventNPC(std::string package_name, QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
-                         std::vector<std::any> *extra_pointers, luabind::adl::object *l_func) {
+                         std::vector<std::any> *extra_pointers, sol::table *l_func) {
 	const char *sub_name = LuaEvents[evt];
 
 	int start = lua_gettop(L);
@@ -277,7 +275,7 @@ int LuaParser::_EventNPC(std::string package_name, QuestEventID evt, NPC *npc, M
 		lua_createtable(L, 0, 0);
 		// always push self
 		Lua_NPC l_npc(npc);
-		luabind::adl::object l_npc_o = luabind::adl::object(L, l_npc);
+		sol::table l_npc_o = sol::table(L, l_npc);
 		l_npc_o.push(L);
 		lua_setfield(L, -2, "self");
 
@@ -354,7 +352,7 @@ int LuaParser::EventGlobalPlayer(QuestEventID evt, Client *client, std::string d
 }
 
 int LuaParser::_EventPlayer(std::string package_name, QuestEventID evt, Client *client, std::string data, uint32 extra_data,
-                            std::vector<std::any> *extra_pointers, luabind::adl::object *l_func) {
+                            std::vector<std::any> *extra_pointers, sol::table *l_func) {
 	const char *sub_name = LuaEvents[evt];
 	int start = lua_gettop(L);
 
@@ -371,7 +369,7 @@ int LuaParser::_EventPlayer(std::string package_name, QuestEventID evt, Client *
 		lua_createtable(L, 0, 0);
 		// push self
 		Lua_Client l_client(client);
-		luabind::adl::object l_client_o = luabind::adl::object(L, l_client);
+		sol::table l_client_o = sol::table(L, l_client);
 		l_client_o.push(L);
 		lua_setfield(L, -2, "self");
 
@@ -433,7 +431,7 @@ int LuaParser::EventItem(QuestEventID evt, Client *client, EQ::ItemInstance *ite
 }
 
 int LuaParser::_EventItem(std::string package_name, QuestEventID evt, Client *client, EQ::ItemInstance *item, Mob *mob,
-                          std::string data, uint32 extra_data, std::vector<std::any> *extra_pointers, luabind::adl::object *l_func) {
+                          std::string data, uint32 extra_data, std::vector<std::any> *extra_pointers, sol::table *l_func) {
 	const char *sub_name = LuaEvents[evt];
 
 	int start = lua_gettop(L);
@@ -450,12 +448,12 @@ int LuaParser::_EventItem(std::string package_name, QuestEventID evt, Client *cl
 		lua_createtable(L, 0, 0);
 		// always push self
 		Lua_ItemInst l_item(item);
-		luabind::adl::object l_item_o = luabind::adl::object(L, l_item);
+		sol::table l_item_o = sol::table(L, l_item);
 		l_item_o.push(L);
 		lua_setfield(L, -2, "self");
 
 		Lua_Client l_client(client);
-		luabind::adl::object l_client_o = luabind::adl::object(L, l_client);
+		sol::table l_client_o = sol::table(L, l_client);
 		l_client_o.push(L);
 		lua_setfield(L, -2, "owner");
 
@@ -513,7 +511,7 @@ int LuaParser::EventSpell(QuestEventID evt, NPC *npc, Client *client, uint32 spe
 }
 
 int LuaParser::_EventSpell(std::string package_name, QuestEventID evt, NPC *npc, Client *client, uint32 spell_id, uint32 extra_data,
-                           std::vector<std::any> *extra_pointers, luabind::adl::object *l_func) {
+                           std::vector<std::any> *extra_pointers, sol::table *l_func) {
 	const char *sub_name = LuaEvents[evt];
 
 	int start = lua_gettop(L);
@@ -533,11 +531,11 @@ int LuaParser::_EventSpell(std::string package_name, QuestEventID evt, NPC *npc,
 		// always push self even if invalid
 		if (IsValidSpell(spell_id)) {
 			Lua_Spell l_spell(&spells[spell_id]);
-			luabind::adl::object l_spell_o = luabind::adl::object(L, l_spell);
+			sol::table l_spell_o = sol::table(L, l_spell);
 			l_spell_o.push(L);
 		} else {
 			Lua_Spell l_spell(nullptr);
-			luabind::adl::object l_spell_o = luabind::adl::object(L, l_spell);
+			sol::table l_spell_o = sol::table(L, l_spell);
 			l_spell_o.push(L);
 		}
 		lua_setfield(L, -2, "self");

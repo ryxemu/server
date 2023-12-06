@@ -9,13 +9,6 @@ struct Lua_HateList;
 class Lua_Item;
 class Lua_ItemInst;
 
-namespace luabind {
-struct scope;
-namespace adl {
-class object;
-}
-}  // namespace luabind
-
 luabind::scope lua_register_mob();
 luabind::scope lua_register_special_abilities();
 
@@ -272,7 +265,7 @@ class Lua_Mob : public Lua_Entity {
 	void SetTexture(int in);
 	void SetRace(int in);
 	void SetGender(int in);
-	void SendIllusionPacket(luabind::adl::object illusion);
+	void SendIllusionPacket(sol::table illusion);
 	std::string GetGlobal(const char *varname);
 	void SetGlobal(const char *varname, const char *newvalue, int options, const char *duration);
 	void SetGlobal(const char *varname, const char *newvalue, int options, const char *duration, Lua_Mob other);
