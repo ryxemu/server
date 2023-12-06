@@ -434,27 +434,44 @@ void EmuTCPConnection::ClearBuffers() {
 }
 
 void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
-#if TCPC_DEBUG >= 1
-	struct in_addr in;
-	in.s_addr = GetrIP();
-	std::cout "NetError: '";
-	if (reason)
-		std::cout << reason;
-	std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
-#endif
-	auto pack = new ServerPacket(0);
-	pack->size = 1;
-	if (reason != nullptr)
-		pack->size += strlen(reason) + 1;
-	pack->pBuffer = new uchar[pack->size];
-	memset(pack->pBuffer, 0, pack->size);
-	pack->pBuffer[0] = 255;
-	if (reason != nullptr)
-		strcpy((char*)&pack->pBuffer[1], reason);
-	else
-		strcpy((char*)&pack->pBuffer[1], "unknown");
-	SendPacket(pack);
-	safe_delete(pack);
+    #if TCPC_DEBUG >= 1
+        struct in_addr in;
+        in.s_addr = GetrIP();
+        std::cout << "NetError: '";
+        if (reason)
+            std::cout << reason;
+        std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
+    #endif
+
+    auto pack = new ServerPacket(0);
+    pack->size = 1;
+
+    if (reason != nullptr)
+        pack->size += strlen(reason) + 1;
+
+    // Allocate memory for pBuffer
+    pack->pBuffer = new uchar[pack->size];
+    memset(pack->pBuffer, 0, pack->size);
+    pack->pBuffer[0] = 255;
+
+    if (reason != nullptr) {
+        size_t remainingSpace = pack->size - 1;
+        size_t reasonLength = strlen(reason);
+
+        if (reasonLength < remainingSpace) {
+            strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+            pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
+        } else {
+            strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+            pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
+        }
+    } else {
+        strncpy((char*)&pack->pBuffer[1], "unknown", pack->size - 1);
+        pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
+    }
+
+    SendPacket(pack);
+    safe_delete(pack);
 }
 
 void EmuTCPConnection::RemoveRelay(EmuTCPConnection* relay, bool iSendRelayDisconnect) {

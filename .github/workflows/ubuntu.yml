@@ -3,6 +3,8 @@ name: ubuntu-22.04
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   BUILD_TYPE: Release
@@ -16,7 +18,8 @@ jobs:
       with:
         submodules: true
     - run: make set-version
-    - uses: actions/cache@v3
+    - uses: actions/cache/restore@v3
+      id: restore-cache
       with:
         path: |
           ${{github.workspace}}/build/
@@ -28,13 +31,15 @@ jobs:
 
     - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - uses: actions/cache/save@v3
+      if: github.ref == 'refs/heads/main'
       with:
         path: |
           ${{github.workspace}}/build/
           !${{github.workspace}}/build/bin
-        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
     - name: Archive Release
+      if: github.ref == 'refs/heads/main'
       uses: thedoctor0/zip-release@main
       with:
         path: './build/bin/'

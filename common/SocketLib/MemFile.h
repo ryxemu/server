@@ -1,7 +1,3 @@
-/** \file MemFile.h
- **	\date  2005-04-25
- **	\author grymse@alhem.net
- **/
 /*
 Copyright (C) 2004,2005  Anders Hedstrom
 
@@ -31,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _MEMFILE_H
 
 #include <map>
+#include <string>
 #include "IFile.h"
 
 #define BLOCKSIZE 32768
@@ -39,51 +36,48 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace SOCKETS_NAMESPACE {
 #endif
 
-/** Implements a memory file.
-    \ingroup file */
 class MemFile : public IFile {
-   public:
-	/** File block structure.
-	    \ingroup file */
-	struct block_t {
-		block_t() : next(nullptr) {}
-		struct block_t *next;
-		char data[BLOCKSIZE];
-	};
+public:
+    MemFile();
+    MemFile(const std::string &path);
+    ~MemFile();
 
-   public:
-	MemFile();
-	MemFile(const std::string &path);
-	~MemFile();
+    bool fopen(const std::string &path, const std::string &mode);
+    void fclose();
 
-	bool fopen(const std::string &path, const std::string &mode);
-	void fclose();
+    size_t fread(char *ptr, size_t size, size_t nmemb);
+    size_t fwrite(const char *ptr, size_t size, size_t nmemb);
 
-	size_t fread(char *ptr, size_t size, size_t nmemb);
-	size_t fwrite(const char *ptr, size_t size, size_t nmemb);
+    char *fgets(char *s, int size);
+    void fprintf(char *format, ...);
 
-	char *fgets(char *s, int size);
-	void fprintf(char *format, ...);
+    off_t size();
+    bool eof();
 
-	off_t size();
-	bool eof();
+private:
+    struct block_t {
+        block_t() : next(nullptr) {}
+        struct block_t *next;
+        char data[BLOCKSIZE];
+    };
 
-   private:
-	MemFile(const MemFile &) {}                            // copy constructor
-	MemFile &operator=(const MemFile &) { return *this; }  // assignment operator
+    MemFile(const MemFile &) = delete; // Disable copy constructor
+    MemFile &operator=(const MemFile &) = delete; // Disable assignment operator
 
-	static std::map<std::string, block_t *> m_files;
-	std::string m_path;
-	bool m_temporary;
-	block_t *m_base;
-	block_t *m_current_read;
-	block_t *m_current_write;
-	size_t m_read_ptr;
-	size_t m_write_ptr;
+    void resetPointers();
+
+    static std::map<std::string, block_t *> m_files;
+    std::string m_path;
+    bool m_temporary;
+    block_t *m_base;
+    block_t *m_current_read;
+    block_t *m_current_write;
+    size_t m_read_ptr;
+    size_t m_write_ptr;
 };
 
 #ifdef SOCKETS_NAMESPACE
 }
 #endif
 
-#endif  // _MEMFILE_H
+#endif // _MEMFILE_H
