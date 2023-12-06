@@ -17,6 +17,15 @@
 	},
 	"C_Cpp.default.includePath": [
 		"/usr/include/x86_64-linux-gnu",
+		"${workspaceFolder}/dependencies/cereal",
+		"${workspaceFolder}/dependencies/curl_x64",
+		"${workspaceFolder}/dependencies/fmt",
+		"${workspaceFolder}/dependencies/glm",
+		"${workspaceFolder}/dependencies/libuv",
+		"${workspaceFolder}/dependencies/recastnavigation",
+		"${workspaceFolder}/dependencies/sol2",
+		"${workspaceFolder}/dependencies/websocketpp",
+		"${workspaceFolder}/dependencies/zlibng"
 	],
 	"telemetry.enableTelemetry": false,
 	"cmake.buildDirectory": "${workspaceFolder}/build",
