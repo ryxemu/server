@@ -1,5 +1,5 @@
 #include <sol/sol.hpp>
-#include "../common/rulesys.h"
+#include "../../common/rulesys.h"
 
 int get_rulei(int rule) {
 	return RuleManager::Instance()->GetIntRule((RuleManager::IntType)rule);
@@ -18,17 +18,17 @@ void lua_register_rules_const(sol::state_view &sv) {
 	                 {
 #define RULE_INT(cat, rule, default_value, notes) \
 	{#rule, RuleManager::Int__##rule},
-#include "../common/ruletypes.h"
+#include "../../common/ruletypes.h"
 	                     {"_IntRuleCount", RuleManager::_IntRuleCount},
 #undef RULE_INT
 #define RULE_REAL(cat, rule, default_value, notes) \
 	{#rule, RuleManager::Real__##rule},
-#include "../common/ruletypes.h"
+#include "../../common/ruletypes.h"
 	                     {"_RealRuleCount", RuleManager::_RealRuleCount},
 #undef RULE_REAL
 #define RULE_BOOL(cat, rule, default_value, notes) \
 	{#rule, RuleManager::Bool__##rule},
-#include "../common/ruletypes.h"
+#include "../../common/ruletypes.h"
 	                     {"_BoolRuleCount", RuleManager::_BoolRuleCount}});
 }
 

@@ -16,12 +16,12 @@
 // #include "../dialogue_window.h"
 #include "../titles.h"
 // #include "../../common/expedition_lockout_timer.h"
-
+/*
 void Lua_Client::SendSound() {
-	Lua_Safe_Call_Void();
-	self->SendSound();
+    Lua_Safe_Call_Void();
+    self->SendSound();
 }
-
+ */
 void Lua_Client::Save() {
 	Lua_Safe_Call_Void();
 	self->Save();
@@ -31,11 +31,11 @@ void Lua_Client::Save(int commit_now) {
 	Lua_Safe_Call_Void();
 	self->Save(commit_now);
 }
-
+/*
 void Lua_Client::SaveBackup() {
-	Lua_Safe_Call_Void();
-	self->SaveBackup();
-}
+    Lua_Safe_Call_Void();
+    self->SaveBackup();
+} */
 
 bool Lua_Client::Connected() {
 	Lua_Safe_Call_Bool();
@@ -46,12 +46,12 @@ bool Lua_Client::InZone() {
 	Lua_Safe_Call_Bool();
 	return self->InZone();
 }
-
+/*
 void Lua_Client::Kick() {
-	Lua_Safe_Call_Void();
-	self->Kick("Lua Quest");
+    Lua_Safe_Call_Void();
+    self->Kick("Lua Quest");
 }
-
+ */
 void Lua_Client::Disconnect() {
 	Lua_Safe_Call_Void();
 	self->Disconnect();
@@ -66,17 +66,17 @@ void Lua_Client::WorldKick() {
 	Lua_Safe_Call_Void();
 	self->WorldKick();
 }
-
+/*
 int Lua_Client::GetAFK() {
-	Lua_Safe_Call_Int();
-	return self->GetAFK();
+    Lua_Safe_Call_Int();
+    return self->GetAFK();
 }
 
 void Lua_Client::SetAFK(uint8 afk_flag) {
-	Lua_Safe_Call_Void();
-	self->SetAFK(afk_flag);
+    Lua_Safe_Call_Void();
+    self->SetAFK(afk_flag);
 }
-
+ */
 int Lua_Client::GetAnon() {
 	Lua_Safe_Call_Int();
 	return self->GetAnon();
@@ -91,22 +91,22 @@ void Lua_Client::Duck() {
 	Lua_Safe_Call_Void();
 	self->Duck();
 }
-
+/*
 void Lua_Client::Sit() {
-	Lua_Safe_Call_Void();
-	self->Sit();
-}
-
+    Lua_Safe_Call_Void();
+    self->Sit();
+} */
+/*
 void Lua_Client::DyeArmorBySlot(uint8 slot, uint8 red, uint8 green, uint8 blue) {
-	Lua_Safe_Call_Void();
-	self->DyeArmorBySlot(slot, red, green, blue);
+    Lua_Safe_Call_Void();
+    self->DyeArmorBySlot(slot, red, green, blue);
 }
 
 void Lua_Client::DyeArmorBySlot(uint8 slot, uint8 red, uint8 green, uint8 blue, uint8 use_tint) {
-	Lua_Safe_Call_Void();
-	self->DyeArmorBySlot(slot, red, green, blue, use_tint);
+    Lua_Safe_Call_Void();
+    self->DyeArmorBySlot(slot, red, green, blue, use_tint);
 }
-
+ */
 void Lua_Client::Stand() {
 	Lua_Safe_Call_Void();
 	self->Stand();
@@ -121,11 +121,11 @@ void Lua_Client::SetPVP(bool v) {
 	Lua_Safe_Call_Void();
 	self->SetPVP(v);
 }
-
+/*
 void Lua_Client::SendToGuildHall() {
-	Lua_Safe_Call_Void();
-	self->SendToGuildHall();
-}
+    Lua_Safe_Call_Void();
+    self->SendToGuildHall();
+} */
 
 bool Lua_Client::GetPVP() {
 	Lua_Safe_Call_Bool();
@@ -171,12 +171,12 @@ int Lua_Client::GetLanguageSkill(int skill_id) {
 	Lua_Safe_Call_Int();
 	return self->GetLanguageSkill(skill_id);
 }
-
+/*
 int Lua_Client::GetLDoNPointsTheme(int theme) {
-	Lua_Safe_Call_Int();
-	return self->GetLDoNPointsTheme(theme);
+    Lua_Safe_Call_Int();
+    return self->GetLDoNPointsTheme(theme);
 }
-
+ */
 int Lua_Client::GetBaseSTR() {
 	Lua_Safe_Call_Int();
 	return self->GetBaseSTR();
@@ -226,22 +226,23 @@ uint32 Lua_Client::GetAAExp() {
 	Lua_Safe_Call_Int();
 	return self->GetAAXP();
 }
-
+/*
 uint32 Lua_Client::GetAAPercent() {
-	Lua_Safe_Call_Int();
-	return self->GetAAPercent();
-}
-
+    Lua_Safe_Call_Int();
+    return self->GetAAPercent();
+} */
+/*
 uint32 Lua_Client::GetTotalSecondsPlayed() {
-	Lua_Safe_Call_Int();
-	return self->GetTotalSecondsPlayed();
+    Lua_Safe_Call_Int();
+    return self->GetTotalSecondsPlayed();
 }
-
+ */
+/*
 void Lua_Client::UpdateLDoNPoints(uint32 theme_id, int points) {
-	Lua_Safe_Call_Void();
-	self->UpdateLDoNPoints(theme_id, points);
+ Lua_Safe_Call_Void();
+ self->UpdateLDoNPoints(theme_id, points);
 }
-
+*/
 void Lua_Client::SetDeity(int v) {
 	Lua_Safe_Call_Void();
 	self->SetDeity(v);
@@ -256,11 +257,11 @@ void Lua_Client::AddEXP(uint32 add_exp, int conlevel) {
 	Lua_Safe_Call_Void();
 	self->AddEXP(add_exp, conlevel);
 }
-
+/*
 void Lua_Client::AddEXP(uint32 add_exp, int conlevel, bool resexp) {
-	Lua_Safe_Call_Void();
-	self->AddEXP(add_exp, conlevel, resexp);
-}
+    Lua_Safe_Call_Void();
+    self->AddEXP(add_exp, conlevel, resexp);
+} */
 
 void Lua_Client::SetEXP(uint32 set_exp, uint32 set_aaxp) {
 	Lua_Safe_Call_Void();
@@ -276,37 +277,37 @@ void Lua_Client::SetBindPoint() {
 	Lua_Safe_Call_Void();
 	self->SetBindPoint();
 }
-
+/*
 void Lua_Client::SetBindPoint(int to_zone) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint(0, to_zone);
+    Lua_Safe_Call_Void();
+    self->SetBindPoint(0, to_zone);
 }
 
 void Lua_Client::SetBindPoint(int to_zone, int to_instance) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint(0, to_zone, to_instance);
+    Lua_Safe_Call_Void();
+    self->SetBindPoint(0, to_zone, to_instance);
 }
 
 void Lua_Client::SetBindPoint(int to_zone, int to_instance, float new_x) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, 0.0f, 0.0f));
+    Lua_Safe_Call_Void();
+    self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, 0.0f, 0.0f));
 }
 
 void Lua_Client::SetBindPoint(int to_zone, int to_instance, float new_x, float new_y) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, new_y, 0.0f));
+    Lua_Safe_Call_Void();
+    self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, new_y, 0.0f));
 }
 
 void Lua_Client::SetBindPoint(int to_zone, int to_instance, float new_x, float new_y, float new_z) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, new_y, new_z));
+    Lua_Safe_Call_Void();
+    self->SetBindPoint(0, to_zone, to_instance, glm::vec3(new_x, new_y, new_z));
 }
 
 void Lua_Client::SetBindPoint(int to_zone, int to_instance, float new_x, float new_y, float new_z, float new_heading) {
-	Lua_Safe_Call_Void();
-	self->SetBindPoint2(0, to_zone, to_instance, glm::vec4(new_x, new_y, new_z, new_heading));
+    Lua_Safe_Call_Void();
+    self->SetBindPoint2(0, to_zone, to_instance, glm::vec4(new_x, new_y, new_z, new_heading));
 }
-
+ */
 float Lua_Client::GetBindX() {
 	Lua_Safe_Call_Real();
 	return self->GetBindX();
@@ -356,21 +357,21 @@ uint32 Lua_Client::GetBindZoneID(int index) {
 	Lua_Safe_Call_Int();
 	return self->GetBindZoneID(index);
 }
-
+/*
 float Lua_Client::GetTargetRingX() {
-	Lua_Safe_Call_Real();
-	return self->GetTargetRingX();
+    Lua_Safe_Call_Real();
+    return self->GetTargetRingX();
 }
 
 float Lua_Client::GetTargetRingY() {
-	Lua_Safe_Call_Real();
-	return self->GetTargetRingY();
+    Lua_Safe_Call_Real();
+    return self->GetTargetRingY();
 }
 
 float Lua_Client::GetTargetRingZ() {
-	Lua_Safe_Call_Real();
-	return self->GetTargetRingZ();
-}
+    Lua_Safe_Call_Real();
+    return self->GetTargetRingZ();
+} */
 
 void Lua_Client::MovePC(int zone, float x, float y, float z, float heading) {
 	Lua_Safe_Call_Void();
@@ -381,61 +382,61 @@ void Lua_Client::MovePCInstance(int zone, int instance, float x, float y, float 
 	Lua_Safe_Call_Void();
 	self->MovePC(zone, instance, x, y, z, heading);
 }
-
+/*
 void Lua_Client::MoveZone(const char* zone_short_name) {
-	Lua_Safe_Call_Void();
-	self->MoveZone(zone_short_name);
+    Lua_Safe_Call_Void();
+    self->MoveZone(zone_short_name);
 }
 
 void Lua_Client::MoveZoneGroup(const char* zone_short_name) {
-	Lua_Safe_Call_Void();
-	self->MoveZoneGroup(zone_short_name);
+    Lua_Safe_Call_Void();
+    self->MoveZoneGroup(zone_short_name);
 }
 
 void Lua_Client::MoveZoneRaid(const char* zone_short_name) {
-	Lua_Safe_Call_Void();
-	self->MoveZoneRaid(zone_short_name);
+    Lua_Safe_Call_Void();
+    self->MoveZoneRaid(zone_short_name);
 }
 
 void Lua_Client::MoveZoneInstance(uint16 instance_id) {
-	Lua_Safe_Call_Void();
-	self->MoveZoneInstance(instance_id);
+    Lua_Safe_Call_Void();
+    self->MoveZoneInstance(instance_id);
 }
 
 void Lua_Client::MoveZoneInstanceGroup(uint16 instance_id) {
-	Lua_Safe_Call_Void();
-	self->MoveZoneInstanceGroup(instance_id);
+    Lua_Safe_Call_Void();
+    self->MoveZoneInstanceGroup(instance_id);
 }
 
 void Lua_Client::MoveZoneInstanceRaid(uint16 instance_id) {
-	Lua_Safe_Call_Void();
-	self->MoveZoneInstanceRaid(instance_id);
+    Lua_Safe_Call_Void();
+    self->MoveZoneInstanceRaid(instance_id);
 }
-
+ */
 void Lua_Client::ChangeLastName(std::string last_name) {
 	Lua_Safe_Call_Void();
-	self->ChangeLastName(last_name);
+	self->ChangeLastName(last_name.c_str());
 }
 
+/*
 int Lua_Client::GetFactionLevel(uint32 char_id, uint32 npc_id, uint32 race, uint32 class_, uint32 deity, uint32 faction, Lua_NPC npc) {
-	Lua_Safe_Call_Int();
-	return static_cast<int>(self->GetFactionLevel(char_id, npc_id, race, class_, deity, faction, npc));
+    Lua_Safe_Call_Int();
+    return static_cast<int>(self->GetFactionLevel(char_id, npc_id, race, class_, deity, faction, npc));
 }
-
 void Lua_Client::SetFactionLevel(uint32 char_id, uint32 npc_id, int char_class, int char_race, int char_deity) {
-	Lua_Safe_Call_Void();
-	self->SetFactionLevel(char_id, npc_id, char_class, char_race, char_deity);
+    Lua_Safe_Call_Void();
+    self->SetFactionLevel(char_id, npc_id, char_class, char_race, char_deity);
 }
 
 void Lua_Client::SetFactionLevel2(uint32 char_id, int faction_id, int char_class, int char_race, int char_deity, int value, int temp) {
-	Lua_Safe_Call_Void();
-	self->SetFactionLevel2(char_id, faction_id, char_class, char_race, char_deity, value, temp);
+    Lua_Safe_Call_Void();
+    self->SetFactionLevel2(char_id, faction_id, char_class, char_race, char_deity, value, temp);
 }
 
 void Lua_Client::RewardFaction(int id, int amount) {
-	Lua_Safe_Call_Void();
-	self->RewardFaction(id, amount);
-}
+    Lua_Safe_Call_Void();
+    self->RewardFaction(id, amount);
+} */
 
 int Lua_Client::GetRawItemAC() {
 	Lua_Safe_Call_Int();

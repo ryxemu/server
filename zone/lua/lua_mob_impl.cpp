@@ -1,7 +1,7 @@
 #include <sol/sol.hpp>
 
-#include "client.h"
-#include "npc.h"
+#include "../client.h"
+#include "../npc.h"
 #include "lua_item.h"
 #include "lua_iteminst.h"
 #include "lua_mob.h"
@@ -9,7 +9,6 @@
 #include "lua_hate_list.h"
 #include "lua_client.h"
 #include "lua_stat_bonuses.h"
-#include "dialogue_window.h"
 
 const char *Lua_Mob::GetName() {
 	Lua_Safe_Call_String();
@@ -695,9 +694,6 @@ void Lua_Mob::Message(int type, const char *message) {
 	if (RuleB(Chat, QuestDialogueUsesDialogueWindow) && self->IsClient()) {
 		std::string window_markdown = message;
 		DialogueWindow::Render(self->CastToClient(), window_markdown);
-	} else if (RuleB(Chat, AutoInjectSaylinksToClientMessage)) {
-		std::string new_message = EQ::SayLinkEngine::InjectSaylinksIfNotExist(message);
-		self->Message(type, new_message.c_str());
 	} else {
 		self->Message(type, message);
 	}

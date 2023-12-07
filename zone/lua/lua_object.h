@@ -4,8 +4,6 @@
 
 class Object;
 
-luabind::scope lua_register_object();
-
 class Lua_Object : public Lua_Entity {
 	typedef Object NativeType;
 
@@ -24,7 +22,6 @@ class Lua_Object : public Lua_Entity {
 	}
 
 	void Depop();
-	void DepopWithTimer();
 	void Repop();
 	void SetModelName(const char *name);
 	const char *GetModelName();
@@ -38,7 +35,7 @@ class Lua_Object : public Lua_Entity {
 	void SetHeading(float h);
 	void SetLocation(float x, float y, float z);
 	void SetItemID(uint32 item_id);
-	int16 GetItemID();
+	uint32 GetItemID();
 	void SetIcon(uint32 icon);
 	uint32 GetIcon();
 	void SetType(uint32 type);

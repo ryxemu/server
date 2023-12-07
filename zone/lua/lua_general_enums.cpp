@@ -2,10 +2,10 @@
 
 #include "../common.h"
 #include "../event_codes.h"
-#include "../common/faction.h"
-#include "../common/emu_constants.h"
-#include "../common/textures.h"
-#include "../common/classes.h"
+#include "../../common/faction.h"
+#include "../../common/emu_constants.h"
+#include "../../common/textures.h"
+#include "../../common/classes.h"
 
 void lua_register_events(sol::state_view &sv) {
 	sv.new_enum("Event",
@@ -46,7 +46,7 @@ void lua_register_events(sol::state_view &sv) {
 	            "target_change", static_cast<int>(EVENT_TARGET_CHANGE),
 	            "hate_list", static_cast<int>(EVENT_HATE_LIST),
 	            "spell_effect", static_cast<int>(EVENT_SPELL_EFFECT_CLIENT),
-	            "spell_buff_tic", static_cast<int>(EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT),
+	            "spell_buff_tic", static_cast<int>(EVENT_SPELL_BUFF_TIC_CLIENT),
 	            "spell_fade", static_cast<int>(EVENT_SPELL_FADE),
 	            "spell_effect_translocate_complete", static_cast<int>(EVENT_SPELL_EFFECT_TRANSLOCATE_COMPLETE),
 	            "combine_success ", static_cast<int>(EVENT_COMBINE_SUCCESS),

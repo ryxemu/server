@@ -22,12 +22,12 @@ bool Lua_Entity::IsMob() {
 	Lua_Safe_Call_Bool();
 	return self->IsMob();
 }
-
+/*
 bool Lua_Entity::IsMerc() {
-	Lua_Safe_Call_Bool();
-	return self->IsMerc();
+    Lua_Safe_Call_Bool();
+    return self->IsMerc();
 }
-
+ */
 bool Lua_Entity::IsCorpse() {
 	Lua_Safe_Call_Bool();
 	return self->IsCorpse();
@@ -66,11 +66,6 @@ bool Lua_Entity::IsBeacon() {
 bool Lua_Entity::IsEncounter() {
 	Lua_Safe_Call_Bool();
 	return self->IsEncounter();
-}
-
-bool Lua_Entity::IsBot() {
-	Lua_Safe_Call_Bool();
-	return self->IsBot();
 }
 
 int Lua_Entity::GetID() {

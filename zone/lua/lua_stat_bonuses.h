@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lua_ptr.h"
-#include "common.h"
+#include "../common.h"
 
 struct StatBonuses;
 

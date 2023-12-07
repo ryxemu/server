@@ -4,11 +4,15 @@
 #include <list>
 #include <map>
 
-#include "../common/content/world_content_service.h"
-#include "../common/timer.h"
-#include "../common/eqemu_logsys.h"
-#include "../common/classes.h"
-#include "../common/rulesys.h"
+// #include "../../common/content/world_content_service.h"
+#include "../../common/timer.h"
+#include "../../common/eqemu_logsys.h"
+#include "../../common/classes.h"
+#include "../../common/rulesys.h"
+#include "../quest_parser_collection.h"
+#include "../questmgr.h"
+#include "../qglobals.h"
+#include "../encounter.h"
 #include "lua_parser.h"
 #include "lua_item.h"
 #include "lua_iteminst.h"
@@ -17,13 +21,9 @@
 #include "lua_entity_list.h"
 #include "lua_expedition.h"
 #include "lua_spell.h"
-#include "../quest_parser_collection.h"
-#include "../questmgr.h"
-#include "../qglobals.h"
-#include "../encounter.h"
 #include "lua_encounter.h"
-//#include "../data_bucket.h"
-#include "../expedition.h"
+// #include "../data_bucket.h"
+// #include "../expedition.h"
 
 struct lua_registered_event {
 	std::string encounter_name;

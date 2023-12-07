@@ -7,8 +7,7 @@
 	"files.trimTrailingWhitespace": true,
 	"editor.formatOnSave": true,
 	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4, IncludeBlocks: Preserve, ColumnLimit: 0, SortIncludes: false}",
-	"C_Cpp.default.defines": [
-	],
+	"C_Cpp.default.defines": [],
 	"search.exclude": {
 		"dependencies": true,
 		"submodules": true,
@@ -16,6 +15,7 @@
 	},
 	"C_Cpp.default.includePath": [
 		"/usr/include/x86_64-linux-gnu",
+		"/usr/include/lua5.2",
 		"${workspaceFolder}/dependencies/cereal",
 		"${workspaceFolder}/dependencies/curl_x64",
 		"${workspaceFolder}/dependencies/fmt",

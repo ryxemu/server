@@ -2,9 +2,9 @@
 #define EQEMU_LUA_ITEM_H
 #include "lua_ptr.h"
 
+namespace EQ {
 struct ItemData;
-
-luabind::scope lua_register_item();
+}
 
 class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	typedef const EQ::ItemData NativeType;
@@ -32,11 +32,20 @@ class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	uint32 GetSlots();
 	uint32 GetPrice();
 	uint32 GetIcon();
+	int32 GetLoreGroup();
+	bool GetLoreFlag();
+	bool GetPendingLoreFlag();
+	bool GetArtifactFlag();
+	bool GetSummonedFlag();
 	int GetFVNoDrop();
+	uint32 GetFavor();
+	uint32 GetGuildFavor();
+	uint32 GetPointType();
 	int GetBagType();
 	int GetBagSlots();
 	int GetBagSize();
 	int GetBagWR();
+	bool GetBenefitFlag();
 	bool GetTradeskills();
 	int GetCR();
 	int GetDR();
@@ -79,8 +88,20 @@ class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	int GetItemType();
 	int GetMaterial();
 	double GetSellRate();
+	uint32 GetFulfilment();
 	int GetCastTime();
+	uint32 GetEliteMaterial();
 	int GetProcRate();
+	int GetCombatEffects();
+	int GetShielding();
+	int GetStunResist();
+	int GetStrikeThrough();
+	uint32 GetExtraDmgSkill();
+	uint32 GetExtraDmgAmt();
+	int GetSpellShield();
+	int GetAvoidance();
+	int GetAccuracy();
+	uint32 GetCharmFileID();
 	int GetFactionMod1();
 	int GetFactionMod2();
 	int GetFactionMod3();
@@ -89,11 +110,35 @@ class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	int GetFactionAmt2();
 	int GetFactionAmt3();
 	int GetFactionAmt4();
+	const char *GetCharmFile();
+	uint32 GetAugType();
+	int GetAugSlotType(int i);
+	int GetAugSlotVisible(int i);
+	int GetAugSlotUnk2(int i);
+	uint32 GetLDoNTheme();
+	uint32 GetLDoNPrice();
+	uint32 GetLDoNSold();
+	uint32 GetBaneDmgRaceAmt();
+	uint32 GetAugRestrict();
+	int32 GetEndur();
+	int32 GetDotShielding();
+	int32 GetAttack();
+	int32 GetRegen();
+	int32 GetManaRegen();
+	int32 GetEnduranceRegen();
+	int32 GetHaste();
+	int32 GetDamageShield();
 	uint32 GetRecastDelay();
 	uint32 GetRecastType();
+	uint32 GetAugDistiller();
+	bool GetAttuneable();
+	bool GetNoPet();
+	bool GetPotionBelt();
 	bool GetStackable();
+	bool GetNoTransfer();
 	bool GetQuestItemFlag();
 	int GetStackSize();
+	int GetPotionBeltSlots();
 	int GetClick_Effect();
 	int GetClick_Type();
 	int GetClick_Level();
@@ -121,5 +166,34 @@ class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	int GetBook();
 	uint32 GetBookType();
 	const char *GetFilename();
+	int GetSVCorruption();
+	uint32 GetPurity();
+	uint32 GetBackstabDmg();
+	uint32 GetDSMitigation();
+	int GetHeroicStr();
+	int GetHeroicInt();
+	int GetHeroicWis();
+	int GetHeroicAgi();
+	int GetHeroicDex();
+	int GetHeroicSta();
+	int GetHeroicCha();
+	int GetHeroicMR();
+	int GetHeroicFR();
+	int GetHeroicCR();
+	int GetHeroicDR();
+	int GetHeroicPR();
+	int GetHeroicSVCorrup();
+	int GetHealAmt();
+	int GetSpellDmg();
+	uint32 GetLDoNSellBackRate();
+	uint32 GetScriptFileID();
+	int GetExpendableArrow();
+	uint32 GetClairvoyance();
+	const char *GetClickName();
+	const char *GetProcName();
+	const char *GetWornName();
+	const char *GetFocusName();
+	const char *GetScrollName();
 };
+
 #endif

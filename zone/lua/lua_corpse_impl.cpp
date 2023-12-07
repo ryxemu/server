@@ -74,7 +74,7 @@ uint32 Lua_Corpse::CountItems() {
 
 void Lua_Corpse::AddItem(uint32 itemnum, uint16 charges, int16 slot, uint32 aug1, uint32 aug2, uint32 aug3, uint32 aug4, uint32 aug5) {
 	Lua_Safe_Call_Void();
-	self->AddItem(itemnum, charges, slot, aug1, aug2, aug3, aug4, aug5);
+	self->AddItem(itemnum, charges, slot);  //, aug1, aug2, aug3, aug4, aug5);
 }
 
 uint32 Lua_Corpse::GetWornItem(int16 equipSlot) {
@@ -146,33 +146,33 @@ void Lua_Corpse::AddLooter(Lua_Mob who) {
 	Lua_Safe_Call_Void();
 	self->AddLooter(who);
 }
-
+/*
 bool Lua_Corpse::HasItem(uint32 item_id) {
-	Lua_Safe_Call_Bool();
-	return self->HasItem(item_id);
+    Lua_Safe_Call_Bool();
+    return self->HasItem(item_id);
 }
 
 uint16 Lua_Corpse::CountItem(uint32 item_id) {
-	Lua_Safe_Call_Int();
-	return self->CountItem(item_id);
+    Lua_Safe_Call_Int();
+    return self->CountItem(item_id);
 }
 
 uint32 Lua_Corpse::GetItemIDBySlot(uint16 loot_slot) {
-	Lua_Safe_Call_Int();
-	return self->GetItemIDBySlot(loot_slot);
+    Lua_Safe_Call_Int();
+    return self->GetItemIDBySlot(loot_slot);
 }
 
 uint16 Lua_Corpse::GetFirstSlotByItemID(uint32 item_id) {
-	Lua_Safe_Call_Int();
-	return self->GetFirstSlotByItemID(item_id);
+    Lua_Safe_Call_Int();
+    return self->GetFirstSlotByItemID(item_id);
 }
 
 void Lua_Corpse::RemoveItemByID(uint32 item_id) {
-	Lua_Safe_Call_Void();
-	self->RemoveItemByID(item_id);
+    Lua_Safe_Call_Void();
+    self->RemoveItemByID(item_id);
 }
 
 void Lua_Corpse::RemoveItemByID(uint32 item_id, int quantity) {
-	Lua_Safe_Call_Void();
-	self->RemoveItemByID(item_id, quantity);
-}
+    Lua_Safe_Call_Void();
+    self->RemoveItemByID(item_id, quantity);
+} */

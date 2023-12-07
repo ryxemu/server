@@ -8,7 +8,7 @@
 #include <memory>
 #include <sol/forward.hpp>
 
-#include "zone_config.h"
+#include "../zone_config.h"
 
 extern const ZoneConfig *Config;
 

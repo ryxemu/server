@@ -70,52 +70,52 @@ uint32 Lua_Item::GetIcon() {
 	Lua_Safe_Call_Int();
 	return self->Icon;
 }
-
+/*
 int32 Lua_Item::GetLoreGroup() {
-	Lua_Safe_Call_Int();
-	return self->LoreGroup;
+    Lua_Safe_Call_Int();
+    return self->LoreGroup;
 }
 
 bool Lua_Item::GetLoreFlag() {
-	Lua_Safe_Call_Bool();
-	return self->LoreFlag;
+    Lua_Safe_Call_Bool();
+    return self->LoreFlag;
 }
 
 bool Lua_Item::GetPendingLoreFlag() {
-	Lua_Safe_Call_Bool();
-	return self->PendingLoreFlag;
+    Lua_Safe_Call_Bool();
+    return self->PendingLoreFlag;
 }
 
 bool Lua_Item::GetArtifactFlag() {
-	Lua_Safe_Call_Bool();
-	return self->ArtifactFlag;
+    Lua_Safe_Call_Bool();
+    return self->ArtifactFlag;
 }
 
 bool Lua_Item::GetSummonedFlag() {
-	Lua_Safe_Call_Bool();
-	return self->SummonedFlag;
+    Lua_Safe_Call_Bool();
+    return self->SummonedFlag;
 }
-
+ */
 int Lua_Item::GetFVNoDrop() {
 	Lua_Safe_Call_Int();
 	return self->FVNoDrop;
 }
-
+/*
 uint32 Lua_Item::GetFavor() {
-	Lua_Safe_Call_Int();
-	return self->Favor;
+    Lua_Safe_Call_Int();
+    return self->Favor;
 }
 
 uint32 Lua_Item::GetGuildFavor() {
-	Lua_Safe_Call_Int();
-	return self->GuildFavor;
+    Lua_Safe_Call_Int();
+    return self->GuildFavor;
 }
 
 uint32 Lua_Item::GetPointType() {
-	Lua_Safe_Call_Int();
-	return self->PointType;
+    Lua_Safe_Call_Int();
+    return self->PointType;
 }
-
+ */
 int Lua_Item::GetBagType() {
 	Lua_Safe_Call_Int();
 	return self->BagType;
@@ -135,12 +135,12 @@ int Lua_Item::GetBagWR() {
 	Lua_Safe_Call_Int();
 	return self->BagWR;
 }
-
+/*
 bool Lua_Item::GetBenefitFlag() {
-	Lua_Safe_Call_Bool();
-	return self->BenefitFlag;
+    Lua_Safe_Call_Bool();
+    return self->BenefitFlag;
 }
-
+ */
 bool Lua_Item::GetTradeskills() {
 	Lua_Safe_Call_Bool();
 	return self->Tradeskills;
@@ -360,67 +360,67 @@ int Lua_Item::GetCastTime() {
 	Lua_Safe_Call_Int();
 	return self->CastTime;
 }
-
+/*
 uint32 Lua_Item::GetEliteMaterial() {
-	Lua_Safe_Call_Int();
-	return self->EliteMaterial;
+    Lua_Safe_Call_Int();
+    return self->EliteMaterial;
 }
-
+ */
 int Lua_Item::GetProcRate() {
 	Lua_Safe_Call_Int();
 	return self->ProcRate;
 }
-
+/*
 int Lua_Item::GetCombatEffects() {
-	Lua_Safe_Call_Int();
-	return self->CombatEffects;
+    Lua_Safe_Call_Int();
+    return self->CombatEffects;
 }
 
 int Lua_Item::GetShielding() {
-	Lua_Safe_Call_Int();
-	return self->Shielding;
+    Lua_Safe_Call_Int();
+    return self->Shielding;
 }
 
 int Lua_Item::GetStunResist() {
-	Lua_Safe_Call_Int();
-	return self->StunResist;
+    Lua_Safe_Call_Int();
+    return self->StunResist;
 }
 
 int Lua_Item::GetStrikeThrough() {
-	Lua_Safe_Call_Int();
-	return self->StrikeThrough;
+    Lua_Safe_Call_Int();
+    return self->StrikeThrough;
 }
 
 uint32 Lua_Item::GetExtraDmgSkill() {
-	Lua_Safe_Call_Int();
-	return self->ExtraDmgSkill;
+    Lua_Safe_Call_Int();
+    return self->ExtraDmgSkill;
 }
 
 uint32 Lua_Item::GetExtraDmgAmt() {
-	Lua_Safe_Call_Int();
-	return self->ExtraDmgAmt;
+    Lua_Safe_Call_Int();
+    return self->ExtraDmgAmt;
 }
 
 int Lua_Item::GetSpellShield() {
-	Lua_Safe_Call_Int();
-	return self->SpellShield;
+    Lua_Safe_Call_Int();
+    return self->SpellShield;
 }
 
 int Lua_Item::GetAvoidance() {
-	Lua_Safe_Call_Int();
-	return self->Avoidance;
+    Lua_Safe_Call_Int();
+    return self->Avoidance;
 }
 
 int Lua_Item::GetAccuracy() {
-	Lua_Safe_Call_Int();
-	return self->Accuracy;
+    Lua_Safe_Call_Int();
+    return self->Accuracy;
 }
 
 uint32 Lua_Item::GetCharmFileID() {
-	Lua_Safe_Call_Int();
-	return self->CharmFileID;
+    Lua_Safe_Call_Int();
+    return self->CharmFileID;
 }
-
+ */
 int Lua_Item::GetFactionMod1() {
 	Lua_Safe_Call_Int();
 	return self->FactionMod1;
@@ -460,112 +460,112 @@ int Lua_Item::GetFactionAmt4() {
 	Lua_Safe_Call_Int();
 	return self->FactionAmt4;
 }
-
+/*
 const char *Lua_Item::GetCharmFile() {
-	Lua_Safe_Call_String();
-	return self->CharmFile;
+    Lua_Safe_Call_String();
+    return self->CharmFile;
 }
 
 uint32 Lua_Item::GetAugType() {
-	Lua_Safe_Call_Int();
-	return self->AugType;
+    Lua_Safe_Call_Int();
+    return self->AugType;
 }
 
 int Lua_Item::GetAugSlotType(int i) {
-	Lua_Safe_Call_Int();
+    Lua_Safe_Call_Int();
 
-	if (i >= 5 || i < 0) {
-		return 0;
-	}
+    if (i >= 5 || i < 0) {
+        return 0;
+    }
 
-	return self->AugSlotType[i];
+    return self->AugSlotType[i];
 }
 
 int Lua_Item::GetAugSlotVisible(int i) {
-	Lua_Safe_Call_Int();
+    Lua_Safe_Call_Int();
 
-	if (i >= 5 || i < 0) {
-		return 0;
-	}
+    if (i >= 5 || i < 0) {
+        return 0;
+    }
 
-	return self->AugSlotVisible[i];
+    return self->AugSlotVisible[i];
 }
 
 int Lua_Item::GetAugSlotUnk2(int i) {
-	Lua_Safe_Call_Int();
+    Lua_Safe_Call_Int();
 
-	if (i >= 5 || i < 0) {
-		return 0;
-	}
+    if (i >= 5 || i < 0) {
+        return 0;
+    }
 
-	return self->AugSlotUnk2[i];
+    return self->AugSlotUnk2[i];
 }
 
 uint32 Lua_Item::GetLDoNTheme() {
-	Lua_Safe_Call_Int();
-	return self->LDoNTheme;
+    Lua_Safe_Call_Int();
+    return self->LDoNTheme;
 }
 
 uint32 Lua_Item::GetLDoNPrice() {
-	Lua_Safe_Call_Int();
-	return self->LDoNPrice;
+    Lua_Safe_Call_Int();
+    return self->LDoNPrice;
 }
 
 uint32 Lua_Item::GetLDoNSold() {
-	Lua_Safe_Call_Int();
-	return self->LDoNSold;
+    Lua_Safe_Call_Int();
+    return self->LDoNSold;
 }
 
 uint32 Lua_Item::GetBaneDmgRaceAmt() {
-	Lua_Safe_Call_Int();
-	return self->BaneDmgRaceAmt;
+    Lua_Safe_Call_Int();
+    return self->BaneDmgRaceAmt;
 }
 
 uint32 Lua_Item::GetAugRestrict() {
-	Lua_Safe_Call_Int();
-	return self->AugRestrict;
+    Lua_Safe_Call_Int();
+    return self->AugRestrict;
 }
 
 int32 Lua_Item::GetEndur() {
-	Lua_Safe_Call_Int();
-	return self->Endur;
+    Lua_Safe_Call_Int();
+    return self->Endur;
 }
 
 int32 Lua_Item::GetDotShielding() {
-	Lua_Safe_Call_Int();
-	return self->DotShielding;
+    Lua_Safe_Call_Int();
+    return self->DotShielding;
 }
 
 int32 Lua_Item::GetAttack() {
-	Lua_Safe_Call_Int();
-	return self->Attack;
+    Lua_Safe_Call_Int();
+    return self->Attack;
 }
 
 int32 Lua_Item::GetRegen() {
-	Lua_Safe_Call_Int();
-	return self->Regen;
+    Lua_Safe_Call_Int();
+    return self->Regen;
 }
 
 int32 Lua_Item::GetManaRegen() {
-	Lua_Safe_Call_Int();
-	return self->ManaRegen;
+    Lua_Safe_Call_Int();
+    return self->ManaRegen;
 }
 
 int32 Lua_Item::GetEnduranceRegen() {
-	Lua_Safe_Call_Int();
-	return self->EnduranceRegen;
+    Lua_Safe_Call_Int();
+    return self->EnduranceRegen;
 }
 
 int32 Lua_Item::GetHaste() {
-	Lua_Safe_Call_Int();
-	return self->Haste;
+    Lua_Safe_Call_Int();
+    return self->Haste;
 }
 
 int32 Lua_Item::GetDamageShield() {
-	Lua_Safe_Call_Int();
-	return self->DamageShield;
+    Lua_Safe_Call_Int();
+    return self->DamageShield;
 }
-
+ */
 uint32 Lua_Item::GetRecastDelay() {
 	Lua_Safe_Call_Int();
 	return self->RecastDelay;
@@ -575,37 +575,37 @@ uint32 Lua_Item::GetRecastType() {
 	Lua_Safe_Call_Int();
 	return self->RecastType;
 }
-
+/*
 uint32 Lua_Item::GetAugDistiller() {
-	Lua_Safe_Call_Int();
-	return self->AugDistiller;
+    Lua_Safe_Call_Int();
+    return self->AugDistiller;
 }
 
 bool Lua_Item::GetAttuneable() {
-	Lua_Safe_Call_Bool();
-	return self->Attuneable;
+    Lua_Safe_Call_Bool();
+    return self->Attuneable;
 }
 
 bool Lua_Item::GetNoPet() {
-	Lua_Safe_Call_Bool();
-	return self->NoPet;
+    Lua_Safe_Call_Bool();
+    return self->NoPet;
 }
 
 bool Lua_Item::GetPotionBelt() {
-	Lua_Safe_Call_Bool();
-	return self->PotionBelt;
+    Lua_Safe_Call_Bool();
+    return self->PotionBelt;
 }
-
+ */
 bool Lua_Item::GetStackable() {
 	Lua_Safe_Call_Bool();
 	return self->Stackable;
 }
-
+/*
 bool Lua_Item::GetNoTransfer() {
-	Lua_Safe_Call_Bool();
-	return self->NoTransfer;
+    Lua_Safe_Call_Bool();
+    return self->NoTransfer;
 }
-
+ */
 bool Lua_Item::GetQuestItemFlag() {
 	Lua_Safe_Call_Bool();
 	return self->QuestItemFlag;
@@ -615,12 +615,12 @@ int Lua_Item::GetStackSize() {
 	Lua_Safe_Call_Int();
 	return self->StackSize;
 }
-
+/*
 int Lua_Item::GetPotionBeltSlots() {
-	Lua_Safe_Call_Int();
-	return self->PotionBeltSlots;
+    Lua_Safe_Call_Int();
+    return self->PotionBeltSlots;
 }
-
+ */
 int Lua_Item::GetClick_Effect() {
 	Lua_Safe_Call_Int();
 	return self->Click.Effect;
@@ -755,143 +755,143 @@ const char *Lua_Item::GetFilename() {
 	Lua_Safe_Call_String();
 	return self->Filename;
 }
-
+/*
 int Lua_Item::GetSVCorruption() {
-	Lua_Safe_Call_Int();
-	return self->SVCorruption;
+    Lua_Safe_Call_Int();
+    return self->SVCorruption;
 }
 
 uint32 Lua_Item::GetPurity() {
-	Lua_Safe_Call_Int();
-	return self->Purity;
+    Lua_Safe_Call_Int();
+    return self->Purity;
 }
 
 uint32 Lua_Item::GetBackstabDmg() {
-	Lua_Safe_Call_Int();
-	return self->BackstabDmg;
+    Lua_Safe_Call_Int();
+    return self->BackstabDmg;
 }
 
 uint32 Lua_Item::GetDSMitigation() {
-	Lua_Safe_Call_Int();
-	return self->DSMitigation;
+    Lua_Safe_Call_Int();
+    return self->DSMitigation;
 }
 
 int Lua_Item::GetHeroicStr() {
-	Lua_Safe_Call_Int();
-	return self->HeroicStr;
+    Lua_Safe_Call_Int();
+    return self->HeroicStr;
 }
 
 int Lua_Item::GetHeroicInt() {
-	Lua_Safe_Call_Int();
-	return self->HeroicInt;
+    Lua_Safe_Call_Int();
+    return self->HeroicInt;
 }
 
 int Lua_Item::GetHeroicWis() {
-	Lua_Safe_Call_Int();
-	return self->HeroicWis;
+    Lua_Safe_Call_Int();
+    return self->HeroicWis;
 }
 
 int Lua_Item::GetHeroicAgi() {
-	Lua_Safe_Call_Int();
-	return self->HeroicAgi;
+    Lua_Safe_Call_Int();
+    return self->HeroicAgi;
 }
 
 int Lua_Item::GetHeroicDex() {
-	Lua_Safe_Call_Int();
-	return self->HeroicDex;
+    Lua_Safe_Call_Int();
+    return self->HeroicDex;
 }
 
 int Lua_Item::GetHeroicSta() {
-	Lua_Safe_Call_Int();
-	return self->HeroicSta;
+    Lua_Safe_Call_Int();
+    return self->HeroicSta;
 }
 
 int Lua_Item::GetHeroicCha() {
-	Lua_Safe_Call_Int();
-	return self->HeroicCha;
+    Lua_Safe_Call_Int();
+    return self->HeroicCha;
 }
 
 int Lua_Item::GetHeroicMR() {
-	Lua_Safe_Call_Int();
-	return self->HeroicMR;
+    Lua_Safe_Call_Int();
+    return self->HeroicMR;
 }
 
 int Lua_Item::GetHeroicFR() {
-	Lua_Safe_Call_Int();
-	return self->HeroicFR;
+    Lua_Safe_Call_Int();
+    return self->HeroicFR;
 }
 
 int Lua_Item::GetHeroicCR() {
-	Lua_Safe_Call_Int();
-	return self->HeroicCR;
+    Lua_Safe_Call_Int();
+    return self->HeroicCR;
 }
 
 int Lua_Item::GetHeroicDR() {
-	Lua_Safe_Call_Int();
-	return self->HeroicDR;
+    Lua_Safe_Call_Int();
+    return self->HeroicDR;
 }
 
 int Lua_Item::GetHeroicPR() {
-	Lua_Safe_Call_Int();
-	return self->HeroicPR;
+    Lua_Safe_Call_Int();
+    return self->HeroicPR;
 }
 
 int Lua_Item::GetHeroicSVCorrup() {
-	Lua_Safe_Call_Int();
-	return self->HeroicSVCorrup;
+    Lua_Safe_Call_Int();
+    return self->HeroicSVCorrup;
 }
 
 int Lua_Item::GetHealAmt() {
-	Lua_Safe_Call_Int();
-	return self->HealAmt;
+    Lua_Safe_Call_Int();
+    return self->HealAmt;
 }
 
 int Lua_Item::GetSpellDmg() {
-	Lua_Safe_Call_Int();
-	return self->SpellDmg;
+    Lua_Safe_Call_Int();
+    return self->SpellDmg;
 }
 
 uint32 Lua_Item::GetLDoNSellBackRate() {
-	Lua_Safe_Call_Int();
-	return self->LDoNSellBackRate;
+    Lua_Safe_Call_Int();
+    return self->LDoNSellBackRate;
 }
 
 uint32 Lua_Item::GetScriptFileID() {
-	Lua_Safe_Call_Int();
-	return self->ScriptFileID;
+    Lua_Safe_Call_Int();
+    return self->ScriptFileID;
 }
 
 int Lua_Item::GetExpendableArrow() {
-	Lua_Safe_Call_Int();
-	return self->ExpendableArrow;
+    Lua_Safe_Call_Int();
+    return self->ExpendableArrow;
 }
 
 uint32 Lua_Item::GetClairvoyance() {
-	Lua_Safe_Call_Int();
-	return self->Clairvoyance;
+    Lua_Safe_Call_Int();
+    return self->Clairvoyance;
 }
 
 const char *Lua_Item::GetClickName() {
-	Lua_Safe_Call_String();
-	return self->ClickName;
+    Lua_Safe_Call_String();
+    return self->ClickName;
 }
 
 const char *Lua_Item::GetProcName() {
-	Lua_Safe_Call_String();
-	return self->ProcName;
+    Lua_Safe_Call_String();
+    return self->ProcName;
 }
 
 const char *Lua_Item::GetWornName() {
-	Lua_Safe_Call_String();
-	return self->WornName;
+    Lua_Safe_Call_String();
+    return self->WornName;
 }
 
 const char *Lua_Item::GetFocusName() {
-	Lua_Safe_Call_String();
-	return self->FocusName;
+    Lua_Safe_Call_String();
+    return self->FocusName;
 }
 
 const char *Lua_Item::GetScrollName() {
-	Lua_Safe_Call_String();
-	return self->ScrollName;
-}
+    Lua_Safe_Call_String();
+    return self->ScrollName;
+} */

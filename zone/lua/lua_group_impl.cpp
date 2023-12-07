@@ -100,13 +100,13 @@ Lua_Mob Lua_Group::GetMember(int index) {
 
 	return self->members[index];
 }
-
+/*
 bool Lua_Group::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name) {
-	Lua_Safe_Call_Bool();
-	return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name);
+    Lua_Safe_Call_Bool();
+    return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name);
 }
 
 bool Lua_Group::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count) {
-	Lua_Safe_Call_Bool();
-	return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name, max_check_count);
-}
+    Lua_Safe_Call_Bool();
+    return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name, max_check_count);
+} */

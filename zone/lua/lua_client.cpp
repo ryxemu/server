@@ -1,9 +1,10 @@
-
-#include <sol/forward.hpp>
+#include <sol/sol.hpp>
 
 #include "../client.h"
-#include "../guild_mgr.h"
+// #include "dynamic_zone.h"
+// #include "expedition_request.h"
 #include "lua_client.h"
+#include "lua_expedition.h"
 #include "lua_npc.h"
 #include "lua_item.h"
 #include "lua_iteminst.h"
@@ -11,9 +12,12 @@
 #include "lua_group.h"
 #include "lua_raid.h"
 #include "lua_packet.h"
+#include "../titles.h"
+// #include "../../common/expedition_lockout_timer.h"
 
 void lua_register_client(sol::state_view &sv) {
-	auto client = sv.new_usertype<Lua_Client>("Client", sol::constructors<Lua_Client()>(), sol::base_classes, sol::bases<Lua_Mob, Lua_Entity>());
+	auto client = sv.new_usertype<Lua_Client>("Client", sol::constructors<Lua_Client()>(), sol::base_classes,
+	                                          sol::bases<Lua_Mob, Lua_Entity>());
 	client["AccountID"] = (uint32(Lua_Client::*)(void)) & Lua_Client::AccountID;
 	client["AccountName"] = (const char *(Lua_Client::*)(void)) & Lua_Client::AccountName;
 	client["AddAAPoints"] = (void(Lua_Client::*)(int)) & Lua_Client::AddAAPoints;
@@ -77,8 +81,8 @@ void lua_register_client(sol::state_view &sv) {
 	client["DeleteItemInInventory"] =
 	    sol::overload((void(Lua_Client::*)(int, int)) & Lua_Client::DeleteItemInInventory,
 	                  (void(Lua_Client::*)(int, int, bool)) & Lua_Client::DeleteItemInInventory);
-	//client["DiaWind"] = (void(Lua_Client::*)(std::string)) & Lua_Client::DialogueWindow;
-	//client["DialogueWindow"] = (void(Lua_Client::*)(std::string)) & Lua_Client::DialogueWindow;
+	// client["DiaWind"] = (void(Lua_Client::*)(std::string)) & Lua_Client::DialogueWindow;
+	// client["DialogueWindow"] = (void(Lua_Client::*)(std::string)) & Lua_Client::DialogueWindow;
 	client["DisableAreaEndRegen"] = &Lua_Client::DisableAreaEndRegen;
 	client["DisableAreaHPRegen"] = &Lua_Client::DisableAreaHPRegen;
 	client["DisableAreaManaRegen"] = &Lua_Client::DisableAreaManaRegen;
@@ -484,15 +488,6 @@ void lua_register_client(sol::state_view &sv) {
 	client["UpdateTaskActivity"] = (void(Lua_Client::*)(int, int, int)) & Lua_Client::UpdateTaskActivity;
 	client["UseDiscipline"] = (bool(Lua_Client::*)(int, int)) & Lua_Client::UseDiscipline;
 	client["WorldKick"] = (void(Lua_Client::*)(void)) & Lua_Client::WorldKick;
-}
-
-luabind::scope lua_register_inventory_where() {
-	return luabind::class_<InventoryWhere>("InventoryWhere")
-	    .enum_("constants")
-	        [luabind::value("Personal", static_cast<int>(invWherePersonal)),
-	         luabind::value("Bank", static_cast<int>(invWhereBank)),
-	         luabind::value("Trading", static_cast<int>(invWhereTrading)),
-	         luabind::value("Cursor", static_cast<int>(invWhereCursor))];
 }
 
 void lua_register_inventory_where(sol::state_view &sv) {

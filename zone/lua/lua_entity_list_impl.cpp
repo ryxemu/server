@@ -45,11 +45,11 @@ Lua_NPC Lua_EntityList::GetNPCByNPCTypeID(int npc_type) {
 	Lua_Safe_Call_Class(Lua_NPC);
 	return Lua_NPC(self->GetNPCByNPCTypeID(npc_type));
 }
-
+/*
 Lua_NPC Lua_EntityList::GetNPCBySpawnID(uint32 spawn_id) {
-	Lua_Safe_Call_Class(Lua_NPC);
-	return Lua_NPC(self->GetNPCBySpawnID(spawn_id));
-}
+    Lua_Safe_Call_Class(Lua_NPC);
+    return Lua_NPC(self->GetNPCBySpawnID(spawn_id));
+} */
 
 Lua_Client Lua_EntityList::GetClientByName(const char *name) {
 	Lua_Safe_Call_Class(Lua_Client);
@@ -156,10 +156,10 @@ Lua_Spawn Lua_EntityList::GetSpawnByID(uint32 id) {
 	return self->GetSpawnByID(id);
 }
 
-void Lua_EntityList::ClearClientPetitionQueue() {
-	Lua_Safe_Call_Void();
-	self->ClearClientPetitionQueue();
-}
+/* void Lua_EntityList::ClearClientPetitionQueue() {
+    Lua_Safe_Call_Void();
+    self->ClearClientPetitionQueue();
+} */
 
 bool Lua_EntityList::CanAddHateForMob(Lua_Mob p) {
 	Lua_Safe_Call_Bool();
@@ -183,39 +183,34 @@ void Lua_EntityList::MessageStatus(uint32 guild_dbid, int min_status, uint32 typ
 void Lua_EntityList::MessageClose(Lua_Mob sender, bool skip_sender, float dist, uint32 type, const char *message) {
 	Lua_Safe_Call_Void();
 
-	if (RuleB(Chat, AutoInjectSaylinksToClientMessage)) {
-		std::string new_message = EQ::SayLinkEngine::InjectSaylinksIfNotExist(message);
-		self->MessageClose(sender, skip_sender, dist, type, new_message.c_str());
-	} else {
-		self->MessageClose(sender, skip_sender, dist, type, message);
-	}
+	self->MessageClose(sender, skip_sender, dist, type, message);
 }
-
+/*
 void Lua_EntityList::FilteredMessageClose(Lua_Mob sender, bool skip_sender, float dist, uint32 type, int filter, const char *message) {
-	Lua_Safe_Call_Void();
-	self->FilteredMessageClose(sender, skip_sender, dist, type, (eqFilterType)filter, message);
-}
+    Lua_Safe_Call_Void();
+    self->FilteredMessageClose(sender, skip_sender, dist, type, (eqFilterType)filter, message);
+} */
 
 void Lua_EntityList::RemoveFromTargets(Lua_Mob mob) {
 	Lua_Safe_Call_Void();
 	self->RemoveFromTargets(mob);
 }
-
+/*
 void Lua_EntityList::RemoveFromTargets(Lua_Mob mob, bool RemoveFromXTargets) {
-	Lua_Safe_Call_Void();
-	self->RemoveFromTargets(mob, RemoveFromXTargets);
+    Lua_Safe_Call_Void();
+    self->RemoveFromTargets(mob, RemoveFromXTargets);
 }
-
+ */
 void Lua_EntityList::ReplaceWithTarget(Lua_Mob target, Lua_Mob new_target) {
 	Lua_Safe_Call_Void();
 	self->ReplaceWithTarget(target, new_target);
 }
-
-void Lua_EntityList::OpenDoorsNear(Lua_Mob opener) {
-	Lua_Safe_Call_Void();
-	self->OpenDoorsNear(opener);
+/*
+void Lua_EntityList::OpenDoorsNear(Lua_NPC opener) {
+    Lua_Safe_Call_Void();
+    self->OpenDoorsNear(opener);
 }
-
+ */
 std::string Lua_EntityList::MakeNameUnique(const char *name) {
 	Lua_Safe_Call_String();
 
@@ -301,23 +296,23 @@ void Lua_EntityList::ChannelMessage(Lua_Mob from, int channel_num, int language,
 	Lua_Safe_Call_Void();
 	self->ChannelMessage(from, channel_num, language, message);
 }
-
+/*
 Lua_Mob Lua_EntityList::GetRandomMob(float x, float y, float z, float distance) {
-	Lua_Safe_Call_Class(Lua_Mob);
-	return self->GetRandomMob(glm::vec3(x, y, z), distance);
+    Lua_Safe_Call_Class(Lua_Mob);
+    return self->GetRandomMob(glm::vec3(x, y, z), distance);
 }
 
 Lua_Mob Lua_EntityList::GetRandomMob(float x, float y, float z, float distance, Lua_Mob exclude_mob) {
-	Lua_Safe_Call_Class(Lua_Mob);
-	return self->GetRandomMob(glm::vec3(x, y, z), distance, exclude_mob);
+    Lua_Safe_Call_Class(Lua_Mob);
+    return self->GetRandomMob(glm::vec3(x, y, z), distance, exclude_mob);
 }
 
 Lua_NPC Lua_EntityList::GetRandomNPC(float x, float y, float z, float distance) {
-	Lua_Safe_Call_Class(Lua_NPC);
-	return self->GetRandomNPC(glm::vec3(x, y, z), distance);
+    Lua_Safe_Call_Class(Lua_NPC);
+    return self->GetRandomNPC(glm::vec3(x, y, z), distance);
 }
 
 Lua_NPC Lua_EntityList::GetRandomNPC(float x, float y, float z, float distance, Lua_NPC exclude_npc) {
-	Lua_Safe_Call_Class(Lua_NPC);
-	return self->GetRandomNPC(glm::vec3(x, y, z), distance, exclude_npc);
-}
+    Lua_Safe_Call_Class(Lua_NPC);
+    return self->GetRandomNPC(glm::vec3(x, y, z), distance, exclude_npc);
+} */

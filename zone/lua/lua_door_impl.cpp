@@ -104,17 +104,17 @@ uint32 Lua_Door::GetOpenType() {
 	Lua_Safe_Call_Int();
 	return self->GetOpenType();
 }
-
+/*
 void Lua_Door::SetDisableTimer(bool flag) {
-	Lua_Safe_Call_Void();
-	self->SetDisableTimer(flag);
+    Lua_Safe_Call_Void();
+    self->SetDisableTimer(flag);
 }
 
 bool Lua_Door::GetDisableTimer() {
-	Lua_Safe_Call_Bool();
-	return self->GetDisableTimer();
+    Lua_Safe_Call_Bool();
+    return self->GetDisableTimer();
 }
-
+ */
 void Lua_Door::SetLockPick(uint32 pick) {
 	Lua_Safe_Call_Void();
 	self->SetLockpick(pick);
@@ -144,12 +144,12 @@ int Lua_Door::GetNoKeyring() {
 	Lua_Safe_Call_Int();
 	return self->GetNoKeyring();
 }
-
+/*
 void Lua_Door::CreateDatabaseEntry() {
-	Lua_Safe_Call_Void();
-	self->CreateDatabaseEntry();
+    Lua_Safe_Call_Void();
+    self->CreateDatabaseEntry();
 }
-
+ */
 void Lua_Door::ForceOpen(Lua_Mob sender) {
 	Lua_Safe_Call_Void();
 	self->ForceOpen(sender);

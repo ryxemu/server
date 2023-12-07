@@ -1,21 +1,28 @@
 #ifndef EQEMU_LUA_PACKET_H
 #define EQEMU_LUA_PACKET_H
 #include "lua_ptr.h"
-#include "../common/types.h"
+#include "../../common/types.h"
 
 class EQApplicationPacket;
 
-class Lua_Packet : public Lua_Ptr<EQApplicationPacket>
-{
+class Lua_Packet : public Lua_Ptr<EQApplicationPacket> {
 	typedef EQApplicationPacket NativeType;
-public:
-	Lua_Packet() : Lua_Ptr(nullptr), owned_(false) { }
-	Lua_Packet(EQApplicationPacket *d) : Lua_Ptr(d), owned_(false) { }
+
+   public:
+	Lua_Packet() : Lua_Ptr(nullptr), owned_(false) {}
+	Lua_Packet(EQApplicationPacket* d) : Lua_Ptr(d), owned_(false) {}
 	Lua_Packet(int opcode, int size);
 	Lua_Packet(int opcode, int size, bool raw);
 	Lua_Packet& operator=(const Lua_Packet& o);
 	Lua_Packet(const Lua_Packet& o);
-	virtual ~Lua_Packet() { if(owned_) { EQApplicationPacket *ptr = GetLuaPtrData(); if(ptr) { delete ptr; } } }
+	virtual ~Lua_Packet() {
+		if (owned_) {
+			EQApplicationPacket* ptr = GetLuaPtrData();
+			if (ptr) {
+				delete ptr;
+			}
+		}
+	}
 
 	int GetSize();
 	int GetOpcode();
@@ -53,7 +60,7 @@ public:
 		return reinterpret_cast<EQApplicationPacket*>(GetLuaPtrData());
 	}
 
-private:
+   private:
 	bool owned_;
 };
 

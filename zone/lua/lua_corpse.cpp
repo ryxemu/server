@@ -10,17 +10,17 @@ struct Lua_Corpse_Loot_List {
 	sol::as_table_t<std::vector<uint32>> get_entries() { return sol::as_table(entries); }
 };
 
-Lua_Corpse_Loot_List Lua_Corpse::GetLootList() {
-	Lua_Safe_Call_Class(Lua_Corpse_Loot_List);
-	Lua_Corpse_Loot_List ret;
-	auto loot_list = self->GetLootList();
+/* Lua_Corpse_Loot_List Lua_Corpse::GetLootList() {
+    Lua_Safe_Call_Class(Lua_Corpse_Loot_List);
+    Lua_Corpse_Loot_List ret;
+    auto loot_list = self->GetLootList();
 
-	for (auto item_id : loot_list) {
-		ret.entries.push_back(item_id);
-	}
+    for (auto item_id : loot_list) {
+        ret.entries.push_back(item_id);
+    }
 
-	return ret;
-}
+    return ret;
+} */
 
 void lua_register_corpse(sol::state_view &sv) {
 	auto corpse = sv.new_usertype<Lua_Corpse>("Corpse", sol::constructors<Lua_Corpse()>(), sol::base_classes,

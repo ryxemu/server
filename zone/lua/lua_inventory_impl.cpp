@@ -32,12 +32,12 @@ int Lua_Inventory::PushCursor(Lua_ItemInst item) {
 
 	return self->PushCursor(*inst);
 }
-
+/*
 bool Lua_Inventory::SwapItem(int source_slot, int destination_slot) {
-	Lua_Safe_Call_Bool();
-	EQ::InventoryProfile::SwapItemFailState fail_state = EQ::InventoryProfile::swapInvalid;
-	return self->SwapItem(source_slot, destination_slot, fail_state);
-}
+    Lua_Safe_Call_Bool();
+    EQ::InventoryProfile::SwapItemFailState fail_state = EQ::InventoryProfile::swapInvalid;
+    return self->SwapItem(source_slot, destination_slot, fail_state);
+} */
 
 bool Lua_Inventory::DeleteItem(int slot_id) {
 	Lua_Safe_Call_Bool();
@@ -93,16 +93,16 @@ int Lua_Inventory::HasItemByUse(int use, uint8 quantity, uint8 where) {
 	Lua_Safe_Call_Int();
 	return self->HasItemByUse(use, quantity, where);
 }
-
+/*
 int Lua_Inventory::HasItemByLoreGroup(uint32 loregroup) {
-	Lua_Safe_Call_Int();
-	return self->HasItemByLoreGroup(loregroup);
+    Lua_Safe_Call_Int();
+    return self->HasItemByLoreGroup(loregroup);
 }
 
 int Lua_Inventory::HasItemByLoreGroup(uint32 loregroup, int where) {
-	Lua_Safe_Call_Int();
-	return self->HasItemByLoreGroup(loregroup, where);
-}
+    Lua_Safe_Call_Int();
+    return self->HasItemByLoreGroup(loregroup, where);
+} */
 
 int Lua_Inventory::FindFreeSlot(bool for_bag, bool try_cursor) {
 	Lua_Safe_Call_Int();
@@ -158,23 +158,23 @@ int Lua_Inventory::GetSlotByItemInst(Lua_ItemInst inst) {
 	Lua_Safe_Call_Int();
 	return self->GetSlotByItemInst(inst);
 }
-
+/*
 int Lua_Inventory::CountAugmentEquippedByID(uint32 item_id) {
-	Lua_Safe_Call_Int();
-	return self->CountAugmentEquippedByID(item_id);
+    Lua_Safe_Call_Int();
+    return self->CountAugmentEquippedByID(item_id);
 }
 
 bool Lua_Inventory::HasAugmentEquippedByID(uint32 item_id) {
-	Lua_Safe_Call_Bool();
-	return self->HasAugmentEquippedByID(item_id);
+    Lua_Safe_Call_Bool();
+    return self->HasAugmentEquippedByID(item_id);
 }
 
 int Lua_Inventory::CountItemEquippedByID(uint32 item_id) {
-	Lua_Safe_Call_Int();
-	return self->CountItemEquippedByID(item_id);
+    Lua_Safe_Call_Int();
+    return self->CountItemEquippedByID(item_id);
 }
 
 bool Lua_Inventory::HasItemEquippedByID(uint32 item_id) {
-	Lua_Safe_Call_Bool();
-	return self->HasItemEquippedByID(item_id);
-}
+    Lua_Safe_Call_Bool();
+    return self->HasItemEquippedByID(item_id);
+} */

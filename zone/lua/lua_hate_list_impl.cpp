@@ -1,5 +1,5 @@
 #include "../masterentity.h"
-#include "hate_list.h"
+#include "../hate_list.h"
 #include "lua_mob.h"
 #include "lua_hate_list.h"
 
