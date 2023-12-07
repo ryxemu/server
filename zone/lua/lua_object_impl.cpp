@@ -1,6 +1,11 @@
 #include "../object.h"
 #include "lua_object.h"
 
+int Lua_Object::GetID() {
+	Lua_Safe_Call_Int();
+	return self->GetID();
+}
+/*
 void Lua_Object::Depop() {
 	Lua_Safe_Call_Void();
 	self->Depop();
@@ -113,10 +118,7 @@ void Lua_Object::SetID(int user) {
 	self->SetID(user);
 }
 
-int Lua_Object::GetID() {
-	Lua_Safe_Call_Int();
-	return self->GetID();
-}
+
 
 bool Lua_Object::Save() {
 	Lua_Safe_Call_Int();
@@ -171,4 +173,4 @@ void Lua_Object::SetEntityVariable(const char *name, const char *value) {
 bool Lua_Object::EntityVariableExists(const char *name) {
 	Lua_Safe_Call_Int();
 	return self->EntityVariableExists(name);
-}
+} */

@@ -126,7 +126,7 @@ bool Client::CheckLoreConflict(const EQ::ItemData* item) {
 		return false;
 
 	if (item->Lore[0] == '*')  // Standard lore items; look everywhere except unused, return the result
-		return (m_inv.HasItem(item->ID, 0, ~invWhereUnused) != INVALID_INDEX);
+		return (m_inv.HasItem(item->ID, 0, ~invWhereSharedBank) != INVALID_INDEX);
 
 	else if (item->Lore[0] == '#')
 		return (m_inv.HasArtifactItem() != INVALID_INDEX);

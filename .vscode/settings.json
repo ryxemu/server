@@ -16,6 +16,7 @@
 	"C_Cpp.default.includePath": [
 		"/usr/include/x86_64-linux-gnu",
 		"/usr/include/lua5.2",
+		"/usr/include/mariadb",
 		"${workspaceFolder}/dependencies/cereal",
 		"${workspaceFolder}/dependencies/curl_x64",
 		"${workspaceFolder}/dependencies/fmt",

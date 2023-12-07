@@ -16,17 +16,17 @@ bool get_ruleb(int rule) {
 void lua_register_rules_const(sol::state_view &sv) {
 	sv.new_enum<int>("Rule",
 	                 {
-#define RULE_INT(cat, rule, default_value, notes) \
+#define RULE_INT(cat, rule, default_value) \
 	{#rule, RuleManager::Int__##rule},
 #include "../../common/ruletypes.h"
 	                     {"_IntRuleCount", RuleManager::_IntRuleCount},
 #undef RULE_INT
-#define RULE_REAL(cat, rule, default_value, notes) \
+#define RULE_REAL(cat, rule, default_value) \
 	{#rule, RuleManager::Real__##rule},
 #include "../../common/ruletypes.h"
 	                     {"_RealRuleCount", RuleManager::_RealRuleCount},
 #undef RULE_REAL
-#define RULE_BOOL(cat, rule, default_value, notes) \
+#define RULE_BOOL(cat, rule, default_value) \
 	{#rule, RuleManager::Bool__##rule},
 #include "../../common/ruletypes.h"
 	                     {"_BoolRuleCount", RuleManager::_BoolRuleCount}});

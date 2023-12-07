@@ -27,14 +27,14 @@ public:
 		return reinterpret_cast<EQ::InventoryProfile*>(GetLuaPtrData());
 	}
 
-	Lua_ItemInst GetItem(int slot_id);
+	bool CheckNoDrop(int slot_id);
+	/* Lua_ItemInst GetItem(int slot_id);
 	Lua_ItemInst GetItem(int slot_id, int bag_slot);
 	int PutItem(int slot_id, Lua_ItemInst item);
 	int PushCursor(Lua_ItemInst item);
 	bool SwapItem(int source_slot, int destination_slot);
 	bool DeleteItem(int slot_id);
 	bool DeleteItem(int slot_id, int quantity);
-	bool CheckNoDrop(int slot_id);
 	int CountAugmentEquippedByID(uint32 item_id);
 	int CountItemEquippedByID(uint32 item_id);
 	Lua_ItemInst PopItem(int slot_id);
@@ -59,6 +59,6 @@ public:
 	int CalcMaterialFromSlot(int equipslot);
 	bool CanItemFitInContainer(Lua_Item item, Lua_Item container);
 	bool SupportsContainers(int slot_id);
-	int GetSlotByItemInst(Lua_ItemInst inst);
+	int GetSlotByItemInst(Lua_ItemInst inst); */
 };
 #endif

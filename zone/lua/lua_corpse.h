@@ -21,7 +21,7 @@ class Lua_Corpse : public Lua_Mob {
 
 	uint32 GetCharID();
 	uint32 GetDecayTime();
-	void Lock();
+	/* void Lock();
 	void UnLock();
 	bool IsLocked();
 	void ResetLooter();
@@ -54,7 +54,7 @@ class Lua_Corpse : public Lua_Mob {
 	uint16 CountItem(uint32 item_id);
 	uint32 GetItemIDBySlot(uint16 loot_slot);
 	uint16 GetFirstSlotByItemID(uint32 item_id);
-	Lua_Corpse_Loot_List GetLootList();
+	Lua_Corpse_Loot_List GetLootList(); */
 };
 
 #endif

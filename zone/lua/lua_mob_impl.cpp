@@ -14,7 +14,7 @@ const char *Lua_Mob::GetName() {
 	Lua_Safe_Call_String();
 	return self->GetName();
 }
-
+/*
 void Lua_Mob::Depop() {
 	Lua_Safe_Call_Void();
 	return self->Depop();
@@ -2200,4 +2200,4 @@ void Lua_Mob::SetBuffDuration(int spell_id) {
 void Lua_Mob::SetBuffDuration(int spell_id, int duration) {
 	Lua_Safe_Call_Void();
 	self->SetBuffDuration(spell_id, duration);
-}
+} */

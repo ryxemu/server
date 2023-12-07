@@ -4,7 +4,7 @@ int32 Lua_StatBonuses::GetAC() const {
 	Lua_Safe_Call_Int();
 	return self->AC;
 }
-
+/*
 int64 Lua_StatBonuses::GetHP() const {
 	Lua_Safe_Call_Int();
 	return self->HP;
@@ -1278,4 +1278,4 @@ uint8 Lua_StatBonuses::GetAssassinateLevel(int idx) const {
 int32 Lua_StatBonuses::GetReduceTradeskillFail(int idx) const {
 	Lua_Safe_Call_Int();
 	return self->ReduceTradeskillFail[idx];
-}
+} */

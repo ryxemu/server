@@ -12,7 +12,7 @@ uint32 Lua_Corpse::GetDecayTime() {
 	return self->GetDecayTime();
 }
 
-void Lua_Corpse::Lock() {
+/* void Lua_Corpse::Lock() {
 	Lua_Safe_Call_Void();
 	self->Lock();
 }
@@ -146,7 +146,7 @@ void Lua_Corpse::AddLooter(Lua_Mob who) {
 	Lua_Safe_Call_Void();
 	self->AddLooter(who);
 }
-/*
+
 bool Lua_Corpse::HasItem(uint32 item_id) {
     Lua_Safe_Call_Bool();
     return self->HasItem(item_id);

@@ -18,7 +18,8 @@ public:
 		return reinterpret_cast<Raid*>(GetLuaPtrData());
 	}
 
-	bool IsRaidMember(const char *name);
+	int GetID();
+	/* bool IsRaidMember(const char *name);
 	void CastGroupSpell(Lua_Mob caster, int spell_id, uint32 group_id);
 	int GroupCount(uint32 group_id);
 	int RaidCount();
@@ -37,10 +38,9 @@ public:
 	Lua_Client GetClientByIndex(int index);
 	void TeleportGroup(Lua_Mob sender, uint32 zone_id, uint32 instance_id, float x, float y, float z, float h, uint32 group_id);
 	void TeleportRaid(Lua_Mob sender, uint32 zone_id, uint32 instance_id, float x, float y, float z, float h);
-	int GetID();
 	Lua_Client GetMember(int index);
 	int GetGroupNumber(int index);
 	bool DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name);
-	bool DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count);
+	bool DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count); */
 };
 #endif

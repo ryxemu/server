@@ -33,6 +33,13 @@ Lua_ItemInst::Lua_ItemInst(const Lua_ItemInst& o) {
 	}
 }
 
+
+uint32 Lua_ItemInst::GetID() {
+	Lua_Safe_Call_Int();
+	return self->GetID();
+}
+
+/*
 bool Lua_ItemInst::IsType(int item_class) {
 	Lua_Safe_Call_Bool();
 	return self->IsType(static_cast<EQ::item::ItemClass>(item_class));
@@ -116,11 +123,6 @@ bool Lua_ItemInst::IsWeapon() {
 bool Lua_ItemInst::IsAmmo() {
 	Lua_Safe_Call_Bool();
 	return self->IsAmmo();
-}
-
-uint32 Lua_ItemInst::GetID() {
-	Lua_Safe_Call_Int();
-	return self->GetID();
 }
 
 uint32 Lua_ItemInst::GetItemScriptID() {
@@ -266,4 +268,4 @@ bool Lua_ItemInst::ContainsAugmentByID(uint32 item_id) {
 int Lua_ItemInst::CountAugmentByID(uint32 item_id) {
 	Lua_Safe_Call_Int();
 	return self->CountAugmentByID(item_id);
-}
+} */

@@ -7,13 +7,14 @@
 
 void lua_register_inventory(sol::state_view &sv) {
 	auto inventory = sv.new_usertype<Lua_Inventory>("Inventory", sol::constructors<Lua_Inventory()>());
-	inventory["CalcBagIdx"] = (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcBagIdx;
+	inventory["CheckNoDrop"] = (bool(Lua_Inventory::*)(int)) & Lua_Inventory::CheckNoDrop;
+	/* inventory["CalcBagIdx"] = (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcBagIdx;
 	inventory["CalcMaterialFromSlot"] = (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcMaterialFromSlot;
 	inventory["CalcSlotFromMaterial"] = (int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcSlotFromMaterial;
 	inventory["CalcSlotId"] = sol::overload((int(Lua_Inventory::*)(int)) & Lua_Inventory::CalcSlotId,
 	                                        (int(Lua_Inventory::*)(int, int)) & Lua_Inventory::CalcSlotId);
 	inventory["CanItemFitInContainer"] = (bool(Lua_Inventory::*)(Lua_Item, Lua_Item)) & Lua_Inventory::CanItemFitInContainer;
-	inventory["CheckNoDrop"] = (bool(Lua_Inventory::*)(int)) & Lua_Inventory::CheckNoDrop;
+
 	inventory["CountAugmentEquippedByID"] = (int(Lua_Inventory::*)(uint32)) & Lua_Inventory::CountAugmentEquippedByID;
 	inventory["CountItemEquippedByID"] = (int(Lua_Inventory::*)(uint32)) & Lua_Inventory::CountItemEquippedByID;
 	inventory["DeleteItem"] = sol::overload((bool(Lua_Inventory::*)(int)) & Lua_Inventory::DeleteItem,
@@ -42,5 +43,5 @@ void lua_register_inventory(sol::state_view &sv) {
 	inventory["PushCursor"] = (int(Lua_Inventory::*)(Lua_ItemInst)) & Lua_Inventory::PushCursor;
 	inventory["PutItem"] = (int(Lua_Inventory::*)(int, Lua_ItemInst)) & Lua_Inventory::PutItem;
 	inventory["SupportsContainers"] = (bool(Lua_Inventory::*)(int)) & Lua_Inventory::SupportsContainers;
-	inventory["SwapItem"] = (bool(Lua_Inventory::*)(int, int)) & Lua_Inventory::SwapItem;
+	inventory["SwapItem"] = (bool(Lua_Inventory::*)(int, int)) & Lua_Inventory::SwapItem; */
 }

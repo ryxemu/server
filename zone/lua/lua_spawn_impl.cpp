@@ -2,6 +2,11 @@
 #include "lua_npc.h"
 #include "lua_spawn.h"
 
+uint32 Lua_Spawn::GetID() {
+	Lua_Safe_Call_Int();
+	return self->GetID();
+}
+/*
 void Lua_Spawn::LoadGrid() {
 	Lua_Safe_Call_Void();
 	self->LoadGrid();
@@ -47,10 +52,7 @@ void Lua_Spawn::ForceDespawn() {
 	self->ForceDespawn();
 }
 
-uint32 Lua_Spawn::GetID() {
-	Lua_Safe_Call_Int();
-	return self->GetID();
-}
+
 
 float Lua_Spawn::GetX() {
 	Lua_Safe_Call_Real();
@@ -130,4 +132,4 @@ void Lua_Spawn::SetTimer(uint32 duration) {
 uint32 Lua_Spawn::GetKillCount() {
 	Lua_Safe_Call_Int();
 	return self->GetKillCount();
-}
+} */

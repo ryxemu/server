@@ -2,15 +2,6 @@
 #include "lua_mob.h"
 #include "../doors.h"
 
-void Lua_Door::SetDoorName(const char *name) {
-	Lua_Safe_Call_Void();
-	self->SetDoorName(name);
-}
-
-const char *Lua_Door::GetDoorName() {
-	Lua_Safe_Call_String();
-	return self->GetDoorName();
-}
 
 float Lua_Door::GetX() {
 	Lua_Safe_Call_Real();
@@ -25,6 +16,17 @@ float Lua_Door::GetY() {
 float Lua_Door::GetZ() {
 	Lua_Safe_Call_Real();
 	return self->GetPosition().z;
+}
+
+/*
+void Lua_Door::SetDoorName(const char *name) {
+	Lua_Safe_Call_Void();
+	self->SetDoorName(name);
+}
+
+const char *Lua_Door::GetDoorName() {
+	Lua_Safe_Call_String();
+	return self->GetDoorName();
 }
 
 float Lua_Door::GetHeading() {
@@ -104,7 +106,7 @@ uint32 Lua_Door::GetOpenType() {
 	Lua_Safe_Call_Int();
 	return self->GetOpenType();
 }
-/*
+
 void Lua_Door::SetDisableTimer(bool flag) {
     Lua_Safe_Call_Void();
     self->SetDisableTimer(flag);
@@ -114,7 +116,7 @@ bool Lua_Door::GetDisableTimer() {
     Lua_Safe_Call_Bool();
     return self->GetDisableTimer();
 }
- */
+
 void Lua_Door::SetLockPick(uint32 pick) {
 	Lua_Safe_Call_Void();
 	self->SetLockpick(pick);
@@ -144,12 +146,12 @@ int Lua_Door::GetNoKeyring() {
 	Lua_Safe_Call_Int();
 	return self->GetNoKeyring();
 }
-/*
+
 void Lua_Door::CreateDatabaseEntry() {
     Lua_Safe_Call_Void();
     self->CreateDatabaseEntry();
 }
- */
+
 void Lua_Door::ForceOpen(Lua_Mob sender) {
 	Lua_Safe_Call_Void();
 	self->ForceOpen(sender);
@@ -168,4 +170,4 @@ void Lua_Door::ForceClose(Lua_Mob sender) {
 void Lua_Door::ForceClose(Lua_Mob sender, bool alt_mode) {
 	Lua_Safe_Call_Void();
 	self->ForceClose(sender, alt_mode);
-}
+} */

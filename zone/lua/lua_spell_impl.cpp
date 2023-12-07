@@ -13,7 +13,7 @@ int Lua_Spell::GetID() {
 	Lua_Safe_Call_Int();
 	return self->id;
 }
-
+/*
 const char *Lua_Spell::GetName() {
 	Lua_Safe_Call_String();
 	return self->name;
@@ -482,4 +482,4 @@ int Lua_Spell::GetDamageShieldType() {
 int Lua_Spell::GetRank() {
 	Lua_Safe_Call_Int();
 	return self->rank;
-}
+} */

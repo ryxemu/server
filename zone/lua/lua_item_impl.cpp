@@ -6,6 +6,12 @@ Lua_Item::Lua_Item(uint32 item_id) {
 	SetLuaPtrData(t);
 }
 
+
+uint32 Lua_Item::GetID() {
+	Lua_Safe_Call_Int();
+	return self->ID;
+}
+/*
 int Lua_Item::GetMinStatus() {
 	Lua_Safe_Call_Int();
 	return self->MinStatus;
@@ -31,10 +37,6 @@ const char *Lua_Item::GetIDFile() {
 	return self->IDFile;
 }
 
-uint32 Lua_Item::GetID() {
-	Lua_Safe_Call_Int();
-	return self->ID;
-}
 
 int Lua_Item::GetWeight() {
 	Lua_Safe_Call_Int();
@@ -70,7 +72,7 @@ uint32 Lua_Item::GetIcon() {
 	Lua_Safe_Call_Int();
 	return self->Icon;
 }
-/*
+
 int32 Lua_Item::GetLoreGroup() {
     Lua_Safe_Call_Int();
     return self->LoreGroup;
@@ -95,12 +97,12 @@ bool Lua_Item::GetSummonedFlag() {
     Lua_Safe_Call_Bool();
     return self->SummonedFlag;
 }
- */
+
 int Lua_Item::GetFVNoDrop() {
 	Lua_Safe_Call_Int();
 	return self->FVNoDrop;
 }
-/*
+
 uint32 Lua_Item::GetFavor() {
     Lua_Safe_Call_Int();
     return self->Favor;
@@ -115,7 +117,7 @@ uint32 Lua_Item::GetPointType() {
     Lua_Safe_Call_Int();
     return self->PointType;
 }
- */
+
 int Lua_Item::GetBagType() {
 	Lua_Safe_Call_Int();
 	return self->BagType;
@@ -135,12 +137,12 @@ int Lua_Item::GetBagWR() {
 	Lua_Safe_Call_Int();
 	return self->BagWR;
 }
-/*
+
 bool Lua_Item::GetBenefitFlag() {
     Lua_Safe_Call_Bool();
     return self->BenefitFlag;
 }
- */
+
 bool Lua_Item::GetTradeskills() {
 	Lua_Safe_Call_Bool();
 	return self->Tradeskills;
@@ -360,17 +362,17 @@ int Lua_Item::GetCastTime() {
 	Lua_Safe_Call_Int();
 	return self->CastTime;
 }
-/*
+
 uint32 Lua_Item::GetEliteMaterial() {
     Lua_Safe_Call_Int();
     return self->EliteMaterial;
 }
- */
+
 int Lua_Item::GetProcRate() {
 	Lua_Safe_Call_Int();
 	return self->ProcRate;
 }
-/*
+
 int Lua_Item::GetCombatEffects() {
     Lua_Safe_Call_Int();
     return self->CombatEffects;
@@ -420,7 +422,7 @@ uint32 Lua_Item::GetCharmFileID() {
     Lua_Safe_Call_Int();
     return self->CharmFileID;
 }
- */
+
 int Lua_Item::GetFactionMod1() {
 	Lua_Safe_Call_Int();
 	return self->FactionMod1;
@@ -460,7 +462,7 @@ int Lua_Item::GetFactionAmt4() {
 	Lua_Safe_Call_Int();
 	return self->FactionAmt4;
 }
-/*
+
 const char *Lua_Item::GetCharmFile() {
     Lua_Safe_Call_String();
     return self->CharmFile;
@@ -565,7 +567,7 @@ int32 Lua_Item::GetDamageShield() {
     Lua_Safe_Call_Int();
     return self->DamageShield;
 }
- */
+
 uint32 Lua_Item::GetRecastDelay() {
 	Lua_Safe_Call_Int();
 	return self->RecastDelay;
@@ -575,7 +577,7 @@ uint32 Lua_Item::GetRecastType() {
 	Lua_Safe_Call_Int();
 	return self->RecastType;
 }
-/*
+
 uint32 Lua_Item::GetAugDistiller() {
     Lua_Safe_Call_Int();
     return self->AugDistiller;
@@ -595,17 +597,17 @@ bool Lua_Item::GetPotionBelt() {
     Lua_Safe_Call_Bool();
     return self->PotionBelt;
 }
- */
+
 bool Lua_Item::GetStackable() {
 	Lua_Safe_Call_Bool();
 	return self->Stackable;
 }
-/*
+
 bool Lua_Item::GetNoTransfer() {
     Lua_Safe_Call_Bool();
     return self->NoTransfer;
 }
- */
+
 bool Lua_Item::GetQuestItemFlag() {
 	Lua_Safe_Call_Bool();
 	return self->QuestItemFlag;
@@ -615,12 +617,12 @@ int Lua_Item::GetStackSize() {
 	Lua_Safe_Call_Int();
 	return self->StackSize;
 }
-/*
+
 int Lua_Item::GetPotionBeltSlots() {
     Lua_Safe_Call_Int();
     return self->PotionBeltSlots;
 }
- */
+
 int Lua_Item::GetClick_Effect() {
 	Lua_Safe_Call_Int();
 	return self->Click.Effect;
@@ -755,7 +757,7 @@ const char *Lua_Item::GetFilename() {
 	Lua_Safe_Call_String();
 	return self->Filename;
 }
-/*
+
 int Lua_Item::GetSVCorruption() {
     Lua_Safe_Call_Int();
     return self->SVCorruption;
@@ -894,4 +896,4 @@ const char *Lua_Item::GetFocusName() {
 const char *Lua_Item::GetScrollName() {
     Lua_Safe_Call_String();
     return self->ScrollName;
-} */
+}  */

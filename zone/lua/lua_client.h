@@ -23,8 +23,9 @@ class Lua_Client : public Lua_Mob {
 	operator Client*() {
 		return reinterpret_cast<Client*>(GetLuaPtrData());
 	}
-
-	void SendSound();
+	uint32 AccountID();
+	const char* AccountName();
+	/* void SendSound();
 	void Sit();
 	void Save();
 	void Save(int commit_now);
@@ -128,8 +129,7 @@ class Lua_Client : public Lua_Mob {
 	void SetFactionLevel2(uint32 char_id, int faction_id, int char_class, int char_race, int char_deity, int value, int temp);
 	void RewardFaction(int id, int amount);
 	int GetRawItemAC();
-	uint32 AccountID();
-	const char* AccountName();
+
 	int16 Admin();
 	uint32 CharacterID();
 	int GuildRank();
@@ -464,7 +464,7 @@ class Lua_Client : public Lua_Mob {
 	void CreateTaskDynamicZone(int task_id, sol::table dz_table);
 	void Fling(float value, float target_x, float target_y, float target_z);
 	void Fling(float value, float target_x, float target_y, float target_z, bool ignore_los);
-	void Fling(float value, float target_x, float target_y, float target_z, bool ignore_los, bool clipping);
+	void Fling(float value, float target_x, float target_y, float target_z, bool ignore_los, bool clipping); */
 };
 
 #endif

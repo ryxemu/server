@@ -2,6 +2,12 @@
 #include "lua_npc.h"
 #include "lua_client.h"
 
+int Lua_NPC::GetLoottableID() {
+	Lua_Safe_Call_Int();
+	return self->GetLoottableID();
+}
+
+/*
 void Lua_NPC::Signal(int id) {
 	Lua_Safe_Call_Void();
 	self->SignalNPC(id);
@@ -95,11 +101,6 @@ void Lua_NPC::RemoveCash() {
 int Lua_NPC::CountLoot() {
 	Lua_Safe_Call_Int();
 	return self->CountLoot();
-}
-
-int Lua_NPC::GetLoottableID() {
-	Lua_Safe_Call_Int();
-	return self->GetLoottableID();
 }
 
 uint32 Lua_NPC::GetCopper() {
@@ -636,4 +637,4 @@ bool Lua_NPC::IsRareSpawn() {
 void Lua_NPC::ReloadSpells() {
 	Lua_Safe_Call_Void();
 	self->ReloadSpells();
-}
+} */

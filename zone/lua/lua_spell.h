@@ -16,8 +16,8 @@ public:
 	operator const SPDat_Spell_Struct*() {
 		return reinterpret_cast<const SPDat_Spell_Struct*>(GetLuaPtrData());
 	}
-
 	int GetID();
+/*
 	const char *GetName();
 	const char *GetPlayer1();
 	const char *GetTeleportZone();
@@ -101,6 +101,6 @@ public:
 	float GetMaxDistMod();
 	float GetMinRange();
 	int GetDamageShieldType();
-	int GetRank();
+	int GetRank(); */
 };
 #endif

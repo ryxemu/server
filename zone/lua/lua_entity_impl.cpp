@@ -28,6 +28,7 @@ bool Lua_Entity::IsMerc() {
     return self->IsMerc();
 }
  */
+
 bool Lua_Entity::IsCorpse() {
 	Lua_Safe_Call_Bool();
 	return self->IsCorpse();

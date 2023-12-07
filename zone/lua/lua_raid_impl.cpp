@@ -5,6 +5,11 @@
 #include "lua_client.h"
 #include "lua_npc.h"
 
+int Lua_Raid::GetID() {
+	Lua_Safe_Call_Int();
+	return self->GetID();
+}
+/*
 bool Lua_Raid::IsRaidMember(const char *name) {
 	Lua_Safe_Call_Bool();
 	return self->IsRaidMember(name);
@@ -100,10 +105,7 @@ void Lua_Raid::TeleportRaid(Lua_Mob sender, uint32 zone_id, uint32 instance_id, 
 	self->TeleportRaid(sender, zone_id, instance_id, x, y, z, h);
 }
 
-int Lua_Raid::GetID() {
-	Lua_Safe_Call_Int();
-	return self->GetID();
-}
+
 
 Lua_Client Lua_Raid::GetMember(int index) {
 	Lua_Safe_Call_Class(Lua_Client);
@@ -133,4 +135,4 @@ bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, s
 bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count) {
 	Lua_Safe_Call_Bool();
 	return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name, max_check_count);
-}
+} */

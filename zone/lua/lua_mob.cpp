@@ -12,7 +12,8 @@
 
 void lua_register_mob(sol::state_view &sv) {
 	auto mob = sv.new_usertype<Lua_Mob>("Mob", sol::constructors<Lua_Mob()>(), sol::base_classes, sol::bases<Lua_Entity>());
-	mob["AddNimbusEffect"] = (void(Lua_Mob::*)(int)) & Lua_Mob::AddNimbusEffect;
+	mob["GetName"] = &Lua_Mob::GetName;
+	/* mob["AddNimbusEffect"] = (void(Lua_Mob::*)(int)) & Lua_Mob::AddNimbusEffect;
 	mob["AddToHateList"] =
 	    sol::overload((void(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::AddToHateList,
 	                  (void(Lua_Mob::*)(Lua_Mob, int64)) & Lua_Mob::AddToHateList,
@@ -112,36 +113,18 @@ void lua_register_mob(sol::state_view &sv) {
 	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_ItemInst, int, int)) & Lua_Mob::DoArcheryAttackDmg,
 	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_ItemInst, int, int, int)) & Lua_Mob::DoArcheryAttackDmg);
 	mob["DoKnockback"] = (void(Lua_Mob::*)(Lua_Mob, uint32, uint32)) & Lua_Mob::DoKnockback;
-	mob["DoMeleeSkillAttackDmg"] =
-	    sol::overload((void(Lua_Mob::*)(Lua_Mob, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int, int, bool)) & Lua_Mob::DoMeleeSkillAttackDmg);
-	mob["DoSpecialAttackDamage"] =
-	    sol::overload((void(Lua_Mob::*)(Lua_Mob, int, int)) & Lua_Mob::DoSpecialAttackDamage,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int)) & Lua_Mob::DoSpecialAttackDamage,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int, int)) & Lua_Mob::DoSpecialAttackDamage,
-	                  (void(Lua_Mob::*)(Lua_Mob, int, int, int, int, int)) & Lua_Mob::DoSpecialAttackDamage);
-	mob["DoThrowingAttackDmg"] = sol::overload(
-	    (void(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::DoThrowingAttackDmg,
-	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst)) & Lua_Mob::DoThrowingAttackDmg,
-	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item)) & Lua_Mob::DoThrowingAttackDmg,
-	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int)) & Lua_Mob::DoThrowingAttackDmg,
-	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int, int)) & Lua_Mob::DoThrowingAttackDmg,
-	    (void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int, int, int)) & Lua_Mob::DoThrowingAttackDmg);
+	mob["DoMeleeSkillAttackDmg"] =sol::overload((void(Lua_Mob::*)(Lua_Mob, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,(void(Lua_Mob::*)(Lua_Mob, int, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,(void(Lua_Mob::*)(Lua_Mob, int, int, int, int)) & Lua_Mob::DoMeleeSkillAttackDmg,(void(Lua_Mob::*)(Lua_Mob, int, int, int, int, bool)) & Lua_Mob::DoMeleeSkillAttackDmg);
+	mob["DoSpecialAttackDamage"] =sol::overload((void(Lua_Mob::*)(Lua_Mob, int, int)) & Lua_Mob::DoSpecialAttackDamage,(void(Lua_Mob::*)(Lua_Mob, int, int, int)) & Lua_Mob::DoSpecialAttackDamage,(void(Lua_Mob::*)(Lua_Mob, int, int, int, int)) & Lua_Mob::DoSpecialAttackDamage,(void(Lua_Mob::*)(Lua_Mob, int, int, int, int, int)) & Lua_Mob::DoSpecialAttackDamage);
+	mob["DoThrowingAttackDmg"] = sol::overload((void(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::DoThrowingAttackDmg,(void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst)) & Lua_Mob::DoThrowingAttackDmg,(void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item)) & Lua_Mob::DoThrowingAttackDmg,(void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int)) & Lua_Mob::DoThrowingAttackDmg,(void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int, int)) & Lua_Mob::DoThrowingAttackDmg,(void(Lua_Mob::*)(Lua_Mob, Lua_ItemInst, Lua_Item, int, int, int)) & Lua_Mob::DoThrowingAttackDmg);
 	mob["DoubleAggro"] = &Lua_Mob::DoubleAggro;
 	mob["Emote"] = &Lua_Mob::Emote;
 	mob["EntityVariableExists"] = (bool(Lua_Mob::*)(const char *)) & Lua_Mob::EntityVariableExists;
 	mob["FaceTarget"] = (void(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::FaceTarget;
 	mob["FindBuff"] = &Lua_Mob::FindBuff;
 	mob["FindBuffBySlot"] = (uint16(Lua_Mob::*)(int)) & Lua_Mob::FindBuffBySlot;
-	mob["FindGroundZ"] = sol::overload((double(Lua_Mob::*)(double, double)) & Lua_Mob::FindGroundZ,
-	                                   (double(Lua_Mob::*)(double, double, double)) & Lua_Mob::FindGroundZ);
-	mob["FindType"] = sol::overload((bool(Lua_Mob::*)(int)) & Lua_Mob::FindType,
-	                                (bool(Lua_Mob::*)(int, bool)) & Lua_Mob::FindType,
-	                                (bool(Lua_Mob::*)(int, bool, int)) & Lua_Mob::FindType);
-	mob["GMMove"] = sol::overload((void(Lua_Mob::*)(double, double, double)) & Lua_Mob::GMMove,
-	                              (void(Lua_Mob::*)(double, double, double, double)) & Lua_Mob::GMMove);
+	mob["FindGroundZ"] = sol::overload((double(Lua_Mob::*)(double, double)) & Lua_Mob::FindGroundZ,(double(Lua_Mob::*)(double, double, double)) & Lua_Mob::FindGroundZ);
+	mob["FindType"] = sol::overload((bool(Lua_Mob::*)(int)) & Lua_Mob::FindType,(bool(Lua_Mob::*)(int, bool)) & Lua_Mob::FindType,(bool(Lua_Mob::*)(int, bool, int)) & Lua_Mob::FindType);
+	mob["GMMove"] = sol::overload((void(Lua_Mob::*)(double, double, double)) & Lua_Mob::GMMove,(void(Lua_Mob::*)(double, double, double, double)) & Lua_Mob::GMMove);
 	mob["GetAA"] = (int(Lua_Mob::*)(int)) & Lua_Mob::GetAA;
 	mob["GetAABonuses"] = &Lua_Mob::GetAABonuses;
 	mob["GetAAByAAID"] = (int(Lua_Mob::*)(int)) & Lua_Mob::GetAAByAAID;
@@ -195,13 +178,11 @@ void lua_register_mob(sol::state_view &sv) {
 	mob["GetHandToHandDamage"] = (int(Lua_Mob::*)(void)) & Lua_Mob::GetHandToHandDamage;
 	mob["GetHandToHandDelay"] = (int(Lua_Mob::*)(void)) & Lua_Mob::GetHandToHandDelay;
 	mob["GetHaste"] = (int(Lua_Mob::*)(void)) & Lua_Mob::GetHaste;
-	mob["GetHateAmount"] = sol::overload((int64(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::GetHateAmount,
-	                                     (int64(Lua_Mob::*)(Lua_Mob, bool)) & Lua_Mob::GetHateAmount);
+	mob["GetHateAmount"] = sol::overload((int64(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::GetHateAmount,(int64(Lua_Mob::*)(Lua_Mob, bool)) & Lua_Mob::GetHateAmount);
 	mob["GetHateClosest"] = &Lua_Mob::GetHateClosest;
 	mob["GetHateDamageTop"] = (Lua_Mob(Lua_Mob::*)(Lua_Mob)) & Lua_Mob::GetHateDamageTop;
 	mob["GetHateList"] = &Lua_Mob::GetHateList;
-	mob["GetHateListByDistance"] = sol::overload((Lua_HateList(Lua_Mob::*)(int)) & Lua_Mob::GetHateListByDistance,
-	                                             (Lua_HateList(Lua_Mob::*)(void)) & Lua_Mob::GetHateListByDistance);
+	mob["GetHateListByDistance"] = sol::overload((Lua_HateList(Lua_Mob::*)(int)) & Lua_Mob::GetHateListByDistance,(Lua_HateList(Lua_Mob::*)(void)) & Lua_Mob::GetHateListByDistance);
 	mob["GetHateRandom"] = (Lua_Mob(Lua_Mob::*)(void)) & Lua_Mob::GetHateRandom;
 	mob["GetHateRandomClient"] = (Lua_Client(Lua_Mob::*)(void)) & Lua_Mob::GetHateRandomClient;
 	mob["GetHateRandomNPC"] = (Lua_NPC(Lua_Mob::*)(void)) & Lua_Mob::GetHateRandomNPC;
@@ -239,7 +220,6 @@ void lua_register_mob(sol::state_view &sv) {
 	mob["GetModSkillDmgTaken"] = (int(Lua_Mob::*)(int)) & Lua_Mob::GetModSkillDmgTaken;
 	mob["GetModVulnerability"] = (int(Lua_Mob::*)(int)) & Lua_Mob::GetModVulnerability;
 	mob["GetNPCTypeID"] = &Lua_Mob::GetNPCTypeID;
-	mob["GetName"] = &Lua_Mob::GetName;
 	mob["GetNimbusEffect1"] = (uint8(Lua_Mob::*)(void)) & Lua_Mob::GetNimbusEffect1;
 	mob["GetNimbusEffect2"] = (uint8(Lua_Mob::*)(void)) & Lua_Mob::GetNimbusEffect2;
 	mob["GetNimbusEffect3"] = (uint8(Lua_Mob::*)(void)) & Lua_Mob::GetNimbusEffect3;
@@ -497,5 +477,5 @@ void lua_register_special_abilities(sol::state_view &sv) {
 	    "immune_damage_npc", static_cast<int>(IMMUNE_DAMAGE_NPC),
 	    "immune_aggro_client", static_cast<int>(IMMUNE_AGGRO_CLIENT),
 	    "immune_aggro_npc", static_cast<int>(IMMUNE_AGGRO_NPC),
-	    "modify_avoid_damage", static_cast<int>(MODIFY_AVOID_DAMAGE));
+	    "modify_avoid_damage", static_cast<int>(MODIFY_AVOID_DAMAGE)); */
 }
