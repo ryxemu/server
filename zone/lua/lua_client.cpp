@@ -1,4 +1,3 @@
-#ifdef LUA_EQEMU
 
 #include <sol/forward.hpp>
 
@@ -500,4 +499,3 @@ void lua_register_inventory_where(sol::state_view &sv) {
 	sv.new_enum("InventoryWhere", "Personal", invWherePersonal, "Bank", invWhereBank, "SharedBank",
 	            invWhereSharedBank, "Trading", invWhereTrading, "Cursor", invWhereCursor);
 }
-#endif

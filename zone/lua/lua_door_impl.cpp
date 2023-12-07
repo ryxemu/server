@@ -1,7 +1,6 @@
-#ifdef LUA_EQEMU
 #include "lua_door.h"
 #include "lua_mob.h"
-#include "doors.h"
+#include "../doors.h"
 
 void Lua_Door::SetDoorName(const char *name) {
 	Lua_Safe_Call_Void();
@@ -170,4 +169,3 @@ void Lua_Door::ForceClose(Lua_Mob sender, bool alt_mode) {
 	Lua_Safe_Call_Void();
 	self->ForceClose(sender, alt_mode);
 }
-#endif

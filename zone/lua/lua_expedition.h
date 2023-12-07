@@ -1,7 +1,5 @@
 #ifndef EQEMU_LUA_EXPEDITION_H
 #define EQEMU_LUA_EXPEDITION_H
-#ifdef LUA_EQEMU
-
 #include <string>
 #include <sol/forward.hpp>
 #include "lua_ptr.h"
@@ -64,6 +62,4 @@ class Lua_Expedition : public Lua_Ptr<Expedition> {
 	void UpdateLockoutDuration(std::string event_name, uint32_t duration);
 	void UpdateLockoutDuration(std::string event_name, uint32_t duration, bool members_only);
 };
-
-#endif  // LUA_EQEMU
 #endif  // EQEMU_LUA_EXPEDITION_H

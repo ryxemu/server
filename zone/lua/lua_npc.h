@@ -1,15 +1,13 @@
 #ifndef EQEMU_LUA_NPC_H
 #define EQEMU_LUA_NPC_H
-#ifdef LUA_EQEMU
-
+#include <sol/forward.hpp>
 #include "lua_mob.h"
 
 class NPC;
 class Lua_Mob;
 class Lua_NPC;
 class Lua_Client;
-
-luabind::scope lua_register_npc();
+struct Lua_NPC_Loot_List;
 
 class Lua_NPC : public Lua_Mob {
 	typedef NPC NativeType;
@@ -27,10 +25,17 @@ class Lua_NPC : public Lua_Mob {
 	int CheckNPCFactionAlly(int faction);
 	void AddItem(int item_id, int charges);
 	void AddItem(int item_id, int charges, bool equip);
+	void AddItem(int item_id, int charges, bool equip, int aug1);
+	void AddItem(int item_id, int charges, bool equip, int aug1, int aug2);
+	void AddItem(int item_id, int charges, bool equip, int aug1, int aug2, int aug3);
+	void AddItem(int item_id, int charges, bool equip, int aug1, int aug2, int aug3, int aug4);
+	void AddItem(int item_id, int charges, bool equip, int aug1, int aug2, int aug3, int aug4, int aug5);
+	void AddItem(int item_id, int charges, bool equip, int aug1, int aug2, int aug3, int aug4, int aug5, int aug6);
 	void AddLootTable();
 	void AddLootTable(int id);
 	void RemoveItem(int item_id);
-	void RemoveItem(int item_id, int slot);
+	void RemoveItem(int item_id, int quantity);
+	void RemoveItem(int item_id, int quantity, int slot);
 	void ClearItemList();
 	void AddCash(int copper, int silver, int gold, int platinum);
 	void RemoveCash();
@@ -52,7 +57,7 @@ class Lua_NPC : public Lua_Mob {
 	uint32 GetSp2();
 	int GetNPCFactionID();
 	int GetPrimaryFaction();
-	int GetNPCHate(Lua_Mob ent);
+	int64 GetNPCHate(Lua_Mob ent);
 	bool IsOnHatelist(Lua_Mob ent);
 	void SetNPCFactionID(int id);
 	uint32 GetMaxDMG();
@@ -62,35 +67,33 @@ class Lua_NPC : public Lua_Mob {
 	void SetPetSpellID(int id);
 	uint32 GetMaxDamage(int level);
 	void SetTaunting(bool t);
+	bool IsTaunting();
 	void PickPocket(Lua_Client thief);
 	void StartSwarmTimer(uint32 duration);
 	void DoClassAttacks(Lua_Mob target);
 	int GetMaxWp();
-	void DisplayWaypointInfo(Lua_Client to);
+	void DisplayWaypointInfo(Lua_Client client);
 	void CalculateNewWaypoint();
 	void AssignWaypoints(int grid);
-	void RemoveWaypoints();
 	void SetWaypointPause();
 	void UpdateWaypoint(int wp);
-	void EditWaypoint(int wp, float x, float y, float z, float h, int pause, bool centerpoint);
-	void AddWaypoint(float x, float y, float z, float h, int pause, bool centerpoint);
-	void SetWanderType(int wt);
-	void SetPauseType(int pt);
 	void StopWandering();
 	void ResumeWandering();
 	void PauseWandering(int pause_time);
-	void SetNoQuestPause(bool state);
 	void MoveTo(float x, float y, float z, float h, bool save);
-	void MoveTo(float x, float y, float z, float h, bool save, uint32 delay);
-	void StopQuestMove();
-	void StopQuestMove(bool save_guard_spot);
 	void NextGuardPosition();
 	void SaveGuardSpot();
 	void SaveGuardSpot(bool clear);
-	void SetGuardSpot(float x, float y, float z, float h);
+	void SaveGuardSpot(float x, float y, float z, float heading);
 	bool IsGuarding();
-	void AI_SetRoambox(float max_x, float min_x, float max_y, float min_y);
-	void AI_SetRoambox(float max_x, float min_x, float max_y, float min_y, uint32 delay, uint32 mindelay);
+	void AI_SetRoambox(float dist, float max_x, float min_x, float max_y, float min_y);
+	void AI_SetRoambox(float dist, float max_x, float min_x, float max_y, float min_y, uint32 delay, uint32 mindelay);
+	void SetFollowID(int id);
+	void SetFollowDistance(int dist);
+	void SetFollowCanRun(bool v);
+	int GetFollowID();
+	int GetFollowDistance();
+	bool GetFollowCanRun();
 	int GetNPCSpellsID();
 	int GetSpawnPointID();
 	float GetSpawnPointX();
@@ -109,39 +112,43 @@ class Lua_NPC : public Lua_Mob {
 	void SetSwarmTarget(int target);
 	void ModifyNPCStat(const char *stat, const char *value);
 	void AddAISpell(int priority, int spell_id, int type, int mana_cost, int recast_delay, int resist_adjust);
+	void AddAISpell(int priority, int spell_id, int type, int mana_cost, int recast_delay, int resist_adjust, int min_hp, int max_hp);
 	void RemoveAISpell(int spell_id);
-	void SetCastRateDetrimental(int rate);
-	void SetCastRateBeneficial(int rate);
 	void SetSpellFocusDMG(int focus);
 	void SetSpellFocusHeal(int focus);
 	int GetSpellFocusDMG();
 	int GetSpellFocusHeal();
 	float GetSlowMitigation();
+	float GetAttackSpeed();
+	int GetAttackDelay();
 	int GetAccuracyRating();
 	int GetSpawnKillCount();
+	int GetScore();
 	void MerchantOpenShop();
 	void MerchantCloseShop();
-	void AddQuestLoot(int itemid);
-	void AddQuestLoot(int itemid, int charges);
-	void AddPetLoot(int itemid);
-	void AddPetLoot(int itemid, int charges);
-	bool GetQuestLoot(int itemid);
-	bool GetPetLoot(int itemid);
-	bool HasQuestLoot();
-	void DeleteQuestLoot();
-	void DeleteQuestLoot(int itemid1);
-	void DeleteQuestLoot(int itemid1, int itemid2);
-	void DeleteQuestLoot(int itemid1, int itemid2, int itemid3);
-	void DeleteQuestLoot(int itemid1, int itemid2, int itemid3, int itemid4);
-	bool HasRequiredQuestLoot(int itemid1, int itemid2, int itemid3, int itemid4);
-	int QuestLootCount(int itemid);
-	bool CanTalk();
-	void ForceRepop();
-	void SetNPCAggro(bool state);
-	void SetBaseHP(uint32 new_hp);
-	void SetSpawnPoint(float x, float y, float z, float h);
-	void SetClass(int classNum);
+	int GetRawAC();
+	int GetAvoidanceRating();
+	void SetSimpleRoamBox(float box_size);
+	void SetSimpleRoamBox(float box_size, float move_distance);
+	void SetSimpleRoamBox(float box_size, float move_distance, int move_delay);
+	void RecalculateSkills();
+	void ReloadSpells();
+	void ScaleNPC(uint8 npc_level);
+	bool IsRaidTarget();
+	bool IsRareSpawn();
+	void ChangeLastName(std::string last_name);
+	void ClearLastName();
+	bool HasItem(uint32 item_id);
+	uint16 CountItem(uint32 item_id);
+	uint32 GetItemIDBySlot(uint16 slot_id);
+	uint16 GetFirstSlotByItemID(uint32 item_id);
+	float GetHealScale();
+	float GetSpellScale();
+	Lua_NPC_Loot_List GetLootList();
+	void AddAISpellEffect(int spell_effect_id, int base_value, int limit_value, int max_value);
+	void RemoveAISpellEffect(int spell_effect_id);
+	bool HasAISpellEffect(int spell_effect_id);
+	float GetNPCStat(const char *identifier);
 };
 
-#endif
 #endif

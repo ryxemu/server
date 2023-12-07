@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_raid.h"
 #include "lua_entity.h"
 #include "lua_mob.h"
@@ -109,7 +108,7 @@ int Lua_Raid::GetID() {
 Lua_Client Lua_Raid::GetMember(int index) {
 	Lua_Safe_Call_Class(Lua_Client);
 
-	if(index >= 72 || index < 0) {
+	if (index >= 72 || index < 0) {
 		return Lua_Client();
 	}
 
@@ -119,22 +118,19 @@ Lua_Client Lua_Raid::GetMember(int index) {
 int Lua_Raid::GetGroupNumber(int index) {
 	Lua_Safe_Call_Int();
 
-	if(index >= 72 || index < 0 || self->members[index].GroupNumber == RAID_GROUPLESS) {
+	if (index >= 72 || index < 0 || self->members[index].GroupNumber == RAID_GROUPLESS) {
 		return -1;
 	}
 
 	return self->members[index].GroupNumber;
 }
 
-bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name)
-{
+bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name) {
 	Lua_Safe_Call_Bool();
 	return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name);
 }
 
-bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count)
-{
+bool Lua_Raid::DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count) {
 	Lua_Safe_Call_Bool();
 	return self->DoesAnyMemberHaveExpeditionLockout(expedition_name, event_name, max_check_count);
 }
-#endif

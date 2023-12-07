@@ -1,6 +1,5 @@
 #ifndef EQEMU_LUA_CORPSE_H
 #define EQEMU_LUA_CORPSE_H
-#ifdef LUA_EQEMU
 
 #include "lua_mob.h"
 
@@ -58,5 +57,4 @@ class Lua_Corpse : public Lua_Mob {
 	Lua_Corpse_Loot_List GetLootList();
 };
 
-#endif
 #endif

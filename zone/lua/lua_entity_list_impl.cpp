@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_entity_list.h"
 #include "lua_entity.h"
 #include "lua_mob.h"
@@ -11,10 +10,6 @@
 #include "lua_group.h"
 #include "lua_raid.h"
 #include "lua_spawn.h"
-
-#ifdef BOTS
-#include "lua_bot.h"
-#endif
 
 Lua_Mob Lua_EntityList::GetMobID(int id) {
 	Lua_Safe_Call_Class(Lua_Mob);
@@ -326,17 +321,3 @@ Lua_NPC Lua_EntityList::GetRandomNPC(float x, float y, float z, float distance, 
 	Lua_Safe_Call_Class(Lua_NPC);
 	return self->GetRandomNPC(glm::vec3(x, y, z), distance, exclude_npc);
 }
-
-#ifdef BOTS
-Lua_Bot Lua_EntityList::GetBotByID(uint32 bot_id) {
-	Lua_Safe_Call_Class(Lua_Bot);
-	return Lua_Bot(self->GetBotByBotID(bot_id));
-}
-
-Lua_Bot Lua_EntityList::GetBotByName(std::string bot_name) {
-	Lua_Safe_Call_Class(Lua_Bot);
-	return Lua_Bot(self->GetBotByBotName(bot_name));
-}
-#endif
-
-#endif

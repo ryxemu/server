@@ -1,8 +1,7 @@
-#ifdef LUA_EQEMU
 #include <sol/sol.hpp>
 
-#include "common.h"
-#include "event_codes.h"
+#include "../common.h"
+#include "../event_codes.h"
 #include "../common/faction.h"
 #include "../common/emu_constants.h"
 #include "../common/textures.h"
@@ -584,5 +583,3 @@ void lua_register_journal_mode(sol::state_view &sv) {
 	            "Log1", static_cast<int>(Journal::Mode::Log1),
 	            "Log2", static_cast<int>(Journal::Mode::Log2));
 }
-
-#endif

@@ -1,6 +1,5 @@
 #ifndef EQEMU_LUA_HATE_LIST_H
 #define EQEMU_LUA_HATE_LIST_H
-#ifdef LUA_EQEMU
 
 #include <sol/sol.hpp>
 #include "lua_ptr.h"
@@ -30,6 +29,4 @@ struct Lua_HateList {
 	std::vector<Lua_HateEntry> entries;
 	sol::as_table_t<std::vector<Lua_HateEntry>> get_entries() { return sol::as_table(entries); }
 };
-
-#endif
 #endif

@@ -1,11 +1,7 @@
-	#ifdef LUA_EQEMU
 #include <sol/sol.hpp>
 
 #include "client.h"
 #include "npc.h"
-#ifdef BOTS
-#include "lua_bot.h"
-#endif
 #include "lua_item.h"
 #include "lua_iteminst.h"
 #include "lua_mob.h"
@@ -212,8 +208,8 @@ void Lua_Mob::ChangeSize(double in_size, bool no_restriction) {
 }
 
 void Lua_Mob::RandomizeFeatures(bool send_illusion, bool save_variables) {
-       Lua_Safe_Call_Void();
-       self->RandomizeFeatures(send_illusion, save_variables);
+	Lua_Safe_Call_Void();
+	self->RandomizeFeatures(send_illusion, save_variables);
 }
 
 void Lua_Mob::GMMove(double x, double y, double z) {
@@ -612,7 +608,7 @@ double Lua_Mob::ResistSpell(int resist_type, int spell_id, Lua_Mob caster, bool 
 }
 
 double Lua_Mob::ResistSpell(int resist_type, int spell_id, Lua_Mob caster, bool use_resist_override, int resist_override,
-	bool charisma_check) {
+                            bool charisma_check) {
 	Lua_Safe_Call_Real();
 	return self->ResistSpell(resist_type, spell_id, caster, use_resist_override, resist_override, charisma_check);
 }
@@ -699,12 +695,10 @@ void Lua_Mob::Message(int type, const char *message) {
 	if (RuleB(Chat, QuestDialogueUsesDialogueWindow) && self->IsClient()) {
 		std::string window_markdown = message;
 		DialogueWindow::Render(self->CastToClient(), window_markdown);
-	}
-	else if (RuleB(Chat, AutoInjectSaylinksToClientMessage)) {
+	} else if (RuleB(Chat, AutoInjectSaylinksToClientMessage)) {
 		std::string new_message = EQ::SayLinkEngine::InjectSaylinksIfNotExist(message);
 		self->Message(type, new_message.c_str());
-	}
-	else {
+	} else {
 		self->Message(type, message);
 	}
 }
@@ -719,9 +713,9 @@ void Lua_Mob::Say(const char *message) {
 	self->Say(message);
 }
 
-void Lua_Mob::Say(const char* message, int language) {
+void Lua_Mob::Say(const char *message, int language) {
 	Lua_Safe_Call_Void();
-	entity_list.ChannelMessage(self, ChatChannel_Say, language, message); // these run through the client channels and probably shouldn't for NPCs, but oh well
+	entity_list.ChannelMessage(self, ChatChannel_Say, language, message);  // these run through the client channels and probably shouldn't for NPCs, but oh well
 }
 
 void Lua_Mob::QuestSay(Lua_Client client, const char *message) {
@@ -758,7 +752,7 @@ void Lua_Mob::Shout(const char *message) {
 	self->Shout(message);
 }
 
-void Lua_Mob::Shout(const char* message, int language) {
+void Lua_Mob::Shout(const char *message, int language) {
 	Lua_Safe_Call_Void();
 	entity_list.ChannelMessage(self, ChatChannel_Shout, language, message);
 }
@@ -804,19 +798,19 @@ bool Lua_Mob::CastSpell(int spell_id, int target_id, int slot, int cast_time, in
 }
 
 bool Lua_Mob::CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot, int timer,
-	int timer_duration) {
+                        int timer_duration) {
 	Lua_Safe_Call_Bool();
 	return self->CastSpell(spell_id, target_id, static_cast<EQ::spells::CastingSlot>(slot), cast_time, mana_cost, nullptr, static_cast<uint32>(item_slot),
-		static_cast<uint32>(timer), static_cast<uint32>(timer_duration));
+	                       static_cast<uint32>(timer), static_cast<uint32>(timer_duration));
 }
 
 bool Lua_Mob::CastSpell(int spell_id, int target_id, int slot, int cast_time, int mana_cost, int item_slot, int timer,
-	int timer_duration, int resist_adjust) {
+                        int timer_duration, int resist_adjust) {
 	Lua_Safe_Call_Bool();
 	int16 res = resist_adjust;
 
 	return self->CastSpell(spell_id, target_id, static_cast<EQ::spells::CastingSlot>(slot), cast_time, mana_cost, nullptr, static_cast<uint32>(item_slot),
-		static_cast<uint32>(timer), static_cast<uint32>(timer_duration), &res);
+	                       static_cast<uint32>(timer), static_cast<uint32>(timer_duration), &res);
 }
 
 bool Lua_Mob::SpellFinished(int spell_id, Lua_Mob target) {
@@ -875,7 +869,7 @@ Lua_HateList Lua_Mob::GetHateList() {
 
 	auto h_list = self->GetHateList();
 	auto iter = h_list.begin();
-	while(iter != h_list.end()) {
+	while (iter != h_list.end()) {
 		Lua_HateEntry e(*iter);
 		ret.entries.push_back(e);
 		++iter;
@@ -890,7 +884,7 @@ Lua_HateList Lua_Mob::GetShuffledHateList() {
 
 	auto h_list = self->GetHateList();
 	auto iter = h_list.begin();
-	while(iter != h_list.end()) {
+	while (iter != h_list.end()) {
 		Lua_HateEntry e(*iter);
 		ret.entries.push_back(e);
 		++iter;
@@ -1266,7 +1260,7 @@ void Lua_Mob::SetOOCRegen(int64 new_ooc_regen) {
 	self->SetOOCRegen(new_ooc_regen);
 }
 
-const char* Lua_Mob::GetEntityVariable(const char *name) {
+const char *Lua_Mob::GetEntityVariable(const char *name) {
 	Lua_Safe_Call_String();
 	return self->GetEntityVariable(name);
 }
@@ -1284,9 +1278,9 @@ bool Lua_Mob::EntityVariableExists(const char *name) {
 void Lua_Mob::Signal(uint32 id) {
 	Lua_Safe_Call_Void();
 
-	if(self->IsClient()) {
+	if (self->IsClient()) {
 		self->CastToClient()->Signal(id);
-	} else if(self->IsNPC()) {
+	} else if (self->IsNPC()) {
 		self->CastToNPC()->SignalNPC(id);
 	}
 }
@@ -1342,7 +1336,7 @@ void Lua_Mob::DoThrowingAttackDmg(Lua_Mob other, Lua_ItemInst range_weapon, Lua_
 }
 
 void Lua_Mob::DoThrowingAttackDmg(Lua_Mob other, Lua_ItemInst range_weapon, Lua_Item item, int weapon_damage, int chance_mod,
-								  int focus) {
+                                  int focus) {
 	Lua_Safe_Call_Void();
 	self->DoThrowingAttackDmg(other, range_weapon, item, weapon_damage, chance_mod, focus);
 }
@@ -1393,7 +1387,7 @@ void Lua_Mob::DoArcheryAttackDmg(Lua_Mob other, Lua_ItemInst range_weapon, Lua_I
 }
 
 void Lua_Mob::DoArcheryAttackDmg(Lua_Mob other, Lua_ItemInst range_weapon, Lua_ItemInst ammo, int weapon_damage, int chance_mod,
-								 int focus) {
+                                 int focus) {
 	Lua_Safe_Call_Void();
 	self->DoArcheryAttackDmg(other, range_weapon, ammo, weapon_damage, chance_mod, focus);
 }
@@ -1451,7 +1445,7 @@ void Lua_Mob::ProjectileAnimation(Lua_Mob to, int item_id, bool is_arrow, double
 void Lua_Mob::ProjectileAnimation(Lua_Mob to, int item_id, bool is_arrow, double speed, double angle, double tilt, double arc) {
 	Lua_Safe_Call_Void();
 	self->ProjectileAnimation(to, item_id, is_arrow, static_cast<float>(speed), static_cast<float>(angle), static_cast<float>(tilt),
-		static_cast<float>(arc));
+	                          static_cast<float>(arc));
 }
 
 bool Lua_Mob::HasNPCSpecialAtk(const char *parse) {
@@ -1510,7 +1504,7 @@ void Lua_Mob::SendIllusionPacket(sol::table illusion) {
 	float size = illusion.get_or("size", -1.0f);
 
 	self->SendIllusionPacket(race, gender, texture, helmtexture, haircolor, beardcolor, eyecolor1, eyecolor2, hairstyle, luclinface,
-		beard, aa_title, drakkin_heritage, drakkin_tattoo, drakkin_details, size);
+	                         beard, aa_title, drakkin_heritage, drakkin_tattoo, drakkin_details, size);
 }
 
 void Lua_Mob::ChangeRace(int in) {
@@ -1609,7 +1603,7 @@ void Lua_Mob::SendSpellEffect(uint32 effect_id, uint32 duration, uint32 finish_d
 }
 
 void Lua_Mob::SendSpellEffect(uint32 effect_id, uint32 duration, uint32 finish_delay, bool zone_wide, uint32 unk020, bool perm_effect,
-							  Lua_Client c) {
+                              Lua_Client c) {
 	Lua_Safe_Call_Void();
 	self->SendSpellEffect(effect_id, duration, finish_delay, zone_wide, unk020, perm_effect, c);
 }
@@ -1709,14 +1703,12 @@ int Lua_Mob::GetSkillDmgTaken(int skill) {
 	return self->GetSkillDmgTaken(static_cast<EQ::skills::SkillType>(skill));
 }
 
-int Lua_Mob::GetFcDamageAmtIncoming(Lua_Mob caster, int32 spell_id)
-{
+int Lua_Mob::GetFcDamageAmtIncoming(Lua_Mob caster, int32 spell_id) {
 	Lua_Safe_Call_Int();
 	return self->GetFcDamageAmtIncoming(caster, spell_id);
 }
 
-int Lua_Mob::GetSkillDmgAmt(uint16 skill)
-{
+int Lua_Mob::GetSkillDmgAmt(uint16 skill) {
 	Lua_Safe_Call_Int();
 	return self->GetSkillDmgAmt(skill);
 }
@@ -1996,37 +1988,32 @@ int Lua_Mob::GetWeaponDamageBonus(Lua_Item weapon, bool offhand) {
 	return self->GetWeaponDamageBonus(weapon, offhand);
 }
 
-int Lua_Mob::GetItemStat(uint32 itemid, const char* identifier) {
+int Lua_Mob::GetItemStat(uint32 itemid, const char *identifier) {
 	Lua_Safe_Call_Int();
 	return self->GetItemStat(itemid, identifier);
 }
 
-Lua_StatBonuses Lua_Mob::GetItemBonuses()
-{
+Lua_StatBonuses Lua_Mob::GetItemBonuses() {
 	Lua_Safe_Call_Class(Lua_StatBonuses);
 	return self->GetItemBonusesPtr();
 }
 
-Lua_StatBonuses Lua_Mob::GetSpellBonuses()
-{
+Lua_StatBonuses Lua_Mob::GetSpellBonuses() {
 	Lua_Safe_Call_Class(Lua_StatBonuses);
 	return self->GetSpellBonusesPtr();
 }
 
-Lua_StatBonuses Lua_Mob::GetAABonuses()
-{
+Lua_StatBonuses Lua_Mob::GetAABonuses() {
 	Lua_Safe_Call_Class(Lua_StatBonuses);
 	return self->GetAABonusesPtr();
 }
 
-int16 Lua_Mob::GetMeleeDamageMod_SE(uint16 skill)
-{
+int16 Lua_Mob::GetMeleeDamageMod_SE(uint16 skill) {
 	Lua_Safe_Call_Int();
 	return self->GetMeleeDamageMod_SE(skill);
 }
 
-int16 Lua_Mob::GetMeleeMinDamageMod_SE(uint16 skill)
-{
+int16 Lua_Mob::GetMeleeMinDamageMod_SE(uint16 skill) {
 	Lua_Safe_Call_Int();
 	return self->GetMeleeMinDamageMod_SE(skill);
 }
@@ -2056,68 +2043,57 @@ bool Lua_Mob::IsBerserk() {
 	return self->IsBerserk();
 }
 
-int Lua_Mob::GetBodyType()
-{
+int Lua_Mob::GetBodyType() {
 	Lua_Safe_Call_Int();
 	return (int)self->GetBodyType();
 }
 
-int Lua_Mob::GetOrigBodyType()
-{
+int Lua_Mob::GetOrigBodyType() {
 	Lua_Safe_Call_Int();
 	return (int)self->GetOrigBodyType();
 }
 
-void Lua_Mob::CheckNumHitsRemaining(int type, int32 buff_slot, uint16 spell_id)
-{
+void Lua_Mob::CheckNumHitsRemaining(int type, int32 buff_slot, uint16 spell_id) {
 	Lua_Safe_Call_Void();
 	self->CheckNumHitsRemaining((NumHit)type, buff_slot, spell_id);
 }
 
-void Lua_Mob::DeleteBucket(std::string bucket_name)
-{
+void Lua_Mob::DeleteBucket(std::string bucket_name) {
 	Lua_Safe_Call_Void();
 	self->DeleteBucket(bucket_name);
 }
 
-std::string Lua_Mob::GetBucket(std::string bucket_name)
-{
+std::string Lua_Mob::GetBucket(std::string bucket_name) {
 	Lua_Safe_Call_String();
 	return self->GetBucket(bucket_name);
 }
 
-std::string Lua_Mob::GetBucketExpires(std::string bucket_name)
-{
+std::string Lua_Mob::GetBucketExpires(std::string bucket_name) {
 	Lua_Safe_Call_String();
 	return self->GetBucketExpires(bucket_name);
 }
 
-std::string Lua_Mob::GetBucketKey()
-{
+std::string Lua_Mob::GetBucketKey() {
 	Lua_Safe_Call_String();
 	return self->GetBucketKey();
 }
 
-std::string Lua_Mob::GetBucketRemaining(std::string bucket_name)
-{
+std::string Lua_Mob::GetBucketRemaining(std::string bucket_name) {
 	Lua_Safe_Call_String();
 	return self->GetBucketRemaining(bucket_name);
 }
 
-void Lua_Mob::SetBucket(std::string bucket_name, std::string bucket_value)
-{
+void Lua_Mob::SetBucket(std::string bucket_name, std::string bucket_value) {
 	Lua_Safe_Call_Void();
 	self->SetBucket(bucket_name, bucket_value);
 }
 
-void Lua_Mob::SetBucket(std::string bucket_name, std::string bucket_value, std::string expiration)
-{
+void Lua_Mob::SetBucket(std::string bucket_name, std::string bucket_value, std::string expiration) {
 	Lua_Safe_Call_Void();
 	self->SetBucket(bucket_name, bucket_value, expiration);
 }
 
-bool Lua_Mob::IsHorse()
-{
+bool Lua_Mob::IsHorse() {
 	Lua_Safe_Call_Bool();
 	return self->IsHorse();
 }
@@ -2169,13 +2145,6 @@ void Lua_Mob::RemoveAllNimbusEffects() {
 	self->RemoveAllNimbusEffects();
 }
 
-#ifdef BOTS
-Lua_Bot Lua_Mob::GetHateRandomBot() {
-	Lua_Safe_Call_Class(Lua_Bot);
-	return Lua_Bot(self->GetHateRandomBot());
-}
-#endif
-
 Lua_Client Lua_Mob::GetHateRandomClient() {
 	Lua_Safe_Call_Class(Lua_Client);
 	return Lua_Client(self->GetHateRandomClient());
@@ -2186,27 +2155,23 @@ Lua_NPC Lua_Mob::GetHateRandomNPC() {
 	return Lua_NPC(self->GetHateRandomNPC());
 }
 
-uint8 Lua_Mob::GetInvisibleLevel()
-{
+uint8 Lua_Mob::GetInvisibleLevel() {
 	Lua_Safe_Call_Int();
 	return self->GetInvisibleLevel();
 }
 
-uint8 Lua_Mob::GetInvisibleUndeadLevel()
-{
+uint8 Lua_Mob::GetInvisibleUndeadLevel() {
 	Lua_Safe_Call_Int();
 	return self->GetInvisibleUndeadLevel();
 }
 
-void Lua_Mob::SetSeeInvisibleLevel(uint8 invisible_level)
-{
+void Lua_Mob::SetSeeInvisibleLevel(uint8 invisible_level) {
 	Lua_Safe_Call_Void();
 	self->SetInnateSeeInvisible(invisible_level);
 	self->CalcSeeInvisibleLevel();
 }
 
-void Lua_Mob::SetSeeInvisibleUndeadLevel(uint8 invisible_level)
-{
+void Lua_Mob::SetSeeInvisibleUndeadLevel(uint8 invisible_level) {
 	Lua_Safe_Call_Void();
 	self->SetSeeInvisibleUndead(invisible_level);
 }
@@ -2221,12 +2186,12 @@ void Lua_Mob::ApplySpellBuff(int spell_id, int duration) {
 	self->ApplySpellBuff(spell_id, duration);
 }
 
-int Lua_Mob::GetBuffStatValueBySlot(uint8 slot, const char* identifier) {
+int Lua_Mob::GetBuffStatValueBySlot(uint8 slot, const char *identifier) {
 	Lua_Safe_Call_Int();
 	return self->GetBuffStatValueBySlot(slot, identifier);
 }
 
-int Lua_Mob::GetBuffStatValueBySpell(int spell_id, const char* identifier) {
+int Lua_Mob::GetBuffStatValueBySpell(int spell_id, const char *identifier) {
 	Lua_Safe_Call_Int();
 	return self->GetBuffStatValueBySpell(spell_id, identifier);
 }
@@ -2240,4 +2205,3 @@ void Lua_Mob::SetBuffDuration(int spell_id, int duration) {
 	Lua_Safe_Call_Void();
 	self->SetBuffDuration(spell_id, duration);
 }
-#endif

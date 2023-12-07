@@ -1,6 +1,5 @@
 #ifndef EQEMU_LUA_GROUP_H
 #define EQEMU_LUA_GROUP_H
-#ifdef LUA_EQEMU
 
 #include "lua_ptr.h"
 
@@ -42,5 +41,4 @@ class Lua_Group : public Lua_Ptr<Group> {
 	bool DoesAnyMemberHaveExpeditionLockout(std::string expedition_name, std::string event_name, int max_check_count);
 };
 
-#endif
 #endif

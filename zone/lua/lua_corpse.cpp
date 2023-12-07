@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "corpse.h"
+#include "../corpse.h"
 #include "lua_corpse.h"
 #include "lua_client.h"
 #include "lua_entity.h"
@@ -71,5 +69,3 @@ void lua_register_corpse_loot_list(sol::state_view &sv) {
 	auto corpse_loot_list = sv.new_usertype<Lua_Corpse_Loot_List>("CorpseLootList");
 	corpse_loot_list["entries"] = sol::readonly_property(&Lua_Corpse_Loot_List::get_entries);
 }
-
-#endif

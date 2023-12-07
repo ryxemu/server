@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "npc.h"
+#include "../npc.h"
 #include "lua_npc.h"
 #include "lua_client.h"
 
@@ -534,129 +533,107 @@ int Lua_NPC::GetRawAC() {
 	return self->GetRawAC();
 }
 
-int Lua_NPC::GetAvoidanceRating()
-{
+int Lua_NPC::GetAvoidanceRating() {
 	Lua_Safe_Call_Int();
 	return self->GetAvoidanceRating();
 }
 
-void Lua_NPC::SetSimpleRoamBox(float box_size)
-{
+void Lua_NPC::SetSimpleRoamBox(float box_size) {
 	Lua_Safe_Call_Void();
 	self->SetSimpleRoamBox(box_size);
 }
 
-void Lua_NPC::SetSimpleRoamBox(float box_size, float move_distance)
-{
+void Lua_NPC::SetSimpleRoamBox(float box_size, float move_distance) {
 	Lua_Safe_Call_Void();
 	self->SetSimpleRoamBox(box_size, move_distance);
 }
 
-void Lua_NPC::SetSimpleRoamBox(float box_size, float move_distance, int move_delay)
-{
+void Lua_NPC::SetSimpleRoamBox(float box_size, float move_distance, int move_delay) {
 	Lua_Safe_Call_Void();
 	self->SetSimpleRoamBox(box_size, move_distance, move_delay);
 }
 
-void Lua_NPC::RecalculateSkills()
-{
+void Lua_NPC::RecalculateSkills() {
 	Lua_Safe_Call_Void();
 	self->RecalculateSkills();
 }
 
-void Lua_NPC::ScaleNPC(uint8 npc_level)
-{
+void Lua_NPC::ScaleNPC(uint8 npc_level) {
 	Lua_Safe_Call_Void();
 	self->ScaleNPC(npc_level);
 }
 
-bool Lua_NPC::IsRaidTarget()
-{
+bool Lua_NPC::IsRaidTarget() {
 	Lua_Safe_Call_Bool();
 	return self->IsRaidTarget();
 }
 
-void Lua_NPC::ChangeLastName(std::string last_name)
-{
+void Lua_NPC::ChangeLastName(std::string last_name) {
 	Lua_Safe_Call_Void();
 	self->ChangeLastName(last_name);
 }
 
-void Lua_NPC::ClearLastName()
-{
+void Lua_NPC::ClearLastName() {
 	Lua_Safe_Call_Void();
 	self->ClearLastName();
 }
 
-bool Lua_NPC::HasItem(uint32 item_id)
-{
+bool Lua_NPC::HasItem(uint32 item_id) {
 	Lua_Safe_Call_Bool();
 	return self->HasItem(item_id);
 }
 
-uint16 Lua_NPC::CountItem(uint32 item_id)
-{
+uint16 Lua_NPC::CountItem(uint32 item_id) {
 	Lua_Safe_Call_Int();
 	return self->CountItem(item_id);
 }
 
-uint32 Lua_NPC::GetItemIDBySlot(uint16 loot_slot)
-{
+uint32 Lua_NPC::GetItemIDBySlot(uint16 loot_slot) {
 	Lua_Safe_Call_Int();
 	return self->GetItemIDBySlot(loot_slot);
 }
 
-uint16 Lua_NPC::GetFirstSlotByItemID(uint32 item_id)
-{
+uint16 Lua_NPC::GetFirstSlotByItemID(uint32 item_id) {
 	Lua_Safe_Call_Int();
 	return self->GetFirstSlotByItemID(item_id);
 }
 
-float Lua_NPC::GetHealScale()
-{
+float Lua_NPC::GetHealScale() {
 	Lua_Safe_Call_Real();
 	return self->GetHealScale();
 }
 
-float Lua_NPC::GetSpellScale()
-{
+float Lua_NPC::GetSpellScale() {
 	Lua_Safe_Call_Real();
 	return self->GetSpellScale();
 }
 
-void Lua_NPC::AddAISpellEffect(int spell_effect_id, int base_value, int limit_value, int max_value)
-{
+void Lua_NPC::AddAISpellEffect(int spell_effect_id, int base_value, int limit_value, int max_value) {
 	Lua_Safe_Call_Void();
 	self->AddSpellEffectToNPCList(spell_effect_id, base_value, limit_value, max_value, true);
 }
 
-void Lua_NPC::RemoveAISpellEffect(int spell_effect_id)
-{
+void Lua_NPC::RemoveAISpellEffect(int spell_effect_id) {
 	Lua_Safe_Call_Void();
 	self->RemoveSpellEffectFromNPCList(spell_effect_id, true);
 }
 
-bool Lua_NPC::HasAISpellEffect(int spell_effect_id)
-{
+bool Lua_NPC::HasAISpellEffect(int spell_effect_id) {
 	Lua_Safe_Call_Bool();
 	return self->HasAISpellEffect(spell_effect_id);
 }
 
-float Lua_NPC::GetNPCStat(const char* identifier)
-{
+float Lua_NPC::GetNPCStat(const char *identifier) {
 	Lua_Safe_Call_Real();
 	return self->GetNPCStat(identifier);
 }
 
-bool Lua_NPC::IsRareSpawn()
-{
+bool Lua_NPC::IsRareSpawn() {
 	Lua_Safe_Call_Bool();
 	return self->IsRareSpawn();
 }
 
-void Lua_NPC::ReloadSpells()
-{
+void Lua_NPC::ReloadSpells() {
 	Lua_Safe_Call_Void();
 	self->ReloadSpells();
 }
-#endif

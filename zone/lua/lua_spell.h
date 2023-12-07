@@ -1,24 +1,20 @@
 #ifndef EQEMU_LUA_SPELL_H
 #define EQEMU_LUA_SPELL_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 struct SPDat_Spell_Struct;
 
-luabind::scope lua_register_spell();
-
-class Lua_Spell : public Lua_Ptr<const SPDat_Spell_Struct> {
+class Lua_Spell : public Lua_Ptr<const SPDat_Spell_Struct>
+{
 	typedef const SPDat_Spell_Struct NativeType;
-
-   public:
+public:
 	Lua_Spell(int id);
-	Lua_Spell() : Lua_Ptr(nullptr) {}
-	Lua_Spell(const SPDat_Spell_Struct *d) : Lua_Ptr(d) {}
-	virtual ~Lua_Spell() {}
+	Lua_Spell() : Lua_Ptr(nullptr) { }
+	Lua_Spell(const SPDat_Spell_Struct *d) : Lua_Ptr(d) { }
+	virtual ~Lua_Spell() { }
 
-	operator const SPDat_Spell_Struct *() {
-		return reinterpret_cast<const SPDat_Spell_Struct *>(GetLuaPtrData());
+	operator const SPDat_Spell_Struct*() {
+		return reinterpret_cast<const SPDat_Spell_Struct*>(GetLuaPtrData());
 	}
 
 	int GetID();
@@ -69,20 +65,42 @@ class Lua_Spell : public Lua_Ptr<const SPDat_Spell_Struct> {
 	int GetShortBuffBox();
 	int GetDescNum();
 	int GetEffectDescNum();
+	int GetBonusHate();
 	int GetEndurCost();
 	int GetEndurTimerIndex();
 	int GetHateAdded();
 	int GetEndurUpkeep();
+	int GetNumHits();
 	int GetPVPResistBase();
 	int GetPVPResistCalc();
 	int GetPVPResistCap();
 	int GetSpellCategory();
+	int GetPVPDuration();
+	int GetPVPDurationCap();
 	int GetCanMGB();
 	int GetDispelFlag();
+	int GetMinResist();
+	int GetMaxResist();
+	int GetViralTargets();
+	int GetViralTimer();
+	int GetNimbusEffect();
+	float GetDirectionalStart();
+	float GetDirectionalEnd();
 	int GetSpellGroup();
+	int GetPowerfulFlag();
+	int GetCastRestriction();
 	bool GetAllowRest();
+	bool GetInCombat();
+	bool GetOutOfCombat();
+	int GetAEMaxTargets();
+	int GetMaxTargets();
+	bool GetPersistDeath();
+	float GetMinDist();
+	float GetMinDistMod();
+	float GetMaxDist();
+	float GetMaxDistMod();
+	float GetMinRange();
 	int GetDamageShieldType();
+	int GetRank();
 };
-
-#endif
 #endif

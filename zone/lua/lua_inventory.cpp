@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_inventory.h"
 #include "lua_iteminst.h"
 #include "lua_item.h"
@@ -46,5 +44,3 @@ void lua_register_inventory(sol::state_view &sv) {
 	inventory["SupportsContainers"] = (bool(Lua_Inventory::*)(int)) & Lua_Inventory::SupportsContainers;
 	inventory["SwapItem"] = (bool(Lua_Inventory::*)(int, int)) & Lua_Inventory::SwapItem;
 }
-
-#endif

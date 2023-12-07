@@ -1,9 +1,7 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "groups.h"
-#include "masterentity.h"
+#include "../groups.h"
+#include "../masterentity.h"
 #include "lua_group.h"
 #include "lua_entity.h"
 #include "lua_mob.h"
@@ -37,5 +35,3 @@ void lua_register_group(sol::state_view& sv) {
 	                  (void(Lua_Group::*)(uint32, uint32, uint32, uint32, Lua_Client)) & Lua_Group::SplitMoney);
 	group["TeleportGroup"] = (void(Lua_Group::*)(Lua_Mob, uint32, uint32, float, float, float, float)) & Lua_Group::TeleportGroup;
 }
-
-#endif

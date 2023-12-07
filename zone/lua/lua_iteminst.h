@@ -1,7 +1,5 @@
 #ifndef EQEMU_LUA_ITEMINST_H
 #define EQEMU_LUA_ITEMINST_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 namespace EQ {
@@ -68,5 +66,4 @@ class Lua_ItemInst : public Lua_Ptr<EQ::ItemInstance> {
 	bool cloned_;
 };
 
-#endif
 #endif

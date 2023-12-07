@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_entity_list.h"
 #include "lua_entity.h"
 #include "lua_mob.h"
@@ -14,10 +12,6 @@
 #include "lua_group.h"
 #include "lua_raid.h"
 #include "lua_spawn.h"
-
-#ifdef BOTS
-#include "lua_bot.h"
-#endif
 
 struct Lua_Mob_List {
 	std::vector<Lua_Mob> entries;
@@ -33,13 +27,6 @@ struct Lua_Client_List {
 	std::vector<Lua_Client> entries;
 	sol::as_table_t<std::vector<Lua_Client>> get_entries() { return sol::as_table(entries); }
 };
-
-#ifdef BOTS
-struct Lua_Bot_List {
-	std::vector<Lua_Bot> entries;
-	sol::as_table_t<std::vector<Lua_Bot>> get_entries() { return sol::as_table(entries); }
-};
-#endif
 
 struct Lua_Corpse_List {
 	std::vector<Lua_Corpse> entries;
@@ -88,50 +75,6 @@ Lua_Client_List Lua_EntityList::GetClientList() {
 
 	return ret;
 }
-
-#ifdef BOTS
-Lua_Bot_List Lua_EntityList::GetBotList() {
-	Lua_Safe_Call_Class(Lua_Bot_List);
-	Lua_Bot_List ret;
-	auto &bot_list = self->GetBotList();
-
-	if (bot_list.size()) {
-		for (auto bot : bot_list) {
-			ret.entries.push_back(Lua_Bot(bot));
-		}
-	}
-
-	return ret;
-}
-
-Lua_Bot_List Lua_EntityList::GetBotListByCharacterID(uint32 character_id) {
-	Lua_Safe_Call_Class(Lua_Bot_List);
-	Lua_Bot_List ret;
-	auto bot_list = self->GetBotListByCharacterID(character_id);
-
-	if (bot_list.size()) {
-		for (auto bot : bot_list) {
-			ret.entries.push_back(Lua_Bot(bot));
-		}
-	}
-
-	return ret;
-}
-
-Lua_Bot_List Lua_EntityList::GetBotListByClientName(std::string client_name) {
-	Lua_Safe_Call_Class(Lua_Bot_List);
-	Lua_Bot_List ret;
-	auto bot_list = self->GetBotListByClientName(client_name);
-
-	if (bot_list.size()) {
-		for (auto bot : bot_list) {
-			ret.entries.push_back(Lua_Bot(bot));
-		}
-	}
-
-	return ret;
-}
-#endif
 
 Lua_Client_List Lua_EntityList::GetShuffledClientList() {
 	Lua_Safe_Call_Class(Lua_Client_List);
@@ -234,13 +177,6 @@ void lua_register_entity_list(sol::state_view &sv) {
 	entity_list["Fighting"] = (bool(Lua_EntityList::*)(Lua_Mob)) & Lua_EntityList::Fighting;
 	entity_list["FilteredMessageClose"] = &Lua_EntityList::FilteredMessageClose;
 	entity_list["FindDoor"] = (Lua_Door(Lua_EntityList::*)(uint32)) & Lua_EntityList::FindDoor;
-#ifdef BOTS
-	entity_list["GetBotByID"] = (Lua_Bot(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetBotByID;
-	entity_list["GetBotByName"] = (Lua_Bot(Lua_EntityList::*)(std::string)) & Lua_EntityList::GetBotByName;
-	entity_list["GetBotList"] = (Lua_Bot_List(Lua_EntityList::*)(void)) & Lua_EntityList::GetBotList;
-	entity_list["GetBotListByCharacterID"] = (Lua_Bot_List(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetBotListByCharacterID;
-	entity_list["GetBotListByClientName"] = (Lua_Bot_List(Lua_EntityList::*)(std::string)) & Lua_EntityList::GetBotListByClientName;
-#endif
 	entity_list["GetClientByAccID"] = (Lua_Client(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetClientByAccID;
 	entity_list["GetClientByCharID"] = (Lua_Client(Lua_EntityList::*)(uint32)) & Lua_EntityList::GetClientByCharID;
 	entity_list["GetClientByID"] = (Lua_Client(Lua_EntityList::*)(int)) & Lua_EntityList::GetClientByID;
@@ -315,13 +251,6 @@ void lua_register_client_list(sol::state_view &sv) {
 	client_list["entries"] = sol::readonly_property(&Lua_Client_List::get_entries);
 }
 
-#ifdef BOTS
-void lua_register_bot_list(sol::state_view &sv) {
-	auto bot_list = sv.new_usertype<Lua_Bot_List>("BotList");
-	bot_list["entries"] = sol::readonly_property(&Lua_Bot_List::get_entries);
-}
-#endif
-
 void lua_register_npc_list(sol::state_view &sv) {
 	auto npc_list = sv.new_usertype<Lua_NPC_List>("NPCList");
 	npc_list["entries"] = sol::readonly_property(&Lua_NPC_List::get_entries);
@@ -346,5 +275,3 @@ void lua_register_spawn_list(sol::state_view &sv) {
 	auto spawn_list = sv.new_usertype<Lua_Spawn_List>("SpawnList");
 	spawn_list["entries"] = sol::readonly_property(&Lua_Spawn_List::get_entries);
 }
-
-#endif

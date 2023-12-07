@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_item.h"
 
 Lua_Item::Lua_Item(uint32 item_id) {
@@ -475,7 +474,7 @@ uint32 Lua_Item::GetAugType() {
 int Lua_Item::GetAugSlotType(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 5 || i < 0) {
+	if (i >= 5 || i < 0) {
 		return 0;
 	}
 
@@ -485,7 +484,7 @@ int Lua_Item::GetAugSlotType(int i) {
 int Lua_Item::GetAugSlotVisible(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 5 || i < 0) {
+	if (i >= 5 || i < 0) {
 		return 0;
 	}
 
@@ -495,7 +494,7 @@ int Lua_Item::GetAugSlotVisible(int i) {
 int Lua_Item::GetAugSlotUnk2(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 5 || i < 0) {
+	if (i >= 5 || i < 0) {
 		return 0;
 	}
 
@@ -896,4 +895,3 @@ const char *Lua_Item::GetScrollName() {
 	Lua_Safe_Call_String();
 	return self->ScrollName;
 }
-#endif

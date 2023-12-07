@@ -1,5 +1,3 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
 #include <ctype.h>
@@ -10,6 +8,9 @@
 
 #include "masterentity.h"
 #include "../common/spdat.h"
+#include "../zone.h"
+#include "../zone_config.h"
+#include "../questmgr.h"
 #include "lua_bit.h"
 #include "lua_entity.h"
 #include "lua_item.h"
@@ -29,9 +30,6 @@
 #include "lua_spawn.h"
 #include "lua_packet.h"
 #include "lua_general.h"
-#include "questmgr.h"
-#include "zone.h"
-#include "zone_config.h"
 #include "lua_parser.h"
 #include "lua_encounter.h"
 
@@ -1255,5 +1253,3 @@ QuestEventID LuaParser::ConvertLuaEvent(QuestEventID evt) {
 			return evt;
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "spawn2.h"
+#include "../spawn2.h"
 #include "lua_npc.h"
 #include "lua_spawn.h"
 
@@ -132,4 +131,3 @@ uint32 Lua_Spawn::GetKillCount() {
 	Lua_Safe_Call_Int();
 	return self->GetKillCount();
 }
-#endif

@@ -1,9 +1,8 @@
-#ifdef LUA_EQEMU
-#include "../common/spdat.h"
+#include "../../common/spdat.h"
 #include "lua_spell.h"
 
 Lua_Spell::Lua_Spell(int id) {
-	if(IsValidSpell(id)) {
+	if (IsValidSpell(id)) {
 		SetLuaPtrData(&spells[id]);
 	} else {
 		SetLuaPtrData(nullptr);
@@ -113,7 +112,7 @@ int Lua_Spell::GetMana() {
 int Lua_Spell::GetBase(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 12 || i < 0) {
+	if (i >= 12 || i < 0) {
 		return 0;
 	}
 
@@ -123,7 +122,7 @@ int Lua_Spell::GetBase(int i) {
 int Lua_Spell::GetBase2(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 12 || i < 0) {
+	if (i >= 12 || i < 0) {
 		return 0;
 	}
 
@@ -133,7 +132,7 @@ int Lua_Spell::GetBase2(int i) {
 int Lua_Spell::GetMax(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 12 || i < 0) {
+	if (i >= 12 || i < 0) {
 		return 0;
 	}
 
@@ -143,7 +142,7 @@ int Lua_Spell::GetMax(int i) {
 int Lua_Spell::GetComponents(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 4 || i < 0) {
+	if (i >= 4 || i < 0) {
 		return 0;
 	}
 
@@ -153,7 +152,7 @@ int Lua_Spell::GetComponents(int i) {
 int Lua_Spell::GetComponentCounts(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 4 || i < 0) {
+	if (i >= 4 || i < 0) {
 		return 0;
 	}
 
@@ -163,7 +162,7 @@ int Lua_Spell::GetComponentCounts(int i) {
 int Lua_Spell::GetNoexpendReagent(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 4 || i < 0) {
+	if (i >= 4 || i < 0) {
 		return 0;
 	}
 
@@ -173,7 +172,7 @@ int Lua_Spell::GetNoexpendReagent(int i) {
 int Lua_Spell::GetFormula(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 12 || i < 0) {
+	if (i >= 12 || i < 0) {
 		return 0;
 	}
 
@@ -198,7 +197,7 @@ int Lua_Spell::GetResistType() {
 int Lua_Spell::GetEffectID(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 12 || i < 0) {
+	if (i >= 12 || i < 0) {
 		return 0;
 	}
 
@@ -238,7 +237,7 @@ int Lua_Spell::GetTimeOfDay() {
 int Lua_Spell::GetClasses(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 16 || i < 0) {
+	if (i >= 16 || i < 0) {
 		return 0;
 	}
 
@@ -263,7 +262,7 @@ int Lua_Spell::GetDisallowSit() {
 int Lua_Spell::GetDeities(int i) {
 	Lua_Safe_Call_Int();
 
-	if(i >= 16 || i < 0) {
+	if (i >= 16 || i < 0) {
 		return 0;
 	}
 
@@ -484,4 +483,3 @@ int Lua_Spell::GetRank() {
 	Lua_Safe_Call_Int();
 	return self->rank;
 }
-#endif

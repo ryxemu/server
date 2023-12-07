@@ -67,6 +67,8 @@ SET(zone_sources
 	lua/lua_spawn_impl.cpp
 	lua/lua_spell.cpp
 	lua/lua_spell_impl.cpp
+	lua/lua_stat_bonuses.cpp
+	lua/lua_stat_bonuses_impl.cpp
 	entity.cpp
 	exp.cpp
 	fearpath.cpp
@@ -160,6 +162,7 @@ SET(zone_headers
 	lua/lua_raid.h
 	lua/lua_spawn.h
 	lua/lua_spell.h
+	lua/lua_stat_bonuses.h
 	map.h
 	masterentity.h
 	mob.h

@@ -304,10 +304,8 @@ int main(int argc, char** argv) {
 	}
 
 	parse = new QuestParserCollection();
-#ifdef LUA_EQEMU
 	auto lua_parser = new LuaParser();
 	parse->RegisterQuestInterface(lua_parser, "lua");
-#endif
 
 	// now we have our parser, load the quests
 	LogInfo("Loading quests");
@@ -475,9 +473,7 @@ int main(int argc, char** argv) {
 
 	parse->ClearInterfaces();
 
-#ifdef LUA_EQEMU
 	safe_delete(lua_parser);
-#endif
 
 	safe_delete(Config);
 	title_manager.ClearTitles();

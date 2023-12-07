@@ -1,4 +1,3 @@
-#ifdef LUA_EQEMU
 #include "lua_stat_bonuses.h"
 
 int32 Lua_StatBonuses::GetAC() const {
@@ -673,7 +672,7 @@ int Lua_StatBonuses::GetXPRateMod() const {
 
 bool Lua_StatBonuses::GetBlockNextSpell() const {
 	Lua_Safe_Call_Bool();
-	return false; // Bonus no longer used due to effect being a focus
+	return false;  // Bonus no longer used due to effect being a focus
 }
 
 bool Lua_StatBonuses::GetImmuneToFlee() const {
@@ -1280,4 +1279,3 @@ int32 Lua_StatBonuses::GetReduceTradeskillFail(int idx) const {
 	Lua_Safe_Call_Int();
 	return self->ReduceTradeskillFail[idx];
 }
-#endif

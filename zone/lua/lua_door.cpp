@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "doors.h"
+#include "../doors.h"
 #include "lua_mob.h"
 #include "lua_door.h"
 
@@ -44,5 +42,3 @@ void lua_register_door(sol::state_view &sv) {
 	door["SetY"] = &Lua_Door::SetY;
 	door["SetZ"] = &Lua_Door::SetZ;
 }
-
-#endif

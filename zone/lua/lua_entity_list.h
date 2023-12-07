@@ -1,15 +1,10 @@
 #ifndef EQEMU_LUA_ENTITY_LIST_H
 #define EQEMU_LUA_ENTITY_LIST_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 class EntityList;
 class Lua_Mob;
 class Lua_Client;
-#ifdef BOTS
-class Lua_Bot;
-#endif
 class Lua_NPC;
 class Lua_Door;
 class Lua_Corpse;
@@ -19,9 +14,6 @@ class Lua_Raid;
 class Lua_Spawn;
 struct Lua_Mob_List;
 struct Lua_Client_List;
-#ifdef BOTS
-struct Lua_Bot_List;
-#endif
 struct Lua_NPC_List;
 struct Lua_Corpse_List;
 struct Lua_Object_List;
@@ -107,14 +99,6 @@ class Lua_EntityList : public Lua_Ptr<EntityList> {
 	Lua_Spawn_List GetSpawnList();
 	void SignalAllClients(int signal);
 	void ChannelMessage(Lua_Mob from, int channel_num, int language, const char *message);
-#ifdef BOTS
-	Lua_Bot GetBotByID(uint32 bot_id);
-	Lua_Bot GetBotByName(std::string bot_name);
-	Lua_Bot_List GetBotList();
-	Lua_Bot_List GetBotListByCharacterID(uint32 character_id);
-	Lua_Bot_List GetBotListByClientName(std::string client_name);
-#endif
 };
 
-#endif
 #endif

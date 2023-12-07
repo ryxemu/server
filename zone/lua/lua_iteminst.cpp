@@ -1,5 +1,3 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
 #include "masterentity.h"
@@ -213,5 +211,3 @@ luabind::scope lua_register_iteminst() {
 	    .def("StopTimer", (void(Lua_ItemInst::*)(std::string)) & Lua_ItemInst::StopTimer)
 	    .def("ClearTimers", (void(Lua_ItemInst::*)(void)) & Lua_ItemInst::ClearTimers);
 }
-
-#endif

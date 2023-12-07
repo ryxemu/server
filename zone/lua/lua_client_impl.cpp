@@ -1,10 +1,9 @@
-#ifdef LUA_EQEMU
 #include <sol/sol.hpp>
 #include "lua_client.h"
 
-#include "client.h"
-#include "dynamic_zone.h"
-#include "expedition_request.h"
+#include "../client.h"
+/* #include "../dynamic_zone.h"
+#include "../expedition_request.h" */
 #include "lua_client.h"
 #include "lua_expedition.h"
 #include "lua_npc.h"
@@ -14,7 +13,7 @@
 #include "lua_group.h"
 #include "lua_raid.h"
 #include "lua_packet.h"
-//#include "../dialogue_window.h"
+// #include "../dialogue_window.h"
 #include "../titles.h"
 // #include "../../common/expedition_lockout_timer.h"
 
@@ -1810,268 +1809,268 @@ uint8 Lua_Client::GetClientMaxLevel() {
 }
 
 /* void Lua_Client::DialogueWindow(std::string markdown) {
-	Lua_Safe_Call_Void();
-	DialogueWindow::Render(self, std::move(markdown));
+    Lua_Safe_Call_Void();
+    DialogueWindow::Render(self, std::move(markdown));
 }
  */
-DynamicZoneLocation GetDynamicZoneLocationFromTable(const sol::table& lua_table) {
-	DynamicZoneLocation zone_location;
+/* DynamicZoneLocation GetDynamicZoneLocationFromTable(const sol::table& lua_table) {
+    DynamicZoneLocation zone_location;
 
-	auto lua_zone = lua_table.get<sol::optional<sol::object>>("zone");
+    auto lua_zone = lua_table.get<sol::optional<sol::object>>("zone");
 
-	// default invalid/missing args to 0
-	uint32_t zone_id = 0;
-	if (lua_zone) {
-		auto object = lua_zone.value();
-		if (object.get_type() == sol::type::string) {
-			zone_id = ZoneID(object.as<std::string>());
-		} else if (object.get_type() == sol::type::number) {
-			zone_id = object.as<uint32_t>();
-		}
-	}
+    // default invalid/missing args to 0
+    uint32_t zone_id = 0;
+    if (lua_zone) {
+        auto object = lua_zone.value();
+        if (object.get_type() == sol::type::string) {
+            zone_id = ZoneID(object.as<std::string>());
+        } else if (object.get_type() == sol::type::number) {
+            zone_id = object.as<uint32_t>();
+        }
+    }
 
-	float x = lua_table.get_or("x", 0.0f);
-	float y = lua_table.get_or("y", 0.0f);
-	float z = lua_table.get_or("z", 0.0f);
-	float h = lua_table.get_or("h", 0.0f);
+    float x = lua_table.get_or("x", 0.0f);
+    float y = lua_table.get_or("y", 0.0f);
+    float z = lua_table.get_or("z", 0.0f);
+    float h = lua_table.get_or("h", 0.0f);
 
-	zone_location = {zone_id, x, y, z, h};
+    zone_location = {zone_id, x, y, z, h};
 
-	return zone_location;
+    return zone_location;
 }
 
 Lua_Expedition Lua_Client::CreateExpedition(sol::table expedition_table) {
-	Lua_Safe_Call_Class(Lua_Expedition);
+    Lua_Safe_Call_Class(Lua_Expedition);
 
-	auto instance_info = expedition_table.get<sol::table>("instance");
-	auto expedition_info = expedition_table.get<sol::table>("expedition");
-	auto zone = instance_info.get<sol::optional<sol::object>>("zone");
+    auto instance_info = expedition_table.get<sol::table>("instance");
+    auto expedition_info = expedition_table.get<sol::table>("expedition");
+    auto zone = instance_info.get<sol::optional<sol::object>>("zone");
 
-	uint32_t zone_id = 0;
-	if (zone) {
-		auto object = zone.value();
-		if (object.get_type() == sol::type::string) {
-			zone_id = ZoneID(object.as<std::string>());
-		} else if (object.get_type() == sol::type::number) {
-			zone_id = object.as<uint32_t>();
-		}
-	}
+    uint32_t zone_id = 0;
+    if (zone) {
+        auto object = zone.value();
+        if (object.get_type() == sol::type::string) {
+            zone_id = ZoneID(object.as<std::string>());
+        } else if (object.get_type() == sol::type::number) {
+            zone_id = object.as<uint32_t>();
+        }
+    }
 
-	auto zone_version = instance_info.get<uint32_t>("version");
-	auto zone_duration = instance_info.get<uint32_t>("duration");
+    auto zone_version = instance_info.get<uint32_t>("version");
+    auto zone_duration = instance_info.get<uint32_t>("duration");
 
-	DynamicZone dz{zone_id, zone_version, zone_duration, DynamicZoneType::Expedition};
-	dz.SetName(expedition_info.get<std::string>("name"));
-	dz.SetMinPlayers(expedition_info.get<uint32_t>("min_players"));
-	dz.SetMaxPlayers(expedition_info.get<uint32_t>("max_players"));
+    DynamicZone dz{zone_id, zone_version, zone_duration, DynamicZoneType::Expedition};
+    dz.SetName(expedition_info.get<std::string>("name"));
+    dz.SetMinPlayers(expedition_info.get<uint32_t>("min_players"));
+    dz.SetMaxPlayers(expedition_info.get<uint32_t>("max_players"));
 
-	// the dz_info table supports optional hash entries for 'compass', 'safereturn', and 'zonein' data
-	auto compass = expedition_info.get<sol::optional<sol::table>>("compass");
-	if (compass) {
-		auto compass_loc = GetDynamicZoneLocationFromTable(compass.value());
-		dz.SetCompass(compass_loc);
-	}
+    // the dz_info table supports optional hash entries for 'compass', 'safereturn', and 'zonein' data
+    auto compass = expedition_info.get<sol::optional<sol::table>>("compass");
+    if (compass) {
+        auto compass_loc = GetDynamicZoneLocationFromTable(compass.value());
+        dz.SetCompass(compass_loc);
+    }
 
-	auto safereturn = expedition_info.get<sol::optional<sol::table>>("safereturn");
-	if (safereturn) {
-		auto safereturn_loc = GetDynamicZoneLocationFromTable(safereturn.value());
-		dz.SetSafeReturn(safereturn_loc);
-	}
+    auto safereturn = expedition_info.get<sol::optional<sol::table>>("safereturn");
+    if (safereturn) {
+        auto safereturn_loc = GetDynamicZoneLocationFromTable(safereturn.value());
+        dz.SetSafeReturn(safereturn_loc);
+    }
 
-	auto zonein = expedition_info.get<sol::optional<sol::table>>("zonein");
-	if (zonein) {
-		auto zonein_loc = GetDynamicZoneLocationFromTable(zonein.value());
-		dz.SetZoneInLocation(zonein_loc);
-	}
+    auto zonein = expedition_info.get<sol::optional<sol::table>>("zonein");
+    if (zonein) {
+        auto zonein_loc = GetDynamicZoneLocationFromTable(zonein.value());
+        dz.SetZoneInLocation(zonein_loc);
+    }
 
-	auto switchid = expedition_info.get<sol::optional<int>>("switchid");
-	if (switchid) {
-		dz.SetSwitchID(switchid.value());
-	}
+    auto switchid = expedition_info.get<sol::optional<int>>("switchid");
+    if (switchid) {
+        dz.SetSwitchID(switchid.value());
+    }
 
-	bool disable_messages = expedition_info.get_or("disable_messages", false);
+    bool disable_messages = expedition_info.get_or("disable_messages", false);
 
-	return self->CreateExpedition(dz, disable_messages);
+    return self->CreateExpedition(dz, disable_messages);
 }
 
 Lua_Expedition Lua_Client::CreateExpedition(std::string zone_name, uint32 version, uint32 duration, std::string expedition_name, uint32 min_players, uint32 max_players) {
-	Lua_Safe_Call_Class(Lua_Expedition);
-	return self->CreateExpedition(zone_name, version, duration, expedition_name, min_players, max_players);
+    Lua_Safe_Call_Class(Lua_Expedition);
+    return self->CreateExpedition(zone_name, version, duration, expedition_name, min_players, max_players);
 }
 
 Lua_Expedition Lua_Client::CreateExpedition(std::string zone_name, uint32 version, uint32 duration, std::string expedition_name, uint32 min_players, uint32 max_players, bool disable_messages) {
-	Lua_Safe_Call_Class(Lua_Expedition);
-	return self->CreateExpedition(zone_name, version, duration, expedition_name, min_players, max_players, disable_messages);
+    Lua_Safe_Call_Class(Lua_Expedition);
+    return self->CreateExpedition(zone_name, version, duration, expedition_name, min_players, max_players, disable_messages);
 }
 
 Lua_Expedition Lua_Client::CreateExpeditionFromTemplate(uint32_t dz_template_id) {
-	Lua_Safe_Call_Class(Lua_Expedition);
-	return self->CreateExpeditionFromTemplate(dz_template_id);
+    Lua_Safe_Call_Class(Lua_Expedition);
+    return self->CreateExpeditionFromTemplate(dz_template_id);
 }
 
 Lua_Expedition Lua_Client::GetExpedition() {
-	Lua_Safe_Call_Class(Lua_Expedition);
-	return self->GetExpedition();
+    Lua_Safe_Call_Class(Lua_Expedition);
+    return self->GetExpedition();
 }
 
 sol::table Lua_Client::GetExpeditionLockouts(sol::this_state s) {
-	sol::state_view sv(s);
-	auto lua_table = sv.create_table();
-	if (d_) {
-		auto self = reinterpret_cast<NativeType*>(d_);
-		auto lockouts = self->GetExpeditionLockouts();
+    sol::state_view sv(s);
+    auto lua_table = sv.create_table();
+    if (d_) {
+        auto self = reinterpret_cast<NativeType*>(d_);
+        auto lockouts = self->GetExpeditionLockouts();
 
-		for (const auto& lockout : lockouts) {
-			auto lockout_table = lua_table[lockout.GetExpeditionName()].get_or_create<sol::table>();
-			lockout_table[lockout.GetEventName()] = lockout.GetSecondsRemaining();
-		}
-	}
-	return lua_table;
+        for (const auto& lockout : lockouts) {
+            auto lockout_table = lua_table[lockout.GetExpeditionName()].get_or_create<sol::table>();
+            lockout_table[lockout.GetEventName()] = lockout.GetSecondsRemaining();
+        }
+    }
+    return lua_table;
 }
 
 sol::table Lua_Client::GetExpeditionLockouts(sol::this_state s, std::string expedition_name) {
-	sol::state_view sv(s);
-	auto lua_table = sv.create_table();
-	if (d_) {
-		auto self = reinterpret_cast<NativeType*>(d_);
-		auto lockouts = self->GetExpeditionLockouts();
+    sol::state_view sv(s);
+    auto lua_table = sv.create_table();
+    if (d_) {
+        auto self = reinterpret_cast<NativeType*>(d_);
+        auto lockouts = self->GetExpeditionLockouts();
 
-		for (const auto& lockout : lockouts) {
-			if (lockout.GetExpeditionName() == expedition_name) {
-				lua_table[lockout.GetEventName()] = lockout.GetSecondsRemaining();
-			}
-		}
-	}
-	return lua_table;
+        for (const auto& lockout : lockouts) {
+            if (lockout.GetExpeditionName() == expedition_name) {
+                lua_table[lockout.GetEventName()] = lockout.GetSecondsRemaining();
+            }
+        }
+    }
+    return lua_table;
 }
 
 std::string Lua_Client::GetLockoutExpeditionUUID(std::string expedition_name, std::string event_name) {
-	Lua_Safe_Call_String();
-	std::string uuid;
-	auto lockout = self->GetExpeditionLockout(expedition_name, event_name);
-	if (lockout) {
-		uuid = lockout->GetExpeditionUUID();
-	}
-	return uuid;
+    Lua_Safe_Call_String();
+    std::string uuid;
+    auto lockout = self->GetExpeditionLockout(expedition_name, event_name);
+    if (lockout) {
+        uuid = lockout->GetExpeditionUUID();
+    }
+    return uuid;
 }
 
 void Lua_Client::AddExpeditionLockout(std::string expedition_name, std::string event_name, uint32 seconds) {
-	Lua_Safe_Call_Void();
-	self->AddNewExpeditionLockout(expedition_name, event_name, seconds);
+    Lua_Safe_Call_Void();
+    self->AddNewExpeditionLockout(expedition_name, event_name, seconds);
 }
 
 void Lua_Client::AddExpeditionLockout(std::string expedition_name, std::string event_name, uint32 seconds, std::string uuid) {
-	Lua_Safe_Call_Void();
-	self->AddNewExpeditionLockout(expedition_name, event_name, seconds, uuid);
+    Lua_Safe_Call_Void();
+    self->AddNewExpeditionLockout(expedition_name, event_name, seconds, uuid);
 }
 
 void Lua_Client::AddExpeditionLockoutDuration(std::string expedition_name, std::string event_name, int seconds) {
-	Lua_Safe_Call_Void();
-	self->AddExpeditionLockoutDuration(expedition_name, event_name, seconds, {}, true);
+    Lua_Safe_Call_Void();
+    self->AddExpeditionLockoutDuration(expedition_name, event_name, seconds, {}, true);
 }
 
 void Lua_Client::AddExpeditionLockoutDuration(std::string expedition_name, std::string event_name, int seconds, std::string uuid) {
-	Lua_Safe_Call_Void();
-	self->AddExpeditionLockoutDuration(expedition_name, event_name, seconds, uuid, true);
+    Lua_Safe_Call_Void();
+    self->AddExpeditionLockoutDuration(expedition_name, event_name, seconds, uuid, true);
 }
 
 void Lua_Client::RemoveAllExpeditionLockouts() {
-	Lua_Safe_Call_Void();
-	self->RemoveAllExpeditionLockouts({}, true);
+    Lua_Safe_Call_Void();
+    self->RemoveAllExpeditionLockouts({}, true);
 }
 
 void Lua_Client::RemoveAllExpeditionLockouts(std::string expedition_name) {
-	Lua_Safe_Call_Void();
-	self->RemoveAllExpeditionLockouts(expedition_name, true);
+    Lua_Safe_Call_Void();
+    self->RemoveAllExpeditionLockouts(expedition_name, true);
 }
 
 void Lua_Client::RemoveExpeditionLockout(std::string expedition_name, std::string event_name) {
-	Lua_Safe_Call_Void();
-	self->RemoveExpeditionLockout(expedition_name, event_name, true);
+    Lua_Safe_Call_Void();
+    self->RemoveExpeditionLockout(expedition_name, event_name, true);
 }
 
 bool Lua_Client::HasExpeditionLockout(std::string expedition_name, std::string event_name) {
-	Lua_Safe_Call_Bool();
-	return self->HasExpeditionLockout(expedition_name, event_name);
+    Lua_Safe_Call_Bool();
+    return self->HasExpeditionLockout(expedition_name, event_name);
 }
 
 void Lua_Client::MovePCDynamicZone(uint32 zone_id) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_id);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_id);
 }
 
 void Lua_Client::MovePCDynamicZone(uint32 zone_id, int zone_version) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_id, zone_version);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_id, zone_version);
 }
 
 void Lua_Client::MovePCDynamicZone(uint32 zone_id, int zone_version, bool msg_if_invalid) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_id, zone_version, msg_if_invalid);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_id, zone_version, msg_if_invalid);
 }
 
 void Lua_Client::MovePCDynamicZone(std::string zone_name) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_name);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_name);
 }
 
 void Lua_Client::MovePCDynamicZone(std::string zone_name, int zone_version) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_name, zone_version);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_name, zone_version);
 }
 
 void Lua_Client::MovePCDynamicZone(std::string zone_name, int zone_version, bool msg_if_invalid) {
-	Lua_Safe_Call_Void();
-	return self->MovePCDynamicZone(zone_name, zone_version, msg_if_invalid);
+    Lua_Safe_Call_Void();
+    return self->MovePCDynamicZone(zone_name, zone_version, msg_if_invalid);
 }
 
 void Lua_Client::CreateTaskDynamicZone(int task_id, sol::table dz_table) {
-	Lua_Safe_Call_Void();
+    Lua_Safe_Call_Void();
 
-	auto instance_info = dz_table.get<sol::table>("instance");
-	auto zone = instance_info.get<sol::optional<sol::object>>("zone");
+    auto instance_info = dz_table.get<sol::table>("instance");
+    auto zone = instance_info.get<sol::optional<sol::object>>("zone");
 
-	uint32_t zone_id = 0;
-	if (zone) {
-		auto object = zone.value();
-		if (object.get_type() == sol::type::string) {
-			zone_id = ZoneID(object.as<std::string>());
-		} else if (object.get_type() == sol::type::number) {
-			zone_id = object.as<uint32_t>();
-		}
-	}
+    uint32_t zone_id = 0;
+    if (zone) {
+        auto object = zone.value();
+        if (object.get_type() == sol::type::string) {
+            zone_id = ZoneID(object.as<std::string>());
+        } else if (object.get_type() == sol::type::number) {
+            zone_id = object.as<uint32_t>();
+        }
+    }
 
-	auto zone_version = instance_info.get<uint32_t>("version");
+    auto zone_version = instance_info.get<uint32_t>("version");
 
-	// tasks override dz duration so duration is ignored here
-	DynamicZone dz{zone_id, zone_version, 0, DynamicZoneType::None};
+    // tasks override dz duration so duration is ignored here
+    DynamicZone dz{zone_id, zone_version, 0, DynamicZoneType::None};
 
-	// the dz_info table supports optional hash entries for 'compass', 'safereturn', and 'zonein' data
-	auto compass = dz_table.get<sol::optional<sol::table>>("compass");
-	if (compass) {
-		auto compass_loc = GetDynamicZoneLocationFromTable(compass.value());
-		dz.SetCompass(compass_loc);
-	}
+    // the dz_info table supports optional hash entries for 'compass', 'safereturn', and 'zonein' data
+    auto compass = dz_table.get<sol::optional<sol::table>>("compass");
+    if (compass) {
+        auto compass_loc = GetDynamicZoneLocationFromTable(compass.value());
+        dz.SetCompass(compass_loc);
+    }
 
-	auto safereturn = dz_table.get<sol::optional<sol::table>>("safereturn");
-	if (safereturn) {
-		auto safereturn_loc = GetDynamicZoneLocationFromTable(safereturn.value());
-		dz.SetSafeReturn(safereturn_loc);
-	}
+    auto safereturn = dz_table.get<sol::optional<sol::table>>("safereturn");
+    if (safereturn) {
+        auto safereturn_loc = GetDynamicZoneLocationFromTable(safereturn.value());
+        dz.SetSafeReturn(safereturn_loc);
+    }
 
-	auto zonein = dz_table.get<sol::optional<sol::table>>("zonein");
-	if (zonein) {
-		auto zonein_loc = GetDynamicZoneLocationFromTable(zonein.value());
-		dz.SetZoneInLocation(zonein_loc);
-	}
+    auto zonein = dz_table.get<sol::optional<sol::table>>("zonein");
+    if (zonein) {
+        auto zonein_loc = GetDynamicZoneLocationFromTable(zonein.value());
+        dz.SetZoneInLocation(zonein_loc);
+    }
 
-	auto switchid = dz_table.get<sol::optional<int>>("switchid");
-	if (switchid) {
-		dz.SetSwitchID(switchid.value());
-	}
+    auto switchid = dz_table.get<sol::optional<int>>("switchid");
+    if (switchid) {
+        dz.SetSwitchID(switchid.value());
+    }
 
-	self->CreateTaskDynamicZone(task_id, dz);
-}
+    self->CreateTaskDynamicZone(task_id, dz);
+} */
 
 void Lua_Client::Fling(float value, float target_x, float target_y, float target_z) {
 	Lua_Safe_Call_Void();
@@ -2516,5 +2515,3 @@ bool Lua_Client::HasRecipeLearned(uint32 recipe_id) {
 	Lua_Safe_Call_Bool();
 	return self->HasRecipeLearned(recipe_id);
 }
-
-#endif

@@ -1,6 +1,5 @@
 #ifndef EQEMU_LUA_CLIENT_H
 #define EQEMU_LUA_CLIENT_H
-#ifdef LUA_EQEMU
 
 #include <sol/forward.hpp>
 
@@ -468,5 +467,4 @@ class Lua_Client : public Lua_Mob {
 	void Fling(float value, float target_x, float target_y, float target_z, bool ignore_los, bool clipping);
 };
 
-#endif
 #endif

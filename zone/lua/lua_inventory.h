@@ -1,7 +1,5 @@
 #ifndef EQEMU_LUA_INVENTORY_H
 #define EQEMU_LUA_INVENTORY_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 class Lua_ItemInst;
@@ -63,6 +61,4 @@ public:
 	bool SupportsContainers(int slot_id);
 	int GetSlotByItemInst(Lua_ItemInst inst);
 };
-
-#endif
 #endif

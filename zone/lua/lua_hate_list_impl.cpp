@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "hate_list.h"
 #include "lua_mob.h"
 #include "lua_hate_list.h"
@@ -43,4 +42,3 @@ void Lua_HateEntry::SetFrenzy(bool value) {
 	Lua_Safe_Call_Void();
 	self->is_entity_frenzy = value;
 }
-#endif

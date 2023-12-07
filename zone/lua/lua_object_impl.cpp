@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "object.h"
+#include "../object.h"
 #include "lua_object.h"
 
 void Lua_Object::Depop() {
@@ -173,4 +172,3 @@ bool Lua_Object::EntityVariableExists(const char *name) {
 	Lua_Safe_Call_Int();
 	return self->EntityVariableExists(name);
 }
-#endif

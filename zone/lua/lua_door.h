@@ -1,6 +1,5 @@
 #ifndef EQEMU_LUA_DOOR_H
 #define EQEMU_LUA_DOOR_H
-#ifdef LUA_EQEMU
 
 #include "lua_entity.h"
 
@@ -58,5 +57,4 @@ class Lua_Door : public Lua_Entity {
 	void ForceClose(Lua_Mob sender, bool alt_mode);
 };
 
-#endif
 #endif

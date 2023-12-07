@@ -1,12 +1,12 @@
 #ifndef _EQE_LUA_PARSER_H
 #define _EQE_LUA_PARSER_H
-#ifdef LUA_EQEMU
-
-#include "quest_parser_collection.h"
-#include "quest_interface.h"
+#include "../common.h"
+#include "../quest_parser_collection.h"
+#include "../quest_interface.h"
 #include <string>
-#include <list>
-#include <map>
+#include <exception>
+#include <memory>
+#include <sol/forward.hpp>
 
 #include "zone_config.h"
 
@@ -16,30 +16,34 @@ struct lua_State;
 class Client;
 class NPC;
 
-namespace EQ {
-class ItemInstance;
+namespace EQ
+{
+	class ItemInstance;
 }
+
 #include "lua_parser_events.h"
 
+struct lua_registered_event;
+
 class LuaParser : public QuestInterface {
-   public:
+public:
 	LuaParser();
 	~LuaParser();
 
-	virtual int EventNPC(QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
-	                     std::vector<std::any> *extra_pointers);
-	virtual int EventGlobalNPC(QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
-	                           std::vector<std::any> *extra_pointers);
+	virtual int EventNPC(QuestEventID evt, NPC* npc, Mob *init, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers);
+	virtual int EventGlobalNPC(QuestEventID evt, NPC* npc, Mob *init, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers);
 	virtual int EventPlayer(QuestEventID evt, Client *client, std::string data, uint32 extra_data,
-	                        std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
 	virtual int EventGlobalPlayer(QuestEventID evt, Client *client, std::string data, uint32 extra_data,
-	                              std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
 	virtual int EventItem(QuestEventID evt, Client *client, EQ::ItemInstance *item, Mob *mob, std::string data, uint32 extra_data,
-	                      std::vector<std::any> *extra_pointers);
-	virtual int EventSpell(QuestEventID evt, NPC *npc, Client *client, uint32 spell_id, uint32 extra_data,
-	                       std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
+	virtual int EventSpell(QuestEventID evt, NPC* npc, Client *client, uint32 spell_id, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers);
 	virtual int EventEncounter(QuestEventID evt, std::string encounter_name, std::string data, uint32 extra_data,
-	                           std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
 
 	virtual bool HasQuestSub(uint32 npc_id, QuestEventID evt);
 	virtual bool HasGlobalQuestSub(QuestEventID evt);
@@ -48,7 +52,7 @@ class LuaParser : public QuestInterface {
 	virtual bool SpellHasQuestSub(uint32 spell_id, QuestEventID evt);
 	virtual bool ItemHasQuestSub(EQ::ItemInstance *itm, QuestEventID evt);
 	virtual bool EncounterHasQuestSub(std::string encounter_name, QuestEventID evt);
-	virtual bool HasEncounterSub(const std::string &package_name, QuestEventID evt);
+	virtual bool HasEncounterSub(const std::string& package_name, QuestEventID evt);
 
 	virtual void LoadNPCScript(std::string filename, int npc_id);
 	virtual void LoadGlobalNPCScript(std::string filename);
@@ -62,46 +66,55 @@ class LuaParser : public QuestInterface {
 	virtual std::string GetVar(std::string name);
 	virtual void Init();
 	virtual void ReloadQuests();
-	virtual uint32 GetIdentifier() { return 0xb0712acc; }
 	virtual void RemoveEncounter(const std::string &name);
+    virtual uint32 GetIdentifier() { return LUA_IDENTIFIER; }
 
-	virtual int DispatchEventNPC(QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
-	                             std::vector<std::any> *extra_pointers);
+	virtual int DispatchEventNPC(QuestEventID evt, NPC* npc, Mob *init, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers);
 	virtual int DispatchEventPlayer(QuestEventID evt, Client *client, std::string data, uint32 extra_data,
-	                                std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
 	virtual int DispatchEventItem(QuestEventID evt, Client *client, EQ::ItemInstance *item, Mob *mob, std::string data, uint32 extra_data,
-	                              std::vector<std::any> *extra_pointers);
-	virtual int DispatchEventSpell(QuestEventID evt, NPC *npc, Client *client, uint32 spell_id, uint32 extra_data,
-	                               std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
+	virtual int DispatchEventSpell(QuestEventID evt, NPC* npc, Client *client, uint32 spell_id, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers);
 
-   private:
-	int _EventNPC(std::string package_name, QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
-	              std::vector<std::any> *extra_pointers, sol::table *l_func = nullptr);
+	bool HasFunction(const std::string &function, const std::string &package_name);
+
+	//Mod Extensions
+	void MeleeMitigation(Mob *self, Mob *attacker, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault);
+	void ApplyDamageTable(Mob *self, DamageHitInfo &hit, bool &ignoreDefault);
+	bool AvoidDamage(Mob *self, Mob *other, DamageHitInfo &hit, bool &ignoreDefault);
+	bool CheckHitChance(Mob *self, Mob* other, DamageHitInfo &hit, bool &ignoreDefault);
+	void TryCriticalHit(Mob *self, Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault);
+	void CommonOutgoingHitSuccess(Mob *self, Mob* other, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault);
+	uint32 GetRequiredAAExperience(Client *self, bool &ignoreDefault);
+	uint32 GetEXPForLevel(Client *self, uint16 level, bool &ignoreDefault);
+	uint32 GetExperienceForKill(Client *self, Mob *against, bool &ignoreDefault);
+
+private:
+	int _EventNPC(std::string package_name, QuestEventID evt, NPC* npc, Mob *init, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers, sol::function *l_func = nullptr);
 	int _EventPlayer(std::string package_name, QuestEventID evt, Client *client, std::string data, uint32 extra_data,
-	                 std::vector<std::any> *extra_pointers, sol::table *l_func = nullptr);
+		std::vector<std::any> *extra_pointers, sol::function *l_func = nullptr);
 	int _EventItem(std::string package_name, QuestEventID evt, Client *client, EQ::ItemInstance *item, Mob *mob, std::string data,
-	               uint32 extra_data, std::vector<std::any> *extra_pointers, sol::table *l_func = nullptr);
-	int _EventSpell(std::string package_name, QuestEventID evt, NPC *npc, Client *client, uint32 spell_id, uint32 extra_data,
-	                std::vector<std::any> *extra_pointers, sol::table *l_func = nullptr);
+		uint32 extra_data, std::vector<std::any> *extra_pointers, sol::function *l_func = nullptr);
+	int _EventSpell(std::string package_name, QuestEventID evt, NPC* npc, Client *client, uint32 spell_id, std::string data, uint32 extra_data,
+		std::vector<std::any> *extra_pointers, sol::function *l_func = nullptr);
 	int _EventEncounter(std::string package_name, QuestEventID evt, std::string encounter_name, std::string data, uint32 extra_data,
-	                    std::vector<std::any> *extra_pointers);
+		std::vector<std::any> *extra_pointers);
 
-	void LoadScript(std::string filename, std::string package_name);
-	bool HasFunction(std::string function, std::string package_name);
-	void ClearStates();
-	void MapFunctions(lua_State *L);
+	void LoadScript(const std::string &filename, const std::string &package_name);
+	void MapFunctions();
 	QuestEventID ConvertLuaEvent(QuestEventID evt);
-
-	std::map<std::string, std::string> vars_;
-	std::map<std::string, bool> loaded_;
-	lua_State *L;
 
 	NPCArgumentHandler NPCArgumentDispatch[_LargestEventID];
 	PlayerArgumentHandler PlayerArgumentDispatch[_LargestEventID];
 	ItemArgumentHandler ItemArgumentDispatch[_LargestEventID];
 	SpellArgumentHandler SpellArgumentDispatch[_LargestEventID];
 	EncounterArgumentHandler EncounterArgumentDispatch[_LargestEventID];
-};
 
-#endif
+	struct Implementation;
+	std::unique_ptr<Implementation> m_impl;
+
+};
 #endif

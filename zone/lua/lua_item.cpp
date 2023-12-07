@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_item.h"
 
 Lua_Item::Lua_Item(uint32 item_id) {
@@ -629,5 +627,3 @@ luabind::scope lua_register_item() {
 	    .def("BookType", &Lua_Item::GetBookType)
 	    .def("Filename", &Lua_Item::GetFilename);
 }
-
-#endif

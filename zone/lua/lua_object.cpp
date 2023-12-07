@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "object.h"
+#include "../object.h"
 #include "lua_object.h"
 
 void Lua_Object::Depop() {
@@ -223,5 +221,3 @@ luabind::scope lua_register_object() {
 	    .def("SetEntityVariable", (void(Lua_Object::*)(const char *, const char *)) & Lua_Object::SetEntityVariable)
 	    .def("EntityVariableExists", (bool(Lua_Object::*)(const char *)) & Lua_Object::EntityVariableExists);
 }
-
-#endif

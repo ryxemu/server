@@ -1,7 +1,5 @@
 #ifndef EQEMU_LUA_OBJECT_H
 #define EQEMU_LUA_OBJECT_H
-#ifdef LUA_EQEMU
-
 #include "lua_entity.h"
 
 class Object;
@@ -61,6 +59,4 @@ class Lua_Object : public Lua_Entity {
 	void SetEntityVariable(const char *name, const char *value);
 	bool EntityVariableExists(const char *name);
 };
-
-#endif
 #endif

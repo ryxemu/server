@@ -1,4 +1,3 @@
-#ifdef LUA_EQEMU
 #include <sol/sol.hpp>
 #include "../common/rulesys.h"
 
@@ -44,4 +43,3 @@ void lua_register_ruler(sol::state_view &sv) {
 void lua_register_ruleb(sol::state_view &sv) {
 	sv.create_named_table("RuleB", "Get", &get_ruleb);
 }
-#endif

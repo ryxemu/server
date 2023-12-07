@@ -1,6 +1,4 @@
-#ifdef LUA_EQEMU
-
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "hate_list.h"
 #include "lua_mob.h"
 #include "lua_hate_list.h"
@@ -21,5 +19,3 @@ void lua_register_hate_list(sol::state_view &sv)
 	auto hate_list = sv.new_usertype<Lua_HateList>("HateList");
 	hate_list["entries"] = sol::readonly_property(&Lua_HateList::get_entries);
 }
-
-#endif

@@ -1,7 +1,5 @@
 #ifndef EQEMU_LUA_ITEM_H
 #define EQEMU_LUA_ITEM_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 struct ItemData;
@@ -124,6 +122,4 @@ class Lua_Item : public Lua_Ptr<const EQ::ItemData> {
 	uint32 GetBookType();
 	const char *GetFilename();
 };
-
-#endif
 #endif

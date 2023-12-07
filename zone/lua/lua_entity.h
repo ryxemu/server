@@ -1,14 +1,9 @@
 #ifndef EQEMU_LUA_ENTITY_H
 #define EQEMU_LUA_ENTITY_H
-#ifdef LUA_EQEMU
-
 #include "lua_ptr.h"
 
 class Entity;
 class Lua_Client;
-#ifdef BOTS
-class Lua_Bot;
-#endif
 class Lua_NPC;
 class Lua_Mob;
 struct Lua_HateList;
@@ -51,10 +46,6 @@ class Lua_Entity : public Lua_Ptr<Entity> {
 	Lua_Corpse CastToCorpse();
 	Lua_Object CastToObject();
 	Lua_Door CastToDoor();
-#ifdef BOTS
-	Lua_Bot CastToBot();
-#endif
 };
 
-#endif
 #endif

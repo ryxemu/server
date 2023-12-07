@@ -1,5 +1,4 @@
 #pragma once
-#ifdef LUA_EQEMU
 #include <sol/forward.hpp>
 #include <sol/sol.hpp>
 
@@ -22,9 +21,6 @@ void lua_register_mob(sol::state_view &sv);
 void lua_register_special_abilities(sol::state_view &sv);
 void lua_register_npc(sol::state_view &sv);
 void lua_register_client(sol::state_view &sv);
-#ifdef BOTS
-void lua_register_bot(sol::state_view &sv);
-#endif
 void lua_register_inventory(sol::state_view &sv);
 void lua_register_inventory_where(sol::state_view &sv);
 void lua_register_iteminst(sol::state_view &sv);
@@ -36,9 +32,6 @@ void lua_register_hate_list(sol::state_view &sv);
 void lua_register_entity_list(sol::state_view &sv);
 void lua_register_mob_list(sol::state_view &sv);
 void lua_register_client_list(sol::state_view &sv);
-#ifdef BOTS
-void lua_register_bot_list(sol::state_view &sv);
-#endif
 void lua_register_npc_list(sol::state_view &sv);
 void lua_register_corpse_list(sol::state_view &sv);
 void lua_register_object_list(sol::state_view &sv);
@@ -62,5 +55,3 @@ void lua_register_journal_speakmode(sol::state_view &sv);
 void lua_register_journal_mode(sol::state_view &sv);
 void lua_register_expedition(sol::state_view &sv);
 void lua_register_expedition_lock_messages(sol::state_view &sv);
-
-#endif

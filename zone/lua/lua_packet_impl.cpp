@@ -1,5 +1,4 @@
-#ifdef LUA_EQEMU
-#include "masterentity.h"
+#include "../masterentity.h"
 #include "lua_packet.h"
 
 Lua_Packet::Lua_Packet(int opcode, int size) {
@@ -313,4 +312,3 @@ std::string Lua_Packet::ReadFixedLengthString(int offset, int string_length) {
 
 	return "";
 }
-#endif

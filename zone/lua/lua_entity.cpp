@@ -1,8 +1,6 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
-#include "entity.h"
+#include "../entity.h"
 #include "lua_entity.h"
 #include "lua_mob.h"
 #include "lua_client.h"
@@ -11,17 +9,10 @@
 #include "lua_object.h"
 #include "lua_door.h"
 
-#ifdef BOTS
-#include "lua_bot.h"
-#endif
-
 void lua_register_entity(sol::state_view &sv) {
 	auto entity = sv.new_usertype<Lua_Entity>("Entity", sol::constructors<Lua_Entity()>());
 	entity["null"] = sol::readonly_property(&Lua_Entity::Null);
 	entity["valid"] = sol::readonly_property(&Lua_Entity::Valid);
-#ifdef BOTS
-	entity["CastToBot"] = &Lua_Entity::CastToBot;
-#endif
 	entity["CastToClient"] = &Lua_Entity::CastToClient;
 	entity["CastToCorpse"] = &Lua_Entity::CastToCorpse;
 	entity["CastToDoor"] = &Lua_Entity::CastToDoor;
@@ -43,5 +34,3 @@ void lua_register_entity(sol::state_view &sv) {
 	entity["IsPlayerCorpse"] = &Lua_Entity::IsPlayerCorpse;
 	entity["IsTrap"] = &Lua_Entity::IsTrap;
 }
-
-#endif

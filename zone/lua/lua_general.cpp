@@ -1,5 +1,3 @@
-#ifdef LUA_EQEMU
-
 #include <sol/sol.hpp>
 
 #include <sstream>
@@ -19,13 +17,13 @@
 #include "lua_entity_list.h"
 #include "lua_expedition.h"
 #include "lua_spell.h"
-#include "quest_parser_collection.h"
-#include "questmgr.h"
-#include "qglobals.h"
-#include "encounter.h"
+#include "../quest_parser_collection.h"
+#include "../questmgr.h"
+#include "../qglobals.h"
+#include "../encounter.h"
 #include "lua_encounter.h"
-#include "data_bucket.h"
-#include "expedition.h"
+//#include "../data_bucket.h"
+#include "../expedition.h"
 
 struct lua_registered_event {
 	std::string encounter_name;
@@ -4023,5 +4021,3 @@ void lua_register_random(sol::state_view &sv) {
 	random["RollReal"] = &random_roll_real;
 	random["Roll0"] = &random_roll0;
 }
-
-#endif
