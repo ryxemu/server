@@ -73,7 +73,6 @@ SET(common_sources
 	unix.cpp
 	uuid.cpp
 	worldconn.cpp
-	xml_parser.cpp
 	platform.cpp
 	patches/patches.cpp
 	patches/mac.cpp
@@ -406,7 +405,6 @@ SET(common_headers
 	uuid.h
 	version.h
 	worldconn.h
-	xml_parser.h
 	zone_numbers.h
 	platform.h
 	patches/patches.h

@@ -1,7 +1,7 @@
 NAME := ryxemu-server
 VERSION ?= 0.0.1
 
-DOCKER_ARGS := --rm -v ${PWD}:/src -w /src ${NAME}
+DOCKER_ARGS := --rm  --name ${NAME} -v ${PWD}:/src -w /src ${NAME}
 
 # Run 'ninja' in build directory
 .PHONY: build
@@ -10,7 +10,7 @@ build:
 		make cmake; \
 	fi
 
-	@cd build$$BUILD_SUFFIX && cmake --build . --config Debug --target all --
+	@cd build$$BUILD_SUFFIX && cmake --build . --config Release --target all --
 
 # Run 'cmake' in build directory
 .PHONY: cmake
