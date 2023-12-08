@@ -149,8 +149,6 @@ class StackWalker {
 
 #if defined(_M_IX86)
 #ifdef CURRENT_THREAD_VIA_EXCEPTION
-// TODO: The following is not a "good" implementation,
-// because the callstack is only valid in the "__except" block...
 #define GET_CURRENT_CONTEXT(c, contextFlags)                                                                        \
 	do {                                                                                                            \
 		memset(&c, 0, sizeof(CONTEXT));                                                                             \

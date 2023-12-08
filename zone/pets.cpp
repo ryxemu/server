@@ -633,7 +633,7 @@ void NPC::GetPetState(SpellBuff_Struct *pet_buffs, uint32 *items, char *name) {
 	// save their buffs.
 	for (int i = 0; i < GetPetMaxTotalSlots(); i++) {
 		if (buffs[i].spellid != SPELL_UNKNOWN) {
-			pet_buffs[i].bufftype = 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+			pet_buffs[i].bufftype = 2;
 			pet_buffs[i].level = buffs[i].casterlevel;
 			pet_buffs[i].bard_modifier = buffs[i].instrumentmod;
 			pet_buffs[i].activated = spells[buffs[i].spellid].Activated;

@@ -1257,7 +1257,6 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 #ifdef SPELL_EFFECT_SPAM
 				snprintf(effect_desc, _EDLEN, "Feign Death");
 #endif
-				// todo, look up spell ID in DB
 				if (spell_id == 2488)  // Dook- Lifeburn fix
 					break;
 
@@ -1463,7 +1462,6 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 #ifdef SPELL_EFFECT_SPAM
 				snprintf(effect_desc, _EDLEN, "Lull");
 #endif
-				// TODO: check vs. CHA when harmony effect failed, if caster is to be added to hatelist
 				break;
 			}
 

@@ -2163,7 +2163,7 @@ int CalcBuffDuration_formula(int level, int formula, int duration) {
 			return duration ? i < duration ? i : duration : i;
 
 		case 50:            // permanent buff
-			return 0xFFFE;  // TODO - the better way might be to set the bufftype to 1 instead of 2 for these, then the client won't tick down the timer
+			return 0xFFFE;
 
 		default:
 			Log(Logs::General, Logs::Spells, "CalcBuffDuration_formula: unknown formula %d", formula);
@@ -2218,8 +2218,6 @@ int Mob::CanBuffStack(uint16 spellid, uint8 caster_level, bool iFailIfOverwrite)
 	if (FindBuff(spellid))
 		return (-1);  // do not recast a buff we already have on, we recast fast enough that we dont need to refresh our buffs
 
-	// TODO - it would be better to pass the caster object into this function instead of the caster_level.
-	// FindAffectSlot behaves differently if NPC caster instead of client caster but we only have the target here.
 	int slot = -1;
 	FindAffectSlot(this, spellid, &slot, 0);
 
@@ -2815,8 +2813,6 @@ bool Mob::SpellOnTarget(uint16 spell_id, Mob *spelltar, bool reflect, bool use_r
 		int recourse_spell_id = spells[spell_id].RecourseLink;
 		if (spells[recourse_spell_id].targettype == ST_Tap)  // Soul Well Recourse, Greenmist Recourse
 		{
-			// this is a hack to make these spells show correctly and overwrite themselves on the client
-			// TODO: investigate using type 4 buffs which negates the spell values on the client
 			if (IsClient()) {
 				int buff_count = GetMaxBuffSlots();
 				for (int i = 0; i < buff_count; i++) {
@@ -3030,9 +3026,6 @@ bool Mob::IsImmuneToSpell(uint16 spell_id, Mob *caster, bool isProc) {
 	if (casting_gm_override == 1)
 		return (false);
 
-	// TODO: this function loops through the effect list for
-	// this spell like 10 times, this could easily be consolidated
-	// into one loop through with a switch statement.
 
 	Log(Logs::Detail, Logs::Spells, "Checking to see if we are immune to spell %d cast by %s", spell_id, caster->GetName());
 
@@ -3689,7 +3682,7 @@ void Client::MakeBuffFadePacket(uint16 spell_id, int slot_id, bool send_message)
 	SpellBuffFade_Struct *sbf = (SpellBuffFade_Struct *)outapp->pBuffer;
 
 	sbf->entityid = GetID();
-	sbf->bufftype = 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+	sbf->bufftype = 2;
 	sbf->level = buffs[slot_id].casterlevel;
 	sbf->bard_modifier = buffs[slot_id].instrumentmod;
 	sbf->activated = spells[spell_id].Activated;
@@ -4050,7 +4043,7 @@ void Client::SendBuffDurationPacket(uint16 spell_id, int duration, int inlevel, 
 	sbf->entityid = GetID();
 
 	// this is SpellBuff_Struct - client replaces the existing buff fully with the data sent here
-	sbf->bufftype = 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+	sbf->bufftype = 2;
 	sbf->level = inlevel > 0 ? inlevel : GetLevel();
 	sbf->bard_modifier = bardmodifier;
 	sbf->activated = spells[spell_id].Activated;

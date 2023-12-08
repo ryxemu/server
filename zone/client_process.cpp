@@ -1585,7 +1585,6 @@ void Client::OPGMTrainSkill(const EQApplicationPacket *app) {
 			// that the initial level of a skill should be the player's current level instead, but this puts the client window out
 			// of sync with the real value.
 			{
-				// TODO: this check for level 1 is a workaround for not being able to differentiate between a value 0 skill and an untrained (254) skill
 				t_level = t_level == 1 ? 1 : std::min((uint16)GetLevel(), MaxSkill(skill));
 			}
 			SetSkill(skill, t_level, true);

@@ -2372,7 +2372,7 @@ void ZoneDatabase::LoadPetInfo(Client* client) {
 		pi->Buffs[slot_id].spellid = spell_id;
 		pi->Buffs[slot_id].level = caster_level;
 		pi->Buffs[slot_id].player_id = caster_id;
-		pi->Buffs[slot_id].bufftype = 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+		pi->Buffs[slot_id].bufftype = 2;
 
 		pi->Buffs[slot_id].duration = ticsremaining;
 		pi->Buffs[slot_id].counters = counters;

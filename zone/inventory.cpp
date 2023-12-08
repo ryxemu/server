@@ -137,8 +137,6 @@ bool Client::CheckLoreConflict(const EQ::ItemData* item) {
 bool Client::SummonItem(uint32 item_id, int8 quantity, uint16 to_slot, bool force_charges) {
 	this->EVENT_ITEM_ScriptStopReturn();
 
-	// TODO: update calling methods and script apis to handle a failure return
-
 	const EQ::ItemData* item = database.GetItem(item_id);
 
 	// make sure the item exists

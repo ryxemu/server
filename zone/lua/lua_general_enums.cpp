@@ -6,7 +6,7 @@
 #include "../../common/emu_constants.h"
 #include "../../common/textures.h"
 #include "../../common/classes.h"
-
+/*
 void lua_register_events(sol::state_view &sv) {
 	sv.new_enum("Event",
 	            "say", static_cast<int>(EVENT_SAY),
@@ -582,4 +582,4 @@ void lua_register_journal_mode(sol::state_view &sv) {
 	            "None", static_cast<int>(Journal::Mode::None),
 	            "Log1", static_cast<int>(Journal::Mode::Log1),
 	            "Log2", static_cast<int>(Journal::Mode::Log2));
-}
+} */

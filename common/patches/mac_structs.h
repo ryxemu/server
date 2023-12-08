@@ -446,7 +446,6 @@ struct SetDataRate_Struct
 };
 
 // Added this struct for eqemu and started eimplimentation ProcessOP_SendLoginInfo
-//TODO: confirm everything in this struct
 // PPC Mac version of this is 196 bytes, Intel Mac version is 200 bytes
 struct LoginInfo_Struct
 {

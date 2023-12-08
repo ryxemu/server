@@ -13,7 +13,7 @@ void Lua_HateEntry::SetEnt(Lua_Mob e) {
 	self->entity_on_hatelist = e;
 }
 
-int64 Lua_HateEntry::GetDamage() {
+/* int64 Lua_HateEntry::GetDamage() {
 	Lua_Safe_Call_Int();
 	return self->hatelist_damage;
 }
@@ -41,4 +41,4 @@ int Lua_HateEntry::GetFrenzy() {
 void Lua_HateEntry::SetFrenzy(bool value) {
 	Lua_Safe_Call_Void();
 	self->is_entity_frenzy = value;
-}
+} */

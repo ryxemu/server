@@ -32,7 +32,7 @@ class ItemInstQueue {
 	inline std::list<EQ::ItemInstance*>::const_iterator cbegin() { return m_list.cbegin(); }
 	inline std::list<EQ::ItemInstance*>::const_iterator cend() { return m_list.cend(); }
 
-	inline int size() { return static_cast<int>(m_list.size()); }  // TODO: change to size_t
+	inline int size() { return static_cast<int>(m_list.size()); }
 	inline bool empty() { return m_list.empty(); }
 
 	void push(EQ::ItemInstance* inst);

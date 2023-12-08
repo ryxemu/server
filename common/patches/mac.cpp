@@ -38,7 +38,6 @@ void Register(EQStreamIdentifier &into) {
 		opfile += name;
 		opfile += ".conf";
 		// load up the opcode manager.
-		// TODO: figure out how to support shared memory with multiple patches...
 		opcodes = new RegularOpcodeManager();
 		if (!opcodes->LoadOpcodes(opfile.c_str())) {
 			Log(Logs::General, Logs::Netcode, "[OPCODES] Error loading opcodes file %s. Not registering patch %s.", opfile.c_str(), name);
@@ -82,7 +81,6 @@ void Reload() {
 	// we need to go to every stream and replace it's manager.
 
 	if (opcodes != nullptr) {
-		// TODO: get this file name from the config file
 		auto Config = Config::get();
 		std::string opfile = Config->PatchDir;
 		opfile += "patch_";
@@ -177,7 +175,7 @@ ENCODE(OP_PlayerProfile) {
 	OUT_array(skills, structs::MAX_PP_SKILL);  // 1:1 direct copy (100 dword)
 
 	for (r = 0; r < 15; r++) {
-		eq->buffs[r].bufftype = (emu->buffs[r].spellid == 0xFFFF || emu->buffs[r].spellid == 0) ? 0 : 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+		eq->buffs[r].bufftype = (emu->buffs[r].spellid == 0xFFFF || emu->buffs[r].spellid == 0) ? 0 : 2;
 		OUT(buffs[r].level);
 		OUT(buffs[r].bard_modifier);
 		OUT(buffs[r].activated);

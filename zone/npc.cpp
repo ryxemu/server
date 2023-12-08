@@ -1569,7 +1569,6 @@ void NPC::LevelScale() {
 	float scaling = (((random_level / (float)level) - 1) * (scalerate / 100.0f));
 
 	if (scalerate == 0 || maxlevel <= 25) {
-		// todo: add expansion column to npc_types
 		if (npctype_id < 200000) {
 			max_hp += (random_level - level) * 20;
 			base_hp += (random_level - level) * 20;

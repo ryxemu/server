@@ -68,7 +68,6 @@ void Trade::Start(uint32 mob_id, bool initiate_with) {
 
 // Add item from a given slot to trade bucket (automatically does bag data too)
 void Trade::AddEntity(uint16 trade_slot_id, uint32 stack_size) {
-	// TODO: review for inventory saves / consider changing return type to bool so failure can be passed to desync handler
 
 	if (!owner || !owner->IsClient()) {
 		// This should never happen
@@ -859,7 +858,7 @@ void Client::Trader_StartTrader() {
 	Trader_ShowItems_Struct* sis = (Trader_ShowItems_Struct*)outapp->pBuffer;
 	sis->Code = BazaarTrader_StartTraderMode;
 	sis->TraderID = this->GetID();
-	sis->SubAction = BazaarTrader_StartTraderMode;  // Todo: Sending this as 0 sends a message about being in a trader area. Implement that server side.
+	sis->SubAction = BazaarTrader_StartTraderMode;
 
 	QueuePacket(outapp);
 	safe_delete(outapp);

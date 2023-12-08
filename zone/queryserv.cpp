@@ -355,8 +355,6 @@ void QueryServ::QSHandinItems(struct QSPlayerLogHandin_Struct* QS) {
 	SendQuery(query);
 }
 
-// TODO: Need to figure out how to convert the delete reporting to this function.
 void QueryServ::QSDeleteItems() {}
 
-// TODO: Need to figure out how to convert the move reporting to this function.
 void QueryServ::QSMoveItems() {}

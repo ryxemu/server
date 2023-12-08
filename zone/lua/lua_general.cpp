@@ -24,7 +24,7 @@
 #include "lua_encounter.h"
 // #include "../data_bucket.h"
 // #include "../expedition.h"
-
+/*
 struct lua_registered_event {
 	std::string encounter_name;
 	sol::function lua_reference;
@@ -3412,605 +3412,455 @@ int random_roll0(int max) {
 
 void lua_register_general(sol::state_view &sv) {
 	auto eq = sv.create_named_table("eq");
-	eq["load_encounter"] = &load_encounter;
-	eq["unload_encounter"] = &unload_encounter;
-	eq["load_encounter_with_data"] = &load_encounter_with_data;
-	eq["unload_encounter_with_data"] = &unload_encounter_with_data;
-	eq["register_npc_event"] =
-	    sol::overload((void (*)(std::string, int, int, sol::protected_function)) & register_npc_event,
-	                  (void (*)(int, int, sol::protected_function)) & register_npc_event);
-	eq["unregister_npc_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_npc_event,
-	                                           (void (*)(int, int)) & unregister_npc_event);
-	eq["register_player_event"] =
-	    sol::overload((void (*)(std::string, int, sol::protected_function)) & register_player_event,
-	                  (void (*)(int, sol::protected_function)) & register_player_event);
-	eq["unregister_player_event"] = sol::overload((void (*)(std::string, int)) & unregister_player_event,
-	                                              (void (*)(int)) & unregister_player_event);
-	eq["register_item_event"] =
-	    sol::overload((void (*)(std::string, int, int, sol::protected_function)) & register_item_event,
-	                  (void (*)(int, int, sol::protected_function)) & register_item_event);
-	eq["unregister_item_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_item_event,
-	                                            (void (*)(int, int)) & unregister_item_event);
-	eq["register_spell_event"] =
-	    sol::overload((void (*)(std::string, int, int, sol::protected_function func)) & register_spell_event,
-	                  (void (*)(int, int, sol::protected_function func)) & register_spell_event);
-	eq["unregister_spell_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_spell_event,
-	                                             (void (*)(int, int)) & unregister_spell_event);
-	eq["spawn2"] = (Lua_Mob(*)(int, int, int, double, double, double, double)) & lua_spawn2;
-	eq["unique_spawn"] =
-	    sol::overload((Lua_Mob(*)(int, int, int, double, double, double)) & lua_unique_spawn,
-	                  (Lua_Mob(*)(int, int, int, double, double, double, double)) & lua_unique_spawn);
-	eq["spawn_from_spawn2"] = (Lua_Mob(*)(uint32)) & lua_spawn_from_spawn2;
-	eq["enable_spawn2"] = &lua_enable_spawn2;
-	eq["disable_spawn2"] = &lua_disable_spawn2;
-	eq["has_timer"] = (bool (*)(const char *)) & lua_has_timer;
-	eq["get_remaining_time"] = (uint32(*)(const char *)) & lua_get_remaining_time;
-	eq["get_timer_duration"] = (uint32(*)(const char *)) & lua_get_timer_duration;
-	eq["set_timer"] = sol::overload((void (*)(const char *, int)) & lua_set_timer,
-	                                (void (*)(const char *, int, Lua_ItemInst)) & lua_set_timer,
-	                                (void (*)(const char *, int, Lua_Mob)) & lua_set_timer,
-	                                (void (*)(const char *, int, Lua_Encounter)) & lua_set_timer);
-	eq["stop_timer"] = sol::overload((void (*)(const char *)) & lua_stop_timer,
-	                                 (void (*)(const char *, Lua_ItemInst)) & lua_stop_timer,
-	                                 (void (*)(const char *, Lua_Mob)) & lua_stop_timer,
-	                                 (void (*)(const char *, Lua_Encounter)) & lua_stop_timer);
-	eq["pause_timer"] = (void (*)(const char *)) & lua_pause_timer;
-	eq["resume_timer"] = (void (*)(const char *)) & lua_resume_timer;
-	eq["is_paused_timer"] = (bool (*)(const char *)) & lua_is_paused_timer;
-	eq["stop_all_timers"] =
-	    sol::overload((void (*)(void)) & lua_stop_all_timers, (void (*)(Lua_ItemInst)) & lua_stop_all_timers,
-	                  (void (*)(Lua_Mob)) & lua_stop_all_timers, (void (*)(Lua_Encounter)) & lua_stop_all_timers);
-	eq["depop"] = sol::overload((void (*)(void)) & lua_depop, (void (*)(int)) & lua_depop);
-	eq["depop_with_timer"] =
-	    sol::overload((void (*)(void)) & lua_depop_with_timer, (void (*)(int)) & lua_depop_with_timer);
-	eq["depop_all"] = sol::overload((void (*)(void)) & lua_depop_all, (void (*)(int)) & lua_depop_all);
-	eq["depop_zone"] = &lua_depop_zone;
-	eq["repop_zone"] = &lua_repop_zone;
-	eq["process_mobs_while_zone_empty"] = &lua_process_mobs_while_zone_empty;
-	eq["is_disc_tome"] = &lua_is_disc_tome;
-	eq["get_race_name"] = (std::string(*)(uint16)) & lua_get_race_name;
-	eq["get_spell_name"] = (std::string(*)(uint32)) & lua_get_spell_name;
-	eq["get_skill_name"] = (std::string(*)(int)) & lua_get_skill_name;
-	eq["safe_move"] = &lua_safe_move;
-	eq["rain"] = &lua_rain;
-	eq["snow"] = &lua_snow;
-	eq["scribe_spells"] =
-	    sol::overload((int (*)(int)) & lua_scribe_spells, (int (*)(int, int)) & lua_scribe_spells);
-	eq["train_discs"] = sol::overload((int (*)(int)) & lua_train_discs, (int (*)(int, int)) & lua_train_discs);
-	eq["set_sky"] = &lua_set_sky;
-	eq["set_guild"] = &lua_set_guild;
-	eq["create_guild"] = &lua_create_guild;
-	eq["set_time"] = sol::overload((void (*)(int, int)) & lua_set_time, (void (*)(int, int, bool)) & lua_set_time);
-	eq["signal"] = sol::overload((void (*)(int, int)) & lua_signal, (void (*)(int, int, int)) & lua_signal);
-	eq["set_global"] = &lua_set_global;
-	eq["target_global"] = &lua_target_global;
-	eq["delete_global"] = &lua_delete_global;
-	eq["start"] = &lua_start;
-	eq["stop"] = &lua_stop;
-	eq["pause"] = &lua_pause;
-	eq["move_to"] = sol::overload((void (*)(float, float, float)) & lua_move_to,
-	                              (void (*)(float, float, float, float)) & lua_move_to,
-	                              (void (*)(float, float, float, float, bool)) & lua_move_to);
-	eq["resume"] = &lua_path_resume;
-	eq["set_next_hp_event"] = &lua_set_next_hp_event;
-	eq["set_next_inc_hp_event"] = &lua_set_next_inc_hp_event;
-	eq["respawn"] = &lua_respawn;
-	eq["set_proximity"] =
-	    sol::overload((void (*)(float, float, float, float)) & lua_set_proximity,
-	                  (void (*)(float, float, float, float, float, float)) & lua_set_proximity,
-	                  (void (*)(float, float, float, float, float, float, bool)) & lua_set_proximity);
-	eq["clear_proximity"] = &lua_clear_proximity;
-	eq["enable_proximity_say"] = &lua_enable_proximity_say;
-	eq["disable_proximity_say"] = &lua_disable_proximity_say;
-	eq["set_anim"] = &lua_set_anim;
-	eq["spawn_condition"] = &lua_spawn_condition;
-	eq["get_spawn_condition"] = &lua_get_spawn_condition;
-	eq["toggle_spawn_event"] = &lua_toggle_spawn_event;
-	eq["summon_buried_player_corpse"] = &lua_summon_buried_player_corpse;
-	eq["summon_all_player_corpses"] = &lua_summon_all_player_corpses;
-	eq["get_player_corpse_count"] = &lua_get_player_corpse_count;
-	eq["get_player_corpse_count_by_zone_id"] = &lua_get_player_corpse_count_by_zone_id;
-	eq["get_player_buried_corpse_count"] = &lua_get_player_buried_corpse_count;
-	eq["bury_player_corpse"] = &lua_bury_player_corpse;
-	eq["task_selector"] =
-	    sol::overload((void (*)(sol::table)) & lua_task_selector, (void (*)(sol::table, bool)) & lua_task_selector);
-	eq["task_set_selector"] =
-	    sol::overload((void (*)(int)) & lua_task_set_selector, (void (*)(int, bool)) & lua_task_set_selector);
-	eq["enable_task"] = &lua_enable_task;
-	eq["disable_task"] = &lua_disable_task;
-	eq["is_task_enabled"] = &lua_is_task_enabled;
-	eq["is_task_active"] = &lua_is_task_active;
-	eq["is_task_activity_active"] = &lua_is_task_activity_active;
-	eq["get_task_activity_done_count"] = &lua_get_task_activity_done_count;
-	eq["update_task_activity"] = &lua_update_task_activity;
-	eq["reset_task_activity"] = &lua_reset_task_activity;
-	eq["assign_task"] = &lua_assign_task;
-	eq["fail_task"] = &lua_fail_task;
-	eq["task_time_left"] = &lua_task_time_left;
-	eq["is_task_completed"] = &lua_is_task_completed;
-	eq["enabled_task_count"] = &lua_enabled_task_count;
-	eq["first_task_in_set"] = &lua_first_task_in_set;
-	eq["last_task_in_set"] = &lua_last_task_in_set;
-	eq["next_task_in_set"] = &lua_next_task_in_set;
-	eq["active_speak_task"] = &lua_active_speak_task;
-	eq["active_speak_activity"] = &lua_active_speak_activity;
-	eq["active_tasks_in_set"] = &lua_active_tasks_in_set;
-	eq["completed_tasks_in_set"] = &lua_completed_tasks_in_set;
-	eq["is_task_appropriate"] = &lua_is_task_appropriate;
-	eq["get_task_name"] = (std::string(*)(uint32)) & lua_get_task_name;
-	eq["popup"] = &lua_popup;
-	eq["clear_spawn_timers"] = &lua_clear_spawn_timers;
-	eq["zone_emote"] = &lua_zone_emote;
-	eq["world_emote"] = &lua_world_emote;
-	eq["message"] = &lua_message;
-	eq["whisper"] = &lua_whisper;
-	eq["get_level"] = &lua_get_level;
-	eq["create_ground_object"] =
-	    sol::overload((void (*)(uint32, float, float, float, float)) & lua_create_ground_object,
-	                  (void (*)(uint32, float, float, float, float, uint32)) & lua_create_ground_object);
-	eq["create_ground_object_from_model"] = sol::overload(
-	    (void (*)(const char *, float, float, float, float)) & lua_create_ground_object_from_model,
-	    (void (*)(const char *, float, float, float, float, int)) & lua_create_ground_object_from_model,
-	    (void (*)(const char *, float, float, float, float, int, uint32)) & lua_create_ground_object_from_model);
-	eq["create_door"] = &lua_create_door;
-	eq["modify_npc_stat"] = &lua_modify_npc_stat;
-	eq["collect_items"] = &lua_collect_items;
-	eq["count_item"] = &lua_count_item;
-	eq["remove_item"] =
-	    sol::overload((void (*)(uint32)) & lua_remove_item, (void (*)(uint32, uint32)) & lua_remove_item);
-	eq["update_spawn_timer"] = &lua_update_spawn_timer;
-	eq["merchant_set_item"] = sol::overload((void (*)(uint32, uint32)) & lua_merchant_set_item,
-	                                        (void (*)(uint32, uint32, uint32)) & lua_merchant_set_item);
-	eq["merchant_count_item"] = &lua_merchant_count_item;
-	eq["item_link"] = &lua_item_link;
-	eq["get_item_name"] = (std::string(*)(uint32)) & lua_get_item_name;
-	eq["say_link"] = sol::overload((std::string(*)(const char *, bool, const char *)) & lua_say_link,
-	                               (std::string(*)(const char *, bool)) & lua_say_link,
-	                               (std::string(*)(const char *)) & lua_say_link);
-	eq["set_rule"] = (void (*)(std::string, std::string)) & lua_set_rule;
-	eq["get_rule"] = (std::string(*)(std::string)) & lua_get_rule;
-	eq["get_data"] = (std::string(*)(std::string)) & lua_get_data;
-	eq["get_data_expires"] = (std::string(*)(std::string)) & lua_get_data_expires;
-	eq["set_data"] = sol::overload((void (*)(std::string, std::string)) & lua_set_data,
-	                               (void (*)(std::string, std::string, std::string)) & lua_set_data);
-	eq["delete_data"] = (bool (*)(std::string)) & lua_delete_data;
-	eq["get_char_name_by_id"] = &lua_get_char_name_by_id;
-	eq["get_char_id_by_name"] = (uint32(*)(const char *)) & lua_get_char_id_by_name;
-	eq["get_class_name"] = sol::overload((std::string(*)(uint8)) & lua_get_class_name,
-	                                     (std::string(*)(uint8, uint8)) & lua_get_class_name);
-	eq["get_clean_npc_name_by_id"] = &lua_get_clean_npc_name_by_id;
-	eq["get_currency_id"] = &lua_get_currency_id;
-	eq["get_currency_item_id"] = &lua_get_currency_item_id;
-	eq["get_guild_name_by_id"] = &lua_get_guild_name_by_id;
-	eq["get_guild_id_by_char_id"] = &lua_get_guild_id_by_char_id;
-	eq["get_group_id_by_char_id"] = &lua_get_group_id_by_char_id;
-	eq["get_npc_name_by_id"] = &lua_get_npc_name_by_id;
-	eq["get_raid_id_by_char_id"] = &lua_get_raid_id_by_char_id;
-	eq["create_instance"] = &lua_create_instance;
-	eq["destroy_instance"] = &lua_destroy_instance;
-	eq["update_instance_timer"] = &lua_update_instance_timer;
-	eq["get_instance_id"] = &lua_get_instance_id;
-	eq["get_instance_id_by_char_id"] = &lua_get_instance_id_by_char_id;
-	eq["get_instance_timer"] = &lua_get_instance_timer;
-	eq["get_instance_timer_by_id"] = &lua_get_instance_timer_by_id;
-	eq["get_characters_in_instance"] = &lua_get_characters_in_instance;
-	eq["assign_to_instance"] = &lua_assign_to_instance;
-	eq["assign_to_instance_by_char_id"] = &lua_assign_to_instance_by_char_id;
-	eq["assign_group_to_instance"] = &lua_assign_group_to_instance;
-	eq["assign_raid_to_instance"] = &lua_assign_raid_to_instance;
-	eq["remove_from_instance"] = &lua_remove_from_instance;
-	eq["remove_from_instance_by_char_id"] = &lua_remove_from_instance_by_char_id;
-	eq["check_instance_by_char_id"] = (bool (*)(uint16, uint32)) & lua_check_instance_by_char_id;
-	eq["remove_all_from_instance"] = &lua_remove_all_from_instance;
-	eq["flag_instance_by_group_leader"] = &lua_flag_instance_by_group_leader;
-	eq["flag_instance_by_raid_leader"] = &lua_flag_instance_by_raid_leader;
-	eq["fly_mode"] = &lua_fly_mode;
-	eq["faction_value"] = &lua_faction_value;
-	eq["check_title"] = &lua_check_title;
-	eq["enable_title"] = &lua_enable_title;
-	eq["remove_title"] = &lua_remove_title;
-	eq["wear_change"] = &lua_wear_change;
-	eq["voice_tell"] = &lua_voice_tell;
-	eq["send_mail"] = &lua_send_mail;
-	eq["get_qglobals"] = sol::overload((sol::table(*)(sol::this_state, Lua_NPC, Lua_Client)) & lua_get_qglobals,
-	                                   (sol::table(*)(sol::this_state, Lua_Client)) & lua_get_qglobals,
-	                                   (sol::table(*)(sol::this_state, Lua_NPC)) & lua_get_qglobals,
-	                                   (sol::table(*)(sol::this_state)) & lua_get_qglobals);
-	eq["get_entity_list"] = &lua_get_entity_list;
-	eq["zone"] = &lua_zone;
-	eq["zone_group"] = &lua_zone_group;
-	eq["zone_raid"] = &lua_zone_raid;
-	eq["get_zone_id"] = &lua_get_zone_id;
-	eq["get_zone_id_by_name"] = &lua_get_zone_id_by_name;
-	eq["get_zone_long_name"] = &lua_get_zone_long_name;
-	eq["get_zone_long_name_by_name"] = &lua_get_zone_long_name_by_name;
-	eq["get_zone_long_name_by_id"] = &lua_get_zone_long_name_by_id;
-	eq["get_zone_short_name"] = &lua_get_zone_short_name;
-	eq["get_zone_short_name_by_id"] = &lua_get_zone_short_name_by_id;
-	eq["get_zone_instance_id"] = &lua_get_zone_instance_id;
-	eq["get_zone_instance_version"] = &lua_get_zone_instance_version;
-	eq["get_zone_weather"] = &lua_get_zone_weather;
-	eq["get_zone_time"] = &lua_get_zone_time;
-	eq["add_area"] = &lua_add_area;
-	eq["remove_area"] = &lua_remove_area;
-	eq["clear_areas"] = &lua_clear_areas;
-	eq["add_spawn_point"] = &lua_add_spawn_point;
-	eq["remove_spawn_point"] = &lua_remove_spawn_point;
-	eq["attack"] = &lua_attack;
-	eq["attack_npc"] = &lua_attack_npc;
-	eq["attack_npc_type"] = &lua_attack_npc_type;
-	eq["follow"] = sol::overload((void (*)(int)) & lua_follow, (void (*)(int, int)) & lua_follow);
-	eq["stop_follow"] = &lua_stop_follow;
-	eq["get_initiator"] = &lua_get_initiator;
-	eq["get_owner"] = &lua_get_owner;
-	eq["get_quest_item"] = &lua_get_quest_item;
-	eq["get_quest_spell"] = &lua_get_quest_spell;
-	eq["get_encounter"] = &lua_get_encounter;
-	eq["map_opcodes"] = &lua_map_opcodes;
-	eq["clear_opcode"] = &lua_clear_opcode;
-	eq["enable_recipe"] = &lua_enable_recipe;
-	eq["disable_recipe"] = &lua_disable_recipe;
-	eq["clear_npctype_cache"] = &lua_clear_npctype_cache;
-	eq["reloadzonestaticdata"] = &lua_reloadzonestaticdata;
-	eq["update_zone_header"] = &lua_update_zone_header;
-	eq["clock"] = &lua_clock;
-	eq["create_npc"] = &lua_create_npc;
-	eq["log"] = (void (*)(int, std::string)) & lua_log;
-	eq["debug"] = sol::overload((void (*)(std::string)) & lua_debug, (void (*)(std::string, int)) & lua_debug);
-	eq["log_combat"] = (void (*)(std::string)) & lua_log_combat;
-	eq["seconds_to_time"] = &lua_seconds_to_time;
-	eq["get_hex_color_code"] = &lua_get_hex_color_code;
-	eq["get_aa_exp_modifier_by_char_id"] =
-	    sol::overload((double (*)(uint32, uint32)) & lua_get_aa_exp_modifier_by_char_id,
-	                  (double (*)(uint32, uint32, int16)) & lua_get_aa_exp_modifier_by_char_id);
-	eq["get_exp_modifier_by_char_id"] =
-	    sol::overload((double (*)(uint32, uint32)) & lua_get_exp_modifier_by_char_id,
-	                  (double (*)(uint32, uint32, int16)) & lua_get_exp_modifier_by_char_id);
-	eq["set_aa_exp_modifier_by_char_id"] =
-	    sol::overload((void (*)(uint32, uint32, double)) & lua_set_aa_exp_modifier_by_char_id,
-	                  (void (*)(uint32, uint32, double, int16)) & lua_set_aa_exp_modifier_by_char_id);
-	eq["set_exp_modifier_by_char_id"] =
-	    sol::overload((void (*)(uint32, uint32, double)) & lua_set_exp_modifier_by_char_id,
-	                  (void (*)(uint32, uint32, double, int16)) & lua_set_exp_modifier_by_char_id);
-	eq["add_ldon_loss"] = &lua_add_ldon_loss;
-	eq["add_ldon_points"] = &lua_add_ldon_points;
-	eq["add_ldon_win"] = &lua_add_ldon_win;
-	eq["get_gender_name"] = &lua_get_gender_name;
-	eq["get_deity_name"] = &lua_get_deity_name;
-	eq["get_inventory_slot_name"] = &lua_get_inventory_slot_name;
-	eq["rename"] = &lua_rename;
-	eq["get_data_remaining"] = &lua_get_data_remaining;
-	eq["get_item_stat"] = &lua_get_item_stat;
-	eq["get_spell_stat"] = sol::overload((int (*)(uint32, std::string)) & lua_get_spell_stat,
-	                                     (int (*)(uint32, std::string, uint8)) & lua_get_spell_stat);
-	eq["is_npc_spawned"] = &lua_is_npc_spawned;
-	eq["count_spawned_npcs"] = &lua_count_spawned_npcs;
-	eq["get_spell"] = &lua_get_spell;
-	eq["get_ldon_theme_name"] = &lua_get_ldon_theme_name;
-	eq["get_faction_name"] = &lua_get_faction_name;
-	eq["get_language_name"] = &lua_get_language_name;
-	eq["get_body_type_name"] = &lua_get_body_type_name;
-	eq["get_consider_level_name"] = &lua_get_consider_level_name;
-	eq["get_environmental_damage_name"] = &lua_get_environmental_damage_name;
-	eq["commify"] = &lua_commify;
-	eq["check_name_filter"] = &lua_check_name_filter;
-	eq["discord_send"] = &lua_discord_send;
-	eq["track_npc"] = &lua_track_npc;
-	eq["get_recipe_made_count"] = &lua_get_recipe_made_count;
-	eq["get_recipe_name"] = &lua_get_recipe_name;
-	eq["has_recipe_learned"] = &lua_has_recipe_learned;
-	eq["is_raining"] = &lua_is_raining;
-	eq["is_snowing"] = &lua_is_snowing;
-
-	/*
-	    Cross Zone
-	*/
-	eq["cross_zone_add_ldon_loss_by_char_id"] = &lua_cross_zone_add_ldon_loss_by_char_id;
-	eq["cross_zone_add_ldon_loss_by_group_id"] = &lua_cross_zone_add_ldon_loss_by_group_id;
-	eq["cross_zone_add_ldon_loss_by_raid_id"] = &lua_cross_zone_add_ldon_loss_by_raid_id;
-	eq["cross_zone_add_ldon_loss_by_guild_id"] = &lua_cross_zone_add_ldon_loss_by_guild_id;
-	eq["cross_zone_add_ldon_loss_by_expedition_id"] = &lua_cross_zone_add_ldon_loss_by_expedition_id;
-	eq["cross_zone_add_ldon_loss_by_client_name"] = &lua_cross_zone_add_ldon_loss_by_client_name;
-	eq["cross_zone_add_ldon_points_by_char_id"] = &lua_cross_zone_add_ldon_points_by_char_id;
-	eq["cross_zone_add_ldon_points_by_group_id"] = &lua_cross_zone_add_ldon_points_by_group_id;
-	eq["cross_zone_add_ldon_points_by_raid_id"] = &lua_cross_zone_add_ldon_points_by_raid_id;
-	eq["cross_zone_add_ldon_points_by_guild_id"] = &lua_cross_zone_add_ldon_points_by_guild_id;
-	eq["cross_zone_add_ldon_points_by_expedition_id"] = &lua_cross_zone_add_ldon_points_by_expedition_id;
-	eq["cross_zone_add_ldon_points_by_client_name"] = &lua_cross_zone_add_ldon_points_by_client_name;
-	eq["cross_zone_add_ldon_win_by_char_id"] = &lua_cross_zone_add_ldon_win_by_char_id;
-	eq["cross_zone_add_ldon_win_by_group_id"] = &lua_cross_zone_add_ldon_win_by_group_id;
-	eq["cross_zone_add_ldon_win_by_raid_id"] = &lua_cross_zone_add_ldon_win_by_raid_id;
-	eq["cross_zone_add_ldon_win_by_guild_id"] = &lua_cross_zone_add_ldon_win_by_guild_id;
-	eq["cross_zone_add_ldon_win_by_expedition_id"] = &lua_cross_zone_add_ldon_win_by_expedition_id;
-	eq["cross_zone_add_ldon_win_by_client_name"] = &lua_cross_zone_add_ldon_win_by_client_name;
-	eq["cross_zone_assign_task_by_char_id"] =
-	    sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_char_id,
-	                  (void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_char_id);
-	eq["cross_zone_assign_task_by_group_id"] =
-	    sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_group_id,
-	                  (void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_group_id);
-	eq["cross_zone_assign_task_by_raid_id"] =
-	    sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_raid_id,
-	                  (void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_raid_id);
-	eq["cross_zone_assign_task_by_guild_id"] =
-	    sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_guild_id,
-	                  (void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_guild_id);
-	eq["cross_zone_assign_task_by_expedition_id"] =
-	    sol::overload((void (*)(uint32, uint32)) & lua_cross_zone_assign_task_by_expedition_id,
-	                  (void (*)(uint32, uint32, bool)) & lua_cross_zone_assign_task_by_expedition_id);
-	eq["cross_zone_assign_task_by_client_name"] =
-	    sol::overload((void (*)(const char *, uint32)) & lua_cross_zone_assign_task_by_client_name,
-	                  (void (*)(const char *, uint32, bool)) & lua_cross_zone_assign_task_by_client_name);
-	eq["cross_zone_cast_spell_by_char_id"] = &lua_cross_zone_cast_spell_by_char_id;
-	eq["cross_zone_cast_spell_by_group_id"] = &lua_cross_zone_cast_spell_by_group_id;
-	eq["cross_zone_cast_spell_by_raid_id"] = &lua_cross_zone_cast_spell_by_raid_id;
-	eq["cross_zone_cast_spell_by_guild_id"] = &lua_cross_zone_cast_spell_by_guild_id;
-	eq["cross_zone_cast_spell_by_expedition_id"] = &lua_cross_zone_cast_spell_by_expedition_id;
-	eq["cross_zone_cast_spell_by_client_name"] = &lua_cross_zone_cast_spell_by_client_name;
-	eq["cross_zone_dialogue_window_by_char_id"] = &lua_cross_zone_dialogue_window_by_char_id;
-	eq["cross_zone_dialogue_window_by_group_id"] = &lua_cross_zone_dialogue_window_by_group_id;
-	eq["cross_zone_dialogue_window_by_raid_id"] = &lua_cross_zone_dialogue_window_by_raid_id;
-	eq["cross_zone_dialogue_window_by_guild_id"] = &lua_cross_zone_dialogue_window_by_guild_id;
-	eq["cross_zone_dialogue_window_by_expedition_id"] = &lua_cross_zone_dialogue_window_by_expedition_id;
-	eq["cross_zone_dialogue_window_by_client_name"] = &lua_cross_zone_dialogue_window_by_client_name;
-	eq["cross_zone_disable_task_by_char_id"] = &lua_cross_zone_disable_task_by_char_id;
-	eq["cross_zone_disable_task_by_group_id"] = &lua_cross_zone_disable_task_by_group_id;
-	eq["cross_zone_disable_task_by_raid_id"] = &lua_cross_zone_disable_task_by_raid_id;
-	eq["cross_zone_disable_task_by_guild_id"] = &lua_cross_zone_disable_task_by_guild_id;
-	eq["cross_zone_disable_task_by_expedition_id"] = &lua_cross_zone_disable_task_by_expedition_id;
-	eq["cross_zone_disable_task_by_client_name"] = &lua_cross_zone_disable_task_by_client_name;
-	eq["cross_zone_enable_task_by_char_id"] = &lua_cross_zone_enable_task_by_char_id;
-	eq["cross_zone_enable_task_by_group_id"] = &lua_cross_zone_enable_task_by_group_id;
-	eq["cross_zone_enable_task_by_raid_id"] = &lua_cross_zone_enable_task_by_raid_id;
-	eq["cross_zone_enable_task_by_guild_id"] = &lua_cross_zone_enable_task_by_guild_id;
-	eq["cross_zone_enable_task_by_expedition_id"] = &lua_cross_zone_enable_task_by_expedition_id;
-	eq["cross_zone_enable_task_by_client_name"] = &lua_cross_zone_enable_task_by_client_name;
-	eq["cross_zone_fail_task_by_char_id"] = &lua_cross_zone_fail_task_by_char_id;
-	eq["cross_zone_fail_task_by_group_id"] = &lua_cross_zone_fail_task_by_group_id;
-	eq["cross_zone_fail_task_by_raid_id"] = &lua_cross_zone_fail_task_by_raid_id;
-	eq["cross_zone_fail_task_by_guild_id"] = &lua_cross_zone_fail_task_by_guild_id;
-	eq["cross_zone_fail_task_by_expedition_id"] = &lua_cross_zone_fail_task_by_expedition_id;
-	eq["cross_zone_fail_task_by_client_name"] = &lua_cross_zone_fail_task_by_client_name;
-	eq["cross_zone_marquee_by_char_id"] = &lua_cross_zone_marquee_by_char_id;
-	eq["cross_zone_marquee_by_group_id"] = &lua_cross_zone_marquee_by_group_id;
-	eq["cross_zone_marquee_by_raid_id"] = &lua_cross_zone_marquee_by_raid_id;
-	eq["cross_zone_marquee_by_guild_id"] = &lua_cross_zone_marquee_by_guild_id;
-	eq["cross_zone_marquee_by_expedition_id"] = &lua_cross_zone_marquee_by_expedition_id;
-	eq["cross_zone_marquee_by_client_name"] = &lua_cross_zone_marquee_by_client_name;
-	eq["cross_zone_message_player_by_char_id"] = &lua_cross_zone_message_player_by_char_id;
-	eq["cross_zone_message_player_by_group_id"] = &lua_cross_zone_message_player_by_group_id;
-	eq["cross_zone_message_player_by_raid_id"] = &lua_cross_zone_message_player_by_raid_id;
-	eq["cross_zone_message_player_by_guild_id"] = &lua_cross_zone_message_player_by_guild_id;
-	eq["cross_zone_message_player_by_expedition_id"] = &lua_cross_zone_message_player_by_expedition_id;
-	eq["cross_zone_message_player_by_name"] = &lua_cross_zone_message_player_by_name;
-	eq["cross_zone_move_player_by_char_id"] = &lua_cross_zone_move_player_by_char_id;
-	eq["cross_zone_move_player_by_group_id"] = &lua_cross_zone_move_player_by_group_id;
-	eq["cross_zone_move_player_by_raid_id"] = &lua_cross_zone_move_player_by_raid_id;
-	eq["cross_zone_move_player_by_guild_id"] = &lua_cross_zone_move_player_by_guild_id;
-	eq["cross_zone_move_player_by_expedition_id"] = &lua_cross_zone_move_player_by_expedition_id;
-	eq["cross_zone_move_player_by_client_name"] = &lua_cross_zone_move_player_by_client_name;
-	eq["cross_zone_move_instance_by_char_id"] = &lua_cross_zone_move_instance_by_char_id;
-	eq["cross_zone_move_instance_by_group_id"] = &lua_cross_zone_move_instance_by_group_id;
-	eq["cross_zone_move_instance_by_raid_id"] = &lua_cross_zone_move_instance_by_raid_id;
-	eq["cross_zone_move_instance_by_guild_id"] = &lua_cross_zone_move_instance_by_guild_id;
-	eq["cross_zone_move_instance_by_expedition_id"] = &lua_cross_zone_move_instance_by_expedition_id;
-	eq["cross_zone_move_instance_by_client_name"] = &lua_cross_zone_move_instance_by_client_name;
-	eq["cross_zone_remove_ldon_loss_by_char_id"] = &lua_cross_zone_remove_ldon_loss_by_char_id;
-	eq["cross_zone_remove_ldon_loss_by_group_id"] = &lua_cross_zone_remove_ldon_loss_by_group_id;
-	eq["cross_zone_remove_ldon_loss_by_raid_id"] = &lua_cross_zone_remove_ldon_loss_by_raid_id;
-	eq["cross_zone_remove_ldon_loss_by_guild_id"] = &lua_cross_zone_remove_ldon_loss_by_guild_id;
-	eq["cross_zone_remove_ldon_loss_by_expedition_id"] = &lua_cross_zone_remove_ldon_loss_by_expedition_id;
-	eq["cross_zone_remove_ldon_loss_by_client_name"] = &lua_cross_zone_remove_ldon_loss_by_client_name;
-	eq["cross_zone_remove_ldon_win_by_char_id"] = &lua_cross_zone_remove_ldon_win_by_char_id;
-	eq["cross_zone_remove_ldon_win_by_group_id"] = &lua_cross_zone_remove_ldon_win_by_group_id;
-	eq["cross_zone_remove_ldon_win_by_raid_id"] = &lua_cross_zone_remove_ldon_win_by_raid_id;
-	eq["cross_zone_remove_ldon_win_by_guild_id"] = &lua_cross_zone_remove_ldon_win_by_guild_id;
-	eq["cross_zone_remove_ldon_win_by_expedition_id"] = &lua_cross_zone_remove_ldon_win_by_expedition_id;
-	eq["cross_zone_remove_ldon_win_by_client_name"] = &lua_cross_zone_remove_ldon_win_by_client_name;
-	eq["cross_zone_remove_spell_by_char_id"] = &lua_cross_zone_remove_spell_by_char_id;
-	eq["cross_zone_remove_spell_by_group_id"] = &lua_cross_zone_remove_spell_by_group_id;
-	eq["cross_zone_remove_spell_by_raid_id"] = &lua_cross_zone_remove_spell_by_raid_id;
-	eq["cross_zone_remove_spell_by_guild_id"] = &lua_cross_zone_remove_spell_by_guild_id;
-	eq["cross_zone_remove_spell_by_expedition_id"] = &lua_cross_zone_remove_spell_by_expedition_id;
-	eq["cross_zone_remove_spell_by_client_name"] = &lua_cross_zone_remove_spell_by_client_name;
-	eq["cross_zone_remove_task_by_char_id"] = &lua_cross_zone_remove_task_by_char_id;
-	eq["cross_zone_remove_task_by_group_id"] = &lua_cross_zone_remove_task_by_group_id;
-	eq["cross_zone_remove_task_by_raid_id"] = &lua_cross_zone_remove_task_by_raid_id;
-	eq["cross_zone_remove_task_by_guild_id"] = &lua_cross_zone_remove_task_by_guild_id;
-	eq["cross_zone_remove_task_by_expedition_id"] = &lua_cross_zone_remove_task_by_expedition_id;
-	eq["cross_zone_remove_task_by_client_name"] = &lua_cross_zone_remove_task_by_client_name;
-	eq["cross_zone_reset_activity_by_char_id"] = &lua_cross_zone_reset_activity_by_char_id;
-	eq["cross_zone_reset_activity_by_group_id"] = &lua_cross_zone_reset_activity_by_group_id;
-	eq["cross_zone_reset_activity_by_raid_id"] = &lua_cross_zone_reset_activity_by_raid_id;
-	eq["cross_zone_reset_activity_by_guild_id"] = &lua_cross_zone_reset_activity_by_guild_id;
-	eq["cross_zone_reset_activity_by_expedition_id"] = &lua_cross_zone_reset_activity_by_expedition_id;
-	eq["cross_zone_reset_activity_by_client_name"] = &lua_cross_zone_reset_activity_by_client_name;
-	eq["cross_zone_set_entity_variable_by_client_name"] = &lua_cross_zone_set_entity_variable_by_client_name;
-	eq["cross_zone_set_entity_variable_by_group_id"] = &lua_cross_zone_set_entity_variable_by_group_id;
-	eq["cross_zone_set_entity_variable_by_raid_id"] = &lua_cross_zone_set_entity_variable_by_raid_id;
-	eq["cross_zone_set_entity_variable_by_guild_id"] = &lua_cross_zone_set_entity_variable_by_guild_id;
-	eq["cross_zone_set_entity_variable_by_expedition_id"] = &lua_cross_zone_set_entity_variable_by_expedition_id;
-	eq["cross_zone_set_entity_variable_by_client_name"] = &lua_cross_zone_set_entity_variable_by_client_name;
-	eq["cross_zone_signal_client_by_char_id"] = &lua_cross_zone_signal_client_by_char_id;
-	eq["cross_zone_signal_client_by_group_id"] = &lua_cross_zone_signal_client_by_group_id;
-	eq["cross_zone_signal_client_by_raid_id"] = &lua_cross_zone_signal_client_by_raid_id;
-	eq["cross_zone_signal_client_by_guild_id"] = &lua_cross_zone_signal_client_by_guild_id;
-	eq["cross_zone_signal_client_by_expedition_id"] = &lua_cross_zone_signal_client_by_expedition_id;
-	eq["cross_zone_signal_client_by_name"] = &lua_cross_zone_signal_client_by_name;
-	eq["cross_zone_signal_npc_by_npctype_id"] = &lua_cross_zone_signal_npc_by_npctype_id;
-	eq["cross_zone_update_activity_by_char_id"] =
-	    sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_char_id,
-	                  (void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_char_id);
-	eq["cross_zone_update_activity_by_group_id"] =
-	    sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_group_id,
-	                  (void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_group_id);
-	eq["cross_zone_update_activity_by_raid_id"] =
-	    sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_raid_id,
-	                  (void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_raid_id);
-	eq["cross_zone_update_activity_by_guild_id"] =
-	    sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_guild_id,
-	                  (void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_guild_id);
-	eq["cross_zone_update_activity_by_expedition_id"] =
-	    sol::overload((void (*)(uint32, uint32, int)) & lua_cross_zone_update_activity_by_expedition_id,
-	                  (void (*)(uint32, uint32, int, int)) & lua_cross_zone_update_activity_by_expedition_id);
-	eq["cross_zone_update_activity_by_client_name"] =
-	    sol::overload((void (*)(const char *, uint32, int)) & lua_cross_zone_update_activity_by_client_name,
-	                  (void (*)(const char *, uint32, int, int)) & lua_cross_zone_update_activity_by_client_name);
-
-	/*
-	    World Wide
-	*/
-	eq["world_wide_add_ldon_loss"] = sol::overload((void (*)(uint32)) & lua_world_wide_add_ldon_loss,
-	                                               (void (*)(uint32, uint8)) & lua_world_wide_add_ldon_loss,
-	                                               (void (*)(uint32, uint8, uint8)) & lua_world_wide_add_ldon_loss);
-	eq["world_wide_add_ldon_points"] =
-	    sol::overload((void (*)(uint32, int)) & lua_world_wide_add_ldon_points,
-	                  (void (*)(uint32, int, uint8)) & lua_world_wide_add_ldon_points,
-	                  (void (*)(uint32, int, uint8, uint8)) & lua_world_wide_add_ldon_points);
-	eq["world_wide_add_ldon_loss"] = sol::overload((void (*)(uint32)) & lua_world_wide_add_ldon_win,
-	                                               (void (*)(uint32, uint8)) & lua_world_wide_add_ldon_win,
-	                                               (void (*)(uint32, uint8, uint8)) & lua_world_wide_add_ldon_win);
-	eq["world_wide_assign_task"] = sol::overload(
-	    (void (*)(uint32)) & lua_world_wide_assign_task, (void (*)(uint32, bool)) & lua_world_wide_assign_task,
-	    (void (*)(uint32, bool, uint8)) & lua_world_wide_assign_task,
-	    (void (*)(uint32, bool, uint8, uint8)) & lua_world_wide_assign_task);
-	eq["world_wide_cast_spell"] = sol::overload((void (*)(uint32)) & lua_world_wide_cast_spell,
-	                                            (void (*)(uint32, uint8)) & lua_world_wide_cast_spell,
-	                                            (void (*)(uint32, uint8, uint8)) & lua_world_wide_cast_spell);
-	eq["world_wide_dialogue_window"] =
-	    sol::overload((void (*)(const char *)) & lua_world_wide_dialogue_window,
-	                  (void (*)(const char *, uint8)) & lua_world_wide_dialogue_window,
-	                  (void (*)(const char *, uint8, uint8)) & lua_world_wide_dialogue_window);
-	eq["world_wide_disable_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_disable_task,
-	                                              (void (*)(uint32, uint8)) & lua_world_wide_disable_task,
-	                                              (void (*)(uint32, uint8, uint8)) & lua_world_wide_disable_task);
-	eq["world_wide_enable_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_enable_task,
-	                                             (void (*)(uint32, uint8)) & lua_world_wide_enable_task,
-	                                             (void (*)(uint32, uint8, uint8)) & lua_world_wide_enable_task);
-	eq["world_wide_fail_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_fail_task,
-	                                           (void (*)(uint32, uint8)) & lua_world_wide_fail_task,
-	                                           (void (*)(uint32, uint8, uint8)) & lua_world_wide_fail_task);
-	eq["world_wide_marquee"] = sol::overload(
-	    (void (*)(uint32, uint32, uint32, uint32, uint32, const char *)) & lua_world_wide_marquee,
-	    (void (*)(uint32, uint32, uint32, uint32, uint32, const char *, uint8)) & lua_world_wide_marquee,
-	    (void (*)(uint32, uint32, uint32, uint32, uint32, const char *, uint8, uint8)) & lua_world_wide_marquee);
-	eq["world_wide_message"] =
-	    sol::overload((void (*)(uint32, const char *)) & lua_world_wide_message,
-	                  (void (*)(uint32, const char *, uint8)) & lua_world_wide_message,
-	                  (void (*)(uint32, const char *, uint8, uint8)) & lua_world_wide_message);
-	eq["world_wide_move"] = sol::overload((void (*)(const char *)) & lua_world_wide_move,
-	                                      (void (*)(const char *, uint8)) & lua_world_wide_move,
-	                                      (void (*)(const char *, uint8, uint8)) & lua_world_wide_move);
-	eq["world_wide_move_instance"] = sol::overload((void (*)(uint16)) & lua_world_wide_move_instance,
-	                                               (void (*)(uint16, uint8)) & lua_world_wide_move_instance,
-	                                               (void (*)(uint16, uint8, uint8)) & lua_world_wide_move_instance);
-	eq["world_wide_remove_spell"] = sol::overload((void (*)(uint32)) & lua_world_wide_remove_spell,
-	                                              (void (*)(uint32, uint8)) & lua_world_wide_remove_spell,
-	                                              (void (*)(uint32, uint8, uint8)) & lua_world_wide_remove_spell);
-	eq["world_wide_remove_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_remove_task,
-	                                             (void (*)(uint32, uint8)) & lua_world_wide_remove_task,
-	                                             (void (*)(uint32, uint8, uint8)) & lua_world_wide_remove_task);
-	eq["world_wide_reset_activity"] =
-	    sol::overload((void (*)(uint32, int)) & lua_world_wide_reset_activity,
-	                  (void (*)(uint32, int, uint8)) & lua_world_wide_reset_activity,
-	                  (void (*)(uint32, int, uint8, uint8)) & lua_world_wide_reset_activity);
-	eq["world_wide_set_entity_variable_client"] = sol::overload(
-	    (void (*)(const char *, const char *)) & lua_world_wide_set_entity_variable_client,
-	    (void (*)(const char *, const char *, uint8)) & lua_world_wide_set_entity_variable_client,
-	    (void (*)(const char *, const char *, uint8, uint8)) & lua_world_wide_set_entity_variable_client);
-	eq["world_wide_set_entity_variable_npc"] = &lua_world_wide_set_entity_variable_npc;
-	eq["world_wide_signal_client"] = sol::overload((void (*)(uint32)) & lua_world_wide_signal_client,
-	                                               (void (*)(uint32, uint8)) & lua_world_wide_signal_client,
-	                                               (void (*)(uint32, uint8, uint8)) & lua_world_wide_signal_client);
-	eq["world_wide_signal_npc"] = &lua_world_wide_signal_npc;
-	eq["world_wide_update_activity"] =
-	    sol::overload((void (*)(uint32, int)) & lua_world_wide_update_activity,
-	                  (void (*)(uint32, int, int)) & lua_world_wide_update_activity,
-	                  (void (*)(uint32, int, int, uint8)) & lua_world_wide_update_activity,
-	                  (void (*)(uint32, int, int, uint8, uint8)) & lua_world_wide_update_activity);
-
-	/**
-	 * Expansions
-	 */
-	eq["is_classic_enabled"] = &lua_is_classic_enabled;
-	eq["is_the_ruins_of_kunark_enabled"] = &lua_is_the_ruins_of_kunark_enabled;
-	eq["is_the_scars_of_velious_enabled"] = &lua_is_the_scars_of_velious_enabled;
-	eq["is_the_shadows_of_luclin_enabled"] = &lua_is_the_shadows_of_luclin_enabled;
-	eq["is_the_planes_of_power_enabled"] = &lua_is_the_planes_of_power_enabled;
-	eq["is_the_legacy_of_ykesha_enabled"] = &lua_is_the_legacy_of_ykesha_enabled;
-	eq["is_lost_dungeons_of_norrath_enabled"] = &lua_is_lost_dungeons_of_norrath_enabled;
-	eq["is_gates_of_discord_enabled"] = &lua_is_gates_of_discord_enabled;
-	eq["is_omens_of_war_enabled"] = &lua_is_omens_of_war_enabled;
-	eq["is_dragons_of_norrath_enabled"] = &lua_is_dragons_of_norrath_enabled;
-	eq["is_depths_of_darkhollow_enabled"] = &lua_is_depths_of_darkhollow_enabled;
-	eq["is_prophecy_of_ro_enabled"] = &lua_is_prophecy_of_ro_enabled;
-	eq["is_the_serpents_spine_enabled"] = &lua_is_the_serpents_spine_enabled;
-	eq["is_the_buried_sea_enabled"] = &lua_is_the_buried_sea_enabled;
-	eq["is_secrets_of_faydwer_enabled"] = &lua_is_secrets_of_faydwer_enabled;
-	eq["is_seeds_of_destruction_enabled"] = &lua_is_seeds_of_destruction_enabled;
-	eq["is_underfoot_enabled"] = &lua_is_underfoot_enabled;
-	eq["is_house_of_thule_enabled"] = &lua_is_house_of_thule_enabled;
-	eq["is_veil_of_alaris_enabled"] = &lua_is_veil_of_alaris_enabled;
-	eq["is_rain_of_fear_enabled"] = &lua_is_rain_of_fear_enabled;
-	eq["is_call_of_the_forsaken_enabled"] = &lua_is_call_of_the_forsaken_enabled;
-	eq["is_the_darkened_sea_enabled"] = &lua_is_the_darkened_sea_enabled;
-	eq["is_the_broken_mirror_enabled"] = &lua_is_the_broken_mirror_enabled;
-	eq["is_empires_of_kunark_enabled"] = &lua_is_empires_of_kunark_enabled;
-	eq["is_ring_of_scale_enabled"] = &lua_is_ring_of_scale_enabled;
-	eq["is_the_burning_lands_enabled"] = &lua_is_the_burning_lands_enabled;
-	eq["is_torment_of_velious_enabled"] = &lua_is_torment_of_velious_enabled;
-	eq["is_current_expansion_classic"] = &lua_is_current_expansion_classic;
-	eq["is_current_expansion_the_ruins_of_kunark"] = &lua_is_current_expansion_the_ruins_of_kunark;
-	eq["is_current_expansion_the_scars_of_velious"] = &lua_is_current_expansion_the_scars_of_velious;
-	eq["is_current_expansion_the_shadows_of_luclin"] = &lua_is_current_expansion_the_shadows_of_luclin;
-	eq["is_current_expansion_the_planes_of_power"] = &lua_is_current_expansion_the_planes_of_power;
-	eq["is_current_expansion_the_legacy_of_ykesha"] = &lua_is_current_expansion_the_legacy_of_ykesha;
-	eq["is_current_expansion_lost_dungeons_of_norrath"] = &lua_is_current_expansion_lost_dungeons_of_norrath;
-	eq["is_current_expansion_gates_of_discord"] = &lua_is_current_expansion_gates_of_discord;
-	eq["is_current_expansion_omens_of_war"] = &lua_is_current_expansion_omens_of_war;
-	eq["is_current_expansion_dragons_of_norrath"] = &lua_is_current_expansion_dragons_of_norrath;
-	eq["is_current_expansion_depths_of_darkhollow"] = &lua_is_current_expansion_depths_of_darkhollow;
-	eq["is_current_expansion_prophecy_of_ro"] = &lua_is_current_expansion_prophecy_of_ro;
-	eq["is_current_expansion_the_serpents_spine"] = &lua_is_current_expansion_the_serpents_spine;
-	eq["is_current_expansion_the_buried_sea"] = &lua_is_current_expansion_the_buried_sea;
-	eq["is_current_expansion_secrets_of_faydwer"] = &lua_is_current_expansion_secrets_of_faydwer;
-	eq["is_current_expansion_seeds_of_destruction"] = &lua_is_current_expansion_seeds_of_destruction;
-	eq["is_current_expansion_underfoot"] = &lua_is_current_expansion_underfoot;
-	eq["is_current_expansion_house_of_thule"] = &lua_is_current_expansion_house_of_thule;
-	eq["is_current_expansion_veil_of_alaris"] = &lua_is_current_expansion_veil_of_alaris;
-	eq["is_current_expansion_rain_of_fear"] = &lua_is_current_expansion_rain_of_fear;
-	eq["is_current_expansion_call_of_the_forsaken"] = &lua_is_current_expansion_call_of_the_forsaken;
-	eq["is_current_expansion_the_darkened_sea"] = &lua_is_current_expansion_the_darkened_sea;
-	eq["is_current_expansion_the_broken_mirror"] = &lua_is_current_expansion_the_broken_mirror;
-	eq["is_current_expansion_empires_of_kunark"] = &lua_is_current_expansion_empires_of_kunark;
-	eq["is_current_expansion_ring_of_scale"] = &lua_is_current_expansion_ring_of_scale;
-	eq["is_current_expansion_the_burning_lands"] = &lua_is_current_expansion_the_burning_lands;
-	eq["is_current_expansion_torment_of_velious"] = &lua_is_current_expansion_torment_of_velious;
-
-	/**
-	 * Content flags
-	 */
-	eq["is_content_flag_enabled"] = (bool (*)(std::string)) & lua_is_content_flag_enabled;
-	eq["set_content_flag"] = (void (*)(std::string, bool)) & lua_set_content_flag;
-
-	eq["get_expedition"] = &lua_get_expedition;
-	eq["get_expedition_by_char_id"] = &lua_get_expedition_by_char_id;
-	eq["get_expedition_by_dz_id"] = &lua_get_expedition_by_dz_id;
-	eq["get_expedition_by_zone_instance"] = &lua_get_expedition_by_zone_instance;
-	eq["get_expedition_lockout_by_char_id"] = &lua_get_expedition_lockout_by_char_id;
-	eq["get_expedition_lockouts_by_char_id"] = sol::overload(
-	    (sol::table(*)(sol::this_state, uint32)) & lua_get_expedition_lockouts_by_char_id,
-	    (sol::table(*)(sol::this_state, uint32, std::string)) & lua_get_expedition_lockouts_by_char_id);
-	eq["add_expedition_lockout_all_clients"] = sol::overload(
-	    (void (*)(std::string, std::string, uint32)) & lua_add_expedition_lockout_all_clients,
-	    (void (*)(std::string, std::string, uint32, std::string)) & lua_add_expedition_lockout_all_clients);
-	eq["add_expedition_lockout_by_char_id"] = sol::overload(
-	    (void (*)(uint32, std::string, std::string, uint32)) & lua_add_expedition_lockout_by_char_id,
-	    (void (*)(uint32, std::string, std::string, uint32, std::string)) & lua_add_expedition_lockout_by_char_id);
-	eq["remove_expedition_lockout_by_char_id"] = &lua_remove_expedition_lockout_by_char_id;
-	eq["remove_all_expedition_lockouts_by_char_id"] =
-	    sol::overload((void (*)(uint32)) & lua_remove_all_expedition_lockouts_by_char_id,
-	                  (void (*)(uint32, std::string)) & lua_remove_all_expedition_lockouts_by_char_id);
+	// eq["load_encounter"] = &load_encounter;
+	// eq["unload_encounter"] = &unload_encounter;
+	// eq["load_encounter_with_data"] = &load_encounter_with_data;
+	// eq["unload_encounter_with_data"] = &unload_encounter_with_data;
+	// eq["register_npc_event"] =sol::overload((void (*)(std::string, int, int, sol::protected_function)) & register_npc_event,(void (*)(int, int, sol::protected_function)) & register_npc_event);
+	// eq["unregister_npc_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_npc_event,(void (*)(int, int)) & unregister_npc_event);
+	// eq["register_player_event"] =sol::overload((void (*)(std::string, int, sol::protected_function)) & register_player_event,(void (*)(int, sol::protected_function)) & register_player_event);
+	// eq["unregister_player_event"] = sol::overload((void (*)(std::string, int)) & unregister_player_event,(void (*)(int)) & unregister_player_event);
+	// eq["register_item_event"] =sol::overload((void (*)(std::string, int, int, sol::protected_function)) & register_item_event,(void (*)(int, int, sol::protected_function)) & register_item_event);
+	// eq["unregister_item_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_item_event,(void (*)(int, int)) & unregister_item_event);
+	// eq["register_spell_event"] =sol::overload((void (*)(std::string, int, int, sol::protected_function func)) & register_spell_event,(void (*)(int, int, sol::protected_function func)) & register_spell_event);
+	// eq["unregister_spell_event"] = sol::overload((void (*)(std::string, int, int)) & unregister_spell_event,(void (*)(int, int)) & unregister_spell_event);
+	// eq["spawn2"] = (Lua_Mob(*)(int, int, int, double, double, double, double)) & lua_spawn2;
+	// eq["unique_spawn"] =sol::overload((Lua_Mob(*)(int, int, int, double, double, double)) & lua_unique_spawn,(Lua_Mob(*)(int, int, int, double, double, double, double)) & lua_unique_spawn);
+	// eq["spawn_from_spawn2"] = (Lua_Mob(*)(uint32)) & lua_spawn_from_spawn2;
+	// eq["enable_spawn2"] = &lua_enable_spawn2;
+	// eq["disable_spawn2"] = &lua_disable_spawn2;
+	// eq["has_timer"] = (bool (*)(const char *)) & lua_has_timer;
+	// eq["get_remaining_time"] = (uint32(*)(const char *)) & lua_get_remaining_time;
+	// eq["get_timer_duration"] = (uint32(*)(const char *)) & lua_get_timer_duration;
+	// eq["set_timer"] = sol::overload((void (*)(const char *, int)) & lua_set_timer,(void (*)(const char *, int, Lua_ItemInst)) & lua_set_timer,(void (*)(const char *, int, Lua_Mob)) & lua_set_timer,(void (*)(const char *, int, Lua_Encounter)) & lua_set_timer);
+	// eq["stop_timer"] = sol::overload((void (*)(const char *)) & lua_stop_timer,(void (*)(const char *, Lua_ItemInst)) & lua_stop_timer,(void (*)(const char *, Lua_Mob)) & lua_stop_timer,(void (*)(const char *, Lua_Encounter)) & lua_stop_timer);
+	// eq["pause_timer"] = (void (*)(const char *)) & lua_pause_timer;
+	// eq["resume_timer"] = (void (*)(const char *)) & lua_resume_timer;
+	// eq["is_paused_timer"] = (bool (*)(const char *)) & lua_is_paused_timer;
+	// eq["stop_all_timers"] =sol::overload((void (*)(void)) & lua_stop_all_timers, (void (*)(Lua_ItemInst)) & lua_stop_all_timers,(void (*)(Lua_Mob)) & lua_stop_all_timers, (void (*)(Lua_Encounter)) & lua_stop_all_timers);
+	// eq["depop"] = sol::overload((void (*)(void)) & lua_depop, (void (*)(int)) & lua_depop);
+	// eq["depop_with_timer"] =sol::overload((void (*)(void)) & lua_depop_with_timer, (void (*)(int)) & lua_depop_with_timer);
+	// eq["depop_all"] = sol::overload((void (*)(void)) & lua_depop_all, (void (*)(int)) & lua_depop_all);
+	// eq["depop_zone"] = &lua_depop_zone;
+	// eq["repop_zone"] = &lua_repop_zone;
+	// eq["process_mobs_while_zone_empty"] = &lua_process_mobs_while_zone_empty;
+	// eq["is_disc_tome"] = &lua_is_disc_tome;
+	// eq["get_race_name"] = (std::string(*)(uint16)) & lua_get_race_name;
+	// eq["get_spell_name"] = (std::string(*)(uint32)) & lua_get_spell_name;
+	// eq["get_skill_name"] = (std::string(*)(int)) & lua_get_skill_name;
+	// eq["safe_move"] = &lua_safe_move;
+	// eq["rain"] = &lua_rain;
+	// eq["snow"] = &lua_snow;
+	// eq["scribe_spells"] =sol::overload((int (*)(int)) & lua_scribe_spells, (int (*)(int, int)) & lua_scribe_spells);
+	// eq["train_discs"] = sol::overload((int (*)(int)) & lua_train_discs, (int (*)(int, int)) & lua_train_discs);
+	// eq["set_sky"] = &lua_set_sky;
+	// eq["set_guild"] = &lua_set_guild;
+	// eq["create_guild"] = &lua_create_guild;
+	// eq["set_time"] = sol::overload((void (*)(int, int)) & lua_set_time, (void (*)(int, int, bool)) & lua_set_time);
+	// eq["signal"] = sol::overload((void (*)(int, int)) & lua_signal, (void (*)(int, int, int)) & lua_signal);
+	// eq["set_global"] = &lua_set_global;
+	// eq["target_global"] = &lua_target_global;
+	// eq["delete_global"] = &lua_delete_global;
+	// eq["start"] = &lua_start;
+	// eq["stop"] = &lua_stop;
+	// eq["pause"] = &lua_pause;
+	// eq["move_to"] = sol::overload((void (*)(float, float, float)) & lua_move_to,(void (*)(float, float, float, float)) & lua_move_to,(void (*)(float, float, float, float, bool)) & lua_move_to);
+	// eq["resume"] = &lua_path_resume;
+	// eq["set_next_hp_event"] = &lua_set_next_hp_event;
+	// eq["set_next_inc_hp_event"] = &lua_set_next_inc_hp_event;
+	// eq["respawn"] = &lua_respawn;
+	// eq["set_proximity"] =sol::overload((void (*)(float, float, float, float)) & lua_set_proximity,(void (*)(float, float, float, float, float, float)) & lua_set_proximity,(void (*)(float, float, float, float, float, float, bool)) & lua_set_proximity);
+	// eq["clear_proximity"] = &lua_clear_proximity;
+	// eq["enable_proximity_say"] = &lua_enable_proximity_say;
+	// eq["disable_proximity_say"] = &lua_disable_proximity_say;
+	// eq["set_anim"] = &lua_set_anim;
+	// eq["spawn_condition"] = &lua_spawn_condition;
+	// eq["get_spawn_condition"] = &lua_get_spawn_condition;
+	// eq["toggle_spawn_event"] = &lua_toggle_spawn_event;
+	// eq["summon_buried_player_corpse"] = &lua_summon_buried_player_corpse;
+	// eq["summon_all_player_corpses"] = &lua_summon_all_player_corpses;
+	// eq["get_player_corpse_count"] = &lua_get_player_corpse_count;
+	// eq["get_player_corpse_count_by_zone_id"] = &lua_get_player_corpse_count_by_zone_id;
+	// eq["get_player_buried_corpse_count"] = &lua_get_player_buried_corpse_count;
+	// eq["bury_player_corpse"] = &lua_bury_player_corpse;
+	// eq["task_selector"] =sol::overload((void (*)(sol::table)) & lua_task_selector, (void (*)(sol::table, bool)) & lua_task_selector);
+	// eq["task_set_selector"] =sol::overload((void (*)(int)) & lua_task_set_selector, (void (*)(int, bool)) & lua_task_set_selector);
+	// eq["enable_task"] = &lua_enable_task;
+	// eq["disable_task"] = &lua_disable_task;
+	// eq["is_task_enabled"] = &lua_is_task_enabled;
+	// eq["is_task_active"] = &lua_is_task_active;
+	// eq["is_task_activity_active"] = &lua_is_task_activity_active;
+	// eq["get_task_activity_done_count"] = &lua_get_task_activity_done_count;
+	// eq["update_task_activity"] = &lua_update_task_activity;
+	// eq["reset_task_activity"] = &lua_reset_task_activity;
+	// eq["assign_task"] = &lua_assign_task;
+	// eq["fail_task"] = &lua_fail_task;
+	// eq["task_time_left"] = &lua_task_time_left;
+	// eq["is_task_completed"] = &lua_is_task_completed;
+	// eq["enabled_task_count"] = &lua_enabled_task_count;
+	// eq["first_task_in_set"] = &lua_first_task_in_set;
+	// eq["last_task_in_set"] = &lua_last_task_in_set;
+	// eq["next_task_in_set"] = &lua_next_task_in_set;
+	// eq["active_speak_task"] = &lua_active_speak_task;
+	// eq["active_speak_activity"] = &lua_active_speak_activity;
+	// eq["active_tasks_in_set"] = &lua_active_tasks_in_set;
+	// eq["completed_tasks_in_set"] = &lua_completed_tasks_in_set;
+	// eq["is_task_appropriate"] = &lua_is_task_appropriate;
+	// eq["get_task_name"] = (std::string(*)(uint32)) & lua_get_task_name;
+	// eq["popup"] = &lua_popup;
+	// eq["clear_spawn_timers"] = &lua_clear_spawn_timers;
+	// eq["zone_emote"] = &lua_zone_emote;
+	// eq["world_emote"] = &lua_world_emote;
+	// eq["message"] = &lua_message;
+	// eq["whisper"] = &lua_whisper;
+	// eq["get_level"] = &lua_get_level;
+	// eq["create_ground_object"] =sol::overload((void (*)(uint32, float, float, float, float)) & lua_create_ground_object,(void (*)(uint32, float, float, float, float, uint32)) & lua_create_ground_object);
+	// eq["create_ground_object_from_model"] = sol::overload((void (*)(const char *, float, float, float, float)) & lua_create_ground_object_from_model,(void (*)(const char *, float, float, float, float, int)) & lua_create_ground_object_from_model,(void (*)(const char *, float, float, float, float, int, uint32)) & lua_create_ground_object_from_model);
+	// eq["create_door"] = &lua_create_door;
+	// eq["modify_npc_stat"] = &lua_modify_npc_stat;
+	// eq["collect_items"] = &lua_collect_items;
+	// eq["count_item"] = &lua_count_item;
+	// eq["remove_item"] =sol::overload((void (*)(uint32)) & lua_remove_item, (void (*)(uint32, uint32)) & lua_remove_item);
+	// eq["update_spawn_timer"] = &lua_update_spawn_timer;
+	// eq["merchant_set_item"] = sol::overload((void (*)(uint32, uint32)) & lua_merchant_set_item,(void (*)(uint32, uint32, uint32)) & lua_merchant_set_item);
+	// eq["merchant_count_item"] = &lua_merchant_count_item;
+	// eq["item_link"] = &lua_item_link;
+	// eq["get_item_name"] = (std::string(*)(uint32)) & lua_get_item_name;
+	// eq["say_link"] = sol::overload((std::string(*)(const char *, bool, const char *)) & lua_say_link,(std::string(*)(const char *, bool)) & lua_say_link,(std::string(*)(const char *)) & lua_say_link);
+	// eq["set_rule"] = (void (*)(std::string, std::string)) & lua_set_rule;
+	// eq["get_rule"] = (std::string(*)(std::string)) & lua_get_rule;
+	// eq["get_data"] = (std::string(*)(std::string)) & lua_get_data;
+	// eq["get_data_expires"] = (std::string(*)(std::string)) & lua_get_data_expires;
+	// eq["set_data"] = sol::overload((void (*)(std::string, std::string)) & lua_set_data,(void (*)(std::string, std::string, std::string)) & lua_set_data);
+	// eq["delete_data"] = (bool (*)(std::string)) & lua_delete_data;
+	// eq["get_char_name_by_id"] = &lua_get_char_name_by_id;
+	// eq["get_char_id_by_name"] = (uint32(*)(const char *)) & lua_get_char_id_by_name;
+	// eq["get_class_name"] = sol::overload((std::string(*)(uint8)) & lua_get_class_name,(std::string(*)(uint8, uint8)) & lua_get_class_name);
+	// eq["get_clean_npc_name_by_id"] = &lua_get_clean_npc_name_by_id;
+	// eq["get_currency_id"] = &lua_get_currency_id;
+	// eq["get_currency_item_id"] = &lua_get_currency_item_id;
+	// eq["get_guild_name_by_id"] = &lua_get_guild_name_by_id;
+	// eq["get_guild_id_by_char_id"] = &lua_get_guild_id_by_char_id;
+	// eq["get_group_id_by_char_id"] = &lua_get_group_id_by_char_id;
+	// eq["get_npc_name_by_id"] = &lua_get_npc_name_by_id;
+	// eq["get_raid_id_by_char_id"] = &lua_get_raid_id_by_char_id;
+	// eq["create_instance"] = &lua_create_instance;
+	// eq["destroy_instance"] = &lua_destroy_instance;
+	// eq["update_instance_timer"] = &lua_update_instance_timer;
+	// eq["get_instance_id"] = &lua_get_instance_id;
+	// eq["get_instance_id_by_char_id"] = &lua_get_instance_id_by_char_id;
+	// eq["get_instance_timer"] = &lua_get_instance_timer;
+	// eq["get_instance_timer_by_id"] = &lua_get_instance_timer_by_id;
+	// eq["get_characters_in_instance"] = &lua_get_characters_in_instance;
+	// eq["assign_to_instance"] = &lua_assign_to_instance;
+	// eq["assign_to_instance_by_char_id"] = &lua_assign_to_instance_by_char_id;
+	// eq["assign_group_to_instance"] = &lua_assign_group_to_instance;
+	// eq["assign_raid_to_instance"] = &lua_assign_raid_to_instance;
+	// eq["remove_from_instance"] = &lua_remove_from_instance;
+	// eq["remove_from_instance_by_char_id"] = &lua_remove_from_instance_by_char_id;
+	// eq["check_instance_by_char_id"] = (bool (*)(uint16, uint32)) & lua_check_instance_by_char_id;
+	// eq["remove_all_from_instance"] = &lua_remove_all_from_instance;
+	// eq["flag_instance_by_group_leader"] = &lua_flag_instance_by_group_leader;
+	// eq["flag_instance_by_raid_leader"] = &lua_flag_instance_by_raid_leader;
+	// eq["fly_mode"] = &lua_fly_mode;
+	// eq["faction_value"] = &lua_faction_value;
+	// eq["check_title"] = &lua_check_title;
+	// eq["enable_title"] = &lua_enable_title;
+	// eq["remove_title"] = &lua_remove_title;
+	// eq["wear_change"] = &lua_wear_change;
+	// eq["voice_tell"] = &lua_voice_tell;
+	// eq["send_mail"] = &lua_send_mail;
+	// eq["get_qglobals"] = sol::overload((sol::table(*)(sol::this_state, Lua_NPC, Lua_Client)) & lua_get_qglobals,(sol::table(*)(sol::this_state, Lua_Client)) & lua_get_qglobals,(sol::table(*)(sol::this_state, Lua_NPC)) & lua_get_qglobals,(sol::table(*)(sol::this_state)) & lua_get_qglobals);
+	// eq["get_entity_list"] = &lua_get_entity_list;
+	// eq["zone"] = &lua_zone;
+	// eq["zone_group"] = &lua_zone_group;
+	// eq["zone_raid"] = &lua_zone_raid;
+	// eq["get_zone_id"] = &lua_get_zone_id;
+	// eq["get_zone_id_by_name"] = &lua_get_zone_id_by_name;
+	// eq["get_zone_long_name"] = &lua_get_zone_long_name;
+	// eq["get_zone_long_name_by_name"] = &lua_get_zone_long_name_by_name;
+	// eq["get_zone_long_name_by_id"] = &lua_get_zone_long_name_by_id;
+	// eq["get_zone_short_name"] = &lua_get_zone_short_name;
+	// eq["get_zone_short_name_by_id"] = &lua_get_zone_short_name_by_id;
+	// eq["get_zone_instance_id"] = &lua_get_zone_instance_id;
+	// eq["get_zone_instance_version"] = &lua_get_zone_instance_version;
+	// eq["get_zone_weather"] = &lua_get_zone_weather;
+	// eq["get_zone_time"] = &lua_get_zone_time;
+	// eq["add_area"] = &lua_add_area;
+	// eq["remove_area"] = &lua_remove_area;
+	// eq["clear_areas"] = &lua_clear_areas;
+	// eq["add_spawn_point"] = &lua_add_spawn_point;
+	// eq["remove_spawn_point"] = &lua_remove_spawn_point;
+	// eq["attack"] = &lua_attack;
+	// eq["attack_npc"] = &lua_attack_npc;
+	// eq["attack_npc_type"] = &lua_attack_npc_type;
+	// eq["follow"] = sol::overload((void (*)(int)) & lua_follow, (void (*)(int, int)) & lua_follow);
+	// eq["stop_follow"] = &lua_stop_follow;
+	// eq["get_initiator"] = &lua_get_initiator;
+	// eq["get_owner"] = &lua_get_owner;
+	// eq["get_quest_item"] = &lua_get_quest_item;
+	// eq["get_quest_spell"] = &lua_get_quest_spell;
+	// eq["get_encounter"] = &lua_get_encounter;
+	// eq["map_opcodes"] = &lua_map_opcodes;
+	// eq["clear_opcode"] = &lua_clear_opcode;
+	// eq["enable_recipe"] = &lua_enable_recipe;
+	// eq["disable_recipe"] = &lua_disable_recipe;
+	// eq["clear_npctype_cache"] = &lua_clear_npctype_cache;
+	// eq["reloadzonestaticdata"] = &lua_reloadzonestaticdata;
+	// eq["update_zone_header"] = &lua_update_zone_header;
+	// eq["clock"] = &lua_clock;
+	// eq["create_npc"] = &lua_create_npc;
+	// eq["log"] = (void (*)(int, std::string)) & lua_log;
+	// eq["debug"] = sol::overload((void (*)(std::string)) & lua_debug, (void (*)(std::string, int)) & lua_debug);
+	// eq["log_combat"] = (void (*)(std::string)) & lua_log_combat;
+	// eq["seconds_to_time"] = &lua_seconds_to_time;
+	// eq["get_hex_color_code"] = &lua_get_hex_color_code;
+	// eq["get_aa_exp_modifier_by_char_id"] =sol::overload((double (*)(uint32, uint32)) & lua_get_aa_exp_modifier_by_char_id,(double (*)(uint32, uint32, int16)) & lua_get_aa_exp_modifier_by_char_id);
+	// eq["get_exp_modifier_by_char_id"] =sol::overload((double (*)(uint32, uint32)) & lua_get_exp_modifier_by_char_id,(double (*)(uint32, uint32, int16)) & lua_get_exp_modifier_by_char_id);
+	// eq["set_aa_exp_modifier_by_char_id"] =sol::overload((void (*)(uint32, uint32, double)) & lua_set_aa_exp_modifier_by_char_id,(void (*)(uint32, uint32, double, int16)) & lua_set_aa_exp_modifier_by_char_id);
+	// eq["set_exp_modifier_by_char_id"] =sol::overload((void (*)(uint32, uint32, double)) & lua_set_exp_modifier_by_char_id,(void (*)(uint32, uint32, double, int16)) & lua_set_exp_modifier_by_char_id);
+	// eq["add_ldon_loss"] = &lua_add_ldon_loss;
+	// eq["add_ldon_points"] = &lua_add_ldon_points;
+	// eq["add_ldon_win"] = &lua_add_ldon_win;
+	// eq["get_gender_name"] = &lua_get_gender_name;
+	// eq["get_deity_name"] = &lua_get_deity_name;
+	// eq["get_inventory_slot_name"] = &lua_get_inventory_slot_name;
+	// eq["rename"] = &lua_rename;
+	// eq["get_data_remaining"] = &lua_get_data_remaining;
+	// eq["get_item_stat"] = &lua_get_item_stat;
+	// eq["get_spell_stat"] = sol::overload((int (*)(uint32, std::string)) & lua_get_spell_stat,(int (*)(uint32, std::string, uint8)) & lua_get_spell_stat);
+	// eq["is_npc_spawned"] = &lua_is_npc_spawned;
+	// eq["count_spawned_npcs"] = &lua_count_spawned_npcs;
+	// eq["get_spell"] = &lua_get_spell;
+	// eq["get_ldon_theme_name"] = &lua_get_ldon_theme_name;
+	// eq["get_faction_name"] = &lua_get_faction_name;
+	// eq["get_language_name"] = &lua_get_language_name;
+	// eq["get_body_type_name"] = &lua_get_body_type_name;
+	// eq["get_consider_level_name"] = &lua_get_consider_level_name;
+	// eq["get_environmental_damage_name"] = &lua_get_environmental_damage_name;
+	// eq["commify"] = &lua_commify;
+	// eq["check_name_filter"] = &lua_check_name_filter;
+	// eq["discord_send"] = &lua_discord_send;
+	// eq["track_npc"] = &lua_track_npc;
+	// eq["get_recipe_made_count"] = &lua_get_recipe_made_count;
+	// eq["get_recipe_name"] = &lua_get_recipe_name;
+	// eq["has_recipe_learned"] = &lua_has_recipe_learned;
+	// eq["is_raining"] = &lua_is_raining;
+	// eq["is_snowing"] = &lua_is_snowing;
+	// eq["cross_zone_add_ldon_loss_by_char_id"] = &lua_cross_zone_add_ldon_loss_by_char_id;
+	// eq["cross_zone_add_ldon_loss_by_group_id"] = &lua_cross_zone_add_ldon_loss_by_group_id;
+	// eq["cross_zone_add_ldon_loss_by_raid_id"] = &lua_cross_zone_add_ldon_loss_by_raid_id;
+	// eq["cross_zone_add_ldon_loss_by_guild_id"] = &lua_cross_zone_add_ldon_loss_by_guild_id;
+	// eq["cross_zone_add_ldon_loss_by_expedition_id"] = &lua_cross_zone_add_ldon_loss_by_expedition_id;
+	// eq["cross_zone_add_ldon_loss_by_client_name"] = &lua_cross_zone_add_ldon_loss_by_client_name;
+	// eq["cross_zone_add_ldon_points_by_char_id"] = &lua_cross_zone_add_ldon_points_by_char_id;
+	// eq["cross_zone_add_ldon_points_by_group_id"] = &lua_cross_zone_add_ldon_points_by_group_id;
+	// eq["cross_zone_add_ldon_points_by_raid_id"] = &lua_cross_zone_add_ldon_points_by_raid_id;
+	// eq["cross_zone_add_ldon_points_by_guild_id"] = &lua_cross_zone_add_ldon_points_by_guild_id;
+	// eq["cross_zone_add_ldon_points_by_expedition_id"] = &lua_cross_zone_add_ldon_points_by_expedition_id;
+	// eq["cross_zone_add_ldon_points_by_client_name"] = &lua_cross_zone_add_ldon_points_by_client_name;
+	// eq["cross_zone_add_ldon_win_by_char_id"] = &lua_cross_zone_add_ldon_win_by_char_id;
+	// eq["cross_zone_add_ldon_win_by_group_id"] = &lua_cross_zone_add_ldon_win_by_group_id;
+	// eq["cross_zone_add_ldon_win_by_raid_id"] = &lua_cross_zone_add_ldon_win_by_raid_id;
+	// eq["cross_zone_add_ldon_win_by_guild_id"] = &lua_cross_zone_add_ldon_win_by_guild_id;
+	// eq["cross_zone_add_ldon_win_by_expedition_id"] = &lua_cross_zone_add_ldon_win_by_expedition_id;
+	// eq["cross_zone_add_ldon_win_by_client_name"] = &lua_cross_zone_add_ldon_win_by_client_name;
+	// eq["cross_zone_assign_task_by_char_id"] =sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_char_id,(void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_char_id);
+	// eq["cross_zone_assign_task_by_group_id"] =sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_group_id,(void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_group_id);
+	// eq["cross_zone_assign_task_by_raid_id"] =sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_raid_id,(void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_raid_id);
+	// eq["cross_zone_assign_task_by_guild_id"] =sol::overload((void (*)(int, uint32)) & lua_cross_zone_assign_task_by_guild_id,(void (*)(int, uint32, bool)) & lua_cross_zone_assign_task_by_guild_id);
+	// eq["cross_zone_assign_task_by_expedition_id"] =sol::overload((void (*)(uint32, uint32)) & lua_cross_zone_assign_task_by_expedition_id,(void (*)(uint32, uint32, bool)) & lua_cross_zone_assign_task_by_expedition_id);
+	// eq["cross_zone_assign_task_by_client_name"] =sol::overload((void (*)(const char *, uint32)) & lua_cross_zone_assign_task_by_client_name,(void (*)(const char *, uint32, bool)) & lua_cross_zone_assign_task_by_client_name);
+	// eq["cross_zone_cast_spell_by_char_id"] = &lua_cross_zone_cast_spell_by_char_id;
+	// eq["cross_zone_cast_spell_by_group_id"] = &lua_cross_zone_cast_spell_by_group_id;
+	// eq["cross_zone_cast_spell_by_raid_id"] = &lua_cross_zone_cast_spell_by_raid_id;
+	// eq["cross_zone_cast_spell_by_guild_id"] = &lua_cross_zone_cast_spell_by_guild_id;
+	// eq["cross_zone_cast_spell_by_expedition_id"] = &lua_cross_zone_cast_spell_by_expedition_id;
+	// eq["cross_zone_cast_spell_by_client_name"] = &lua_cross_zone_cast_spell_by_client_name;
+	// eq["cross_zone_dialogue_window_by_char_id"] = &lua_cross_zone_dialogue_window_by_char_id;
+	// eq["cross_zone_dialogue_window_by_group_id"] = &lua_cross_zone_dialogue_window_by_group_id;
+	// eq["cross_zone_dialogue_window_by_raid_id"] = &lua_cross_zone_dialogue_window_by_raid_id;
+	// eq["cross_zone_dialogue_window_by_guild_id"] = &lua_cross_zone_dialogue_window_by_guild_id;
+	// eq["cross_zone_dialogue_window_by_expedition_id"] = &lua_cross_zone_dialogue_window_by_expedition_id;
+	// eq["cross_zone_dialogue_window_by_client_name"] = &lua_cross_zone_dialogue_window_by_client_name;
+	// eq["cross_zone_disable_task_by_char_id"] = &lua_cross_zone_disable_task_by_char_id;
+	// eq["cross_zone_disable_task_by_group_id"] = &lua_cross_zone_disable_task_by_group_id;
+	// eq["cross_zone_disable_task_by_raid_id"] = &lua_cross_zone_disable_task_by_raid_id;
+	// eq["cross_zone_disable_task_by_guild_id"] = &lua_cross_zone_disable_task_by_guild_id;
+	// eq["cross_zone_disable_task_by_expedition_id"] = &lua_cross_zone_disable_task_by_expedition_id;
+	// eq["cross_zone_disable_task_by_client_name"] = &lua_cross_zone_disable_task_by_client_name;
+	// eq["cross_zone_enable_task_by_char_id"] = &lua_cross_zone_enable_task_by_char_id;
+	// eq["cross_zone_enable_task_by_group_id"] = &lua_cross_zone_enable_task_by_group_id;
+	// eq["cross_zone_enable_task_by_raid_id"] = &lua_cross_zone_enable_task_by_raid_id;
+	// eq["cross_zone_enable_task_by_guild_id"] = &lua_cross_zone_enable_task_by_guild_id;
+	// eq["cross_zone_enable_task_by_expedition_id"] = &lua_cross_zone_enable_task_by_expedition_id;
+	// eq["cross_zone_enable_task_by_client_name"] = &lua_cross_zone_enable_task_by_client_name;
+	// eq["cross_zone_fail_task_by_char_id"] = &lua_cross_zone_fail_task_by_char_id;
+	// eq["cross_zone_fail_task_by_group_id"] = &lua_cross_zone_fail_task_by_group_id;
+	// eq["cross_zone_fail_task_by_raid_id"] = &lua_cross_zone_fail_task_by_raid_id;
+	// eq["cross_zone_fail_task_by_guild_id"] = &lua_cross_zone_fail_task_by_guild_id;
+	// eq["cross_zone_fail_task_by_expedition_id"] = &lua_cross_zone_fail_task_by_expedition_id;
+	// eq["cross_zone_fail_task_by_client_name"] = &lua_cross_zone_fail_task_by_client_name;
+	// eq["cross_zone_marquee_by_char_id"] = &lua_cross_zone_marquee_by_char_id;
+	// eq["cross_zone_marquee_by_group_id"] = &lua_cross_zone_marquee_by_group_id;
+	// eq["cross_zone_marquee_by_raid_id"] = &lua_cross_zone_marquee_by_raid_id;
+	// eq["cross_zone_marquee_by_guild_id"] = &lua_cross_zone_marquee_by_guild_id;
+	// eq["cross_zone_marquee_by_expedition_id"] = &lua_cross_zone_marquee_by_expedition_id;
+	// eq["cross_zone_marquee_by_client_name"] = &lua_cross_zone_marquee_by_client_name;
+	// eq["cross_zone_message_player_by_char_id"] = &lua_cross_zone_message_player_by_char_id;
+	// eq["cross_zone_message_player_by_group_id"] = &lua_cross_zone_message_player_by_group_id;
+	// eq["cross_zone_message_player_by_raid_id"] = &lua_cross_zone_message_player_by_raid_id;
+	// eq["cross_zone_message_player_by_guild_id"] = &lua_cross_zone_message_player_by_guild_id;
+	// eq["cross_zone_message_player_by_expedition_id"] = &lua_cross_zone_message_player_by_expedition_id;
+	// eq["cross_zone_message_player_by_name"] = &lua_cross_zone_message_player_by_name;
+	// eq["cross_zone_move_player_by_char_id"] = &lua_cross_zone_move_player_by_char_id;
+	// eq["cross_zone_move_player_by_group_id"] = &lua_cross_zone_move_player_by_group_id;
+	// eq["cross_zone_move_player_by_raid_id"] = &lua_cross_zone_move_player_by_raid_id;
+	// eq["cross_zone_move_player_by_guild_id"] = &lua_cross_zone_move_player_by_guild_id;
+	// eq["cross_zone_move_player_by_expedition_id"] = &lua_cross_zone_move_player_by_expedition_id;
+	// eq["cross_zone_move_player_by_client_name"] = &lua_cross_zone_move_player_by_client_name;
+	// eq["cross_zone_move_instance_by_char_id"] = &lua_cross_zone_move_instance_by_char_id;
+	// eq["cross_zone_move_instance_by_group_id"] = &lua_cross_zone_move_instance_by_group_id;
+	// eq["cross_zone_move_instance_by_raid_id"] = &lua_cross_zone_move_instance_by_raid_id;
+	// eq["cross_zone_move_instance_by_guild_id"] = &lua_cross_zone_move_instance_by_guild_id;
+	// eq["cross_zone_move_instance_by_expedition_id"] = &lua_cross_zone_move_instance_by_expedition_id;
+	// eq["cross_zone_move_instance_by_client_name"] = &lua_cross_zone_move_instance_by_client_name;
+	// eq["cross_zone_remove_ldon_loss_by_char_id"] = &lua_cross_zone_remove_ldon_loss_by_char_id;
+	// eq["cross_zone_remove_ldon_loss_by_group_id"] = &lua_cross_zone_remove_ldon_loss_by_group_id;
+	// eq["cross_zone_remove_ldon_loss_by_raid_id"] = &lua_cross_zone_remove_ldon_loss_by_raid_id;
+	// eq["cross_zone_remove_ldon_loss_by_guild_id"] = &lua_cross_zone_remove_ldon_loss_by_guild_id;
+	// eq["cross_zone_remove_ldon_loss_by_expedition_id"] = &lua_cross_zone_remove_ldon_loss_by_expedition_id;
+	// eq["cross_zone_remove_ldon_loss_by_client_name"] = &lua_cross_zone_remove_ldon_loss_by_client_name;
+	// eq["cross_zone_remove_ldon_win_by_char_id"] = &lua_cross_zone_remove_ldon_win_by_char_id;
+	// eq["cross_zone_remove_ldon_win_by_group_id"] = &lua_cross_zone_remove_ldon_win_by_group_id;
+	// eq["cross_zone_remove_ldon_win_by_raid_id"] = &lua_cross_zone_remove_ldon_win_by_raid_id;
+	// eq["cross_zone_remove_ldon_win_by_guild_id"] = &lua_cross_zone_remove_ldon_win_by_guild_id;
+	// eq["cross_zone_remove_ldon_win_by_expedition_id"] = &lua_cross_zone_remove_ldon_win_by_expedition_id;
+	// eq["cross_zone_remove_ldon_win_by_client_name"] = &lua_cross_zone_remove_ldon_win_by_client_name;
+	// eq["cross_zone_remove_spell_by_char_id"] = &lua_cross_zone_remove_spell_by_char_id;
+	// eq["cross_zone_remove_spell_by_group_id"] = &lua_cross_zone_remove_spell_by_group_id;
+	// eq["cross_zone_remove_spell_by_raid_id"] = &lua_cross_zone_remove_spell_by_raid_id;
+	// eq["cross_zone_remove_spell_by_guild_id"] = &lua_cross_zone_remove_spell_by_guild_id;
+	// eq["cross_zone_remove_spell_by_expedition_id"] = &lua_cross_zone_remove_spell_by_expedition_id;
+	// eq["cross_zone_remove_spell_by_client_name"] = &lua_cross_zone_remove_spell_by_client_name;
+	// eq["cross_zone_remove_task_by_char_id"] = &lua_cross_zone_remove_task_by_char_id;
+	// eq["cross_zone_remove_task_by_group_id"] = &lua_cross_zone_remove_task_by_group_id;
+	// eq["cross_zone_remove_task_by_raid_id"] = &lua_cross_zone_remove_task_by_raid_id;
+	// eq["cross_zone_remove_task_by_guild_id"] = &lua_cross_zone_remove_task_by_guild_id;
+	// eq["cross_zone_remove_task_by_expedition_id"] = &lua_cross_zone_remove_task_by_expedition_id;
+	// eq["cross_zone_remove_task_by_client_name"] = &lua_cross_zone_remove_task_by_client_name;
+	// eq["cross_zone_reset_activity_by_char_id"] = &lua_cross_zone_reset_activity_by_char_id;
+	// eq["cross_zone_reset_activity_by_group_id"] = &lua_cross_zone_reset_activity_by_group_id;
+	// eq["cross_zone_reset_activity_by_raid_id"] = &lua_cross_zone_reset_activity_by_raid_id;
+	// eq["cross_zone_reset_activity_by_guild_id"] = &lua_cross_zone_reset_activity_by_guild_id;
+	// eq["cross_zone_reset_activity_by_expedition_id"] = &lua_cross_zone_reset_activity_by_expedition_id;
+	// eq["cross_zone_reset_activity_by_client_name"] = &lua_cross_zone_reset_activity_by_client_name;
+	// eq["cross_zone_set_entity_variable_by_client_name"] = &lua_cross_zone_set_entity_variable_by_client_name;
+	// eq["cross_zone_set_entity_variable_by_group_id"] = &lua_cross_zone_set_entity_variable_by_group_id;
+	// eq["cross_zone_set_entity_variable_by_raid_id"] = &lua_cross_zone_set_entity_variable_by_raid_id;
+	// eq["cross_zone_set_entity_variable_by_guild_id"] = &lua_cross_zone_set_entity_variable_by_guild_id;
+	// eq["cross_zone_set_entity_variable_by_expedition_id"] = &lua_cross_zone_set_entity_variable_by_expedition_id;
+	// eq["cross_zone_set_entity_variable_by_client_name"] = &lua_cross_zone_set_entity_variable_by_client_name;
+	// eq["cross_zone_signal_client_by_char_id"] = &lua_cross_zone_signal_client_by_char_id;
+	// eq["cross_zone_signal_client_by_group_id"] = &lua_cross_zone_signal_client_by_group_id;
+	// eq["cross_zone_signal_client_by_raid_id"] = &lua_cross_zone_signal_client_by_raid_id;
+	// eq["cross_zone_signal_client_by_guild_id"] = &lua_cross_zone_signal_client_by_guild_id;
+	// eq["cross_zone_signal_client_by_expedition_id"] = &lua_cross_zone_signal_client_by_expedition_id;
+	// eq["cross_zone_signal_client_by_name"] = &lua_cross_zone_signal_client_by_name;
+	// eq["cross_zone_signal_npc_by_npctype_id"] = &lua_cross_zone_signal_npc_by_npctype_id;
+	// eq["cross_zone_update_activity_by_char_id"] =sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_char_id,(void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_char_id);
+	// eq["cross_zone_update_activity_by_group_id"] =sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_group_id,(void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_group_id);
+	// eq["cross_zone_update_activity_by_raid_id"] =sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_raid_id,(void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_raid_id);
+	// eq["cross_zone_update_activity_by_guild_id"] =sol::overload((void (*)(int, uint32, int)) & lua_cross_zone_update_activity_by_guild_id,(void (*)(int, uint32, int, int)) & lua_cross_zone_update_activity_by_guild_id);
+	// eq["cross_zone_update_activity_by_expedition_id"] =sol::overload((void (*)(uint32, uint32, int)) & lua_cross_zone_update_activity_by_expedition_id,(void (*)(uint32, uint32, int, int)) & lua_cross_zone_update_activity_by_expedition_id);
+	// eq["cross_zone_update_activity_by_client_name"] =sol::overload((void (*)(const char *, uint32, int)) & lua_cross_zone_update_activity_by_client_name,(void (*)(const char *, uint32, int, int)) & lua_cross_zone_update_activity_by_client_name);
+	// eq["world_wide_add_ldon_loss"] = sol::overload((void (*)(uint32)) & lua_world_wide_add_ldon_loss,(void (*)(uint32, uint8)) & lua_world_wide_add_ldon_loss,(void (*)(uint32, uint8, uint8)) & lua_world_wide_add_ldon_loss);
+	// eq["world_wide_add_ldon_points"] =sol::overload((void (*)(uint32, int)) & lua_world_wide_add_ldon_points,(void (*)(uint32, int, uint8)) & lua_world_wide_add_ldon_points,(void (*)(uint32, int, uint8, uint8)) & lua_world_wide_add_ldon_points);
+	// eq["world_wide_add_ldon_loss"] = sol::overload((void (*)(uint32)) & lua_world_wide_add_ldon_win,(void (*)(uint32, uint8)) & lua_world_wide_add_ldon_win,(void (*)(uint32, uint8, uint8)) & lua_world_wide_add_ldon_win);
+	// eq["world_wide_assign_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_assign_task, (void (*)(uint32, bool)) & lua_world_wide_assign_task,(void (*)(uint32, bool, uint8)) & lua_world_wide_assign_task,(void (*)(uint32, bool, uint8, uint8)) & lua_world_wide_assign_task);
+	// eq["world_wide_cast_spell"] = sol::overload((void (*)(uint32)) & lua_world_wide_cast_spell,(void (*)(uint32, uint8)) & lua_world_wide_cast_spell,(void (*)(uint32, uint8, uint8)) & lua_world_wide_cast_spell);
+	// eq["world_wide_dialogue_window"] =sol::overload((void (*)(const char *)) & lua_world_wide_dialogue_window,(void (*)(const char *, uint8)) & lua_world_wide_dialogue_window,(void (*)(const char *, uint8, uint8)) & lua_world_wide_dialogue_window);
+	// eq["world_wide_disable_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_disable_task,(void (*)(uint32, uint8)) & lua_world_wide_disable_task,(void (*)(uint32, uint8, uint8)) & lua_world_wide_disable_task);
+	// eq["world_wide_enable_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_enable_task,(void (*)(uint32, uint8)) & lua_world_wide_enable_task,(void (*)(uint32, uint8, uint8)) & lua_world_wide_enable_task);
+	// eq["world_wide_fail_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_fail_task,(void (*)(uint32, uint8)) & lua_world_wide_fail_task,(void (*)(uint32, uint8, uint8)) & lua_world_wide_fail_task);
+	// eq["world_wide_marquee"] = sol::overload((void (*)(uint32, uint32, uint32, uint32, uint32, const char *)) & lua_world_wide_marquee,(void (*)(uint32, uint32, uint32, uint32, uint32, const char *, uint8)) & lua_world_wide_marquee,(void (*)(uint32, uint32, uint32, uint32, uint32, const char *, uint8, uint8)) & lua_world_wide_marquee);
+	// eq["world_wide_message"] =sol::overload((void (*)(uint32, const char *)) & lua_world_wide_message,(void (*)(uint32, const char *, uint8)) & lua_world_wide_message,(void (*)(uint32, const char *, uint8, uint8)) & lua_world_wide_message);
+	// eq["world_wide_move"] = sol::overload((void (*)(const char *)) & lua_world_wide_move,(void (*)(const char *, uint8)) & lua_world_wide_move,(void (*)(const char *, uint8, uint8)) & lua_world_wide_move);
+	// eq["world_wide_move_instance"] = sol::overload((void (*)(uint16)) & lua_world_wide_move_instance,(void (*)(uint16, uint8)) & lua_world_wide_move_instance,(void (*)(uint16, uint8, uint8)) & lua_world_wide_move_instance);
+	// eq["world_wide_remove_spell"] = sol::overload((void (*)(uint32)) & lua_world_wide_remove_spell,(void (*)(uint32, uint8)) & lua_world_wide_remove_spell,(void (*)(uint32, uint8, uint8)) & lua_world_wide_remove_spell);
+	// eq["world_wide_remove_task"] = sol::overload((void (*)(uint32)) & lua_world_wide_remove_task,(void (*)(uint32, uint8)) & lua_world_wide_remove_task,(void (*)(uint32, uint8, uint8)) & lua_world_wide_remove_task);
+	// eq["world_wide_reset_activity"] =sol::overload((void (*)(uint32, int)) & lua_world_wide_reset_activity,(void (*)(uint32, int, uint8)) & lua_world_wide_reset_activity,(void (*)(uint32, int, uint8, uint8)) & lua_world_wide_reset_activity);
+	// eq["world_wide_set_entity_variable_client"] = sol::overload((void (*)(const char *, const char *)) & lua_world_wide_set_entity_variable_client,(void (*)(const char *, const char *, uint8)) & lua_world_wide_set_entity_variable_client,(void (*)(const char *, const char *, uint8, uint8)) & lua_world_wide_set_entity_variable_client);
+	// eq["world_wide_set_entity_variable_npc"] = &lua_world_wide_set_entity_variable_npc;
+	// eq["world_wide_signal_client"] = sol::overload((void (*)(uint32)) & lua_world_wide_signal_client,(void (*)(uint32, uint8)) & lua_world_wide_signal_client,(void (*)(uint32, uint8, uint8)) & lua_world_wide_signal_client);
+	// eq["world_wide_signal_npc"] = &lua_world_wide_signal_npc;
+	// eq["world_wide_update_activity"] =sol::overload((void (*)(uint32, int)) & lua_world_wide_update_activity,(void (*)(uint32, int, int)) & lua_world_wide_update_activity,(void (*)(uint32, int, int, uint8)) & lua_world_wide_update_activity,(void (*)(uint32, int, int, uint8, uint8)) & lua_world_wide_update_activity);
+	// eq["is_classic_enabled"] = &lua_is_classic_enabled;
+	// eq["is_the_ruins_of_kunark_enabled"] = &lua_is_the_ruins_of_kunark_enabled;
+	// eq["is_the_scars_of_velious_enabled"] = &lua_is_the_scars_of_velious_enabled;
+	// eq["is_the_shadows_of_luclin_enabled"] = &lua_is_the_shadows_of_luclin_enabled;
+	// eq["is_the_planes_of_power_enabled"] = &lua_is_the_planes_of_power_enabled;
+	// eq["is_the_legacy_of_ykesha_enabled"] = &lua_is_the_legacy_of_ykesha_enabled;
+	// eq["is_lost_dungeons_of_norrath_enabled"] = &lua_is_lost_dungeons_of_norrath_enabled;
+	// eq["is_gates_of_discord_enabled"] = &lua_is_gates_of_discord_enabled;
+	// eq["is_omens_of_war_enabled"] = &lua_is_omens_of_war_enabled;
+	// eq["is_dragons_of_norrath_enabled"] = &lua_is_dragons_of_norrath_enabled;
+	// eq["is_depths_of_darkhollow_enabled"] = &lua_is_depths_of_darkhollow_enabled;
+	// eq["is_prophecy_of_ro_enabled"] = &lua_is_prophecy_of_ro_enabled;
+	// eq["is_the_serpents_spine_enabled"] = &lua_is_the_serpents_spine_enabled;
+	// eq["is_the_buried_sea_enabled"] = &lua_is_the_buried_sea_enabled;
+	// eq["is_secrets_of_faydwer_enabled"] = &lua_is_secrets_of_faydwer_enabled;
+	// eq["is_seeds_of_destruction_enabled"] = &lua_is_seeds_of_destruction_enabled;
+	// eq["is_underfoot_enabled"] = &lua_is_underfoot_enabled;
+	// eq["is_house_of_thule_enabled"] = &lua_is_house_of_thule_enabled;
+	// eq["is_veil_of_alaris_enabled"] = &lua_is_veil_of_alaris_enabled;
+	// eq["is_rain_of_fear_enabled"] = &lua_is_rain_of_fear_enabled;
+	// eq["is_call_of_the_forsaken_enabled"] = &lua_is_call_of_the_forsaken_enabled;
+	// eq["is_the_darkened_sea_enabled"] = &lua_is_the_darkened_sea_enabled;
+	// eq["is_the_broken_mirror_enabled"] = &lua_is_the_broken_mirror_enabled;
+	// eq["is_empires_of_kunark_enabled"] = &lua_is_empires_of_kunark_enabled;
+	// eq["is_ring_of_scale_enabled"] = &lua_is_ring_of_scale_enabled;
+	// eq["is_the_burning_lands_enabled"] = &lua_is_the_burning_lands_enabled;
+	// eq["is_torment_of_velious_enabled"] = &lua_is_torment_of_velious_enabled;
+	// eq["is_current_expansion_classic"] = &lua_is_current_expansion_classic;
+	// eq["is_current_expansion_the_ruins_of_kunark"] = &lua_is_current_expansion_the_ruins_of_kunark;
+	// eq["is_current_expansion_the_scars_of_velious"] = &lua_is_current_expansion_the_scars_of_velious;
+	// eq["is_current_expansion_the_shadows_of_luclin"] = &lua_is_current_expansion_the_shadows_of_luclin;
+	// eq["is_current_expansion_the_planes_of_power"] = &lua_is_current_expansion_the_planes_of_power;
+	// eq["is_current_expansion_the_legacy_of_ykesha"] = &lua_is_current_expansion_the_legacy_of_ykesha;
+	// eq["is_current_expansion_lost_dungeons_of_norrath"] = &lua_is_current_expansion_lost_dungeons_of_norrath;
+	// eq["is_current_expansion_gates_of_discord"] = &lua_is_current_expansion_gates_of_discord;
+	// eq["is_current_expansion_omens_of_war"] = &lua_is_current_expansion_omens_of_war;
+	// eq["is_current_expansion_dragons_of_norrath"] = &lua_is_current_expansion_dragons_of_norrath;
+	// eq["is_current_expansion_depths_of_darkhollow"] = &lua_is_current_expansion_depths_of_darkhollow;
+	// eq["is_current_expansion_prophecy_of_ro"] = &lua_is_current_expansion_prophecy_of_ro;
+	// eq["is_current_expansion_the_serpents_spine"] = &lua_is_current_expansion_the_serpents_spine;
+	// eq["is_current_expansion_the_buried_sea"] = &lua_is_current_expansion_the_buried_sea;
+	// eq["is_current_expansion_secrets_of_faydwer"] = &lua_is_current_expansion_secrets_of_faydwer;
+	// eq["is_current_expansion_seeds_of_destruction"] = &lua_is_current_expansion_seeds_of_destruction;
+	// eq["is_current_expansion_underfoot"] = &lua_is_current_expansion_underfoot;
+	// eq["is_current_expansion_house_of_thule"] = &lua_is_current_expansion_house_of_thule;
+	// eq["is_current_expansion_veil_of_alaris"] = &lua_is_current_expansion_veil_of_alaris;
+	// eq["is_current_expansion_rain_of_fear"] = &lua_is_current_expansion_rain_of_fear;
+	// eq["is_current_expansion_call_of_the_forsaken"] = &lua_is_current_expansion_call_of_the_forsaken;
+	// eq["is_current_expansion_the_darkened_sea"] = &lua_is_current_expansion_the_darkened_sea;
+	// eq["is_current_expansion_the_broken_mirror"] = &lua_is_current_expansion_the_broken_mirror;
+	// eq["is_current_expansion_empires_of_kunark"] = &lua_is_current_expansion_empires_of_kunark;
+	// eq["is_current_expansion_ring_of_scale"] = &lua_is_current_expansion_ring_of_scale;
+	// eq["is_current_expansion_the_burning_lands"] = &lua_is_current_expansion_the_burning_lands;
+	// eq["is_current_expansion_torment_of_velious"] = &lua_is_current_expansion_torment_of_velious;
+	// eq["is_content_flag_enabled"] = (bool (*)(std::string)) & lua_is_content_flag_enabled;
+	// eq["set_content_flag"] = (void (*)(std::string, bool)) & lua_set_content_flag;
+	// eq["get_expedition"] = &lua_get_expedition;
+	// eq["get_expedition_by_char_id"] = &lua_get_expedition_by_char_id;
+	// eq["get_expedition_by_dz_id"] = &lua_get_expedition_by_dz_id;
+	// eq["get_expedition_by_zone_instance"] = &lua_get_expedition_by_zone_instance;
+	// eq["get_expedition_lockout_by_char_id"] = &lua_get_expedition_lockout_by_char_id;
+	// eq["get_expedition_lockouts_by_char_id"] = sol::overload((sol::table(*)(sol::this_state, uint32)) & lua_get_expedition_lockouts_by_char_id,(sol::table(*)(sol::this_state, uint32, std::string)) & lua_get_expedition_lockouts_by_char_id);
+	// eq["add_expedition_lockout_all_clients"] = sol::overload((void (*)(std::string, std::string, uint32)) & lua_add_expedition_lockout_all_clients,(void (*)(std::string, std::string, uint32, std::string)) & lua_add_expedition_lockout_all_clients);
+	// eq["add_expedition_lockout_by_char_id"] = sol::overload((void (*)(uint32, std::string, std::string, uint32)) & lua_add_expedition_lockout_by_char_id,(void (*)(uint32, std::string, std::string, uint32, std::string)) & lua_add_expedition_lockout_by_char_id);
+	// eq["remove_expedition_lockout_by_char_id"] = &lua_remove_expedition_lockout_by_char_id;
+	// eq["remove_all_expedition_lockouts_by_char_id"] =sol::overload((void (*)(uint32)) & lua_remove_all_expedition_lockouts_by_char_id,(void (*)(uint32, std::string)) & lua_remove_all_expedition_lockouts_by_char_id);
 }
 
 void lua_register_random(sol::state_view &sv) {
@@ -4020,4 +3870,4 @@ void lua_register_random(sol::state_view &sv) {
 	random["Roll"] = &random_roll_int;
 	random["RollReal"] = &random_roll_real;
 	random["Roll0"] = &random_roll0;
-}
+} */

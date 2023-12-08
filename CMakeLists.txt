@@ -297,7 +297,6 @@ INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavig
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/DetourCrowd/Include")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/DetourTileCache/Include")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/Recast/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/websocketpp")
 INCLUDE_DIRECTORIES(${YAML_INCLUDE_DIRS})
 
 OPTION(EQEMU_BUILD_LOGGING "Build Logging (To speed up compilation)" ON)

@@ -557,8 +557,6 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading, uin
 			outapp->priority = 6;
 			FastQueuePacket(&outapp);
 		} else if (zm == ZoneToBindPoint) {
-			// TODO: Find a better packet that works with EQMac on death. Sending OP_RequestClientZoneChange here usually does not zone the
-			// player correctly (it starts the zoning process, then disconnect.) OP_GMGoto seems to work 90% of the time. It's a hack, but it works...
 			Log(Logs::Detail, Logs::EQMac, "Zoning packet about to be sent (ZTB). We are headed to zone: %i, at %f, %f, %f", zoneID, x, y, z);
 			auto outapp = new EQApplicationPacket(OP_GMGoto, sizeof(GMGoto_Struct));
 			GMGoto_Struct* gmg = (GMGoto_Struct*)outapp->pBuffer;

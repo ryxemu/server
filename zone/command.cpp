@@ -6036,7 +6036,6 @@ void command_givemoney(Client *c, const Seperator *sep) {
 	} else if (!c->GetTarget()->IsClient()) {
 		c->Message(CC_Red, "You can only give money to players with this command.");
 	} else {
-		// TODO: update this to the client, otherwise the client doesn't show any weight change until you zone, move an item, etc
 		c->GetTarget()->CastToClient()->AddMoneyToPP(atoi(sep->arg[4]), atoi(sep->arg[3]), atoi(sep->arg[2]), atoi(sep->arg[1]), true);
 		c->Message(CC_Default, "Added %i Platinum, %i Gold, %i Silver, and %i Copper to %s's inventory.", atoi(sep->arg[1]), atoi(sep->arg[2]), atoi(sep->arg[3]), atoi(sep->arg[4]), c->GetTarget()->GetName());
 	}
@@ -7629,7 +7628,6 @@ void command_rules(Client *c, const Seperator *sep) {
 			return;
 		}
 
-		// TODO: we likely want to reload this ruleset everywhere...
 		RuleManager::Instance()->LoadRules(&database, sep->arg[2]);
 
 		c->Message(CC_Default, "The selected ruleset has been changed to (%s (%d)) and reloaded locally", sep->arg[2], rsid);
@@ -7834,7 +7832,6 @@ void command_setgraveyard(Client *c, const Seperator *sep) {
 			c->Message(CC_Default, "Successfuly added a new record for this graveyard!");
 			if (database.AddGraveyardIDToZone(zoneid, graveyard_id) > 0) {
 				c->Message(CC_Default, "Successfuly added this new graveyard for the zone %s.", sep->arg[1]);
-				// TODO: Set graveyard data to the running zone process.
 				c->Message(CC_Default, "Done!");
 			} else
 				c->Message(CC_Default, "Unable to add this new graveyard to the zone %s.", sep->arg[1]);
@@ -8842,7 +8839,6 @@ void command_update(Client *c, const Seperator *sep) {
 	} else if (strcasecmp(sep->arg[1], "source") == 0) {
 		if (admin >= 205) {
 #ifdef _WINDOWS
-			// TODO: Add same functionality for windows from the following command.
 			c->Message(CC_Default, "Not yet implemented for windows.");
 #else
 			c->Message(CC_Default, "Server will be going down and building, 10 min warning issued.");
@@ -8853,7 +8849,6 @@ void command_update(Client *c, const Seperator *sep) {
 	} else if (strcasecmp(sep->arg[1], "reboot") == 0) {
 		if (admin >= 205) {
 #ifdef _WINDOWS
-			// TODO: Add same functionality for windows from the following command.
 			c->Message(CC_Default, "Not yet implemented for windows.");
 #else
 			c->Message(CC_Default, "Server will be going down for reboot, 10 min warning issued.");
@@ -8864,7 +8859,6 @@ void command_update(Client *c, const Seperator *sep) {
 	} else if (strcasecmp(sep->arg[1], "rebootNOW") == 0) {
 		if (admin >= 250) {
 #ifdef _WINDOWS
-			// TODO: Add same functionality for windows from the following command.
 			c->Message(CC_Default, "Not yet implemented for windows.");
 #else
 			c->Message(CC_Default, "Server will be going down for reboot.");
@@ -8882,8 +8876,6 @@ void command_update(Client *c, const Seperator *sep) {
 
 void command_coredump(Client *c, const Seperator *sep) {
 #ifdef _WINDOWS
-	// TODO: Add same functionality for windows from the following command.
-	// Maybe have a batch file spit logs to a web folder?
 	c->Message(CC_Default, "Not yet implemented for windows.");
 #else
 	int system_var = system("./dump");

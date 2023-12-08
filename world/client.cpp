@@ -186,7 +186,6 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	strn0cpy(password, (char *)&(li->login_info[strlen(name) + 1]), 15);
 
 	if (strlen(password) <= 1) {
-		// TODO: Find out how to tell the client wrong username/password
 		Log(Logs::Detail, Logs::WorldServer, "Login without a password");
 		return false;
 	}
@@ -279,7 +278,6 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 			database.LoginIP(cle->AccountID(), long2ip(GetIP()));
 		}
 	} else {
-		// TODO: Find out how to tell the client wrong username/password
 		Log(Logs::Detail, Logs::WorldServer, "Bad/Expired session key '%s'", name);
 		return false;
 	}

@@ -322,8 +322,6 @@ class GTEST_API_ SingleFailureChecker {
 
 #if GTEST_OS_LINUX
 
-// TODO(kenton@google.com): Use autoconf to detect availability of
-// gettimeofday().
 # define GTEST_HAS_GETTIMEOFDAY_ 1
 
 # include <fcntl.h>  // NOLINT
@@ -360,9 +358,6 @@ class GTEST_API_ SingleFailureChecker {
 
 # if GTEST_OS_WINDOWS_MINGW
 // MinGW has gettimeofday() but not _ftime64().
-// TODO(kenton@google.com): Use autoconf to detect availability of
-//   gettimeofday().
-// TODO(kenton@google.com): There are other ways to get the time on
 //   Windows, like GetTickCount() or GetSystemTimeAsFileTime().  MinGW
 //   supports these.  consider using them instead.
 #  define GTEST_HAS_GETTIMEOFDAY_ 1
@@ -376,8 +371,6 @@ class GTEST_API_ SingleFailureChecker {
 #else
 
 // Assume other platforms have gettimeofday().
-// TODO(kenton@google.com): Use autoconf to detect availability of
-//   gettimeofday().
 # define GTEST_HAS_GETTIMEOFDAY_ 1
 
 // cpplint thinks that the header is already included, so we want to
@@ -1428,8 +1421,6 @@ bool ParseNaturalNumber(const ::std::string& str, Integer* number) {
 
   const bool parse_success = *end == '\0' && errno == 0;
 
-  // TODO(vladl@google.com): Convert this to compile time assertion when it is
-  // available.
   GTEST_CHECK_(sizeof(Integer) <= sizeof(parsed));
 
   const Integer result = static_cast<Integer>(parsed);
@@ -1899,10 +1890,6 @@ std::string UnitTestOptions::GetAbsolutePathToOutputFile() {
 
   internal::FilePath output_name(colon + 1);
   if (!output_name.IsAbsolutePath())
-    // TODO(wan@google.com): on Windows \some\path is not an absolute
-    // path (as its meaning depends on the current drive), yet the
-    // following logic for turning it into an absolute path is wrong.
-    // Fix it.
     output_name = internal::FilePath::ConcatPaths(
         internal::FilePath(UnitTest::GetInstance()->original_working_dir()),
         internal::FilePath(colon + 1));
@@ -2272,8 +2259,6 @@ TimeInMillis GetTimeInMillis() {
   SYSTEMTIME now_systime;
   FILETIME now_filetime;
   ULARGE_INTEGER now_int64;
-  // TODO(kenton@google.com): Shouldn't this just use
-  //   GetSystemTimeAsFileTime()?
   GetSystemTime(&now_systime);
   if (SystemTimeToFileTime(&now_systime, &now_filetime)) {
     now_int64.LowPart = now_filetime.dwLowDateTime;
@@ -2290,8 +2275,6 @@ TimeInMillis GetTimeInMillis() {
 
   // MSVC 8 deprecates _ftime64(), so we want to suppress warning 4996
   // (deprecated function) there.
-  // TODO(kenton@google.com): Use GetTickCount()?  Or use
-  //   SystemTimeToFileTime()
 #  pragma warning(push)          // Saves the current warning state.
 #  pragma warning(disable:4996)  // Temporarily disables warning 4996.
   _ftime64(&now);
@@ -2529,8 +2512,6 @@ AssertionResult DoubleNearPredFormat(const char* expr1,
   const double diff = fabs(val1 - val2);
   if (diff <= abs_error) return AssertionSuccess();
 
-  // TODO(wan): do not print the value of an expression if it's
-  // already a literal.
   return AssertionFailure()
       << "The difference between " << expr1 << " and " << expr2
       << " is " << diff << ", which exceeds " << abs_error_expr << ", where\n"
@@ -4424,7 +4405,6 @@ void TestEventRepeater::Append(TestEventListener *listener) {
   listeners_.push_back(listener);
 }
 
-// TODO(vladl@google.com): Factor the search functionality into Vector::Find.
 TestEventListener* TestEventRepeater::Release(TestEventListener *listener) {
   for (size_t i = 0; i < listeners_.size(); ++i) {
     if (listeners_[i] == listener) {

@@ -1237,7 +1237,7 @@ void EntityList::SendZoneSpawns(Client *client) {
 				continue;
 			}
 		}
-		it->second->CastToMob()->CreateSpawnPacket(&app);  // TODO: Use zonespawns opcode instead
+		it->second->CastToMob()->CreateSpawnPacket(&app);
 		client->QueuePacket(&app, true, Client::CLIENT_CONNECTED);
 		safe_delete_array(app.pBuffer);
 		++it;
@@ -1893,7 +1893,6 @@ Raid *EntityList::GetRaidByMob(Mob *mob) {
 
 	while (iterator != raid_list.end()) {
 		for (int x = 0; x < MAX_RAID_MEMBERS; x++) {
-			// TODO: Implement support for Mob objects in Raid class
 			/*if((*iterator)->members[x].member){
 			    if((*iterator)->members[x].member == mob)
 			        return *iterator;
@@ -3782,7 +3781,6 @@ Mob *EntityList::GetTargetForMez(Mob *caster) {
 		return nullptr;
 
 	auto it = mob_list.begin();
-	// TODO: make this smarter and not mez targets being damaged by dots
 	while (it != mob_list.end()) {
 		Mob *d = it->second;
 		if (d) {

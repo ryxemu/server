@@ -484,7 +484,7 @@ bool EQ::ItemInstance::IsSlotAllowed(int16 slot_id, EQ::InventoryProfile& inv) c
 				if (m_item->Damage == 0 || m_item->ItemType == item::ItemTypeUnknown6 || m_item->ItemType == item::ItemTypeUnknown7 || m_item->ItemType == item::ItemTypeArrow || m_item->ItemType == item::ItemTypeUnknown4)
 					IsWeapon = false;
 
-				bool CanDualWield = true;  // TODO - get this value from the character
+				bool CanDualWield = true;
 
 				if (!IsWeapon || CanDualWield) {
 					auto primary_item = inv[invslot::slotPrimary];

@@ -861,7 +861,7 @@ public:
 	void SetAccountFlag(std::string flag, std::string val);
 	std::string GetAccountFlag(std::string flag);
 	void QuestReward(Mob* target, int32 copper = 0, int32 silver = 0, int32 gold = 0, int32 platinum = 0, int16 itemid = 0, int32 exp = 0, bool faction = false);
-	void QuestReward(Mob* target, const QuestReward_Struct& reward); // TODO: Fix faction processing
+	void QuestReward(Mob* target, const QuestReward_Struct& reward);
 	void RewindCommand();
 	virtual bool IsCharmedPet() { return charmed; }
 

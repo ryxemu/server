@@ -47,7 +47,7 @@ struct Lua_Spawn_List {
 	std::vector<Lua_Spawn> entries;
 	sol::as_table_t<std::vector<Lua_Spawn>> get_entries() { return sol::as_table(entries); }
 };
-
+/*
 Lua_Mob_List Lua_EntityList::GetMobList() {
 	Lua_Safe_Call_Class(Lua_Mob_List);
 	Lua_Mob_List ret;
@@ -274,4 +274,4 @@ void lua_register_door_list(sol::state_view &sv) {
 void lua_register_spawn_list(sol::state_view &sv) {
 	auto spawn_list = sv.new_usertype<Lua_Spawn_List>("SpawnList");
 	spawn_list["entries"] = sol::readonly_property(&Lua_Spawn_List::get_entries);
-}
+} */

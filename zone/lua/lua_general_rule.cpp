@@ -1,6 +1,6 @@
 #include <sol/sol.hpp>
 #include "../../common/rulesys.h"
-
+/*
 int get_rulei(int rule) {
 	return RuleManager::Instance()->GetIntRule((RuleManager::IntType)rule);
 }
@@ -42,4 +42,4 @@ void lua_register_ruler(sol::state_view &sv) {
 
 void lua_register_ruleb(sol::state_view &sv) {
 	sv.create_named_table("RuleB", "Get", &get_ruleb);
-}
+} */

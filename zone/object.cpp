@@ -528,7 +528,6 @@ bool Object::HandleClick(Client* sender, const ClickObject_Struct* click_object)
 		auto outapp = new EQApplicationPacket(OP_ClickObjectAction, sizeof(ClickObjectAction_Struct));
 		ClickObjectAction_Struct* coa = (ClickObjectAction_Struct*)outapp->pBuffer;
 
-		// TODO: there is prolly a better way to do this.
 		coa->type = m_type;
 		coa->slot = 0x0a;
 

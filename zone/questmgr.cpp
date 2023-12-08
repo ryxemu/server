@@ -1847,7 +1847,6 @@ void QuestManager::clearspawntimers() {
 	if (!zone)
 		return;
 
-	// TODO: Dec 19, 2008, replace with code updated for current spawn timers.
 	LinkedListIterator<Spawn2 *> iterator(zone->spawn2_list);
 	iterator.Reset();
 	while (iterator.MoreElements()) {

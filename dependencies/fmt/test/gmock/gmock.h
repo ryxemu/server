@@ -790,7 +790,6 @@ GTEST_API_ void Log(LogSeverity severity,
                     const string& message,
                     int stack_frames_to_skip);
 
-// TODO(wan@google.com): group all type utilities together.
 
 // Type traits.
 
@@ -4730,10 +4729,6 @@ namespace testing {
 // MatchResultListener is an abstract class.  Its << operator can be
 // used by a matcher to explain why a value matches or doesn't match.
 //
-// TODO(wan@google.com): add method
-//   bool InterestedInWhy(bool result) const;
-// to indicate whether the listener is interested in why the match
-// result is 'result'.
 class MatchResultListener {
  public:
   // Creates a listener object with the given underlying ostream.  The
@@ -5390,8 +5385,6 @@ class TuplePrefix {
     Value value = get<N - 1>(values);
     StringMatchResultListener listener;
     if (!matcher.MatchAndExplain(value, &listener)) {
-      // TODO(wan): include in the message the name of the parameter
-      // as used in MOCK_METHOD*() when possible.
       *os << "  Expected arg #" << N - 1 << ": ";
       get<N - 1>(matchers).DescribeTo(os);
       *os << "\n           Actual: ";
@@ -8751,7 +8744,6 @@ class GTEST_API_ UntypedFunctionMockerBase {
   // this information in the global mock registry.  Will be called
   // whenever an EXPECT_CALL() or ON_CALL() is executed on this mock
   // method.
-  // TODO(wan@google.com): rename to SetAndRegisterOwner().
   void RegisterOwner(const void* mock_obj)
       GTEST_LOCK_EXCLUDED_(g_gmock_mutex);
 
@@ -9764,9 +9756,6 @@ class TypedExpectation : public ExpectationBase {
       mocker->DescribeDefaultActionTo(args, what);
       DescribeCallCountTo(why);
 
-      // TODO(wan@google.com): allow the user to control whether
-      // unexpected calls should fail immediately or continue using a
-      // flag --gmock_unexpected_calls_are_fatal.
       return NULL;
     }
 

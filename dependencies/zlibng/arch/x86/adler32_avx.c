@@ -35,7 +35,7 @@ Z_INTERNAL uint32_t adler32_avx2(uint32_t adler, const unsigned char *buf, size_
 
     uint32_t ALIGNED_(32) s1[8], s2[8];
 
-    memset(s1, 0, sizeof(s1)); s1[7] = adler; // TODO: would a masked load be faster?
+    memset(s1, 0, sizeof(s1)); s1[7] = adler;
     memset(s2, 0, sizeof(s2)); s2[7] = sum2;
 
     char ALIGNED_(32) dot1[32] = \
