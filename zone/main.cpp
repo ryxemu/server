@@ -49,6 +49,7 @@
 #include <time.h>
 #include <ctime>
 #include <chrono>
+#include <memory>
 
 #ifdef _CRTDBG_MAP_ALLOC
 #undef new
@@ -304,8 +305,8 @@ int main(int argc, char** argv) {
 	}
 
 	parse = new QuestParserCollection();
-	auto lua_parser = new LuaParser();
-	parse->RegisterQuestInterface(lua_parser, "lua");
+	auto lua = std::make_unique<LuaParser>();
+	parse->RegisterQuestInterface(lua.get(), "lua");
 
 	// now we have our parser, load the quests
 	LogInfo("Loading quests");
@@ -472,8 +473,6 @@ int main(int argc, char** argv) {
 	entity_list.RemoveAllEncounters();  // gotta do it manually or rewrite lots of shit :P
 
 	parse->ClearInterfaces();
-
-	safe_delete(lua_parser);
 
 	safe_delete(Config);
 	title_manager.ClearTitles();

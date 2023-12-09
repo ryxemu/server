@@ -46,6 +46,7 @@ class QuestParserCollection {
 	void Init();
 	void ReloadQuests(bool reset_timers = true);
 	void RemoveEncounter(const std::string name);
+	QuestInterface *GetQuestInterface(uint32 id);
 
 	bool HasQuestSub(uint32 npcid, QuestEventID evt, bool check_encounters = false);
 	bool PlayerHasQuestSub(QuestEventID evt, bool check_encounters = false);

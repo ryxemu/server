@@ -14,9 +14,6 @@
 #include "../zone_config.h"
 
 #include "lua_parser.h"
-#ifdef EQEMU_USE_LUA_BIT
-#include "lua_bit.h"
-#endif
 #include "lua_entity.h"
 #include "lua_expedition.h"
 #include "lua_item.h"
@@ -38,14 +35,10 @@
 #include "lua_general.h"
 #include "lua_encounter.h"
 #include "lua_stat_bonuses.h"
-#include "../common/path_manager.h"
+// #include "../common/path_manager.h"
 
 #include "lua_forward.h"
-#include "lua_mod.h"
-
-#ifdef BOTS
-#include "lua_bot.h"
-#endif
+// #include "lua_mod.h"
 
 const char *LuaEvents[_LargestEventID] = {
     "event_say",
@@ -164,116 +157,116 @@ std::map<std::string, Encounter *> lua_encounters;
 struct LuaParser::Implementation {
 	std::unordered_map<std::string, std::string> vars;
 	std::unordered_map<std::string, sol::environment> loaded;  // sandboxed env, if it exists, it loaded
-	std::vector<LuaMod> mods;
+	// std::vector<LuaMod> mods;
 	std::unique_ptr<sol::state> state;
 };
 
 LuaParser::LuaParser() {
-	for (int i = 0; i < _LargestEventID; ++i) {
-		NPCArgumentDispatch[i] = handle_npc_null;
-		PlayerArgumentDispatch[i] = handle_player_null;
-		ItemArgumentDispatch[i] = handle_item_null;
-		SpellArgumentDispatch[i] = handle_spell_null;
-		EncounterArgumentDispatch[i] = handle_encounter_null;
-	}
+	// for (int i = 0; i < _LargestEventID; ++i) {
+	// 	NPCArgumentDispatch[i] = handle_npc_null;
+	// 	PlayerArgumentDispatch[i] = handle_player_null;
+	// 	ItemArgumentDispatch[i] = handle_item_null;
+	// 	SpellArgumentDispatch[i] = handle_spell_null;
+	// 	EncounterArgumentDispatch[i] = handle_encounter_null;
+	// }
 
-	NPCArgumentDispatch[EVENT_SAY] = handle_npc_event_say;
-	NPCArgumentDispatch[EVENT_AGGRO_SAY] = handle_npc_event_say;
-	NPCArgumentDispatch[EVENT_PROXIMITY_SAY] = handle_npc_event_say;
-	NPCArgumentDispatch[EVENT_TRADE] = handle_npc_event_trade;
-	NPCArgumentDispatch[EVENT_HP] = handle_npc_event_hp;
-	NPCArgumentDispatch[EVENT_TARGET_CHANGE] = handle_npc_single_mob;
-	NPCArgumentDispatch[EVENT_CAST_ON] = handle_npc_cast;
-	NPCArgumentDispatch[EVENT_KILLED_MERIT] = handle_npc_single_client;
-	NPCArgumentDispatch[EVENT_SLAY] = handle_npc_single_mob;
-	NPCArgumentDispatch[EVENT_ENTER] = handle_npc_single_client;
-	NPCArgumentDispatch[EVENT_EXIT] = handle_npc_single_client;
-	NPCArgumentDispatch[EVENT_TASK_ACCEPTED] = handle_npc_task_accepted;
-	NPCArgumentDispatch[EVENT_POPUP_RESPONSE] = handle_npc_popup;
-	NPCArgumentDispatch[EVENT_WAYPOINT_ARRIVE] = handle_npc_waypoint;
-	NPCArgumentDispatch[EVENT_WAYPOINT_DEPART] = handle_npc_waypoint;
-	NPCArgumentDispatch[EVENT_HATE_LIST] = handle_npc_hate;
-	NPCArgumentDispatch[EVENT_COMBAT] = handle_npc_hate;
-	NPCArgumentDispatch[EVENT_SIGNAL] = handle_npc_signal;
-	NPCArgumentDispatch[EVENT_TIMER] = handle_npc_timer;
-	NPCArgumentDispatch[EVENT_DEATH] = handle_npc_death;
-	NPCArgumentDispatch[EVENT_DEATH_COMPLETE] = handle_npc_death;
-	NPCArgumentDispatch[EVENT_CAST] = handle_npc_cast;
-	NPCArgumentDispatch[EVENT_CAST_BEGIN] = handle_npc_cast;
-	NPCArgumentDispatch[EVENT_FEIGN_DEATH] = handle_npc_single_client;
-	NPCArgumentDispatch[EVENT_ENTER_AREA] = handle_npc_area;
-	NPCArgumentDispatch[EVENT_LEAVE_AREA] = handle_npc_area;
-	NPCArgumentDispatch[EVENT_LOOT_ZONE] = handle_npc_loot_zone;
+	// NPCArgumentDispatch[EVENT_SAY] = handle_npc_event_say;
+	// NPCArgumentDispatch[EVENT_AGGRO_SAY] = handle_npc_event_say;
+	// NPCArgumentDispatch[EVENT_PROXIMITY_SAY] = handle_npc_event_say;
+	// NPCArgumentDispatch[EVENT_TRADE] = handle_npc_event_trade;
+	// NPCArgumentDispatch[EVENT_HP] = handle_npc_event_hp;
+	// NPCArgumentDispatch[EVENT_TARGET_CHANGE] = handle_npc_single_mob;
+	// NPCArgumentDispatch[EVENT_CAST_ON] = handle_npc_cast;
+	// NPCArgumentDispatch[EVENT_KILLED_MERIT] = handle_npc_single_client;
+	// NPCArgumentDispatch[EVENT_SLAY] = handle_npc_single_mob;
+	// NPCArgumentDispatch[EVENT_ENTER] = handle_npc_single_client;
+	// NPCArgumentDispatch[EVENT_EXIT] = handle_npc_single_client;
+	// NPCArgumentDispatch[EVENT_TASK_ACCEPTED] = handle_npc_task_accepted;
+	// NPCArgumentDispatch[EVENT_POPUP_RESPONSE] = handle_npc_popup;
+	// NPCArgumentDispatch[EVENT_WAYPOINT_ARRIVE] = handle_npc_waypoint;
+	// NPCArgumentDispatch[EVENT_WAYPOINT_DEPART] = handle_npc_waypoint;
+	// NPCArgumentDispatch[EVENT_HATE_LIST] = handle_npc_hate;
+	// NPCArgumentDispatch[EVENT_COMBAT] = handle_npc_hate;
+	// NPCArgumentDispatch[EVENT_SIGNAL] = handle_npc_signal;
+	// NPCArgumentDispatch[EVENT_TIMER] = handle_npc_timer;
+	// NPCArgumentDispatch[EVENT_DEATH] = handle_npc_death;
+	// NPCArgumentDispatch[EVENT_DEATH_COMPLETE] = handle_npc_death;
+	// NPCArgumentDispatch[EVENT_CAST] = handle_npc_cast;
+	// NPCArgumentDispatch[EVENT_CAST_BEGIN] = handle_npc_cast;
+	// NPCArgumentDispatch[EVENT_FEIGN_DEATH] = handle_npc_single_client;
+	// NPCArgumentDispatch[EVENT_ENTER_AREA] = handle_npc_area;
+	// NPCArgumentDispatch[EVENT_LEAVE_AREA] = handle_npc_area;
+	// NPCArgumentDispatch[EVENT_LOOT_ZONE] = handle_npc_loot_zone;
 
-	PlayerArgumentDispatch[EVENT_SAY] = handle_player_say;
-	PlayerArgumentDispatch[EVENT_ENVIRONMENTAL_DAMAGE] = handle_player_environmental_damage;
-	PlayerArgumentDispatch[EVENT_DEATH] = handle_player_death;
-	PlayerArgumentDispatch[EVENT_DEATH_COMPLETE] = handle_player_death;
-	PlayerArgumentDispatch[EVENT_TIMER] = handle_player_timer;
-	PlayerArgumentDispatch[EVENT_DISCOVER_ITEM] = handle_player_discover_item;
-	PlayerArgumentDispatch[EVENT_FISH_SUCCESS] = handle_player_fish_forage_success;
-	PlayerArgumentDispatch[EVENT_FORAGE_SUCCESS] = handle_player_fish_forage_success;
-	PlayerArgumentDispatch[EVENT_CLICK_OBJECT] = handle_player_click_object;
-	PlayerArgumentDispatch[EVENT_CLICK_DOOR] = handle_player_click_door;
-	PlayerArgumentDispatch[EVENT_SIGNAL] = handle_player_signal;
-	PlayerArgumentDispatch[EVENT_POPUP_RESPONSE] = handle_player_popup_response;
-	PlayerArgumentDispatch[EVENT_PLAYER_PICKUP] = handle_player_pick_up;
-	PlayerArgumentDispatch[EVENT_CAST] = handle_player_cast;
-	PlayerArgumentDispatch[EVENT_CAST_BEGIN] = handle_player_cast;
-	PlayerArgumentDispatch[EVENT_CAST_ON] = handle_player_cast;
-	PlayerArgumentDispatch[EVENT_TASK_FAIL] = handle_player_task_fail;
-	PlayerArgumentDispatch[EVENT_ZONE] = handle_player_zone;
-	PlayerArgumentDispatch[EVENT_DUEL_WIN] = handle_player_duel_win;
-	PlayerArgumentDispatch[EVENT_DUEL_LOSE] = handle_player_duel_loss;
-	PlayerArgumentDispatch[EVENT_LOOT] = handle_player_loot;
-	PlayerArgumentDispatch[EVENT_TASK_STAGE_COMPLETE] = handle_player_task_stage_complete;
-	PlayerArgumentDispatch[EVENT_TASK_COMPLETE] = handle_player_task_update;
-	PlayerArgumentDispatch[EVENT_TASK_UPDATE] = handle_player_task_update;
-	PlayerArgumentDispatch[EVENT_COMMAND] = handle_player_command;
-	PlayerArgumentDispatch[EVENT_COMBINE_SUCCESS] = handle_player_combine;
-	PlayerArgumentDispatch[EVENT_COMBINE_FAILURE] = handle_player_combine;
-	PlayerArgumentDispatch[EVENT_FEIGN_DEATH] = handle_player_feign;
-	PlayerArgumentDispatch[EVENT_ENTER_AREA] = handle_player_area;
-	PlayerArgumentDispatch[EVENT_LEAVE_AREA] = handle_player_area;
-	PlayerArgumentDispatch[EVENT_RESPAWN] = handle_player_respawn;
-	PlayerArgumentDispatch[EVENT_UNHANDLED_OPCODE] = handle_player_packet;
-	PlayerArgumentDispatch[EVENT_USE_SKILL] = handle_player_use_skill;
-	PlayerArgumentDispatch[EVENT_TEST_BUFF] = handle_test_buff;
-	PlayerArgumentDispatch[EVENT_COMBINE_VALIDATE] = handle_player_combine_validate;
-	PlayerArgumentDispatch[EVENT_BOT_COMMAND] = handle_player_bot_command;
-	PlayerArgumentDispatch[EVENT_WARP] = handle_player_warp;
-	PlayerArgumentDispatch[EVENT_COMBINE] = handle_player_quest_combine;
-	PlayerArgumentDispatch[EVENT_CONSIDER] = handle_player_consider;
-	PlayerArgumentDispatch[EVENT_CONSIDER_CORPSE] = handle_player_consider_corpse;
-	PlayerArgumentDispatch[EVENT_EQUIP_ITEM_CLIENT] = handle_player_equip_item;
-	PlayerArgumentDispatch[EVENT_UNEQUIP_ITEM_CLIENT] = handle_player_equip_item;
-	PlayerArgumentDispatch[EVENT_SKILL_UP] = handle_player_skill_up;
-	PlayerArgumentDispatch[EVENT_LANGUAGE_SKILL_UP] = handle_player_skill_up;
-	PlayerArgumentDispatch[EVENT_ALT_CURRENCY_MERCHANT_BUY] = handle_player_alt_currency_merchant;
-	PlayerArgumentDispatch[EVENT_ALT_CURRENCY_MERCHANT_SELL] = handle_player_alt_currency_merchant;
-	PlayerArgumentDispatch[EVENT_MERCHANT_BUY] = handle_player_merchant;
-	PlayerArgumentDispatch[EVENT_MERCHANT_SELL] = handle_player_merchant;
+	// PlayerArgumentDispatch[EVENT_SAY] = handle_player_say;
+	// PlayerArgumentDispatch[EVENT_ENVIRONMENTAL_DAMAGE] = handle_player_environmental_damage;
+	// PlayerArgumentDispatch[EVENT_DEATH] = handle_player_death;
+	// PlayerArgumentDispatch[EVENT_DEATH_COMPLETE] = handle_player_death;
+	// PlayerArgumentDispatch[EVENT_TIMER] = handle_player_timer;
+	// PlayerArgumentDispatch[EVENT_DISCOVER_ITEM] = handle_player_discover_item;
+	// PlayerArgumentDispatch[EVENT_FISH_SUCCESS] = handle_player_fish_forage_success;
+	// PlayerArgumentDispatch[EVENT_FORAGE_SUCCESS] = handle_player_fish_forage_success;
+	// PlayerArgumentDispatch[EVENT_CLICK_OBJECT] = handle_player_click_object;
+	// PlayerArgumentDispatch[EVENT_CLICK_DOOR] = handle_player_click_door;
+	// PlayerArgumentDispatch[EVENT_SIGNAL] = handle_player_signal;
+	// PlayerArgumentDispatch[EVENT_POPUP_RESPONSE] = handle_player_popup_response;
+	// PlayerArgumentDispatch[EVENT_PLAYER_PICKUP] = handle_player_pick_up;
+	// PlayerArgumentDispatch[EVENT_CAST] = handle_player_cast;
+	// PlayerArgumentDispatch[EVENT_CAST_BEGIN] = handle_player_cast;
+	// PlayerArgumentDispatch[EVENT_CAST_ON] = handle_player_cast;
+	// PlayerArgumentDispatch[EVENT_TASK_FAIL] = handle_player_task_fail;
+	// PlayerArgumentDispatch[EVENT_ZONE] = handle_player_zone;
+	// PlayerArgumentDispatch[EVENT_DUEL_WIN] = handle_player_duel_win;
+	// PlayerArgumentDispatch[EVENT_DUEL_LOSE] = handle_player_duel_loss;
+	// PlayerArgumentDispatch[EVENT_LOOT] = handle_player_loot;
+	// PlayerArgumentDispatch[EVENT_TASK_STAGE_COMPLETE] = handle_player_task_stage_complete;
+	// PlayerArgumentDispatch[EVENT_TASK_COMPLETE] = handle_player_task_update;
+	// PlayerArgumentDispatch[EVENT_TASK_UPDATE] = handle_player_task_update;
+	// PlayerArgumentDispatch[EVENT_COMMAND] = handle_player_command;
+	// PlayerArgumentDispatch[EVENT_COMBINE_SUCCESS] = handle_player_combine;
+	// PlayerArgumentDispatch[EVENT_COMBINE_FAILURE] = handle_player_combine;
+	// PlayerArgumentDispatch[EVENT_FEIGN_DEATH] = handle_player_feign;
+	// PlayerArgumentDispatch[EVENT_ENTER_AREA] = handle_player_area;
+	// PlayerArgumentDispatch[EVENT_LEAVE_AREA] = handle_player_area;
+	// PlayerArgumentDispatch[EVENT_RESPAWN] = handle_player_respawn;
+	// PlayerArgumentDispatch[EVENT_UNHANDLED_OPCODE] = handle_player_packet;
+	// PlayerArgumentDispatch[EVENT_USE_SKILL] = handle_player_use_skill;
+	// PlayerArgumentDispatch[EVENT_TEST_BUFF] = handle_test_buff;
+	// PlayerArgumentDispatch[EVENT_COMBINE_VALIDATE] = handle_player_combine_validate;
+	// PlayerArgumentDispatch[EVENT_BOT_COMMAND] = handle_player_bot_command;
+	// PlayerArgumentDispatch[EVENT_WARP] = handle_player_warp;
+	// PlayerArgumentDispatch[EVENT_COMBINE] = handle_player_quest_combine;
+	// PlayerArgumentDispatch[EVENT_CONSIDER] = handle_player_consider;
+	// PlayerArgumentDispatch[EVENT_CONSIDER_CORPSE] = handle_player_consider_corpse;
+	// PlayerArgumentDispatch[EVENT_EQUIP_ITEM_CLIENT] = handle_player_equip_item;
+	// PlayerArgumentDispatch[EVENT_UNEQUIP_ITEM_CLIENT] = handle_player_equip_item;
+	// PlayerArgumentDispatch[EVENT_SKILL_UP] = handle_player_skill_up;
+	// PlayerArgumentDispatch[EVENT_LANGUAGE_SKILL_UP] = handle_player_skill_up;
+	// PlayerArgumentDispatch[EVENT_ALT_CURRENCY_MERCHANT_BUY] = handle_player_alt_currency_merchant;
+	// PlayerArgumentDispatch[EVENT_ALT_CURRENCY_MERCHANT_SELL] = handle_player_alt_currency_merchant;
+	// PlayerArgumentDispatch[EVENT_MERCHANT_BUY] = handle_player_merchant;
+	// PlayerArgumentDispatch[EVENT_MERCHANT_SELL] = handle_player_merchant;
 
-	ItemArgumentDispatch[EVENT_ITEM_CLICK] = handle_item_click;
-	ItemArgumentDispatch[EVENT_ITEM_CLICK_CAST] = handle_item_click;
-	ItemArgumentDispatch[EVENT_TIMER] = handle_item_timer;
-	ItemArgumentDispatch[EVENT_WEAPON_PROC] = handle_item_proc;
-	ItemArgumentDispatch[EVENT_LOOT] = handle_item_loot;
-	ItemArgumentDispatch[EVENT_EQUIP_ITEM] = handle_item_equip;
-	ItemArgumentDispatch[EVENT_UNEQUIP_ITEM] = handle_item_equip;
-	ItemArgumentDispatch[EVENT_AUGMENT_ITEM] = handle_item_augment;
-	ItemArgumentDispatch[EVENT_UNAUGMENT_ITEM] = handle_item_augment;
-	ItemArgumentDispatch[EVENT_AUGMENT_INSERT] = handle_item_augment_insert;
-	ItemArgumentDispatch[EVENT_AUGMENT_REMOVE] = handle_item_augment_remove;
+	// ItemArgumentDispatch[EVENT_ITEM_CLICK] = handle_item_click;
+	// ItemArgumentDispatch[EVENT_ITEM_CLICK_CAST] = handle_item_click;
+	// ItemArgumentDispatch[EVENT_TIMER] = handle_item_timer;
+	// ItemArgumentDispatch[EVENT_WEAPON_PROC] = handle_item_proc;
+	// ItemArgumentDispatch[EVENT_LOOT] = handle_item_loot;
+	// ItemArgumentDispatch[EVENT_EQUIP_ITEM] = handle_item_equip;
+	// ItemArgumentDispatch[EVENT_UNEQUIP_ITEM] = handle_item_equip;
+	// ItemArgumentDispatch[EVENT_AUGMENT_ITEM] = handle_item_augment;
+	// ItemArgumentDispatch[EVENT_UNAUGMENT_ITEM] = handle_item_augment;
+	// ItemArgumentDispatch[EVENT_AUGMENT_INSERT] = handle_item_augment_insert;
+	// ItemArgumentDispatch[EVENT_AUGMENT_REMOVE] = handle_item_augment_remove;
 
-	SpellArgumentDispatch[EVENT_SPELL_EFFECT_CLIENT] = handle_spell_event;
-	SpellArgumentDispatch[EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT] = handle_spell_event;
-	SpellArgumentDispatch[EVENT_SPELL_FADE] = handle_spell_event;
-	SpellArgumentDispatch[EVENT_SPELL_EFFECT_TRANSLOCATE_COMPLETE] = handle_translocate_finish;
+	// SpellArgumentDispatch[EVENT_SPELL_EFFECT_CLIENT] = handle_spell_event;
+	// SpellArgumentDispatch[EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT] = handle_spell_event;
+	// SpellArgumentDispatch[EVENT_SPELL_FADE] = handle_spell_event;
+	// SpellArgumentDispatch[EVENT_SPELL_EFFECT_TRANSLOCATE_COMPLETE] = handle_translocate_finish;
 
-	EncounterArgumentDispatch[EVENT_TIMER] = handle_encounter_timer;
-	EncounterArgumentDispatch[EVENT_ENCOUNTER_LOAD] = handle_encounter_load;
-	EncounterArgumentDispatch[EVENT_ENCOUNTER_UNLOAD] = handle_encounter_unload;
+	// EncounterArgumentDispatch[EVENT_TIMER] = handle_encounter_timer;
+	// EncounterArgumentDispatch[EVENT_ENCOUNTER_LOAD] = handle_encounter_load;
+	// EncounterArgumentDispatch[EVENT_ENCOUNTER_UNLOAD] = handle_encounter_unload;
 
 	m_impl = std::make_unique<LuaParser::Implementation>();
 }
@@ -285,7 +278,7 @@ LuaParser::~LuaParser() {
 	lua_encounters_loaded.clear();
 	// just to make sure it's cleaned up before the state, sol::environment keeps a reference
 	// to the state and will do bad things if it's cleaned up after the state
-	m_impl->mods.clear();
+	// m_impl->mods.clear();
 	m_impl->loaded.clear();
 }
 
@@ -523,7 +516,7 @@ int LuaParser::_EventSpell(std::string package_name, QuestEventID evt, NPC *npc,
 	auto arg_function = SpellArgumentDispatch[evt];
 	arg_function(this, m_impl->state->lua_state(), table, npc, client, spell_id, data, extra_data, extra_pointers);
 
-	quest_manager.StartQuest(npc, client, nullptr, const_cast<SPDat_Spell_Struct *>(&spells[spell_id]));
+	// quest_manager.StartQuest(npc, client, nullptr, const_cast<SPDat_Spell_Struct *>(&spells[spell_id]));
 
 	try {
 		auto result = f(table);
@@ -732,7 +725,7 @@ void LuaParser::Init() {
 }
 
 void LuaParser::ReloadQuests() {
-	m_impl->mods.clear();
+	// m_impl->mods.clear();
 	m_impl->loaded.clear();
 	errors_.clear();
 	lua_encounter_events_registered.clear();
@@ -761,13 +754,6 @@ void LuaParser::ReloadQuests() {
 	                  sol::lib::debug,
 	                  sol::lib::bit32,
 	                  sol::lib::io);
-
-#ifdef EQEMU_USE_LUA_BIT
-	if (luaopen_bit(sv.lua_state()) != 1) {
-		std::string error = lua_tostring(sv.lua_state(), -1);
-		AddError(error);
-	}
-#endif
 
 	try {
 		auto result = sv.safe_script("math.randomseed(os.time())");
@@ -809,24 +795,24 @@ void LuaParser::ReloadQuests() {
 #endif
 
 	auto module_path = sv["package"]["path"].get<std::string>();
-	module_path += ";" + path.GetLuaModulesPath() + "/?.lua;" + path.GetLuaModulesPath() + "/?/init.lua";
+	module_path += ";" + Config->LuaModuleDir + "/?.lua;" + Config->LuaModuleDir + "/?/init.lua";
 	// luarock paths using lua_modules as tree
 	// to path it adds foo/share/lua/5.1/?.lua and foo/share/lua/5.1/?/init.lua
-	module_path += ";" + path.GetLuaModulesPath() + "/share/lua/" + lua_version + "/?.lua";
-	module_path += ";" + path.GetLuaModulesPath() + "/share/lua/" + lua_version + "/?/init.lua";
+	module_path += ";" + Config->LuaModuleDir + "/share/lua/" + lua_version + "/?.lua";
+	module_path += ";" + Config->LuaModuleDir + "/share/lua/" + lua_version + "/?/init.lua";
 	sv["package"]["path"] = module_path;
 
 	module_path = sv["package"]["cpath"].get<std::string>();
-	module_path += ";" + path.GetLuaModulesPath() + "/?" + libext;
+	module_path += ";" + Config->LuaModuleDir + "/?" + libext;
 	// luarock paths using lua_modules as tree
 	// luarocks adds foo/lib/lua/5.1/?.so for cpath
-	module_path += ";" + path.GetLuaModulesPath() + "/lib/lua/" + lua_version + "/?" + libext;
+	module_path += ";" + Config->LuaModuleDir + "/lib/lua/" + lua_version + "/?" + libext;
 	sv["package"]["cpath"] = module_path;
 
 	MapFunctions();
 
 	// load init
-	std::string filename = fmt::format("{}/{}/script_init.lua", path.GetQuestsPath(), QUEST_GLOBAL_DIRECTORY);
+	std::string filename = fmt::format("{}/{}/script_init.lua", Config->QuestDir, QUEST_GLOBAL_DIRECTORY);
 
 	auto result = sv.safe_script_file(filename, sol::script_pass_on_error);
 	if (!result.valid() && result.status() != sol::call_status::file) {
@@ -838,15 +824,15 @@ void LuaParser::ReloadQuests() {
 	if (zone) {
 		std::string zone_script = fmt::format(
 		    "{}/{}/script_init_v{}.lua",
-		    path.GetQuestsPath(),
+		    Config->QuestDir,
 		    zone->GetShortName(),
-		    zone->GetInstanceVersion());
+		    0);  // zone->GetInstanceVersion());
 		result = sv.safe_script_file(zone_script, sol::script_pass_on_error);
 		if (!result.valid() && result.status() != sol::call_status::file) {
 			sol::error error = result;
 			AddError(error.what());
 		} else {
-			zone_script = fmt::format("{}/{}/script_init.lua", path.GetQuestsPath(), zone->GetShortName());
+			zone_script = fmt::format("{}/{}/script_init.lua", Config->QuestDir, zone->GetShortName());
 			result = sv.safe_script_file(zone_script, sol::script_pass_on_error);
 			if (!result.valid() && result.status() != sol::call_status::file) {
 				sol::error error = result;
@@ -855,7 +841,7 @@ void LuaParser::ReloadQuests() {
 		}
 	}
 
-	FILE *load_order = fopen(fmt::format("{}/load_order.txt", path.GetLuaModsPath()).c_str(), "r");
+	FILE *load_order = fopen(fmt::format("{}/load_order.txt", Config->LuaModuleDir).c_str(), "r");
 	if (load_order) {
 		char file_name[256] = {0};
 		while (fgets(file_name, 256, load_order) != nullptr) {
@@ -867,9 +853,9 @@ void LuaParser::ReloadQuests() {
 				}
 			}
 
-			LoadScript(fmt::format("{}/{}", path.GetLuaModsPath(), file_name), file_name);
+			LoadScript(fmt::format("{}/{}", Config->LuaModuleDir, file_name), file_name);
 			// error checking
-			m_impl->mods.emplace_back(LuaMod(&m_impl->loaded[file_name], this, file_name));
+			// m_impl->mods.emplace_back(LuaMod(&m_impl->loaded[file_name], this, file_name));
 		}
 
 		fclose(load_order);
@@ -937,66 +923,60 @@ bool LuaParser::HasEncounterSub(const std::string &package_name, QuestEventID ev
 }
 
 void LuaParser::MapFunctions() {
-	sol::state_view sv = m_impl->state->lua_state();
-	lua_register_general(sv);
-	lua_register_random(sv);
-	lua_register_events(sv);
-	lua_register_faction(sv);
-	lua_register_slot(sv);
-	lua_register_material(sv);
-	lua_register_client_version(sv);
-	lua_register_appearance(sv);
-	lua_register_classes(sv);
-	lua_register_skills(sv);
-	lua_register_bodytypes(sv);
-	lua_register_filters(sv);
-	lua_register_message_types(sv);
-	lua_register_entity(sv);
-	lua_register_encounter(sv);
-	lua_register_mob(sv);
-	lua_register_special_abilities(sv);
-	lua_register_npc(sv);
-	lua_register_client(sv);
-#ifdef BOTS
-	lua_register_bot(sv);
-#endif
-	lua_register_inventory(sv);
-	lua_register_inventory_where(sv);
-	lua_register_iteminst(sv);
-	lua_register_item(sv);
-	lua_register_spell(sv);
-	lua_register_spawn(sv);
-	lua_register_hate_entry(sv);
-	lua_register_hate_list(sv);
-	lua_register_entity_list(sv);
-	lua_register_mob_list(sv);
-	lua_register_client_list(sv);
-#ifdef BOTS
-	lua_register_bot_list(sv);
-#endif
-	lua_register_npc_list(sv);
-	lua_register_corpse_list(sv);
-	lua_register_object_list(sv);
-	lua_register_door_list(sv);
-	lua_register_spawn_list(sv);
-	lua_register_corpse_loot_list(sv);
-	lua_register_npc_loot_list(sv);
-	lua_register_group(sv);
-	lua_register_raid(sv);
-	lua_register_corpse(sv);
-	lua_register_door(sv);
-	lua_register_object(sv);
-	lua_register_packet(sv);
-	lua_register_packet_opcodes(sv);
-	lua_register_stat_bonuses(sv);
-	lua_register_rules_const(sv);
-	lua_register_rulei(sv);
-	lua_register_ruler(sv);
-	lua_register_ruleb(sv);
-	lua_register_journal_speakmode(sv);
-	lua_register_journal_mode(sv);
-	lua_register_expedition(sv);
-	lua_register_expedition_lock_messages(sv);
+	// sol::state_view sv = m_impl->state->lua_state();
+	// lua_register_general(sv);
+	// lua_register_random(sv);
+	// lua_register_events(sv);
+	// lua_register_faction(sv);
+	// lua_register_slot(sv);
+	// lua_register_material(sv);
+	// lua_register_client_version(sv);
+	// lua_register_appearance(sv);
+	// lua_register_classes(sv);
+	// lua_register_skills(sv);
+	// lua_register_bodytypes(sv);
+	// lua_register_filters(sv);
+	// lua_register_message_types(sv);
+	// lua_register_entity(sv);
+	// lua_register_encounter(sv);
+	// lua_register_mob(sv);
+	// lua_register_special_abilities(sv);
+	// lua_register_npc(sv);
+	// lua_register_client(sv);
+	// lua_register_inventory(sv);
+	// lua_register_inventory_where(sv);
+	// lua_register_iteminst(sv);
+	// lua_register_item(sv);
+	// lua_register_spell(sv);
+	// lua_register_spawn(sv);
+	// lua_register_hate_entry(sv);
+	// lua_register_hate_list(sv);
+	// lua_register_entity_list(sv);
+	// lua_register_mob_list(sv);
+	// lua_register_client_list(sv);
+	// lua_register_npc_list(sv);
+	// lua_register_corpse_list(sv);
+	// lua_register_object_list(sv);
+	// lua_register_door_list(sv);
+	// lua_register_spawn_list(sv);
+	// lua_register_corpse_loot_list(sv);
+	// lua_register_npc_loot_list(sv);
+	// lua_register_group(sv);
+	// lua_register_raid(sv);
+	// lua_register_corpse(sv);
+	// lua_register_door(sv);
+	// lua_register_object(sv);
+	// lua_register_packet(sv);
+	// lua_register_packet_opcodes(sv);
+	// lua_register_stat_bonuses(sv);
+	// lua_register_rules_const(sv);
+	// lua_register_rulei(sv);
+	// lua_register_ruler(sv);
+	// lua_register_ruleb(sv);
+	// lua_register_journal_speakmode(sv);
+	// lua_register_journal_mode(sv);
+	// lua_register_expedition(sv);
+	// lua_register_expedition_lock_messages(sv);
 }
 
 int LuaParser::DispatchEventNPC(QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
@@ -1165,87 +1145,87 @@ int LuaParser::DispatchEventSpell(QuestEventID evt, NPC *npc, Client *client, ui
 
 QuestEventID LuaParser::ConvertLuaEvent(QuestEventID evt) {
 	switch (evt) {
-		case EVENT_SLAY:
-		case EVENT_NPC_SLAY:
-			return EVENT_SLAY;
-			break;
-		case EVENT_SPELL_EFFECT_CLIENT:
-		case EVENT_SPELL_EFFECT_NPC:
-			return EVENT_SPELL_EFFECT_CLIENT;
-			break;
-		case EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT:
-		case EVENT_SPELL_EFFECT_BUFF_TIC_NPC:
-			return EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT;
-			break;
-		case EVENT_AGGRO:
-		case EVENT_ATTACK:
-			return _LargestEventID;
-			break;
+		// case EVENT_SLAY:
+		// case EVENT_NPC_SLAY:
+		// 	return EVENT_SLAY;
+		// 	break;
+		// case EVENT_SPELL_EFFECT_CLIENT:
+		// case EVENT_SPELL_EFFECT_NPC:
+		// 	return EVENT_SPELL_EFFECT_CLIENT;
+		// 	break;
+		// case EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT:
+		// case EVENT_SPELL_EFFECT_BUFF_TIC_NPC:
+		// 	return EVENT_SPELL_EFFECT_BUFF_TIC_CLIENT;
+		// 	break;
+		// case EVENT_AGGRO:
+		// case EVENT_ATTACK:
+		// 	return _LargestEventID;
+		// 	break;
 		default:
 			return evt;
 	}
 }
-
+/*
 void LuaParser::MeleeMitigation(Mob *self, Mob *attacker, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault) {
-	for (auto &mod : m_impl->mods) {
-		mod.MeleeMitigation(self, attacker, hit, opts, ignoreDefault);
-	}
+    for (auto &mod : m_impl->mods) {
+        mod.MeleeMitigation(self, attacker, hit, opts, ignoreDefault);
+    }
 }
 
 void LuaParser::ApplyDamageTable(Mob *self, DamageHitInfo &hit, bool &ignoreDefault) {
-	for (auto &mod : m_impl->mods) {
-		mod.ApplyDamageTable(self, hit, ignoreDefault);
-	}
+    for (auto &mod : m_impl->mods) {
+        mod.ApplyDamageTable(self, hit, ignoreDefault);
+    }
 }
 
 bool LuaParser::AvoidDamage(Mob *self, Mob *other, DamageHitInfo &hit, bool &ignoreDefault) {
-	bool retval = false;
-	for (auto &mod : m_impl->mods) {
-		mod.AvoidDamage(self, other, hit, retval, ignoreDefault);
-	}
-	return retval;
+    bool retval = false;
+    for (auto &mod : m_impl->mods) {
+        mod.AvoidDamage(self, other, hit, retval, ignoreDefault);
+    }
+    return retval;
 }
 
 bool LuaParser::CheckHitChance(Mob *self, Mob *other, DamageHitInfo &hit, bool &ignoreDefault) {
-	bool retval = false;
-	for (auto &mod : m_impl->mods) {
-		mod.CheckHitChance(self, other, hit, retval, ignoreDefault);
-	}
-	return retval;
+    bool retval = false;
+    for (auto &mod : m_impl->mods) {
+        mod.CheckHitChance(self, other, hit, retval, ignoreDefault);
+    }
+    return retval;
 }
 
 void LuaParser::TryCriticalHit(Mob *self, Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault) {
-	for (auto &mod : m_impl->mods) {
-		mod.TryCriticalHit(self, defender, hit, opts, ignoreDefault);
-	}
+    for (auto &mod : m_impl->mods) {
+        mod.TryCriticalHit(self, defender, hit, opts, ignoreDefault);
+    }
 }
 
 void LuaParser::CommonOutgoingHitSuccess(Mob *self, Mob *other, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault) {
-	for (auto &mod : m_impl->mods) {
-		mod.CommonOutgoingHitSuccess(self, other, hit, opts, ignoreDefault);
-	}
+    for (auto &mod : m_impl->mods) {
+        mod.CommonOutgoingHitSuccess(self, other, hit, opts, ignoreDefault);
+    }
 }
 
 uint32 LuaParser::GetRequiredAAExperience(Client *self, bool &ignoreDefault) {
-	uint32 retval = 0;
-	for (auto &mod : m_impl->mods) {
-		mod.GetRequiredAAExperience(self, retval, ignoreDefault);
-	}
-	return retval;
+    uint32 retval = 0;
+    for (auto &mod : m_impl->mods) {
+        mod.GetRequiredAAExperience(self, retval, ignoreDefault);
+    }
+    return retval;
 }
 
 uint32 LuaParser::GetEXPForLevel(Client *self, uint16 level, bool &ignoreDefault) {
-	uint32 retval = 0;
-	for (auto &mod : m_impl->mods) {
-		mod.GetEXPForLevel(self, level, retval, ignoreDefault);
-	}
-	return retval;
+    uint32 retval = 0;
+    for (auto &mod : m_impl->mods) {
+        mod.GetEXPForLevel(self, level, retval, ignoreDefault);
+    }
+    return retval;
 }
 
 uint32 LuaParser::GetExperienceForKill(Client *self, Mob *against, bool &ignoreDefault) {
-	uint32 retval = 0;
-	for (auto &mod : m_impl->mods) {
-		mod.GetExperienceForKill(self, against, retval, ignoreDefault);
-	}
-	return retval;
-}
+    uint32 retval = 0;
+    for (auto &mod : m_impl->mods) {
+        mod.GetExperienceForKill(self, against, retval, ignoreDefault);
+    }
+    return retval;
+} */

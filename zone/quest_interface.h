@@ -68,7 +68,7 @@ class QuestInterface {
 
 	virtual void AddError(std::string error) {
 		LogQuests("{}", error);
-		LogQuestErrors("{}", Strings::Trim(error));
+		// LogQuestErrors("{}", Strings::Trim(error));
 
 		errors_.push_back(error);
 		if (errors_.size() > 30) {

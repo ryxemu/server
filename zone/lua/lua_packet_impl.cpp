@@ -7,11 +7,11 @@ Lua_Packet::Lua_Packet(int opcode, int size) {
 }
 
 Lua_Packet::Lua_Packet(int opcode, int size, bool raw) {
-	if(raw) {
+	if (raw) {
 		SetLuaPtrData(new EQApplicationPacket(OP_Unknown, size));
 		owned_ = true;
 
-		EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket*>(d_);
+		EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket *>(d_);
 		self->SetOpcodeBypass(opcode);
 	} else {
 		SetLuaPtrData(new EQApplicationPacket(static_cast<EmuOpcode>(opcode), size));
@@ -19,14 +19,14 @@ Lua_Packet::Lua_Packet(int opcode, int size, bool raw) {
 	}
 }
 
-Lua_Packet& Lua_Packet::operator=(const Lua_Packet& o) {
-	if(o.owned_) {
+Lua_Packet &Lua_Packet::operator=(const Lua_Packet &o) {
+	if (o.owned_) {
 		owned_ = true;
-		EQApplicationPacket *app = reinterpret_cast<EQApplicationPacket*>(o.d_);
-		if(app) {
+		EQApplicationPacket *app = reinterpret_cast<EQApplicationPacket *>(o.d_);
+		if (app) {
 			d_ = new EQApplicationPacket(app->GetOpcode(), app->pBuffer, app->size);
 
-			EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket*>(d_);
+			EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket *>(d_);
 			self->SetOpcodeBypass(app->GetOpcodeBypass());
 		} else {
 			d_ = nullptr;
@@ -38,14 +38,14 @@ Lua_Packet& Lua_Packet::operator=(const Lua_Packet& o) {
 	return *this;
 }
 
-Lua_Packet::Lua_Packet(const Lua_Packet& o) {
-	if(o.owned_) {
+Lua_Packet::Lua_Packet(const Lua_Packet &o) {
+	if (o.owned_) {
 		owned_ = true;
-		EQApplicationPacket *app = reinterpret_cast<EQApplicationPacket*>(o.d_);
-		if(app) {
+		EQApplicationPacket *app = reinterpret_cast<EQApplicationPacket *>(o.d_);
+		if (app) {
 			d_ = new EQApplicationPacket(app->GetOpcode(), app->pBuffer, app->size);
 
-			EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket*>(d_);
+			EQApplicationPacket *self = reinterpret_cast<EQApplicationPacket *>(d_);
 			self->SetOpcodeBypass(app->GetOpcodeBypass());
 		} else {
 			d_ = nullptr;
@@ -99,8 +99,8 @@ void Lua_Packet::WriteInt8(int value) {
 void Lua_Packet::WriteInt8(int offset, int value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(int8) <= self->size) {
-		*reinterpret_cast<int8*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(int8) <= self->size) {
+		*reinterpret_cast<int8 *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -112,8 +112,8 @@ void Lua_Packet::WriteInt16(int value) {
 void Lua_Packet::WriteInt16(int offset, int value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(int16) <= self->size) {
-		*reinterpret_cast<int16*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(int16) <= self->size) {
+		*reinterpret_cast<int16 *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -125,8 +125,8 @@ void Lua_Packet::WriteInt32(int value) {
 void Lua_Packet::WriteInt32(int offset, int value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(int32) <= self->size) {
-		*reinterpret_cast<int32*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(int32) <= self->size) {
+		*reinterpret_cast<int32 *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -138,8 +138,8 @@ void Lua_Packet::WriteInt64(int64 value) {
 void Lua_Packet::WriteInt64(int offset, int64 value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(int64) <= self->size) {
-		*reinterpret_cast<int64*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(int64) <= self->size) {
+		*reinterpret_cast<int64 *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -151,8 +151,8 @@ void Lua_Packet::WriteFloat(float value) {
 void Lua_Packet::WriteFloat(int offset, float value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(float) <= self->size) {
-		*reinterpret_cast<float*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(float) <= self->size) {
+		*reinterpret_cast<float *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -164,8 +164,8 @@ void Lua_Packet::WriteDouble(double value) {
 void Lua_Packet::WriteDouble(int offset, double value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + sizeof(double) <= self->size) {
-		*reinterpret_cast<double*>(self->pBuffer + offset) = value;
+	if (offset + sizeof(double) <= self->size) {
+		*reinterpret_cast<double *>(self->pBuffer + offset) = value;
 	}
 }
 
@@ -177,21 +177,21 @@ void Lua_Packet::WriteString(std::string value) {
 void Lua_Packet::WriteString(int offset, std::string value) {
 	Lua_Safe_Call_Void();
 
-	if(offset + value.length() + 1 <= self->size) {
+	if (offset + value.length() + 1 <= self->size) {
 		memcpy(self->pBuffer + offset, value.c_str(), value.length());
-		*reinterpret_cast<int8*>(self->pBuffer + offset + value.length()) = 0;
+		*reinterpret_cast<int8 *>(self->pBuffer + offset + value.length()) = 0;
 	}
 }
 
 void Lua_Packet::WriteFixedLengthString(std::string value) {
 	Lua_Safe_Call_Void();
-	self->WriteLengthString(static_cast<uint32_t>(value.size()), value.c_str());
+	// self->WriteLengthString(static_cast<uint32_t>(value.size()), value.c_str());
 }
 
 void Lua_Packet::WriteFixedLengthString(int offset, std::string value, int string_length) {
 	Lua_Safe_Call_Void();
 
-	if(offset + string_length <= static_cast<int>(self->size)) {
+	if (offset + string_length <= static_cast<int>(self->size)) {
 		memset(self->pBuffer + offset, 0, string_length);
 		memcpy(self->pBuffer + offset, value.c_str(), value.length());
 	}
@@ -199,8 +199,8 @@ void Lua_Packet::WriteFixedLengthString(int offset, std::string value, int strin
 
 int Lua_Packet::ReadInt8(int offset) {
 	Lua_Safe_Call_Int();
-	if(offset + sizeof(int8) <= self->size) {
-		int8 v = *reinterpret_cast<int8*>(self->pBuffer + offset);
+	if (offset + sizeof(int8) <= self->size) {
+		int8 v = *reinterpret_cast<int8 *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -210,8 +210,8 @@ int Lua_Packet::ReadInt8(int offset) {
 int Lua_Packet::ReadInt16(int offset) {
 	Lua_Safe_Call_Int();
 
-	if(offset + sizeof(int16) <= self->size) {
-		int16 v = *reinterpret_cast<int16*>(self->pBuffer + offset);
+	if (offset + sizeof(int16) <= self->size) {
+		int16 v = *reinterpret_cast<int16 *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -221,8 +221,8 @@ int Lua_Packet::ReadInt16(int offset) {
 int Lua_Packet::ReadInt32(int offset) {
 	Lua_Safe_Call_Int();
 
-	if(offset + sizeof(int32) <= self->size) {
-		int32 v = *reinterpret_cast<int32*>(self->pBuffer + offset);
+	if (offset + sizeof(int32) <= self->size) {
+		int32 v = *reinterpret_cast<int32 *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -232,8 +232,8 @@ int Lua_Packet::ReadInt32(int offset) {
 int64 Lua_Packet::ReadInt64(int offset) {
 	Lua_Safe_Call_Int();
 
-	if(offset + sizeof(int64) <= self->size) {
-		int64 v = *reinterpret_cast<int64*>(self->pBuffer + offset);
+	if (offset + sizeof(int64) <= self->size) {
+		int64 v = *reinterpret_cast<int64 *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -243,8 +243,8 @@ int64 Lua_Packet::ReadInt64(int offset) {
 float Lua_Packet::ReadFloat(int offset) {
 	Lua_Safe_Call_Real();
 
-	if(offset + sizeof(float) <= self->size) {
-		float v = *reinterpret_cast<float*>(self->pBuffer + offset);
+	if (offset + sizeof(float) <= self->size) {
+		float v = *reinterpret_cast<float *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -254,8 +254,8 @@ float Lua_Packet::ReadFloat(int offset) {
 double Lua_Packet::ReadDouble(int offset) {
 	Lua_Safe_Call_Real();
 
-	if(offset + sizeof(double) <= self->size) {
-		double v = *reinterpret_cast<double*>(self->pBuffer + offset);
+	if (offset + sizeof(double) <= self->size) {
+		double v = *reinterpret_cast<double *>(self->pBuffer + offset);
 		return v;
 	}
 
@@ -265,18 +265,18 @@ double Lua_Packet::ReadDouble(int offset) {
 std::string Lua_Packet::ReadString(int offset) {
 	Lua_Safe_Call_String();
 
-	if(offset < static_cast<int>(self->size)) {
+	if (offset < static_cast<int>(self->size)) {
 		std::string ret;
 
 		int i = offset;
-		for(;;) {
-			if(i >= static_cast<int>(self->size)) {
+		for (;;) {
+			if (i >= static_cast<int>(self->size)) {
 				break;
 			}
 
-			char c = *reinterpret_cast<char*>(self->pBuffer + i);
+			char c = *reinterpret_cast<char *>(self->pBuffer + i);
 
-			if(c == '\0') {
+			if (c == '\0') {
 				break;
 			}
 
@@ -293,16 +293,16 @@ std::string Lua_Packet::ReadString(int offset) {
 std::string Lua_Packet::ReadFixedLengthString(int offset, int string_length) {
 	Lua_Safe_Call_String();
 
-	if(offset + string_length <= static_cast<int>(self->size)) {
+	if (offset + string_length <= static_cast<int>(self->size)) {
 		std::string ret;
 
 		int i = offset;
-		for(;;) {
-			if(i >= offset + string_length) {
+		for (;;) {
+			if (i >= offset + string_length) {
 				break;
 			}
 
-			char c = *reinterpret_cast<char*>(self->pBuffer + i);
+			char c = *reinterpret_cast<char *>(self->pBuffer + i);
 			ret.push_back(c);
 			++i;
 		}
