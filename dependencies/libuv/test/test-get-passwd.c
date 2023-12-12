@@ -28,7 +28,7 @@
 #endif
 
 TEST_IMPL(get_passwd) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif

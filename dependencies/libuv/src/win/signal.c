@@ -47,7 +47,7 @@ void uv__signals_init(void) {
 
 
 void uv__signal_cleanup(void) {
-  /* TODO(bnoordhuis) Undo effects of uv_signal_init()? */
+  /* (bnoordhuis) Undo effects of uv_signal_init()? */
 }
 
 

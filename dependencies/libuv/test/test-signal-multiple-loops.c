@@ -200,7 +200,7 @@ TEST_IMPL(signal_multiple_loops) {
      thread setup occasionally.  */
   RETURN_SKIP("test needs more investigation on Cygwin");
 #endif
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   // See https://github.com/libuv/libuv/issues/2859
   RETURN_SKIP("QEMU's signal emulation code is notoriously tricky");

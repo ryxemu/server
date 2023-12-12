@@ -225,7 +225,7 @@ static int uv__signal_register_handler(int signum, int oneshot) {
   /* When this function is called, the signal lock must be held. */
   struct sigaction sa;
 
-  /* XXX use a separate signal stack? */
+  /* use a separate signal stack? */
   memset(&sa, 0, sizeof(sa));
   if (sigfillset(&sa.sa_mask))
     abort();
@@ -234,7 +234,7 @@ static int uv__signal_register_handler(int signum, int oneshot) {
   if (oneshot)
     sa.sa_flags |= SA_RESETHAND;
 
-  /* XXX save old action so we can restore it later on? */
+  /* save old action so we can restore it later on? */
   if (sigaction(signum, &sa, NULL))
     return UV__ERR(errno);
 

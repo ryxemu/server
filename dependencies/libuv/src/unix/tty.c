@@ -52,7 +52,7 @@
  */
 static int isreallyatty(int file) {
   int rc;
- 
+
   rc = !ioctl(file, TXISATTY + 0x81, NULL);
   if (!rc && errno != EBADF)
       errno = ENOTTY;
@@ -383,7 +383,7 @@ uv_handle_type uv_guess_handle(uv_file file) {
     return UV_FILE;
 
   if (S_ISCHR(s.st_mode))
-    return UV_FILE;  /* XXX UV_NAMED_PIPE? */
+    return UV_FILE;  /* UV_NAMED_PIPE? */
 
   if (S_ISFIFO(s.st_mode))
     return UV_NAMED_PIPE;

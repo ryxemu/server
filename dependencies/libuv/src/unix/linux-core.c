@@ -83,7 +83,7 @@ static void read_speeds(unsigned int numcpus, uv_cpu_info_t* ci);
 static uint64_t read_cpufreq(unsigned int cpunum);
 
 int uv__platform_loop_init(uv_loop_t* loop) {
-  
+
   loop->inotify_fd = -1;
   loop->inotify_watchers = NULL;
 
@@ -128,7 +128,7 @@ uint64_t uv__hrtime(uv_clocktype_t type) {
    * serviced entirely from the vDSO, whereas CLOCK_MONOTONIC may
    * decide to make a costly system call.
    */
-  /* TODO(bnoordhuis) Use CLOCK_MONOTONIC_COARSE for UV_CLOCK_PRECISE
+  /* (bnoordhuis) Use CLOCK_MONOTONIC_COARSE for UV_CLOCK_PRECISE
    * when it has microsecond granularity or better (unlikely).
    */
   clock_id = CLOCK_MONOTONIC;

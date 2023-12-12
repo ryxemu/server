@@ -152,7 +152,7 @@ int uv_getaddrinfo(uv_loop_t* loop,
   if (req == NULL || (hostname == NULL && service == NULL))
     return UV_EINVAL;
 
-  /* FIXME(bnoordhuis) IDNA does not seem to work z/OS,
+  /* (bnoordhuis) IDNA does not seem to work z/OS,
    * probably because it uses EBCDIC rather than ASCII.
    */
 #ifdef __MVS__

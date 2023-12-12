@@ -928,7 +928,7 @@ TEST_IMPL(fs_event_close_with_pending_delete_event) {
   remove("watch_dir/file");
 
   /* Allow time for the remove event to propagate to the pending list. */
-  /* XXX - perhaps just for __sun? */
+  /* - perhaps just for __sun? */
   uv_sleep(1100);
   uv_update_time(loop);
 

@@ -158,7 +158,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
     else
       op = EPOLL_CTL_MOD;
 
-    /* XXX Future optimization: do EPOLL_CTL_MOD lazily if we stop watching
+    /* Future optimization: do EPOLL_CTL_MOD lazily if we stop watching
      * events, skip the syscall and squelch the events after epoll_wait().
      */
     if (epoll_ctl(loop->backend_fd, op, w->fd, &e)) {

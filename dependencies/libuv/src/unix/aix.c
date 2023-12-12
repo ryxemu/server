@@ -1002,7 +1002,7 @@ int uv_resident_set_memory(size_t* rss) {
   if (fd == -1)
     return UV__ERR(errno);
 
-  /* FIXME(bnoordhuis) Handle EINTR. */
+  /* (bnoordhuis) Handle EINTR. */
   err = UV_EINVAL;
   if (read(fd, &psinfo, sizeof(psinfo)) == sizeof(psinfo)) {
     *rss = (size_t)psinfo.pr_rssize * 1024;

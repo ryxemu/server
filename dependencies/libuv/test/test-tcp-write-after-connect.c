@@ -43,7 +43,7 @@ static void connect_cb(uv_connect_t *req, int status) {
 
 
 TEST_IMPL(tcp_write_after_connect) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif

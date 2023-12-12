@@ -87,7 +87,7 @@ int uv_exepath(char* buffer, size_t* size) {
   /* Copy string from the intermediate buffer to outer one with appropriate
    * length.
    */
-  /* TODO(bnoordhuis) Check uv__strscpy() return value. */
+  /* (bnoordhuis) Check uv__strscpy() return value. */
   uv__strscpy(buffer, int_buf, *size);
 
   /* Set new size. */

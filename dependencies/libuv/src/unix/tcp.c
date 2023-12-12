@@ -213,7 +213,7 @@ int uv__tcp_connect(uv_connect_t* req,
   assert(handle->type == UV_TCP);
 
   if (handle->connect_req != NULL)
-    return UV_EALREADY;  /* FIXME(bnoordhuis) UV_EINVAL or maybe UV_EBUSY. */
+    return UV_EALREADY;  /* (bnoordhuis) UV_EINVAL or maybe UV_EBUSY. */
 
   if (handle->delayed_error != 0)
     goto out;
@@ -409,7 +409,7 @@ int uv__tcp_keepalive(int fd, int on, unsigned int delay) {
   /* Solaris/SmartOS, if you don't support keep-alive,
    * then don't advertise it in your system headers...
    */
-  /* FIXME(bnoordhuis) That's possibly because sizeof(delay) should be 1. */
+  /* (bnoordhuis) That's possibly because sizeof(delay) should be 1. */
 #if defined(TCP_KEEPALIVE) && !defined(__sun)
   if (on && setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &delay, sizeof(delay)))
     return UV__ERR(errno);

@@ -219,7 +219,7 @@ UV_UNUSED(static struct timespec uv__fs_to_timespec(double time)) {
   ts.tv_sec  = time;
   ts.tv_nsec = (time - ts.tv_sec) * 1e9;
 
- /* TODO(bnoordhuis) Remove this. utimesat() has nanosecond resolution but we
+ /* (bnoordhuis) Remove this. utimesat() has nanosecond resolution but we
   * stick to microsecond resolution for the sake of consistency with other
   * platforms. I'm the original author of this compatibility hack but I'm
   * less convinced it's useful nowadays.
