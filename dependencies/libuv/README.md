@@ -1,5 +1,7 @@
 ![libuv][libuv_banner]
 
+for RyxEmu, libuv is a depenency for EQ::Timer, which is used for timing most items
+
 ## Overview
 
 libuv is a multi-platform support library with a focus on asynchronous I/O. It

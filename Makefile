@@ -20,6 +20,8 @@ cmake:
 			-DEQEMU_BUILD_TESTS=OFF \
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
+clean:
+	rm -rf build
 # Run 'cmake' in ubuntu docker container
 docker-cmake: docker-image-build
 	docker run ${DOCKER_ARGS} make cmake
@@ -42,6 +44,8 @@ docker-cmake-%: docker-image-build-%
 # Run 'ninja' in passed docker container
 docker-build-%: docker-image-build-%
 	docker run ${DOCKER_ARGS}-$* make build BUILD_SUFFIX=-$*
+
+docker-clean: clean
 
 # Build image if it doesn't exist
 docker-image-build-%:
