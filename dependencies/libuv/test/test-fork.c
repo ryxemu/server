@@ -538,7 +538,7 @@ TEST_IMPL(fork_fs_events_file_parent_child) {
   /* It's not possible to implement this without additional
    * bookkeeping on SunOS. For AIX it is possible, but has to be
    * written. See https://github.com/libuv/libuv/pull/846#issuecomment-287170420
-   * TODO: On z/OS, we need to open another message queue and subscribe to the
+   *  On z/OS, we need to open another message queue and subscribe to the
    * same events as the parent.
    */
   return 0;

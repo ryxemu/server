@@ -172,7 +172,7 @@ static void uv__stream_osx_select(void* arg) {
       if (errno == EINTR)
         continue;
 
-      /* XXX: Possible?! */
+      /*: Possible?! */
       abort();
     }
 
@@ -405,7 +405,7 @@ int uv__stream_open(uv_stream_t* stream, int fd, int flags) {
     if ((stream->flags & UV_HANDLE_TCP_NODELAY) && uv__tcp_nodelay(fd, 1))
       return UV__ERR(errno);
 
-    /* TODO Use delay the user passed in. */
+    /* Use delay the user passed in. */
     if ((stream->flags & UV_HANDLE_TCP_KEEPALIVE) &&
         uv__tcp_keepalive(fd, 1, 60)) {
       return UV__ERR(errno);
@@ -580,7 +580,7 @@ int uv_accept(uv_stream_t* server, uv_stream_t* client) {
                             server->accepted_fd,
                             UV_HANDLE_READABLE | UV_HANDLE_WRITABLE);
       if (err) {
-        /* TODO handle error */
+        /* handle error */
         uv__close(server->accepted_fd);
         goto done;
       }
@@ -905,7 +905,7 @@ static void uv__write(uv_stream_t* stream) {
       req->send_handle = NULL;
       if (uv__write_req_update(stream, req, n)) {
         uv__write_req_finish(req);
-        return;  /* TODO(bnoordhuis) Start trying to write the next request. */
+        return;  /* (bnoordhuis) Start trying to write the next request. */
       }
     } else if (n != UV_EAGAIN)
       break;
@@ -1093,7 +1093,7 @@ static void uv__read(uv_stream_t* stream) {
 
   is_ipc = stream->type == UV_NAMED_PIPE && ((uv_pipe_t*) stream)->ipc;
 
-  /* XXX: Maybe instead of having UV_HANDLE_READING we just test if
+  /*: Maybe instead of having UV_HANDLE_READING we just test if
    * tcp->read_cb is NULL or not?
    */
   while (stream->read_cb
@@ -1373,7 +1373,7 @@ static int uv__check_before_write(uv_stream_t* stream,
     if (stream->type != UV_NAMED_PIPE || !((uv_pipe_t*)stream)->ipc)
       return UV_EINVAL;
 
-    /* XXX We abuse uv_write2() to send over UDP handles to child processes.
+    /* We abuse uv_write2() to send over UDP handles to child processes.
      * Don't call uv__stream_fd() on those handles, it's a macro that on OS X
      * evaluates to a function that operates on a uv_stream_t with a couple of
      * OS X specific fields. On other Unices it does (handle)->io_watcher.fd,
@@ -1509,7 +1509,7 @@ int uv__read_start(uv_stream_t* stream,
   stream->flags |= UV_HANDLE_READING;
   stream->flags &= ~UV_HANDLE_READ_EOF;
 
-  /* TODO: try to do the read inline? */
+  /*  try to do the read inline? */
   assert(uv__stream_fd(stream) >= 0);
   assert(alloc_cb);
 

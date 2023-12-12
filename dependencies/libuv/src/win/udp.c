@@ -243,7 +243,7 @@ static int uv__udp_maybe_bind(uv_udp_t* handle,
     /* On windows IPV6ONLY is on by default. If the user doesn't specify it
      * libuv turns it off. */
 
-    /* TODO: how to handle errors? This may fail if there is no ipv4 stack
+    /*  how to handle errors? This may fail if there is no ipv4 stack
      * available, or when run on XP/2003 which have no support for dualstack
      * sockets. For now we're silently ignoring the error. */
     setsockopt(handle->socket,
@@ -499,7 +499,7 @@ void uv__process_udp_recv_req(uv_loop_t* loop, uv_udp_t* handle,
     int from_len;
 
     /* Do a nonblocking receive.
-     * TODO: try to read multiple datagrams at once. FIONREAD maybe? */
+     * to read multiple datagrams at once. FIONREAD maybe? */
     buf = uv_buf_init(NULL, 0);
     handle->alloc_cb((uv_handle_t*) handle, UV__UDP_DGRAM_MAXSIZE, &buf);
     if (buf.base == NULL || buf.len == 0) {
@@ -852,7 +852,7 @@ int uv_udp_set_source_membership(uv_udp_t* handle,
                                           src_addr6,
                                           membership);
   }
-  
+
   err = uv_ip4_addr(source_addr, 0, src_addr4);
   if (err)
     return err;

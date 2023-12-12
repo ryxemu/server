@@ -33,8 +33,8 @@
 
 TEST_IMPL(ip6_addr_link_local) {
 #if defined(__CYGWIN__) || defined(__MSYS__)
-  /* FIXME: Does Cygwin support this?  */
-  RETURN_SKIP("FIXME: This test needs more investigation on Cygwin");
+  /*  Does Cygwin support this?  */
+  RETURN_SKIP("test needs more investigation on Cygwin");
 #endif
   char string_address[INET6_ADDRSTRLEN];
   uv_interface_address_t* addresses;

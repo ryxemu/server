@@ -260,12 +260,12 @@ typedef union {
     CRITICAL_SECTION waiters_count_lock;
     HANDLE signal_event;
     HANDLE broadcast_event;
-  } unused_; /* TODO: retained for ABI compatibility; remove me in v2.x. */
+  } unused_; /*  retained for ABI compatibility; remove me in v2.x. */
 } uv_cond_t;
 
 typedef struct {
   SRWLOCK read_write_lock_;
-  /* TODO: retained for ABI compatibility; remove me in v2.x */
+  /*  retained for ABI compatibility; remove me in v2.x */
 #ifdef _WIN64
   unsigned char padding_[72];
 #else
@@ -333,7 +333,7 @@ typedef struct {
   uv_req_t* pending_reqs_tail;                                                \
   /* Head of a single-linked list of closed handles */                        \
   uv_handle_t* endgame_handles;                                               \
-  /* TODO(bnoordhuis) Stop heap-allocating |timer_heap| in libuv v2.x. */     \
+  /* (bnoordhuis) Stop heap-allocating |timer_heap| in libuv v2.x. */     \
   void* timer_heap;                                                           \
     /* Lists of active loop (prepare / check / idle) watchers */              \
   uv_prepare_t* prepare_handles;                                              \
@@ -360,7 +360,7 @@ typedef struct {
   uv_async_t wq_async;
 
 #define UV_REQ_TYPE_PRIVATE                                                   \
-  /* TODO: remove the req suffix */                                           \
+  /*  remove the req suffix */                                           \
   UV_ACCEPT,                                                                  \
   UV_FS_EVENT_REQ,                                                            \
   UV_POLL_REQ,                                                                \
@@ -477,11 +477,11 @@ typedef struct {
 
 #define uv_pipe_connection_fields                                             \
   uv_timer_t* eof_timer;                                                      \
-  uv_write_t dummy; /* TODO: retained for ABI compat; remove this in v2.x. */ \
+  uv_write_t dummy; /*  retained for ABI compat; remove this in v2.x. */ \
   DWORD ipc_remote_pid;                                                       \
   union {                                                                     \
     uint32_t payload_remaining;                                               \
-    uint64_t dummy; /* TODO: retained for ABI compat; remove this in v2.x. */ \
+    uint64_t dummy; /*  retained for ABI compat; remove this in v2.x. */ \
   } ipc_data_frame;                                                           \
   void* ipc_xfer_queue[2];                                                    \
   int ipc_xfer_queue_length;                                                  \
@@ -497,14 +497,14 @@ typedef struct {
     struct { uv_pipe_connection_fields } conn;                                \
   } pipe;
 
-/* TODO: put the parser states in an union - TTY handles are always half-duplex
+/*  put the parser states in an union - TTY handles are always half-duplex
  * so read-state can safely overlap write-state. */
 #define UV_TTY_PRIVATE_FIELDS                                                 \
   HANDLE handle;                                                              \
   union {                                                                     \
     struct {                                                                  \
       /* Used for readable TTY handles */                                     \
-      /* TODO: remove me in v2.x. */                                          \
+      /*  remove me in v2.x. */                                          \
       HANDLE unused_;                                                         \
       uv_buf_t read_line_buffer;                                              \
       HANDLE read_raw_wait;                                                   \
@@ -616,7 +616,7 @@ typedef struct {
   int flags;                                                                  \
   DWORD sys_errno_;                                                           \
   union {                                                                     \
-    /* TODO: remove me in 0.9. */                                             \
+    /*  remove me in 0.9. */                                             \
     WCHAR* pathw;                                                             \
     int fd;                                                                   \
   } file;                                                                     \

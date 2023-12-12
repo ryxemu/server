@@ -248,7 +248,6 @@ Z_INTERNAL void slide_hash_c(deflate_state *s) {
 /* ========================================================================= */
 int32_t Z_EXPORT PREFIX(deflateInit_)(PREFIX3(stream) *strm, int32_t level, const char *version, int32_t stream_size) {
     return PREFIX(deflateInit2_)(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY, version, stream_size);
-    /* Todo: ignore strm->next_in if we use it as window */
 }
 
 /* ========================================================================= */

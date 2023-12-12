@@ -827,13 +827,13 @@ static ssize_t uv__fs_sendfile_emul(uv_fs_t* req) {
    * If we get EAGAIN when writing to the target fd, we poll() on it until
    * it becomes writable again.
    *
-   * FIXME: If we get a write error when use_pread==1, it should be safe to
+   *  If we get a write error when use_pread==1, it should be safe to
    *        return the number of sent bytes instead of an error because pread()
    *        is, in theory, idempotent. However, special files in /dev or /proc
    *        may support pread() but not necessarily return the same data on
    *        successive reads.
    *
-   * FIXME: There is no way now to signal that we managed to send *some* data
+   *  is no way now to signal that we managed to send *some* data
    *        before a write error.
    */
   for (nsent = 0; (size_t) nsent < len; ) {

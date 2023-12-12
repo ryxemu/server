@@ -77,7 +77,7 @@ else
   ABI_GIT_REPO=https://github.com/zlib-ng/zlib-ng.git
   ABI_GIT_COMMIT=56ce27343bf295ae9457f8e3d38ec96d2f949a1c
 fi
-# FIXME: even when using a tag, check the hash.
+#  even when using a tag, check the hash.
 
 # Test compat build for ABI compatibility with zlib
 if test "$CHOST" = ""
@@ -154,7 +154,7 @@ dylib2=$(find btmp2 -type f -name '*.dylib*' -print -o -type f -name '*.so.*' -p
 abidw $dylib2 > btmp2/zlib${suffix}-built.abi
 
 # Compare it to the reference
-# FIXME: use --no-added-syms for now, but we probably want to be more strict.
+#  use --no-added-syms for now, but we probably want to be more strict.
 if abidiff --no-added-syms --suppressions test/abi/ignore "$ABIFILE" btmp2/zlib${suffix}-built.abi
 then
   echo "abicheck: PASS"

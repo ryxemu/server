@@ -82,7 +82,7 @@ namespace glm
 		if(a >= static_cast<T>(1)) return y;
 
 		T fCos = dot(x, y);
-		qua<T, Q> y2(y); //BUG!!! qua<T> y2;
+		qua<T, Q> y2(y);
 		if(fCos < static_cast<T>(0))
 		{
 			y2 = -y;
@@ -94,7 +94,7 @@ namespace glm
 		if(fCos > (static_cast<T>(1) - epsilon<T>()))
 		{
 			k0 = static_cast<T>(1) - a;
-			k1 = static_cast<T>(0) + a; //BUG!!! 1.0f + a;
+			k1 = static_cast<T>(0) + a;
 		}
 		else
 		{

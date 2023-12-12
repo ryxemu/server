@@ -308,7 +308,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
 
       if (w == NULL) {
         /* File descriptor that we've stopped watching, disarm it.
-         * TODO: batch up. */
+         *  batch up. */
         struct kevent events[1];
 
         EV_SET(events + 0, fd, ev->filter, EV_DELETE, 0, 0, 0);
@@ -323,7 +323,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
         assert(w->events == POLLIN);
         assert(w->pevents == POLLIN);
         uv__metrics_update_idle_time(loop);
-        w->cb(loop, w, ev->fflags); /* XXX always uv__fs_event() */
+        w->cb(loop, w, ev->fflags); /* always uv__fs_event() */
         nevents++;
         continue;
       }
@@ -335,7 +335,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           revents |= POLLIN;
           w->rcount = ev->data;
         } else {
-          /* TODO batch up */
+          /* batch up */
           struct kevent events[1];
           EV_SET(events + 0, fd, ev->filter, EV_DELETE, 0, 0, 0);
           if (kevent(loop->backend_fd, events, 1, NULL, 0, NULL))
@@ -351,7 +351,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           revents |= UV__POLLPRI;
           w->rcount = ev->data;
         } else {
-          /* TODO batch up */
+          /* batch up */
           struct kevent events[1];
           EV_SET(events + 0, fd, ev->filter, EV_DELETE, 0, 0, 0);
           if (kevent(loop->backend_fd, events, 1, NULL, 0, NULL))
@@ -365,7 +365,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
           revents |= POLLOUT;
           w->wcount = ev->data;
         } else {
-          /* TODO batch up */
+          /* batch up */
           struct kevent events[1];
           EV_SET(events + 0, fd, ev->filter, EV_DELETE, 0, 0, 0);
           if (kevent(loop->backend_fd, events, 1, NULL, 0, NULL))
@@ -526,7 +526,7 @@ int uv_fs_event_start(uv_fs_event_t* handle,
   if (handle->path == NULL)
     return UV_ENOMEM;
 
-  /* TODO open asynchronously - but how do we report back errors? */
+  /* open asynchronously - but how do we report back errors? */
   fd = open(handle->path, O_RDONLY);
   if (fd == -1) {
     uv__free(handle->path);

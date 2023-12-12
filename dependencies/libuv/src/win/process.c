@@ -800,7 +800,7 @@ int make_program_env(char* env_block[], WCHAR** dst_ptr) {
         var_size = GetEnvironmentVariableW(required_vars[i].wide,
                                            ptr,
                                            (int) (env_len - (ptr - dst)));
-        if (var_size != (DWORD) (len - 1)) { /* TODO: handle race condition? */
+        if (var_size != (DWORD) (len - 1)) { /*  handle race condition? */
           uv_fatal_error(GetLastError(), "GetEnvironmentVariableW");
         }
       }

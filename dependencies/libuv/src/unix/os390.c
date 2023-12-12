@@ -105,7 +105,7 @@ typedef union {
 
 
 void uv_loadavg(double avg[3]) {
-  /* TODO: implement the following */
+  /*  implement the following */
   avg[0] = 0;
   avg[1] = 0;
   avg[2] = 0;
@@ -257,7 +257,7 @@ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
     memset(cpu_info->model, '\0', CPCMODEL_LENGTH + 1);
     memcpy(cpu_info->model, info.siv1v2si11v1.si11v1cpcmodel, CPCMODEL_LENGTH);
     cpu_info->cpu_times.user = cpu_usage_avg;
-    /* TODO: implement the following */
+    /*  implement the following */
     cpu_info->cpu_times.sys = 0;
     cpu_info->cpu_times.idle = 0;
     cpu_info->cpu_times.irq = 0;
@@ -760,7 +760,7 @@ static int os390_message_queue_handler(uv__os390_epoll* ep) {
   else if (msg.__rfim_event == _RFIM_RENAME || msg.__rfim_event == _RFIM_UNLINK)
     events = UV_RENAME;
   else if (msg.__rfim_event == 156)
-    /* TODO(gabylb): zos - this event should not happen, need to investigate.
+    /* (gabylb): zos - this event should not happen, need to investigate.
      *
      * This event seems to occur when the watched file is [re]moved, or an
      * editor (like vim) renames then creates the file on save (for vim, that's

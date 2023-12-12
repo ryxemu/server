@@ -161,7 +161,7 @@ static void post(QUEUE* q, enum uv__work_kind kind) {
 
 
 #ifdef __MVS__
-/* TODO(itodorov) - zos: revisit when Woz compiler is available. */
+/* (itodorov) - zos: revisit when Woz compiler is available. */
 __attribute__((destructor))
 #endif
 void uv__threadpool_cleanup(void) {
@@ -171,7 +171,7 @@ void uv__threadpool_cleanup(void) {
     return;
 
 #ifndef __MVS__
-  /* TODO(gabylb) - zos: revisit when Woz compiler is available. */
+  /*ylb) - zos: revisit when Woz compiler is available. */
   post(&exit_message, UV__WORK_CPU);
 #endif
 

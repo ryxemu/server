@@ -484,8 +484,6 @@
 #ifndef GTEST_HAS_STD_WSTRING
 // The user didn't tell us whether ::std::wstring is available, so we need
 // to figure it out.
-// TODO(wan@google.com): uses autoconf to detect whether ::std::wstring
-//   is available.
 
 // Cygwin 1.7 and below doesn't support ::std::wstring.
 // Solaris' libc++ doesn't support it either.  Android has
@@ -2056,8 +2054,6 @@ class GTEST_API_ RE {
   // PartialMatch(str, re) returns true iff regular expression re
   // matches a substring of str (including str itself).
   //
-  // TODO(wan@google.com): make FullMatch() and PartialMatch() work
-  // when str contains NUL characters.
   static bool FullMatch(const ::std::string& str, const RE& re) {
     return FullMatch(str.c_str(), re);
   }
@@ -2083,7 +2079,7 @@ class GTEST_API_ RE {
   void Init(const char* regex);
 
   // We use a const char* instead of an std::string, as Google Test used to be
-  // used where std::string is not available.  TODO(wan@google.com): change to
+  // used where std::string is not available.  (wan@google.com): change to
   // std::string.
   const char* pattern_;
   bool is_valid_;
@@ -8596,7 +8592,6 @@ GTEST_API_ bool InDeathTestChild();
 //   is rarely a problem as people usually don't put the test binary
 //   directory in PATH.
 //
-// TODO(wan@google.com): make thread-safe death tests search the PATH.
 
 // Asserts that a given statement causes the program to exit, with an
 // integer exit status that satisfies predicate, and emitting error output
@@ -9024,8 +9019,6 @@ TEST_P(DerivedTest, DoesBlah) {
 //       raw pointer (e.g. via get()) concurrently, and
 //     - it's safe to write to two linked_ptrs that point to the same
 //       shared object concurrently.
-// TODO(wan@google.com): rename this to safe_linked_ptr to avoid
-// confusion with normal linked_ptr.
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_LINKED_PTR_H_
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_LINKED_PTR_H_
@@ -9810,7 +9803,6 @@ void UniversalPrintArray(const T* begin, size_t len, ::std::ostream* os) {
     // If the array has more than kThreshold elements, we'll have to
     // omit some details by printing only the first and the last
     // kChunkSize elements.
-    // TODO(wan@google.com): let the user control the threshold using a flag.
     if (len <= kThreshold) {
       PrintRawArrayTo(begin, len, os);
     } else {
@@ -17688,8 +17680,6 @@ class GTEST_API_ AssertionResult {
   const char* message() const {
     return message_.get() != NULL ?  message_->c_str() : "";
   }
-  // TODO(vladl@google.com): Remove this after making sure no clients use it.
-  // Deprecated; please use message() instead.
   const char* failure_message() const { return message(); }
 
   // Streams a custom failure message into this object.
@@ -17985,7 +17975,6 @@ class GTEST_API_ TestResult {
 
   // Adds a failure if the key is a reserved attribute of Google Test
   // testcase tags.  Returns true if the property is valid.
-  // TODO(russr): Validate attribute names are legal and human readable.
   static bool ValidateTestProperty(const std::string& xml_element,
                                    const TestProperty& test_property);
 

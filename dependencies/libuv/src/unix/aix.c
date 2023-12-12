@@ -495,7 +495,7 @@ static int uv__makedir_p(const char *dir) {
   size_t len;
   int err;
 
-  /* TODO(bnoordhuis) Check uv__strscpy() return value. */
+  /* (bnoordhuis) Check uv__strscpy() return value. */
   uv__strscpy(tmp, dir, sizeof(tmp));
   len = strlen(tmp);
   if (tmp[len - 1] == '/')
@@ -746,7 +746,7 @@ static void uv__ahafs_event(uv_loop_t* loop, uv__io_t* event_watch, unsigned int
       p++;
   }
 
-  /* TODO(bnoordhuis) Check uv__strscpy() return value. */
+  /*ordhuis) Check uv__strscpy() return value. */
   uv__strscpy(fname, p, sizeof(fname));
 
   handle->cb(handle, fname, events, 0);
@@ -784,7 +784,7 @@ int uv_fs_event_start(uv_fs_event_t* handle,
   }
   else if (filename[0] == '/') {
     /* We have absolute pathname */
-    /* TODO(bnoordhuis) Check uv__strscpy() return value. */
+    /*ordhuis) Check uv__strscpy() return value. */
     uv__strscpy(absolute_path, filename, sizeof(absolute_path));
   } else {
     /* We have a relative pathname, compose the absolute pathname */
@@ -890,7 +890,7 @@ char** uv_setup_args(int argc, char** argv) {
   size = sizeof(exepath);
   if (uv__search_path(argv[0], exepath, &size) == 0) {
     uv_once(&process_title_mutex_once, init_process_title_mutex_once);
-    uv_mutex_lock(&process_title_mutex); 
+    uv_mutex_lock(&process_title_mutex);
     original_exepath = uv__strdup(exepath);
     uv_mutex_unlock(&process_title_mutex);
   }
@@ -1063,7 +1063,7 @@ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
     return UV_ENOMEM;
   }
 
-  /* TODO(bnoordhuis) Check uv__strscpy() return value. */
+  /*ordhuis) Check uv__strscpy() return value. */
   uv__strscpy(cpu_id.name, FIRST_CPU, sizeof(cpu_id.name));
   result = perfstat_cpu(&cpu_id, ps_cpus, sizeof(perfstat_cpu_t), ncpus);
   if (result == -1) {

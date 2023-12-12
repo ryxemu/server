@@ -173,7 +173,7 @@ namespace Test
 
 			_suite.setup();
 			Time start(Time::current());
-			// FIXME Also feedback exception to user
+			// Also feedback exception to user
 			try
 			{
 				(_suite.*data._func)();
@@ -213,7 +213,7 @@ namespace Test
 
 		for_each(_suites.begin(), _suites.end(), DoRun(_output, _continue));
 
-		// FIXME Find a cleaner way
+		// Find a cleaner way
 		Suites::const_iterator iter = _suites.begin();
 		while (iter != _suites.end())
 		{

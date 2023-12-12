@@ -259,21 +259,21 @@ static int tcp4_echo_start(int port) {
 
   r = uv_tcp_init(loop, &tcpServer);
   if (r) {
-    /* TODO: Error codes */
+    /*  Error codes */
     fprintf(stderr, "Socket creation error\n");
     return 1;
   }
 
   r = uv_tcp_bind(&tcpServer, (const struct sockaddr*) &addr, 0);
   if (r) {
-    /* TODO: Error codes */
+    /*or codes */
     fprintf(stderr, "Bind error\n");
     return 1;
   }
 
   r = uv_listen((uv_stream_t*)&tcpServer, SOMAXCONN, on_connection);
   if (r) {
-    /* TODO: Error codes */
+    /*or codes */
     fprintf(stderr, "Listen error %s\n", uv_err_name(r));
     return 1;
   }
@@ -293,7 +293,7 @@ static int tcp6_echo_start(int port) {
 
   r = uv_tcp_init(loop, &tcpServer);
   if (r) {
-    /* TODO: Error codes */
+    /*or codes */
     fprintf(stderr, "Socket creation error\n");
     return 1;
   }
@@ -308,7 +308,7 @@ static int tcp6_echo_start(int port) {
 
   r = uv_listen((uv_stream_t*)&tcpServer, SOMAXCONN, on_connection);
   if (r) {
-    /* TODO: Error codes */
+    /*or codes */
     fprintf(stderr, "Listen error\n");
     return 1;
   }

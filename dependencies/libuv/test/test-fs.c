@@ -308,7 +308,7 @@ static void chown_root_cb(uv_fs_t* req) {
     ASSERT(req->result == UV_EINVAL);
 #   elif defined(__PASE__)
     /* On IBMi PASE, there is no root user. uid 0 is user qsecofr.
-     * User may grant qsecofr's privileges, including changing 
+     * User may grant qsecofr's privileges, including changing
      * the file's ownership to uid 0.
      */
     ASSERT(req->result == 0 || req->result == UV_EPERM);
@@ -728,7 +728,7 @@ TEST_IMPL(fs_file_noent) {
   uv_run(loop, UV_RUN_DEFAULT);
   ASSERT(open_cb_count == 1);
 
-  /* TODO add EACCES test */
+  /* add EACCES test */
 
   MAKE_VALGRIND_HAPPY();
   return 0;
@@ -845,7 +845,7 @@ static void check_utime(const char* path,
     double st_atim;
     double st_mtim;
 #if !defined(__APPLE__) && !defined(__SUNPRO_C)
-    /* TODO(vtjnash): would it be better to normalize this? */
+    /*nash): would it be better to normalize this? */
     ASSERT_DOUBLE_GE(s->st_atim.tv_nsec, 0);
     ASSERT_DOUBLE_GE(s->st_mtim.tv_nsec, 0);
 #endif

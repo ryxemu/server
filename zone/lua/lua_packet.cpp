@@ -43,7 +43,6 @@ void lua_register_packet(sol::state_view &sv)
 	// 				      (void(Lua_Packet::*)(std::string)) & Lua_Packet::WriteString);
 }
 
-//TODO: Reorder these to match emu_oplist.h again
 void lua_register_packet_opcodes(sol::state_view &sv)
 {
 	sv.new_enum<int>("Opcode",

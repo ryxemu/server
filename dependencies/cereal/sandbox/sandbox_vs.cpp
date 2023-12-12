@@ -215,7 +215,6 @@ int main()
   std::cout << cereal::traits::is_output_serializable<T, Archive>::value << std::endl;
 
 #if !defined(__INTEL_COMPILER)
-  //! TODO: This causes icc to crash
   std::cout << cereal::traits::is_input_serializable<T, Archive>::value << std::endl;
 #endif
 

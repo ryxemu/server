@@ -451,7 +451,7 @@ int uv_tcp_keepalive(uv_tcp_t* handle, int on, unsigned int delay) {
   else
     handle->flags &= ~UV_HANDLE_TCP_KEEPALIVE;
 
-  /* TODO Store delay if uv__stream_fd(handle) == -1 but don't want to enlarge
+  /* Store delay if uv__stream_fd(handle) == -1 but don't want to enlarge
    *      uv_tcp_t with an int that's almost never used...
    */
 

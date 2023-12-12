@@ -38,7 +38,7 @@
 
 int uv_exepath(char* buffer, size_t* size) {
   kern_return_t err;
-  /* XXX in current Hurd, strings are char arrays of 1024 elements */
+  /* in current Hurd, strings are char arrays of 1024 elements */
   string_t exepath;
   ssize_t copied;
 
@@ -46,7 +46,7 @@ int uv_exepath(char* buffer, size_t* size) {
     return UV_EINVAL;
 
   if (*size - 1 > 0) {
-    /* XXX limited length of buffer in current Hurd, this API will probably
+    /* limited length of buffer in current Hurd, this API will probably
      * evolve in the future */
     err = proc_get_exe(getproc(), getpid(), exepath);
 
@@ -82,12 +82,12 @@ int uv_resident_set_memory(size_t* rss) {
 uint64_t uv_get_free_memory(void) {
   kern_return_t err;
   struct vm_statistics vmstats;
-  
+
   err = vm_statistics(mach_task_self(), &vmstats);
 
   if (err)
     return 0;
-  
+
   return vmstats.free_count * vm_page_size;
 }
 
@@ -96,9 +96,9 @@ uint64_t uv_get_total_memory(void) {
   kern_return_t err;
   host_basic_info_data_t hbi;
   mach_msg_type_number_t cnt;
-  
+
   cnt = HOST_BASIC_INFO_COUNT;
-  err = host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t) &hbi, &cnt); 
+  err = host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t) &hbi, &cnt);
 
   if (err)
     return 0;
@@ -135,17 +135,17 @@ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
   kern_return_t err;
   host_basic_info_data_t hbi;
   mach_msg_type_number_t cnt;
-  
+
   /* Get count of cpus  */
   cnt = HOST_BASIC_INFO_COUNT;
-  err = host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t) &hbi, &cnt); 
+  err = host_info(mach_host_self(), HOST_BASIC_INFO, (host_info_t) &hbi, &cnt);
 
   if (err) {
     err = UV__ERR(err);
     goto abort;
   }
 
-  /* XXX not implemented on the Hurd */
+  /* not implemented on the Hurd */
   *cpu_infos = uv__calloc(hbi.avail_cpus, sizeof(**cpu_infos));
   if (*cpu_infos == NULL) {
     err = UV_ENOMEM;
@@ -155,7 +155,7 @@ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
   *count = hbi.avail_cpus;
 
   return 0;
-  
+
  abort:
   *cpu_infos = NULL;
   *count = 0;

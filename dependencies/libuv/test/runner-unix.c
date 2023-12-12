@@ -364,7 +364,7 @@ int process_copy_output(process_info_t* p, FILE* stream) {
     return -1;
   }
 
-  /* TODO: what if the line is longer than buf */
+  /*  what if the line is longer than buf */
   while ((r = fread(buf, 1, sizeof(buf), p->stdout_file)) != 0)
     print_lines(buf, r, stream);
 

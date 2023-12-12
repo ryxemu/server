@@ -163,7 +163,6 @@ if("${CMAKE_C_COMPILER}" MATCHES "icc" OR "${CMAKE_C_COMPILER}" MATCHES "icpc" O
         message(STATUS "Ignoring WITH_NATIVE_INSTRUCTIONS; not supported on this configuration")
     endif()
 elseif(MSVC)
-    # TODO. ICC can be used through MSVC. I'm not sure if we'd ever see that combination
     # (who'd use cmake from an IDE...) but checking for ICC before checking for MSVC should
     # avoid mistakes.
     # /Oi ?

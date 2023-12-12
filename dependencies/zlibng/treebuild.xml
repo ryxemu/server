@@ -4,7 +4,7 @@
 	<property name="description"> zip compression library </property>
 	<property name="include-target-dir" value="$(@PACKAGE/install-includedir)" />
 
-	<!-- fixme: not implemented yet -->
+	<!--  not implemented yet -->
 	<property name="compiler/c/inline" value="yes" />
 
 	<include-file name="zlib.h" scope="public" mode="644" />

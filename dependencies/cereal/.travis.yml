@@ -22,7 +22,6 @@ matrix:
       compiler: clang
       env: CMAKE_OPTIONS="-DSKIP_PORTABILITY_TEST=ON"
 
-    # TODO: Add an entry for valgrind
     #  after_script: make valgrind
 
     - os: osx

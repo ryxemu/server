@@ -859,7 +859,7 @@ void dtCrowd::checkPathValidity(dtCrowdAgent** agents, const int nagents, const 
 		dtVcopy(agentPos, ag->npos);
 		if (!m_navquery->isValidPolyRef(agentRef, &m_filters[ag->params.queryFilterType])) {
 			// Current location is not valid, try to reposition.
-			// TODO: this can snap agents, how to handle that?
+			//  this can snap agents, how to handle that?
 			float nearest[3];
 			dtVcopy(nearest, agentPos);
 			agentRef = 0;

@@ -82,11 +82,11 @@ static void getaddrinfo_cuncurrent_cb(uv_getaddrinfo_t* handle,
 
 
 TEST_IMPL(getaddrinfo_fail) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
-  
+
   uv_getaddrinfo_t req;
 
   ASSERT(UV_EINVAL == uv_getaddrinfo(uv_default_loop(),
@@ -112,7 +112,7 @@ TEST_IMPL(getaddrinfo_fail) {
 
 
 TEST_IMPL(getaddrinfo_fail_sync) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/*gjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
@@ -133,7 +133,7 @@ TEST_IMPL(getaddrinfo_fail_sync) {
 
 
 TEST_IMPL(getaddrinfo_basic) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/*gjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
@@ -159,7 +159,7 @@ TEST_IMPL(getaddrinfo_basic) {
 
 
 TEST_IMPL(getaddrinfo_basic_sync) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/*gjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
@@ -179,11 +179,11 @@ TEST_IMPL(getaddrinfo_basic_sync) {
 
 
 TEST_IMPL(getaddrinfo_concurrent) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/*gjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
-  
+
   int i, r;
   int* data;
 

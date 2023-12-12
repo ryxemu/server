@@ -156,7 +156,7 @@ typedef struct _AFD_RECV_INFO {
 
 #if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 typedef struct _IP_ADAPTER_UNICAST_ADDRESS_XP {
-  /* FIXME: __C89_NAMELESS was removed */
+  /*  __C89_NAMELESS was removed */
   /* __C89_NAMELESS */ union {
     ULONGLONG Alignment;
     /* __C89_NAMELESS */ struct {

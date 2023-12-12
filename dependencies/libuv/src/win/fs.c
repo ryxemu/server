@@ -1224,7 +1224,7 @@ void fs__unlink(uv_fs_t* req) {
 
 
 void fs__mkdir(uv_fs_t* req) {
-  /* TODO: use req->mode. */
+  /*  use req->mode. */
   if (CreateDirectoryW(req->file.pathw, NULL)) {
     SET_REQ_RESULT(req, 0);
   } else {
@@ -1248,7 +1248,7 @@ void fs__mktemp(uv_fs_t* req, uv__fs_mktemp_func func) {
   size_t len;
   uint64_t v;
   char* path;
-  
+
   path = (char*)req->path;
   len = wcslen(req->file.pathw);
   ep = req->file.pathw + len;
@@ -1739,7 +1739,7 @@ INLINE static int fs__stat_handle(HANDLE handle, uv_stat_t* statbuf,
     statbuf->st_dev = volume_info.VolumeSerialNumber;
   }
 
-  /* Todo: st_mode should probably always be 0666 for everyone. We might also
+  /*mode should probably always be 0666 for everyone. We might also
    * want to report 0777 if the file is a .exe or a directory.
    *
    * Currently it's based on whether the 'readonly' attribute is set, which
@@ -1832,7 +1832,7 @@ INLINE static int fs__stat_handle(HANDLE handle, uv_stat_t* statbuf,
    */
   statbuf->st_blksize = 4096;
 
-  /* Todo: set st_flags to something meaningful. Also provide a wrapper for
+  /* st_flags to something meaningful. Also provide a wrapper for
    * chattr(2).
    */
   statbuf->st_flags = 0;
@@ -1852,7 +1852,7 @@ INLINE static int fs__stat_handle(HANDLE handle, uv_stat_t* statbuf,
 INLINE static void fs__stat_prepare_path(WCHAR* pathw) {
   size_t len = wcslen(pathw);
 
-  /* TODO: ignore namespaced paths. */
+  /*ore namespaced paths. */
   if (len > 1 && pathw[len - 2] != L':' &&
       (pathw[len - 1] == L'\\' || pathw[len - 1] == L'/')) {
     pathw[len - 1] = '\0';

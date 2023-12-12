@@ -303,7 +303,6 @@ transfers are done.
 Check & Prepare watchers
 ------------------------
 
-TODO
 
 Loading libraries
 -----------------

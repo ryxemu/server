@@ -223,7 +223,7 @@ static int uv__idna_toascii_label(const char* s, const char* se,
         if (q < t)
           break;
 
-        /* TODO(bnoordhuis) Since 1 <= t <= 26 and therefore
+        /* (bnoordhuis) Since 1 <= t <= 26 and therefore
          * 10 <= y <= 35, we can optimize the long division
          * into a table-based reciprocal multiplication.
          */

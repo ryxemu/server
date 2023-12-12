@@ -470,7 +470,6 @@ TEST(PrintfTest, Pointer) {
 }
 
 TEST(PrintfTest, Location) {
-  // TODO: test %n
 }
 
 enum E { A = 42 };
@@ -540,7 +539,7 @@ TEST(PrintfTest, VSPrintfMakeArgsExample) {
   EXPECT_EQ(
       "[42] something happened", fmt::vsprintf("[%d] %s happened", args2));
   //the older gcc versions can't cast the return value
-#if !defined(__GNUC__) || (__GNUC__ > 4) 
+#if !defined(__GNUC__) || (__GNUC__ > 4)
   EXPECT_EQ(
       "[42] something happened",
       fmt::vsprintf(

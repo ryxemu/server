@@ -120,7 +120,7 @@ static void connection_fail(uv_connect_cb connect_cb) {
  * expect an error.
  */
 TEST_IMPL(connection_fail) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif
@@ -141,7 +141,7 @@ TEST_IMPL(connection_fail) {
  * attempt.
  */
 TEST_IMPL(connection_fail_doesnt_auto_close) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/*gjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif

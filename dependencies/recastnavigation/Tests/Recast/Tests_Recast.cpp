@@ -686,7 +686,7 @@ TEST_CASE("rcRasterizeTriangles")
 
 	rcCalcGridSize(bmin, bmax, cellSize, &width, &height);
 
-	rcHeightfield solid; 
+	rcHeightfield solid;
 	REQUIRE(rcCreateHeightfield(&ctx, solid, width, height, bmin, bmax, cellSize, cellHeight));
 
 	int flagMergeThr = 1;
@@ -1085,7 +1085,6 @@ TEST_CASE("rcVector")
 	}
 }
 
-// TODO: Implement benchmarking for platforms other than posix.
 #ifdef __unix__
 #include <unistd.h>
 #ifdef _POSIX_TIMERS
@@ -1119,7 +1118,6 @@ const int64_t kNumLoops = 100;
 const int64_t kNumInserts = 100000;
 
 // Prevent compiler from eliding a calculation.
-// TODO: Implement for MSVC.
 template <typename T>
 void DoNotOptimize(T* v) {
 	asm volatile ("" : "+r" (v));

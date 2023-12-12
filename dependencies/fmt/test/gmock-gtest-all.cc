@@ -4566,7 +4566,6 @@ void XmlUnitTestResultPrinter::OnTestIterationEnd(const UnitTest& unit_test,
     xmlout = posix::FOpen(output_file_.c_str(), "w");
   }
   if (xmlout == NULL) {
-    // TODO(wan): report the reason of the failure.
     //
     // We don't do it for now as:
     //
@@ -4598,8 +4597,6 @@ void XmlUnitTestResultPrinter::OnTestIterationEnd(const UnitTest& unit_test,
 // module will consist of ordinary English text.
 // If this module is ever modified to produce version 1.1 XML output,
 // most invalid characters can be retained using character references.
-// TODO(wan): It might be nice to have a minimally invasive, human-readable
-// escaping scheme for invalid characters, rather than dropping them.
 std::string XmlUnitTestResultPrinter::EscapeXml(
     const std::string& str, bool is_attribute) {
   Message m;
@@ -4743,7 +4740,6 @@ void XmlUnitTestResultPrinter::OutputXmlAttribute(
 }
 
 // Prints an XML representation of a TestInfo object.
-// TODO(wan): There is also value in printing properties with the plain printer.
 void XmlUnitTestResultPrinter::OutputXmlTestInfo(::std::ostream* stream,
                                                  const char* test_case_name,
                                                  const TestInfo& test_info) {
@@ -5377,7 +5373,6 @@ int UnitTest::Run() {
     // VC++ doesn't define _set_abort_behavior() prior to the version 8.0.
     // Users of prior VC versions shall suffer the agony and pain of
     // clicking through the countless debug dialogs.
-    // TODO(vladl@google.com): find a way to suppress the abort dialog() in the
     // debug mode when compiled with VC 7.1 or lower.
     if (!GTEST_FLAG(break_on_failure))
       _set_abort_behavior(
@@ -6246,7 +6241,6 @@ static bool HasGoogleTestFlagPrefix(const char* str) {
 //   @Y    changes the color to yellow.
 //   @D    changes to the default terminal text color.
 //
-// TODO(wan@google.com): Write tests for this once we add stdout
 // capturing to Google Test.
 static void PrintColorEncoded(const char* str) {
   GTestColor color = COLOR_DEFAULT;  // The current color.
@@ -6713,7 +6707,6 @@ static const char kDeathTestInternalError = 'I';
 // statement, which is not allowed; THREW means that the test statement
 // returned control by throwing an exception.  IN_PROGRESS means the test
 // has not yet concluded.
-// TODO(vladl@google.com): Unify names and possibly values for
 // AbortReason, DeathTestOutcome, and flag characters above.
 enum DeathTestOutcome { IN_PROGRESS, DIED, LIVED, RETURNED, THREW };
 
@@ -7711,7 +7704,6 @@ int GetStatusFileDescriptor(unsigned int parent_process_id,
                    StreamableToString(parent_process_id));
   }
 
-  // TODO(vladl@google.com): Replace the following check with a
   // compile-time assertion when available.
   GTEST_CHECK_(sizeof(HANDLE) <= sizeof(size_t));
 
@@ -8061,9 +8053,6 @@ bool FilePath::DirectoryExists() const {
 // root directory per disk drive.)
 bool FilePath::IsRootDirectory() const {
 #if GTEST_OS_WINDOWS
-  // TODO(wan@google.com): on Windows a network share like
-  // \\server\share can be a root directory, although it cannot be the
-  // current directory.  Handle this properly.
   return pathname_.length() == 3 && IsAbsolutePath();
 #else
   return pathname_.length() == 1 && IsPathSeparator(pathname_.c_str()[0]);
@@ -8161,7 +8150,6 @@ FilePath FilePath::RemoveTrailingPathSeparator() const {
 // Removes any redundant separators that might be in the pathname.
 // For example, "bar///foo" becomes "bar/foo". Does not eliminate other
 // redundancies that might be in a pathname involving "." or "..".
-// TODO(wan@google.com): handle Windows network shares (e.g. \\server\share).
 void FilePath::Normalize() {
   if (pathname_.c_str() == NULL) {
     pathname_ = "";
@@ -8446,9 +8434,6 @@ std::string FormatRegexSyntaxError(const char* regex, int index) {
 // otherwise returns true.
 bool ValidateRegex(const char* regex) {
   if (regex == NULL) {
-    // TODO(wan@google.com): fix the source file location in the
-    // assertion failures to match where the regex is used in user
-    // code.
     ADD_FAILURE() << "NULL is not a valid simple regular expression.";
     return false;
   }
@@ -9078,7 +9063,6 @@ void PrintBytesInObjectToImpl(const unsigned char* obj_bytes, size_t count,
   // If the object size is bigger than kThreshold, we'll have to omit
   // some details by printing only the first and the last kChunkSize
   // bytes.
-  // TODO(wan): let the user control the threshold using a flag.
   if (count < kThreshold) {
     PrintByteSegmentInObjectTo(obj_bytes, 0, count, os);
   } else {
@@ -10980,7 +10964,6 @@ class MockObjectRegistry {
       if (it->second.leakable)  // The user said it's fine to leak this object.
         continue;
 
-      // TODO(wan@google.com): Print the type of the leaked object.
       // This can help the user identify the leaked object.
       std::cout << "\n";
       const MockObjectState& state = it->second;
@@ -11149,9 +11132,6 @@ void Mock::RegisterUseByOnCallOrExpectCall(const void* mock_obj,
     const TestInfo* const test_info =
         UnitTest::GetInstance()->current_test_info();
     if (test_info != NULL) {
-      // TODO(wan@google.com): record the test case name when the
-      // ON_CALL or EXPECT_CALL is invoked from SetUpTestCase() or
-      // TearDownTestCase().
       state.first_used_test_case = test_info->test_case_name();
       state.first_used_test = test_info->name();
     }
@@ -11274,9 +11254,6 @@ InSequence::~InSequence() {
 
 
 namespace testing {
-
-// TODO(wan@google.com): support using environment variables to
-// control the flag values, like what Google Test does.
 
 GMOCK_DEFINE_bool_(catch_leaked_mocks, true,
                    "true iff Google Mock should report leaked mock objects "

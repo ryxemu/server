@@ -32,7 +32,7 @@ using abidw.  This can be slow.
 If you don't mind the slowness, run abicheck.sh --refresh_if,
 and it will download and build the reference version
 and extract the .abi on the spot if needed.
-(FIXME: should this be the default?)
+( should this be the default?)
 
 On the next run, the reference .abi file will already be
 present, and that step will be skipped.

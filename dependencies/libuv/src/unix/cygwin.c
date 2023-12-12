@@ -36,13 +36,13 @@ int uv_uptime(double* uptime) {
 }
 
 int uv_resident_set_memory(size_t* rss) {
-  /* FIXME: read /proc/meminfo? */
+  /*  read /proc/meminfo? */
   *rss = 0;
   return 0;
 }
 
 int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
-  /* FIXME: read /proc/stat? */
+  /* /proc/stat? */
   *cpu_infos = NULL;
   *count = 0;
   return UV_ENOSYS;

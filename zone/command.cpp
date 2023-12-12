@@ -277,7 +277,7 @@ int command_init(void) {
 	    command_add("npctypespawn", "[npctypeid] [factionid] - Spawn an NPC from the db.", AccountStatus::QuestMaster, command_npctypespawn) ||
 	    command_add("nukebuffs", "- Strip all buffs on you or your target.", AccountStatus::GMLeadAdmin, command_nukebuffs) ||
 	    command_add("nukeitem", "[itemid] - Remove itemid from your player target's inventory.", AccountStatus::GMLeadAdmin, command_nukeitem) ||
-	    command_add("numauths", "- TODO: describe this command.", AccountStatus::Max, command_numauths) ||
+	    command_add("numauths", "- describe this command.", AccountStatus::Max, command_numauths) ||
 
 	    command_add("oocmute", "[1/0] - Mutes OOC chat.", AccountStatus::GMStaff, command_oocmute) ||
 	    command_add("opcode", "- opcode management.", AccountStatus::GMCoder, command_opcode) ||

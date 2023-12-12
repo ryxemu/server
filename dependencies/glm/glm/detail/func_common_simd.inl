@@ -203,18 +203,7 @@ namespace detail
 			return Result;
 		}
 	};
-/* FIXME
-	template<qualifier Q>
-	struct compute_step_vector<float, Q, tvec4>
-	{
-		GLM_FUNC_QUALIFIER static vec<4, float, Q> call(vec<4, float, Q> const& edge, vec<4, float, Q> const& x)
-		{
-			vec<4, float, Q> Result;
-			result.data = glm_vec4_step(edge.data, x.data);
-			return result;
-		}
-	};
-*/
+
 	template<qualifier Q>
 	struct compute_smoothstep_vector<4, float, Q, true>
 	{

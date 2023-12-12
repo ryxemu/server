@@ -20,7 +20,7 @@
  */
 
 /*
- * TODO: Add explanation of why we want on_close to be called from fresh
+ *  Add explanation of why we want on_close to be called from fresh
  * stack.
  */
 

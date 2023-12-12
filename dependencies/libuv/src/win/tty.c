@@ -257,7 +257,7 @@ int uv_tty_init(uv_loop_t* loop, uv_tty_t* tty, uv_file fd, int unused) {
   if (readable) {
     /* Initialize TTY input specific fields. */
     tty->flags |= UV_HANDLE_TTY_READABLE | UV_HANDLE_READABLE;
-    /* TODO: remove me in v2.x. */
+    /*  remove me in v2.x. */
     tty->tty.rd.unused_ = NULL;
     tty->tty.rd.read_line_buffer = uv_null_buf_;
     tty->tty.rd.read_raw_wait = NULL;
@@ -982,7 +982,7 @@ void uv_process_tty_read_line_req(uv_loop_t* loop, uv_tty_t* handle,
   } else {
     if (!(handle->flags & UV_HANDLE_CANCELLATION_PENDING) &&
         req->u.io.overlapped.InternalHigh != 0) {
-      /* Read successful. TODO: read unicode, convert to utf-8 */
+      /* Read successful.  read unicode, convert to utf-8 */
       DWORD bytes = req->u.io.overlapped.InternalHigh;
       handle->read_cb((uv_stream_t*) handle, bytes, &buf);
     }
@@ -1005,7 +1005,7 @@ void uv__process_tty_read_req(uv_loop_t* loop, uv_tty_t* handle,
   assert(handle->flags & UV_HANDLE_TTY_READABLE);
 
   /* If the read_line_buffer member is zero, it must have been an raw read.
-   * Otherwise it was a line-buffered read. FIXME: This is quite obscure. Use a
+   * Otherwise it was a line-buffered read.  This is quite obscure. Use a
    * flag or something. */
   if (handle->tty.rd.read_line_buffer.len == 0) {
     uv_process_tty_read_raw_req(loop, handle, req);
@@ -2306,7 +2306,7 @@ void uv__tty_endgame(uv_loop_t* loop, uv_tty_t* handle) {
 
 /*
  * uv__process_tty_accept_req() is a stub to keep DELEGATE_STREAM_REQ working
- * TODO: find a way to remove it
+ *  find a way to remove it
  */
 void uv__process_tty_accept_req(uv_loop_t* loop, uv_tty_t* handle,
     uv_req_t* raw_req) {
@@ -2316,7 +2316,7 @@ void uv__process_tty_accept_req(uv_loop_t* loop, uv_tty_t* handle,
 
 /*
  * uv__process_tty_connect_req() is a stub to keep DELEGATE_STREAM_REQ working
- * TODO: find a way to remove it
+ *  find a way to remove it
  */
 void uv__process_tty_connect_req(uv_loop_t* loop, uv_tty_t* handle,
     uv_connect_t* req) {

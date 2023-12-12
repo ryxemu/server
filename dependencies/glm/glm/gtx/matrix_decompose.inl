@@ -49,7 +49,7 @@ namespace detail
 			PerspectiveMatrix[i][3] = static_cast<T>(0);
 		PerspectiveMatrix[3][3] = static_cast<T>(1);
 
-		/// TODO: Fixme!
+		///  !
 		if(epsilonEqual(determinant(PerspectiveMatrix), static_cast<T>(0), epsilon<T>()))
 			return false;
 
@@ -137,7 +137,6 @@ namespace detail
 
 		// Now, get the rotations out, as described in the gem.
 
-		// FIXME - Add the ability to return either quaternions (which are
 		// easier to recompose with) or Euler angles (rx, ry, rz), which
 		// are easier for authors to deal with. The latter will only be useful
 		// when we fix https://bugs.webkit.org/show_bug.cgi?id=23799, so I

@@ -1,4 +1,4 @@
-/*  
+/*
   FastLZ - lightning-fast lossless compression library
 
   Copyright (C) 2007 Ariya Hidayat (ariya@kde.org)
@@ -50,7 +50,7 @@
 #define FASTLZ_INLINE inline
 #elif defined(__BORLANDC__) || defined(_MSC_VER) || defined(__LCC__)
 #define FASTLZ_INLINE __inline
-#else 
+#else
 #define FASTLZ_INLINE
 #endif
 
@@ -75,7 +75,7 @@
 #endif
 
 /*
- * FIXME: use preprocessor magic to set this on different platforms!
+ *  use preprocessor magic to set this on different platforms!
  */
 typedef unsigned char  flzuint8;
 typedef unsigned short flzuint16;
@@ -96,7 +96,7 @@ int fastlz_decompress(const void* input, int length, void* output, int maxout);
 #define MAX_DISTANCE 8192
 
 #if !defined(FASTLZ_STRICT_ALIGN)
-#define FASTLZ_READU16(p) *((const flzuint16*)(p)) 
+#define FASTLZ_READU16(p) *((const flzuint16*)(p))
 #else
 #define FASTLZ_READU16(p) ((p)[0] | (p)[1]<<8)
 #endif
@@ -242,7 +242,7 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     *hslot = anchor;
 
     /* is this a match? check the first 3 bytes */
-    if(distance==0 || 
+    if(distance==0 ||
 #if FASTLZ_LEVEL==1
     (distance >= MAX_DISTANCE) ||
 #else
@@ -255,11 +255,11 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     /* far, needs at least 5-byte match */
     if(distance >= MAX_DISTANCE)
     {
-      if(*ip++ != *ref++ || *ip++!= *ref++) 
+      if(*ip++ != *ref++ || *ip++!= *ref++)
         goto literal;
       len += 2;
     }
-    
+
     match:
 #endif
 
@@ -355,7 +355,7 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
       while(len > MAX_LEN-2)
       {
         *op++ = (7 << 5) + (distance >> 8);
-        *op++ = MAX_LEN - 2 - 7 -2; 
+        *op++ = MAX_LEN - 2 - 7 -2;
         *op++ = (distance & 255);
         len -= MAX_LEN-2;
       }
@@ -466,7 +466,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
         ref = op - ofs - MAX_DISTANCE;
       }
 #endif
-      
+
 #ifdef FASTLZ_SAFE
       if (FASTLZ_UNEXPECT_CONDITIONAL(op + len + 3 > op_limit))
         return 0;
@@ -539,7 +539,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
         return 0;
 #endif
 
-      *op++ = *ip++; 
+      *op++ = *ip++;
       for(--ctrl; ctrl; ctrl--)
         *op++ = *ip++;
 

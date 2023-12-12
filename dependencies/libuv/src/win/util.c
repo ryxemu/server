@@ -292,7 +292,7 @@ int uv_chdir(const char* dir) {
 
   if (utf16_len < 2 || utf16_buffer[1] != L':') {
     /* Doesn't look like a drive letter could be there - probably an UNC path.
-     * TODO: Need to handle win32 namespaces like \\?\C:\ ? */
+     *  Need to handle win32 namespaces like \\?\C:\ ? */
     drive_letter = 0;
   } else if (utf16_buffer[0] >= L'A' && utf16_buffer[0] <= L'Z') {
     drive_letter = utf16_buffer[0];
@@ -540,7 +540,7 @@ unsigned int uv_available_parallelism(void) {
   SYSTEM_INFO info;
   unsigned rc;
 
-  /* TODO(bnoordhuis) Use GetLogicalProcessorInformationEx() to support systems
+  /* (bnoordhuis) Use GetLogicalProcessorInformationEx() to support systems
    * with > 64 CPUs? See https://github.com/libuv/libuv/pull/3458
    */
   GetSystemInfo(&info);

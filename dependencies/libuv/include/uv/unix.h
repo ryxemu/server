@@ -142,7 +142,7 @@ typedef pthread_key_t uv_key_t;
 #if defined(_AIX) || \
     defined(__OpenBSD__) || \
     !defined(PTHREAD_BARRIER_SERIAL_THREAD)
-/* TODO(bnoordhuis) Merge into uv_barrier_t in v2. */
+/* (bnoordhuis) Merge into uv_barrier_t in v2. */
 struct _uv_barrier {
   uv_mutex_t mutex;
   uv_cond_t cond;
@@ -154,7 +154,7 @@ struct _uv_barrier {
 typedef struct {
   struct _uv_barrier* b;
 # if defined(PTHREAD_BARRIER_SERIAL_THREAD)
-  /* TODO(bnoordhuis) Remove padding in v2. */
+  /* (bnoordhuis) Remove padding in v2. */
   char pad[sizeof(pthread_barrier_t) - sizeof(struct _uv_barrier*)];
 # endif
 } uv_barrier_t;
@@ -236,7 +236,7 @@ typedef struct {
   void* check_handles[2];                                                     \
   void* idle_handles[2];                                                      \
   void* async_handles[2];                                                     \
-  void (*async_unused)(void);  /* TODO(bnoordhuis) Remove in libuv v2. */     \
+  void (*async_unused)(void);  /* (bnoordhuis) Remove in libuv v2. */     \
   uv__io_t async_io_watcher;                                                  \
   int async_wfd;                                                              \
   struct {                                                                    \

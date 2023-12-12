@@ -138,7 +138,7 @@ TEST_IMPL(tty) {
   ASSERT(0 == uv_tty_reset_mode());
   ASSERT(0 == errno);
 
-  /* TODO check the actual mode! */
+  /* check the actual mode! */
 
   uv_close((uv_handle_t*) &tty_in, NULL);
   uv_close((uv_handle_t*) &tty_out, NULL);
@@ -382,7 +382,7 @@ TEST_IMPL(tty_file) {
   fd = open("/dev/tty", O_RDWR);
   if (fd != -1) {
     ASSERT(0 == uv_tty_init(&loop, &tty, fd, 1));
-    ASSERT(0 == close(fd)); /* TODO: it's indeterminate who owns fd now */
+    ASSERT(0 == close(fd)); /*  it's indeterminate who owns fd now */
     ASSERT(uv_is_readable((uv_stream_t*) &tty));
     ASSERT(uv_is_writable((uv_stream_t*) &tty));
     uv_close((uv_handle_t*) &tty, NULL);
@@ -393,7 +393,7 @@ TEST_IMPL(tty_file) {
   fd = open("/dev/tty", O_RDONLY);
   if (fd != -1) {
     ASSERT(0 == uv_tty_init(&loop, &tty_ro, fd, 1));
-    ASSERT(0 == close(fd)); /* TODO: it's indeterminate who owns fd now */
+    ASSERT(0 == close(fd)); /*  it's indeterminate who owns fd now */
     ASSERT(uv_is_readable((uv_stream_t*) &tty_ro));
     ASSERT(!uv_is_writable((uv_stream_t*) &tty_ro));
     uv_close((uv_handle_t*) &tty_ro, NULL);
@@ -404,7 +404,7 @@ TEST_IMPL(tty_file) {
   fd = open("/dev/tty", O_WRONLY);
   if (fd != -1) {
     ASSERT(0 == uv_tty_init(&loop, &tty_wo, fd, 0));
-    ASSERT(0 == close(fd)); /* TODO: it's indeterminate who owns fd now */
+    ASSERT(0 == close(fd)); /*  it's indeterminate who owns fd now */
     ASSERT(!uv_is_readable((uv_stream_t*) &tty_wo));
     ASSERT(uv_is_writable((uv_stream_t*) &tty_wo));
     uv_close((uv_handle_t*) &tty_wo, NULL);
@@ -422,7 +422,7 @@ TEST_IMPL(tty_file) {
 }
 
 TEST_IMPL(tty_pty) {
-/* TODO(gengjiawen): Fix test on QEMU. */
+/* (gengjiawen): Fix test on QEMU. */
 #if defined(__QEMU__)
   RETURN_SKIP("Test does not currently work in QEMU");
 #endif

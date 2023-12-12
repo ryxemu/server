@@ -72,7 +72,7 @@ check_c_compiler_flag(/wd4996 UV_LINT_NO_UNSAFE_MSVC)
 
 check_c_compiler_flag(-Wall UV_LINT_WALL) # DO NOT use this under MSVC
 
-# TODO: Place these into its own function
+#  Place these into its own function
 check_c_compiler_flag(-Wno-unused-parameter UV_LINT_NO_UNUSED_PARAMETER)
 check_c_compiler_flag(-Wstrict-prototypes UV_LINT_STRICT_PROTOTYPES)
 check_c_compiler_flag(-Wextra UV_LINT_EXTRA)
@@ -172,7 +172,7 @@ if(WIN32)
 else()
   list(APPEND uv_defines _FILE_OFFSET_BITS=64 _LARGEFILE_SOURCE)
   if(NOT CMAKE_SYSTEM_NAME MATCHES "Android|OS390|QNX")
-    # TODO: This should be replaced with find_package(Threads) if possible
+    #  This should be replaced with find_package(Threads) if possible
     # Android has pthread as part of its c library, not as a separate
     # libpthread.so.
     list(APPEND uv_libraries pthread)

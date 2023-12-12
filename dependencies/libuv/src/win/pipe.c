@@ -346,7 +346,7 @@ int uv_pipe(uv_file fds[2], int read_flags, int write_flags) {
 
   /* Make the server side the inbound (read) end, */
   /* so that both ends will have FILE_READ_ATTRIBUTES permission. */
-  /* TODO: better source of local randomness than &fds? */
+  /*  better source of local randomness than &fds? */
   read_flags |= UV_READABLE_PIPE;
   write_flags |= UV_WRITABLE_PIPE;
   err = uv__create_pipe_pair(&readh, &writeh, read_flags, write_flags, 0, (char*) &fds[0]);
@@ -1637,7 +1637,7 @@ static DWORD uv__pipe_get_ipc_remote_pid(uv_pipe_t* handle) {
 
   /* If the both ends of the IPC pipe are owned by the same process,
    * the remote end pid may not yet be set. If so, do it here.
-   * TODO: this is weird; it'd probably better to use a handshake. */
+   *s is weird; it'd probably better to use a handshake. */
   if (*pid == 0)
     *pid = GetCurrentProcessId();
 
@@ -2248,7 +2248,7 @@ static void eof_timer_cb(uv_timer_t* timer) {
   uv_read_stop((uv_stream_t*) pipe);
 
   /* Report the eof and update flags. This will get reported even if the user
-   * stopped reading in the meantime. TODO: is that okay? */
+   * stopped reading in the meantime.  is that okay? */
   uv__pipe_read_eof(loop, pipe, uv_null_buf_);
 }
 

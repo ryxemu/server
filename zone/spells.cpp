@@ -677,7 +677,6 @@ void Client::CheckSongSkillIncrease(uint16 spell_id) {
 returns true if spell is successful, false if it fizzled.
 only works for clients, npcs shouldn't be fizzling..
 new algorithm thats closer to live eq (i hope)
-TODO: Add aa skills, item mods, reduced the chance to fizzle
 */
 bool Mob::CheckFizzle(uint16 spell_id) {
 	return (true);
@@ -2162,7 +2161,7 @@ int CalcBuffDuration_formula(int level, int formula, int duration) {
 			i = i ? i : 1;
 			return duration ? i < duration ? i : duration : i;
 
-		case 50:            // permanent buff
+		case 50:  // permanent buff
 			return 0xFFFE;
 
 		default:
@@ -3025,7 +3024,6 @@ bool Mob::IsImmuneToSpell(uint16 spell_id, Mob *caster, bool isProc) {
 
 	if (casting_gm_override == 1)
 		return (false);
-
 
 	Log(Logs::Detail, Logs::Spells, "Checking to see if we are immune to spell %d cast by %s", spell_id, caster->GetName());
 

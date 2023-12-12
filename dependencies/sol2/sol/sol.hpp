@@ -3186,7 +3186,7 @@ extern "C" {
 /* declarations for Lua 5.1 */
 #if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM == 501
 
-/* XXX not implemented:
+/* not implemented:
 * lua_arith (new operators)
 * lua_upvalueid
 * lua_upvaluejoin
@@ -3477,7 +3477,7 @@ COMPAT53_API void luaL_requiref(lua_State *L, const char *modname,
 /* declarations for Lua 5.2 */
 #if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM == 502
 
-/* XXX not implemented:
+/* not implemented:
 * lua_isyieldable
 * lua_getextraspace
 * lua_arith (new operators)
@@ -4858,7 +4858,6 @@ namespace sol {
 		     && !std::is_assignable<T&, const optional<U>&>::value && !std::is_assignable<T&, const optional<U>&&>::value>;
 
 #ifdef _MSC_VER
-		// TODO make a version which works with MSVC
 		template <class T, class U = T>
 		struct is_swappable : std::true_type { };
 
@@ -5814,7 +5813,6 @@ namespace sol {
 			return *this;
 		}
 
-		// TODO check exception guarantee
 		/// Converting move assignment operator.
 		///
 		/// Moves the value from `rhs` if there is one. Otherwise resets the stored
@@ -6849,7 +6847,6 @@ namespace sol {
 } // namespace sol
 
 namespace std {
-	// TODO SFINAE
 	template <class T>
 	struct hash<::sol::optional<T>> {
 		::std::size_t operator()(const ::sol::optional<T>& o) const {
@@ -8880,7 +8877,6 @@ namespace sol {
 		template <typename F, F fx>
 		inline int typed_static_trampoline(lua_State* L) {
 #if 0
-			// TODO: you must evaluate the get/check_get of every
 			// argument, to ensure it doesn't throw
 			// (e.g., for the sol_lua_check_access extension point!)
 			// This incluudes properly noexcept-ing all the above
@@ -15106,7 +15102,6 @@ namespace sol { namespace stack {
 				}
 #endif // Lua Version 5.3 and others
 			}
-			// TODO: figure out a better way to do this...?
 			// set_field(L, -1, cont.size());
 			return 1;
 		}
@@ -19973,7 +19968,6 @@ namespace sol {
 		void select(lua_State* L, Fx&& fx, Args&&... args) {
 			using uFx = meta::unqualified_t<Fx>;
 			if constexpr (is_lua_reference_v<uFx>) {
-				// TODO: hoist into lambda in this case for yielding???
 				stack::push(L, std::forward<Fx>(fx), std::forward<Args>(args)...);
 			}
 			else if constexpr (is_lua_c_function_v<uFx>) {
@@ -22259,7 +22253,6 @@ namespace sol {
 			}
 
 			static detail::error_result insert_lookup(std::true_type, lua_State* L_, T& self, stack_object, stack_object value) {
-				// TODO: should we warn or error about someone calling insert on an ordered / lookup container with no associativity?
 				return add_copyable(std::true_type(), L_, self, std::move(value));
 			}
 
@@ -25306,7 +25299,6 @@ namespace sol {
 			{
 				sol::protected_function_result next_results = m_next_function_ref(m_table_ref, stack_reference(m_L, m_key_index));
 				if (!next_results.valid()) {
-					// TODO: abort, or throw an error?
 					m_clear();
 					m_key_index = empty_key_index;
 					return *this;
