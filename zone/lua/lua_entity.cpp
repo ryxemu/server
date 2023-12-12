@@ -21,7 +21,6 @@ void lua_register_entity(sol::state_view &sv) {
 	entity["CastToObject"] = &Lua_Entity::CastToObject;
 	entity["GetID"] = &Lua_Entity::GetID;
 	entity["IsBeacon"] = &Lua_Entity::IsBeacon;
-	entity["IsBot"] = &Lua_Entity::IsBot;
 	entity["IsClient"] = &Lua_Entity::IsClient;
 	entity["IsCorpse"] = &Lua_Entity::IsCorpse;
 	entity["IsDoor"] = &Lua_Entity::IsDoor;

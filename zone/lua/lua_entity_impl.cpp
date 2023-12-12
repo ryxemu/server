@@ -22,12 +22,12 @@ bool Lua_Entity::IsMob() {
 	Lua_Safe_Call_Bool();
 	return self->IsMob();
 }
-/*
+
 bool Lua_Entity::IsMerc() {
-    Lua_Safe_Call_Bool();
-    return self->IsMerc();
+	Lua_Safe_Call_Bool();
+	return false;
+	// return self->IsMerc();
 }
- */
 
 bool Lua_Entity::IsCorpse() {
 	Lua_Safe_Call_Bool();

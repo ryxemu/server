@@ -37,7 +37,6 @@ class Lua_Entity : public Lua_Ptr<Entity> {
 	bool IsTrap();
 	bool IsBeacon();
 	bool IsEncounter();
-	bool IsBot();
 	int GetID();
 
 	Lua_Client CastToClient();
