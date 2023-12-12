@@ -15,7 +15,6 @@
 		"/usr/include/x86_64-linux-gnu",
 		"/usr/include/lua5.2",
 		"/usr/include/mariadb",
-		"${workspaceFolder}/dependencies/cereal/include",
 		"${workspaceFolder}/dependencies/curl_x64/include",
 		"${workspaceFolder}/dependencies/fmt/include",
 		"${workspaceFolder}/dependencies/glm",
