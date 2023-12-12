@@ -90,7 +90,7 @@ int uv_exepath(char* buffer, size_t* size) {
   }
 
   if (argsbuf[0] == NULL) {
-    err = UV_EINVAL;  /* FIXME(bnoordhuis) More appropriate error. */
+    err = UV_EINVAL;  /* (bnoordhuis) More appropriate error. */
     goto out;
   }
 

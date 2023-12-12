@@ -139,7 +139,7 @@ static void sv_recv_cb(uv_udp_t* handle,
   ASSERT(nread == 4);
   ASSERT(!memcmp("PING", rcvbuf->base, nread));
 
-  /* FIXME? `uv_udp_recv_stop` does what it says: recv_cb is not called
+  /* ? `uv_udp_recv_stop` does what it says: recv_cb is not called
     * anymore. That's problematic because the read buffer won't be returned
     * either... Not sure I like that but it's consistent with `uv_read_stop`.
     */

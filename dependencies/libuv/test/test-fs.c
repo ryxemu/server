@@ -404,7 +404,7 @@ static void read_cb(uv_fs_t* req) {
   int r;
   ASSERT(req == &read_req);
   ASSERT(req->fs_type == UV_FS_READ);
-  ASSERT(req->result >= 0);  /* FIXME(bnoordhuis) Check if requested size? */
+  ASSERT(req->result >= 0);  /* (bnoordhuis) Check if requested size? */
   read_cb_count++;
   uv_fs_req_cleanup(req);
   if (read_cb_count == 1) {
@@ -479,7 +479,7 @@ static void write_cb(uv_fs_t* req) {
   int r;
   ASSERT(req == &write_req);
   ASSERT(req->fs_type == UV_FS_WRITE);
-  ASSERT(req->result >= 0);  /* FIXME(bnoordhuis) Check if requested size? */
+  ASSERT(req->result >= 0);  /* (bnoordhuis) Check if requested size? */
   write_cb_count++;
   uv_fs_req_cleanup(req);
   r = uv_fs_fdatasync(loop, &fdatasync_req, open_req1.result, fdatasync_cb);
@@ -2705,7 +2705,7 @@ TEST_IMPL(fs_futime) {
   r = uv_fs_open(NULL, &req, path, O_RDWR, 0, NULL);
   ASSERT(r >= 0);
   ASSERT(req.result >= 0);
-  file = req.result; /* FIXME probably not how it's supposed to be used */
+  file = req.result; /*  probably not how it's supposed to be used */
   uv_fs_req_cleanup(&req);
 
   r = uv_fs_futime(NULL, &req, file, atime, mtime, NULL);

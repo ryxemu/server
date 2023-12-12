@@ -1387,7 +1387,7 @@ int uv__udp_recv_start(uv_udp_t* handle,
     return UV_EINVAL;
 
   if (uv__io_active(&handle->io_watcher, POLLIN))
-    return UV_EALREADY;  /* FIXME(bnoordhuis) Should be UV_EBUSY. */
+    return UV_EALREADY;  /* (bnoordhuis) Should be UV_EBUSY. */
 
   err = uv__udp_maybe_deferred_bind(handle, AF_INET, 0);
   if (err)
