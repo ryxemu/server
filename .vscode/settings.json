@@ -7,13 +7,20 @@
 	"files.trimTrailingWhitespace": true,
 	"editor.formatOnSave": true,
 	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4, IncludeBlocks: Preserve, ColumnLimit: 0, SortIncludes: false}",
+	"C_Cpp.default.defines": [],
 	"search.exclude": {
-		"dependencies": true,
-		"submodules": true,
-		"libs": true,
+		"dependencies": false,
 	},
 	"C_Cpp.default.includePath": [
 		"/usr/include/x86_64-linux-gnu",
+		"/usr/include/lua5.2",
+		"/usr/include/mariadb",
+		"${workspaceFolder}/dependencies/curl_x64/include",
+		"${workspaceFolder}/dependencies/fmt/include",
+		"${workspaceFolder}/dependencies/glm",
+		"${workspaceFolder}/dependencies/libuv/include",
+		"${workspaceFolder}/dependencies/sol2",
+		"${workspaceFolder}/dependencies/zlibng"
 	],
 	"telemetry.enableTelemetry": false,
 	"cmake.buildDirectory": "${workspaceFolder}/build",

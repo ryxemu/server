@@ -571,7 +571,7 @@ class Mob : public Entity {
 	static void CreateSpawnPacket(EQApplicationPacket* app, NewSpawn_Struct* ns);
 	virtual void FillSpawnStruct(NewSpawn_Struct* ns, Mob* ForWho);
 	void CreateHPPacket(EQApplicationPacket* app);
-	void SendHPUpdate(bool skipnpc = true, bool sendtoself = true);  // skipnpc is only used when rule Alkabor:NPCsSendHPUpdatesPerTic is true.
+	void SendHPUpdate(bool skipnpc = true, bool sendtoself = true);  // skipnpc is only used when rule Server:NPCsSendHPUpdatesPerTic is true.
 
 	// Util
 	static uint32 RandomTimer(int min, int max);

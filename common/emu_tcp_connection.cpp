@@ -658,7 +658,7 @@ bool EmuTCPConnection::ProcessReceivedDataAsOldPackets(char* errbuf) {
 			pack = new ServerPacket;
 			memcpy(&pack->opcode, &buffer[0], 2);
 			pack->size = size - 4;
-			if (size < 4) {  // TODO: Checksum or size check or something similar
+			if (size < 4) {
 				// Datastream corruption, get the hell outta here!
 				delete pack;
 				return true;

@@ -126,7 +126,7 @@ bool Client::CheckLoreConflict(const EQ::ItemData* item) {
 		return false;
 
 	if (item->Lore[0] == '*')  // Standard lore items; look everywhere except unused, return the result
-		return (m_inv.HasItem(item->ID, 0, ~invWhereUnused) != INVALID_INDEX);
+		return (m_inv.HasItem(item->ID, 0, ~invWhereSharedBank) != INVALID_INDEX);
 
 	else if (item->Lore[0] == '#')
 		return (m_inv.HasArtifactItem() != INVALID_INDEX);
@@ -136,8 +136,6 @@ bool Client::CheckLoreConflict(const EQ::ItemData* item) {
 
 bool Client::SummonItem(uint32 item_id, int8 quantity, uint16 to_slot, bool force_charges) {
 	this->EVENT_ITEM_ScriptStopReturn();
-
-	// TODO: update calling methods and script apis to handle a failure return
 
 	const EQ::ItemData* item = database.GetItem(item_id);
 

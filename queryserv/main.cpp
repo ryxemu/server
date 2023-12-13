@@ -35,7 +35,7 @@ int main() {
 	set_exception_handler();
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
-	LogInfo("Starting EQMacEmu QueryServ.");
+	LogInfo("Starting QueryServ v{}", VERSION);
 	auto load_result = queryservconfig::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);

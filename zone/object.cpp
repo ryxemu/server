@@ -528,7 +528,6 @@ bool Object::HandleClick(Client* sender, const ClickObject_Struct* click_object)
 		auto outapp = new EQApplicationPacket(OP_ClickObjectAction, sizeof(ClickObjectAction_Struct));
 		ClickObjectAction_Struct* coa = (ClickObjectAction_Struct*)outapp->pBuffer;
 
-		// TODO: there is prolly a better way to do this.
 		coa->type = m_type;
 		coa->slot = 0x0a;
 
@@ -560,7 +559,7 @@ bool Object::HandleClick(Client* sender, const ClickObject_Struct* click_object)
 		// Send items inside of container
 
 		if (m_inst && m_inst->IsType(EQ::item::ItemClassBag)) {
-			if (RuleB(AlKabor, NoDropRemoveTradeskill)) {
+			if (RuleB(Server, NoDropRemoveTradeskill)) {
 				// Clear out no-drop and no-rent items first
 				m_inst->ClearByFlags(byFlagSet, byFlagSet);
 			} else if (user != last_user) {

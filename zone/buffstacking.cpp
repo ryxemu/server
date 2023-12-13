@@ -287,7 +287,7 @@ int Mob::FindAffectSlot(Mob *caster, uint16 spell_id, int *result_slotnum, int r
 		}
 	}
 
-	SPDat_Spell_Struct *new_spelldata = (SPDat_Spell_Struct *)&spells[spell_id];  // TODO - have to use same spells as client, not the customized TAKP spells in the database
+	SPDat_Spell_Struct *new_spelldata = (SPDat_Spell_Struct *)&spells[spell_id];
 
 	if (!new_spelldata || !caster->IsNPC() && IsStackBlocked(spell_id))
 		return 0;

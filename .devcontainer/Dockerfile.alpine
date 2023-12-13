@@ -1,4 +1,4 @@
 # This was removed due to alpine isn't fully supported with cpptools for intellisense
 FROM mcr.microsoft.com/devcontainers/base:alpine-3.14
-RUN apk add --no-cache cmake ninja libsodium-dev boost-dev lua5.1-dev mariadb-dev ccache util-linux-dev wget unzip gdb libstdc++ g++
+RUN apk add --no-cache cmake ninja boost-dev lua5.2-dev mariadb-dev ccache util-linux-dev wget unzip gdb libstdc++ g++
 USER root

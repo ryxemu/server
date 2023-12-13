@@ -20,9 +20,6 @@ RULE_CATEGORY(Character)
 RULE_BOOL(Character, CanCreate, true)
 RULE_INT(Character, MaxLevel, 65)
 RULE_BOOL(Character, PerCharacterQglobalMaxLevel, false)  // This will check for qglobal 'CharMaxLevel' character qglobal (Type 5), if player tries to level beyond that point, it will not go beyond that level
-RULE_INT(Character, MaxExpLevel, 0)                       // Sets the Max Level attainable via Experience
-RULE_INT(Character, DeathExpLossLevel, 10)                // Any level greater than this will lose exp on death
-RULE_INT(Character, DeathExpLossMaxLevel, 255)            // Any level greater than this will no longer lose exp on death
 RULE_INT(Character, DeathItemLossLevel, 10)
 RULE_INT(Character, CorpseDecayTimeMS, 604800000)      // 7 days
 RULE_INT(Character, EmptyCorpseDecayTimeMS, 10800000)  // 3 hours
@@ -33,12 +30,7 @@ RULE_BOOL(Character, LeaveCorpses, true)
 RULE_BOOL(Character, LeaveNakedCorpses, true)
 RULE_INT(Character, MaxDraggedCorpses, 2)
 RULE_REAL(Character, DragCorpseDistance, 400)  // If the corpse is <= this distance from the player, it won't move
-RULE_REAL(Character, ExpMultiplier, 1.0)
-RULE_REAL(Character, AAExpMultiplier, 1.0)
-RULE_REAL(Character, GroupExpMultiplier, 1.0)
-RULE_REAL(Character, RaidExpMultiplier, 0.6)  // showeq forum says raid exp was 60%
-RULE_REAL(Character, EXPLossMultiplier, 1.0)
-RULE_INT(Character, AutosaveIntervalS, 240)  // 0=disabled
+RULE_INT(Character, AutosaveIntervalS, 240)    // 0=disabled
 RULE_BOOL(Character, HealOnLevel, false)
 RULE_BOOL(Character, ManaOnLevel, false)
 RULE_BOOL(Character, FeignKillsPet, false)
@@ -80,6 +72,7 @@ RULE_CATEGORY_END()
 RULE_CATEGORY(Pets)
 RULE_REAL(Pets, AttackCommandRange, 200)
 RULE_BOOL(Pets, UnTargetableSwarmPet, false)
+RULE_INT(Pets, CharmPetAllyBreak, 0)  // If greater than 0 (e.g. 8 for takp), this is the max number of entities on an NPC's hate list before the NPC will ignore charmed pets.  April 2003 patch set this to 4 on Live.
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(GM)
@@ -104,7 +97,7 @@ RULE_INT(World, AccountSessionLimit, 1)         // Max number of characters allo
 RULE_INT(World, ExemptAccountLimitStatus, 100)  // Min status required to be exempt from multi-session per account limiting (-1 is disabled)
 RULE_BOOL(World, GMAccountIPList, false)        // Check ip list against GM Accounts, AntiHack GM Accounts.
 RULE_INT(World, MinGMAntiHackStatus, 1)         // Minimum GM status to check against AntiHack list
-RULE_INT(World, PVPSettings, 0)                 // Sets the PVP settings for the server, 1 = Rallos Zek RuleSet, 2 = Tallon/Vallon Zek Ruleset, 4 = Sullon Zek Ruleset, 6 = Discord Ruleset, anything above 6 is the Discord Ruleset without the no-drop restrictions removed. TODO: Edit IsAttackAllowed in Zone to accomodate for these rules.
+RULE_INT(World, PVPSettings, 0)                 // Sets the PVP settings for the server, 1 = Rallos Zek RuleSet, 2 = Tallon/Vallon Zek Ruleset, 4 = Sullon Zek Ruleset, 6 = Discord Ruleset, anything above 6 is the Discord Ruleset without the no-drop restrictions removed.  Edit IsAttackAllowed in Zone to accomodate for these rules.
 RULE_INT(World, FVNoDropFlag, 0)                // Sets the Firiona Vie settings on the client. If set to 2, the flag will be set for GMs only, allowing trading of no-drop items.
 RULE_BOOL(World, IPLimitDisconnectAll, false)
 RULE_INT(World, TellQueueSize, 200)
@@ -143,41 +136,23 @@ RULE_BOOL(Zone, IdleWhenEmpty, true)  // After timer is expired, if zone is empt
 RULE_INT(Zone, IdleTimer, 600000)     // 10 minutes
 RULE_INT(Zone, BoatDistance, 50)      // In zones where boat name is not set in the PP, this is how far away from the boat the client must be to move them to the boat's current location.
 RULE_BOOL(Zone, EnableNexusPortals, true)
-RULE_INT(Zone, NexusTimer, 900000)       // Nexus timer in ms. Defaults to 15 minutes.
-RULE_INT(Zone, NexusScionTimer, 900000)  // Nexus timer in ms. Defaults to 15 minutes.
+RULE_INT(Zone, NexusTimer, 900000)          // Nexus timer in ms. Defaults to 15 minutes.
+RULE_INT(Zone, NexusScionTimer, 900000)     // Nexus timer in ms. Defaults to 15 minutes.
+RULE_REAL(Zone, StripBuffsLowHPRatio, 0.0)  // When zoning, if HP lower than provided
 RULE_CATEGORY_END()
 
-RULE_CATEGORY(AlKabor)
-RULE_BOOL(AlKabor, AllowPetPull, false)               // Allow Green Pet Pull (AK behavior is true)
-RULE_BOOL(AlKabor, AllowTickSplit, false)             // AK behavior is true
-RULE_BOOL(AlKabor, StripBuffsOnLowHP, true)           // AK behavior is true
-RULE_BOOL(AlKabor, OutOfRangeGroupXPBonus, false)     // AK behavior is true. When true, players out of range of the kill will still count towards the group bonus. (They will not receive XP.)  This enables the exploit that allowed a soloing player to recieve the entire 2.6x group bonus
-RULE_BOOL(AlKabor, VeliousGroupEXPBonuses, false)     // AK behavior is false.  If true, use the Velious to mid PoP era group exp bonus. (2% for 2 members, up to 20% for 6 members)  This was the case from Jan 2001 to June 2003 on PC.  (prior to that was a 6 man bonus of 10%)  False will use the post June 2003 bonus of 20% per aditional member up to 80%
-RULE_BOOL(AlKabor, GroupEXPBonuses, false)            // AK behavior is true. When true, the "broken" 4-6 member group bonuses will be used.  Note: ClassicGroupEXPBonuses must be false for this to work
-RULE_BOOL(AlKabor, Count6thGroupMember, true)         // AK behavior is true. When true, the 6th member of the group will count towards the split, thus reducing the XP everybody gets.  Note: this should be false if using the post June 2003 PC era exp rules is intended
-RULE_BOOL(AlKabor, GreensGiveXPToGroup, true)         // AK behavior is true. When true, lower level players will receive group XP when a green mob to the higher players is killed.
-RULE_BOOL(AlKabor, GreenExpBonus, true)               // AK is (supposedly) true.  When true, any group member that the mob is green to will have their weighted division split reduced to that of the highest level player who does get exp, resulting in a larger share to those who get exp from the mob.  This results in higher level players being able to powerlevel even more effectively.  no hard evidence is known of this however
-RULE_BOOL(AlKabor, AllowCharmPetRaidTanks, true)      // AK behavior is true.  If false, NPCs will ignore charmed pets once MaxEntitiesCharmTanks players get on an NPC's hate list as per April 2003 patch.
-RULE_INT(AlKabor, MaxEntitiesCharmTanks, 8)           // If AllowCharmPetRaidTanks is false, this is the max number of entities on an NPC's hate list before the NPC will ignore charmed pets.  April 2003 patch set this to 4 on Live.
-RULE_BOOL(AlKabor, AllowPriceIncWhileBrowsing, true)  // AK behavior is true. If true, this allows Bazaar traders to increase the price of an item while another player is browsing their wares.
-RULE_INT(AlKabor, LevelCorpsesAlwaysSpawn, 55)        // AK behavior is 55. The level NPC corpses will not poof even if a NPC was top hate/final blow.
-RULE_BOOL(AlKabor, NPCsSendHPUpdatesPerTic, false)    // AK behavior is true. NPCs will only send HP updates every tic or when targeted instead of real time.
-RULE_BOOL(AlKabor, NoMaxWhoGuild, true)               // AK behavior is false. If true, /who all guild# will return without a limit.
-RULE_BOOL(AlKabor, ServerExpBonus, true)              // AK behavior is true.  This grants a multiplicative 20% experience bonus that was unique to AK
-RULE_REAL(AlKabor, LightBlueExpMod, 100.0)            // Make sure they are all 100.0 for accurate experience gains.  Exp scaling by level is handled in the exp routines
-RULE_REAL(AlKabor, BlueExpMod, 100.0)
-RULE_REAL(AlKabor, WhiteExpMod, 100.0)
-RULE_REAL(AlKabor, YellowExpMod, 100.0)
-RULE_REAL(AlKabor, RedExpMod, 100.0)
-RULE_BOOL(AlKabor, RememberAir, true)             // AK behavior is true. //If zoning from one underwater area to another, remember air_remaining value. If false, it's set to 100.
-RULE_BOOL(AlKabor, ClickyHateExploit, false)      // AK behavior is true. When true, it allows Invis Vs Animals clicky items to generate massive hate.
-RULE_BOOL(AlKabor, InvulnHateReduction, false)    // DA spells seemed to have reduced hate on AK by an unknown amount; if true this will halve the hate
-RULE_BOOL(AlKabor, ReduceAEExp, true)             // AK behavior is true.  Reduce the amount of experience gained when NPC is killed with a PBAoE spell.  Applies to NPCs around level 35 to 55
-RULE_BOOL(AlKabor, RaceEffectsAASplit, true)      // AK behavior is true.  If true then race exp penalties (and bonus in case of halfling) will modify AA Exp ONLY when AA Exp is under 100%
-RULE_BOOL(AlKabor, NoDropRemoveTradeskill, true)  // AK behavior is true.  If true then no drop items will be delete if container is closed.  If false, it will not delete for the original player only.
-RULE_BOOL(AlKabor, ReducedMonkAC, true)           // AK behavior is true.  Monks had a low AC softcap from October 16 2002 to April 8 2003 which made them squishy.  Sony partially unnerfed them in April 03.
-RULE_BOOL(AlKabor, BlockProjectileCorners, true)  // AK behavior is true.  If an NPC was in a corner, arrows and bolts would not hit them.
-RULE_BOOL(AlKabor, BlockProjectileWalls, true)    // AK behavior is true.  If an NPC was walled, then arrows and bolts had to be fired from an angle parallel to the wall in order to hit them. (if this is true, corners will also block)
+RULE_CATEGORY(Server)
+RULE_BOOL(Server, IsStdoutColored, false)          // Is stdout console text colored
+RULE_BOOL(Server, NPCsSendHPUpdatesPerTic, false)  // AK behavior is true. NPCs will only send HP updates every tic or when targeted instead of real time.
+RULE_BOOL(Server, NoMaxWhoGuild, true)             // AK behavior is false. If true, /who all guild# will return without a limit.
+RULE_BOOL(Server, RememberAir, true)               // AK behavior is true. //If zoning from one underwater area to another, remember air_remaining value. If false, it's set to 100.
+RULE_BOOL(Server, ClickyHateExploit, false)        // AK behavior is true. When true, it allows Invis Vs Animals clicky items to generate massive hate.
+RULE_BOOL(Server, InvulnHateReduction, false)      // DA spells seemed to have reduced hate on AK by an unknown amount; if true this will halve the hate
+RULE_BOOL(Server, RaceEffectsAASplit, true)        // AK behavior is true.  If true then race exp penalties (and bonus in case of halfling) will modify AA Exp ONLY when AA Exp is under 100%
+RULE_BOOL(Server, NoDropRemoveTradeskill, true)    // AK behavior is true.  If true then no drop items will be delete if container is closed.  If false, it will not delete for the original player only.
+RULE_BOOL(Server, ReducedMonkAC, true)             // AK behavior is true.  Monks had a low AC softcap from October 16 2002 to April 8 2003 which made them squishy.  Sony partially unnerfed them in April 03.
+RULE_BOOL(Server, BlockProjectileCorners, true)    // AK behavior is true.  If an NPC was in a corner, arrows and bolts would not hit them.
+RULE_BOOL(Server, BlockProjectileWalls, true)      // AK behavior is true.  If an NPC was walled, then arrows and bolts had to be fired from an angle parallel to the wall in order to hit them. (if this is true, corners will also block)
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Map)
@@ -284,10 +259,6 @@ RULE_INT(Combat, PvPArcheryDmgPct, 100)       // Percentage of archery damage do
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(NPC)
-RULE_INT(NPC, MinorNPCCorpseDecayTimeMS, 480000)   // level<55
-RULE_INT(NPC, MajorNPCCorpseDecayTimeMS, 1800000)  // level>=55
-RULE_INT(NPC, CorpseUnlockTimer, 120000)
-RULE_INT(NPC, EmptyNPCCorpseDecayTimeMS, 30000)
 RULE_INT(NPC, SayPauseTimeInSec, 70)
 RULE_INT(NPC, OOCRegen, 0)
 RULE_BOOL(NPC, BuffFriends, true)
@@ -300,6 +271,16 @@ RULE_INT(NPC, NPCTemplateID, 541)          // MonsterSum1
 RULE_BOOL(NPC, BoatsRunByDefault, true)    // Mainly to make it easier to adjust boats' timing on the fly.
 RULE_BOOL(NPC, CheckSoWBuff, false)
 RULE_BOOL(NPC, IgnoreQuestLoot, false)
+RULE_BOOL(NPC, IsTickSplitEnabled, false)     // Allow splitting mobs on aggro if you time it on a tick
+RULE_BOOL(NPC, IsGreenPetPullAllowed, false)  // Allow Green Pet Pull
+RULE_CATEGORY_END()
+
+RULE_CATEGORY(Corpse)
+RULE_INT(Corpse, MinorNPCCorpseDecayTimeMS, 480000)   // level<55
+RULE_INT(Corpse, MajorNPCCorpseDecayTimeMS, 1800000)  // level>=55
+RULE_INT(Corpse, UnlockTimer, 120000)
+RULE_INT(Corpse, EmptyNPCCorpseDecayTimeMS, 30000)
+RULE_INT(Corpse, LevelCorpsesAlwaysSpawn, 55)  // AK behavior is 55. The level NPC corpses will not poof even if a NPC was top hate/final blow.
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Aggro)
@@ -332,6 +313,7 @@ RULE_CATEGORY_END()
 
 RULE_CATEGORY(Bazaar)
 RULE_INT(Bazaar, MaxSearchResults, 50)
+RULE_BOOL(Bazaar, IsPriceTweakingEnabled, false)  // AK behavior is true. If true, this allows Bazaar traders to increase the price of an item while another player is browsing their wares.
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Channels)
@@ -344,10 +326,6 @@ RULE_CATEGORY(EventLog)
 RULE_BOOL(EventLog, RecordSellToMerchant, false)    // Record sales from a player to an NPC merchant in eventlog table
 RULE_BOOL(EventLog, RecordBuyFromMerchant, false)   // Record purchases by a player from an NPC merchant in eventlog table
 RULE_BOOL(EventLog, SkipCommonPacketLogging, true)  // Doesn't log OP_MobHealth or OP_ClientUpdate
-RULE_CATEGORY_END()
-
-RULE_CATEGORY(AA)
-RULE_INT(AA, ExpPerPoint, 18750000)  // Amount of exp per AA
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Console)
@@ -418,6 +396,31 @@ RULE_CATEGORY_END()
 
 RULE_CATEGORY(Petitions)
 RULE_BOOL(Petitions, PetitionSystemActive, false)  // Activates bug reporting
+RULE_CATEGORY_END()
+
+RULE_CATEGORY(Experience)
+RULE_BOOL(Experience, IsOutOfRangeGroupXPBonusEnabled, false)  // AK behavior is true. When true, players out of range of the kill will still count towards the group bonus. (They will not receive XP.)  This enables the exploit that allowed a soloing player to recieve the entire 2.6x group bonus
+RULE_INT(Experience, BaseToAA, 18750000)                       // Amount of base exp per AA, 18750000 is level 51
+RULE_INT(Experience, MaxExpLevel, 0)                           // Sets the Max Level attainable via Experience
+RULE_INT(Experience, DeathExpLossLevel, 10)                    // Any level greater than this will lose exp on death
+RULE_INT(Experience, DeathExpLossMaxLevel, 255)                // Any level greater than this will no longer lose exp on death
+RULE_REAL(Experience, ExpMultiplier, 1.0)
+RULE_REAL(Experience, AAExpMultiplier, 1.0)
+RULE_REAL(Experience, GroupExpMultiplier, 1.0)
+RULE_REAL(Experience, RaidExpMultiplier, 0.6)  // showeq forum says raid exp was 60%
+RULE_REAL(Experience, EXPLossMultiplier, 1.0)
+RULE_BOOL(Experience, IsVeliousGroupEXPBonusesEnabled, false)  // AK behavior is false.  If true, use the Velious to mid PoP era group exp bonus. (2% for 2 members, up to 20% for 6 members)  This was the case from Jan 2001 to June 2003 on PC.  (prior to that was a 6 man bonus of 10%)  False will use the post June 2003 bonus of 20% per aditional member up to 80%
+RULE_BOOL(Experience, IsBrokenGroupEXPBonusesEnabled, false)   // AK behavior is true. When true, the "broken" 4-6 member group bonuses will be used.  Note: ClassicGroupEXPBonuses must be false for this to work
+RULE_BOOL(Experience, Is6thGroupMemberIncluded, false)         // AK behavior is true. When true, the 6th member of the group will count towards the split, thus reducing the XP everybody gets.  Note: this should be false if using the post June 2003 PC era exp rules is intended
+RULE_BOOL(Experience, IsGreenGivingXPToGroupEnabled, false)    // AK behavior is true. When true, lower level players will receive group XP when a green mob to the higher players is killed.
+RULE_BOOL(Experience, IsGreenExpBonusEnabled, false)           // AK is (supposedly) true.  When true, any group member that the mob is green to will have their weighted division split reduced to that of the highest level player who does get exp, resulting in a larger share to those who get exp from the mob.  This results in higher level players being able to powerlevel even more effectively.  no hard evidence is known of this however
+RULE_BOOL(Experience, IsServerExpBonusEnabled, false)          // AK behavior is true.  This grants a multiplicative 20% experience bonus that was unique to AK
+RULE_REAL(Experience, LightBlueExpMod, 100.0)                  // Make sure they are all 100.0 for accurate experience gains.  Exp scaling by level is handled in the exp routines
+RULE_REAL(Experience, BlueExpMod, 100.0)
+RULE_REAL(Experience, WhiteExpMod, 100.0)
+RULE_REAL(Experience, YellowExpMod, 100.0)
+RULE_REAL(Experience, RedExpMod, 100.0)
+RULE_BOOL(Experience, IsAEReduced, false)  // AK behavior is true.  Reduce the amount of experience gained when NPC is killed with a PBAoE spell.  Applies to NPCs around level 35 to 55
 RULE_CATEGORY_END()
 
 #undef RULE_CATEGORY

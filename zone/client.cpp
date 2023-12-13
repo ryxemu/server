@@ -656,7 +656,6 @@ void Client::QueuePacket(const EQApplicationPacket* app, bool ack_req, CLIENT_CO
 
 	// if the program doesnt care about the status or if the status isnt what we requested
 	if (required_state != CLIENT_CONNECTINGALL && client_state != required_state) {
-		// todo: save packets for later use
 		AddPacket(app, ack_req);
 	} else if (eqs)
 		eqs->QueuePacket(app, ack_req);
@@ -679,7 +678,6 @@ void Client::FastQueuePacket(EQApplicationPacket** app, bool ack_req, CLIENT_CON
 	}
 
 	if (required_state != CLIENT_CONNECTINGALL && client_state != required_state) {
-		// todo: save packets for later use
 		AddPacket(app, ack_req);
 		return;
 	} else if (app != nullptr && *app != nullptr) {
@@ -1955,12 +1953,12 @@ uint16 Client::GetMaxSkillAfterSpecializationRules(EQ::skills::SkillType skillid
 				                                /*
 				                                Message(CC_Red, "Your spell casting specializations skills have been reset. "
 				                                        "Only %i primary specialization skill is allowed.", MaxSpecializations);
-				                
+
 				                                for(int i = EQ::skills::SkillSpecializeAbjure; i <= EQ::skills::SkillSpecializeEvocation; ++i)
 				                                    SetSkill((EQ::skills::SkillType)i, 1);
-				                
+
 				                                Save();
-				                
+
 				                                Log(Logs::General, Logs::Normal, "Reset %s's caster specialization skills to 1. "
 				                                                "Too many specializations skills were above 50.", GetCleanName());
 				                                */
@@ -2770,7 +2768,7 @@ void Client::Sacrifice(Client* caster) {
 			loss = 0.07f;
 
 		int requiredxp = GetEXPForLevel(level + 1) - GetEXPForLevel(level);
-		int exploss = (int)((float)requiredxp * (loss * RuleR(Character, EXPLossMultiplier)));
+		int exploss = (int)((float)requiredxp * (loss * RuleR(Experience, EXPLossMultiplier)));
 
 		if (exploss < GetEXP()) {
 			SetEXP(GetEXP() - exploss, GetAAXP());

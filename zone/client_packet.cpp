@@ -653,8 +653,6 @@ void Client::CompleteConnect() {
 }
 
 void Client::CheatDetected(CheatTypes CheatType, float x, float y, float z) {
-	// ToDo: Break warp down for special zones. Some zones have special teleportation pads or bad .map files which can trigger the detector without a legit zone request.
-
 	switch (CheatType) {
 		case MQWarp:  // Some zones may still have issues. Database updates will eliminate most if not all problems.
 			if (RuleB(Zone, EnableMQWarpDetector) && ((this->Admin() < RuleI(Zone, MQWarpExemptStatus) || (RuleI(Zone, MQWarpExemptStatus)) == -1))) {
@@ -956,7 +954,6 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 				safe_delete(zoneentry);
 			zoneentry = new_app;
 
-			// ret = false; // TODO: Can we tell the client to get lost in a good way
 			client_state = CLIENT_WAITING_FOR_AUTH;
 			get_auth_timer.Start();
 		}
@@ -999,7 +996,7 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 
 	exp_sessionStart = Timer::GetCurrentTime();
 	exp_sessionGained = 0;
-	exp_nextCheck = RuleI(AA, ExpPerPoint);
+	exp_nextCheck = RuleI(Experience, BaseToAA);
 	exp_nextCheck *= 2;
 	uint32 i;
 	std::string query;
@@ -1372,15 +1369,16 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 		BuffFadeByEffect(SE_SummonHorse);
 	}
 
-	if (RuleB(AlKabor, StripBuffsOnLowHP) && GetHP() < itembonuses.HP)
+	if (RuleR(Zone, StripBuffsLowHPRatio) > 0 && GetHPRatio() <= RuleR(Zone, StripBuffsLowHPRatio)) {
 		stripbuffs = true;
+	}
 
 	for (int i = 0; i < max_slots; i++) {
 		if ((buffs[i].spellid != SPELL_UNKNOWN && !stripbuffs) ||
 		    IsResurrectionEffects(buffs[i].spellid)) {
 			m_pp.buffs[i].spellid = buffs[i].spellid;
 			m_pp.buffs[i].bard_modifier = buffs[i].instrumentmod;
-			m_pp.buffs[i].bufftype = 2;  // TODO - don't hardcode this, it can be 4 for reversed effects
+			m_pp.buffs[i].bufftype = 2;
 			m_pp.buffs[i].player_id = buffs[i].casterid;
 			m_pp.buffs[i].level = buffs[i].casterlevel;
 			m_pp.buffs[i].activated = spells[buffs[i].spellid].Activated;
@@ -1452,7 +1450,7 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 #endif
 
 	/* Reset to max so they dont drown on zone in if its underwater */
-	if (!RuleB(AlKabor, RememberAir)) {
+	if (!RuleB(Server, RememberAir)) {
 		m_pp.air_remaining = CalculateLungCapacity();
 	}
 	/* Check for PVP Zone status*/
@@ -2349,11 +2347,10 @@ void Client::Handle_OP_CastSpell(const EQApplicationPacket *app) {
 	}
 
 	if (Admin() > 20 && GetGM() && IsValidSpell(castspell->spell_id)) {
-        Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
-        char szArguments[64];
-        snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
-        QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
-
+		Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
+		char szArguments[64];
+		snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
+		QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
 	}
 
 	/* Memorized Spell */
@@ -2661,7 +2658,6 @@ void Client::Handle_OP_ClientUpdate(const EQApplicationPacket *app) {
 	// this is a workaround for minor illusion and tree form and should be removed once we can emulate CDisplay::GetNearestActorTag()
 	// note that this isn't perfect and can leave the client buffs desynced but it attempts to prevent exploiting minor illusion to move around while avoiding NPC aggro.
 	// if a client casts minor illusion then gets a buff on them before moving, they will be in a bad state and need to zone to reload buffs but we aren't forcing that here
-	// TODO: the proper fix is to know about zone objects and predict when the client will fail to illusion, to keep buffs in sync
 	if (GetRace() == TREEFORM || GetRace() == MINOR_ILLUSION) {
 		if ((ppu->x_pos != m_Position.x && (ppu->x_pos > m_Position.x + 1 || ppu->x_pos < m_Position.x - 1)) ||
 		    (ppu->y_pos != m_Position.y && (ppu->y_pos > m_Position.y + 1 || ppu->y_pos < m_Position.y - 1))) {
@@ -2888,7 +2884,7 @@ void Client::Handle_OP_Consider(const EQApplicationPacket *app) {
 	con->playerid = GetID();
 	con->targetid = conin->targetid;
 	if (tmob->IsNPC())
-		con->faction = GetFactionLevel(character_id, race, class_, deity, (tmob->IsNPC()) ? tmob->CastToNPC()->GetPrimaryFaction() : 0, tmob);  // Dec. 20, 2001; TODO: Send the players proper deity
+		con->faction = GetFactionLevel(character_id, race, class_, deity, (tmob->IsNPC()) ? tmob->CastToNPC()->GetPrimaryFaction() : 0, tmob);
 	else
 		con->faction = 1;
 	con->level = GetLevelCon(tmob->GetLevel());
@@ -4919,7 +4915,6 @@ void Client::Handle_OP_GuildWar(const EQApplicationPacket *app) {
 }
 
 void Client::Handle_OP_Hide(const EQApplicationPacket *app) {
-	// TODO: this is not correct and causes the skill to never level up until you manually train it to be above 0.
 	// Need to differentiate between 0, 254 (untrained) and 255 (can't learn) values but 0 is treated as not having the skill in many places.
 	if (!HasSkill(EQ::skills::SkillHide)) {
 		return;
@@ -7060,7 +7055,6 @@ void Client::Handle_OP_ShopRequest(const EQApplicationPacket *app) {
 }
 
 void Client::Handle_OP_Sneak(const EQApplicationPacket *app) {
-	// TODO: this is not correct and causes the skill to never level up until you manually train it to be above 0.
 	// Need to differentiate between 0, 254 (untrained) and 255 (can't learn) values but 0 is treated as not having the skill in many places.
 	if (!HasSkill(EQ::skills::SkillSneak)) {
 		return;

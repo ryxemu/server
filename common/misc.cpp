@@ -357,7 +357,6 @@ int EQsprintf(char *buffer, const char *pattern, const char *arg1, const char *a
 
 std::string generate_key(int length) {
 	std::string key;
-// TODO: write this for win32...
 #ifndef WIN32
 	int i;
 	timeval now;

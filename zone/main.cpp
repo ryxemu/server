@@ -37,7 +37,7 @@
 #include "titles.h"
 #include "guild_mgr.h"
 #include "quest_parser_collection.h"
-#include "lua_parser.h"
+#include "lua/lua_parser.h"
 #include "questmgr.h"
 
 #include <iostream>
@@ -49,6 +49,7 @@
 #include <time.h>
 #include <ctime>
 #include <chrono>
+#include <memory>
 
 #ifdef _CRTDBG_MAP_ALLOC
 #undef new
@@ -94,7 +95,7 @@ int main(int argc, char** argv) {
 	set_exception_handler();
 	QServ = new QueryServ;
 
-	LogInfo("Loading config.yaml");
+	LogInfo("Starting Zone v{}", VERSION);
 	auto load_result = ZoneConfig::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
@@ -304,10 +305,8 @@ int main(int argc, char** argv) {
 	}
 
 	parse = new QuestParserCollection();
-#ifdef LUA_EQEMU
-	auto lua_parser = new LuaParser();
-	parse->RegisterQuestInterface(lua_parser, "lua");
-#endif
+	auto lua = std::make_unique<LuaParser>();
+	parse->RegisterQuestInterface(lua.get(), "lua");
 
 	// now we have our parser, load the quests
 	LogInfo("Loading quests");
@@ -474,10 +473,6 @@ int main(int argc, char** argv) {
 	entity_list.RemoveAllEncounters();  // gotta do it manually or rewrite lots of shit :P
 
 	parse->ClearInterfaces();
-
-#ifdef LUA_EQEMU
-	safe_delete(lua_parser);
-#endif
 
 	safe_delete(Config);
 	title_manager.ClearTitles();

@@ -67,7 +67,7 @@ inline EQ::versions::ClientVersion GetInvSlotRef() { return EQ::versions::Client
 
 namespace enum_ {
 enum InventorySlots : int16 {
-	slotCursor = INULL,
+	slotCharm = INULL,
 	slotEar1,
 	slotHead,
 	slotFace,
@@ -88,6 +88,7 @@ enum InventorySlots : int16 {
 	slotLegs,
 	slotFeet,
 	slotWaist,
+	slotPowerSource,
 	slotAmmo,
 	slotGeneral1,
 	slotGeneral2,
@@ -96,7 +97,10 @@ enum InventorySlots : int16 {
 	slotGeneral5,
 	slotGeneral6,
 	slotGeneral7,
-	slotGeneral8
+	slotGeneral8,
+	slotGeneral9,
+	slotGeneral10,
+	slotCursor
 };
 }  // namespace enum_
 using namespace enum_;

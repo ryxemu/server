@@ -21,7 +21,6 @@ void Register(EQStreamIdentifier &into) {
 		opfile += name;
 		opfile += ".conf";
 		// load up the opcode manager.
-		// TODO: figure out how to support shared memory with multiple patches...
 		opcodes = new RegularOpcodeManager();
 		if (!opcodes->LoadOpcodes(opfile.c_str())) {
 			logger.LogDebugType(EQEmuLogSys::General, EQEmuLogSys::Netcode, "[OPCODES] Error loading opcodes file %s. Not registering patch %s.", opfile.c_str(), name);
@@ -50,7 +49,6 @@ void Reload() {
 	// we need to go to every stream and replace it's manager.
 
 	if (opcodes != NULL) {
-		// TODO: get this file name from the config file
 		string opfile = Config->PatchDir;
 		opfile += "patch_";
 		opfile += name;

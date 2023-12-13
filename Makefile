@@ -1,7 +1,7 @@
 NAME := ryxemu-server
 VERSION ?= 0.0.1
 
-DOCKER_ARGS := --rm -v ${PWD}:/src -w /src ${NAME}
+DOCKER_ARGS := --rm  --name ${NAME} -v ${PWD}:/src -w /src ${NAME}
 
 # Run 'ninja' in build directory
 .PHONY: build
@@ -10,16 +10,18 @@ build:
 		make cmake; \
 	fi
 
-	@cd build$$BUILD_SUFFIX && ninja
+	@cd build$$BUILD_SUFFIX && cmake --build . --config Release --target all --
 
 # Run 'cmake' in build directory
 .PHONY: cmake
 cmake:
 	mkdir -p build$$BUILD_SUFFIX
 	@cd build$$BUILD_SUFFIX && cmake -DEQEMU_BUILD_LOGIN=ON \
-			-DEQEMU_BUILD_TESTS=OFF \
+			-DEQEMU_BUILD_TESTS=ON \
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
+clean:
+	rm -rf build
 # Run 'cmake' in ubuntu docker container
 docker-cmake: docker-image-build
 	docker run ${DOCKER_ARGS} make cmake
@@ -42,6 +44,8 @@ docker-cmake-%: docker-image-build-%
 # Run 'ninja' in passed docker container
 docker-build-%: docker-image-build-%
 	docker run ${DOCKER_ARGS}-$* make build BUILD_SUFFIX=-$*
+
+docker-clean: clean
 
 # Build image if it doesn't exist
 docker-image-build-%:
@@ -70,6 +74,11 @@ prep:
 	@mkdir -p build/bin/logs
 	@mkdir -p build/bin/shared
 	@echo "RyXEmu is prepared"
+
+# Runs tests
+.PHONY: test
+test:
+	cd build/bin && ./tests
 
 # Runs loginserver binary
 .PHONY: loginserver

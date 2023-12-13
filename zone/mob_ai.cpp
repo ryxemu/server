@@ -589,11 +589,6 @@ void Mob::AI_ShutDown() {
 			SpecialAbilities[sat].timer->Disable();
 	}
 }
-
-// todo: expand the logic here to cover:
-// redundant debuffs
-// buffing owner
-// certain types of det spells that need special behavior.
 void Client::AI_SpellCast() {
 	if (!charm_cast_timer.Check())
 		return;
@@ -785,7 +780,6 @@ void Client::AI_Process() {
 			SetTarget(nullptr);
 			return;
 		}
-		// Todo: Figure out why 'this' can become invalid here. It is related to Fear.
 		if (this) {
 			if (DivineAura())
 				return;
@@ -2089,7 +2083,7 @@ void Mob::AI_Event_Engaged(Mob* attacker) {
 	}
 
 	if (IsNPC() && !IsPet() && !CastToNPC()->IsAssisting()) {
-		if (!RuleB(AlKabor, AllowTickSplit) || GetSpecialAbility(ALWAYS_CALL_HELP)) {
+		if (!RuleB(NPC, IsTickSplitEnabled) || GetSpecialAbility(ALWAYS_CALL_HELP)) {
 			CastToNPC()->CallForHelp(attacker, true);
 		}
 	}

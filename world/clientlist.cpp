@@ -613,7 +613,7 @@ void ClientList::SendWhoAll(uint32 fromid, const char* to, int16 admin, Who_All_
 		uint16 totallength = 0;
 		uint8 gmwholist = RuleI(GM, GMWhoList);
 		uint8 wholimit = RuleI(World, WhoListLimit);
-		bool noguildlimit = RuleB(AlKabor, NoMaxWhoGuild);
+		bool noguildlimit = RuleB(Server, NoMaxWhoGuild);
 
 		// This loop grabs the player count.
 		countclients.Reset();

@@ -553,7 +553,7 @@ void EQOldPacket::DecodePacket(uint16 length, uchar *pPacket) {
 	if (length < 10)  // Adding checks for illegal packets, so we dont read beyond the buffer
 	{                 //      Minimum normal packet length is 10
 		              //	cerr << "EQPacket.cpp: Illegal packet length" << endl;
-		return;       // TODO: Do we want to check crc checksum on the incoming packets?
+		return;
 	}
 
 	HDR = *((EQPACKET_HDR_INFO *)intptr++);

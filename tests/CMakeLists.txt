@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 ADD_SUBDIRECTORY(cppunit)
 
@@ -20,7 +20,7 @@ SET(tests_headers
 
 ADD_EXECUTABLE(tests ${tests_sources} ${tests_headers})
 
-TARGET_LINK_LIBRARIES(tests common cppunit fmt)
+TARGET_LINK_LIBRARIES(tests common cppunit fmt ${SERVER_LIBS})
 
 INSTALL(TARGETS tests RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 

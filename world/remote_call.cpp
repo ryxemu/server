@@ -154,7 +154,6 @@ void handle_rc_relay(const std::string &method, const std::string &connection_id
 	safe_delete(pack);
 }
 
-// TODO: We need to look at potential security concerns on direct file access like this.
 void handle_rc_get_file_contents(const std::string &method, const std::string &connection_id, const std::string &request_id, const std::vector<std::string> &params) {
 	std::string error;
 	std::map<std::string, std::string> res;

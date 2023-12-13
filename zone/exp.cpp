@@ -33,7 +33,7 @@ float Mob::GetBaseEXP() {
 	float server_bonus = 1.0f;
 
 	// AK had a permanent 20% XP increase.
-	if (RuleB(AlKabor, ServerExpBonus))
+	if (RuleB(Experience, IsServerExpBonusEnabled))
 		server_bonus += 0.20f;
 	float npc_pct = 1.0f;
 	if (IsNPC())
@@ -83,15 +83,15 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 
 	uint32 add_exp = in_add_exp;
 
-	float lb_mult = 1.0f;                               // light blue con multiplier
-	float hbm = 1.0f;                                   // hell level balance modifier
-	float mlm = 1.0f;                                   // mob level modifier
-	float con_mult;                                     // custom rules con reduction
-	float race_mult = 1.0f;                             // race modifier for AA exp
-	float totalmod = RuleR(Character, ExpMultiplier);   // should be 1.0 for non-custom
-	float aa_mult = RuleR(Character, AAExpMultiplier);  // should be 1.0 for non-custom
-	float aa_lvl_mod = 1.0f;                            // level_exp_mods table
-	float class_mult = 1.0f;                            // since we don't factor class into exp required for level like Sony did, we have to add exp on kills.  does not apply to AAs
+	float lb_mult = 1.0f;                                // light blue con multiplier
+	float hbm = 1.0f;                                    // hell level balance modifier
+	float mlm = 1.0f;                                    // mob level modifier
+	float con_mult;                                      // custom rules con reduction
+	float race_mult = 1.0f;                              // race modifier for AA exp
+	float totalmod = RuleR(Experience, ExpMultiplier);   // should be 1.0 for non-custom
+	float aa_mult = RuleR(Experience, AAExpMultiplier);  // should be 1.0 for non-custom
+	float aa_lvl_mod = 1.0f;                             // level_exp_mods table
+	float class_mult = 1.0f;                             // since we don't factor class into exp required for level like Sony did, we have to add exp on kills.  does not apply to AAs
 	if (GetClass() == WARRIOR) class_mult = 10.0f / 9.0f;
 	if (GetClass() == ROGUE) class_mult = 10.0f / 9.05f;
 
@@ -133,23 +133,23 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 	con_mult = 100.0f;
 	switch (conlevel) {
 		case CON_LIGHTBLUE: {
-			con_mult = RuleR(AlKabor, LightBlueExpMod);
+			con_mult = RuleR(Experience, LightBlueExpMod);
 			break;
 		}
 		case CON_BLUE: {
-			con_mult = RuleR(AlKabor, BlueExpMod);
+			con_mult = RuleR(Experience, BlueExpMod);
 			break;
 		}
 		case CON_WHITE: {
-			con_mult = RuleR(AlKabor, WhiteExpMod);
+			con_mult = RuleR(Experience, WhiteExpMod);
 			break;
 		}
 		case CON_YELLOW: {
-			con_mult = RuleR(AlKabor, YellowExpMod);
+			con_mult = RuleR(Experience, YellowExpMod);
 			break;
 		}
 		case CON_RED: {
-			con_mult = RuleR(AlKabor, RedExpMod);
+			con_mult = RuleR(Experience, RedExpMod);
 			break;
 		}
 	}
@@ -158,7 +158,7 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 	add_exp = static_cast<uint32>(add_exp * lb_mult * mlm * con_mult * totalmod);  // multipliers that apply to level and aa exp
 
 	// if NPC is killed by PBAoE damage, then reduce experience gained if NPC is in a certain level range. (42-55)  this is AK behavior although specifics are still not known
-	if (killed_mob->IsNPC() && RuleB(AlKabor, ReduceAEExp) && killed_mob->pbaoe_damage > (killed_mob->GetMaxHP() / 2)) {
+	if (killed_mob->IsNPC() && RuleB(Experience, IsAEReduced) && killed_mob->pbaoe_damage > (killed_mob->GetMaxHP() / 2)) {
 		float reduction_mult = killed_mob->CastToNPC()->GetPBAoEReduction(GetLevel());
 		if (reduction_mult < 1.0) {
 			Log(Logs::Moderate, Logs::EQMac, "Experience reduced to %0.2f percent due to PBAoE reduction.", reduction_mult * 100.0);
@@ -187,7 +187,7 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 		add_exp -= add_aaxp;
 
 		// Race modifiers apply to AA exp if AA exp is split
-		if (RuleB(AlKabor, RaceEffectsAASplit) && m_epp.perAA > 0 && m_epp.perAA < 100) {
+		if (RuleB(Server, RaceEffectsAASplit) && m_epp.perAA > 0 && m_epp.perAA < 100) {
 			if (GetRace() == HALFLING)
 				race_mult = 1.05f;
 			else if (GetRace() == BARBARIAN)
@@ -232,7 +232,7 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 	if (admin >= 100 && GetGM()) {
 		uint32 neededxp = GetEXPForLevel(GetLevel() + 1) - (GetEXP() + add_exp);
 		float pct_level_gain = static_cast<float>(add_exp) / static_cast<float>(requiredxp) * 100.0f;
-		float pct_aa_gain = static_cast<float>(add_aaxp) / static_cast<float>(RuleI(AA, ExpPerPoint)) * 100.0f;
+		float pct_aa_gain = static_cast<float>(add_aaxp) / static_cast<float>(RuleI(Experience, BaseToAA)) * 100.0f;
 		Message(CC_Yellow, "[GM Debug] Final EXP awarded is %d (%0.2f%% of lvl) and %d AXP (%0.2f%% of AA). %d more EXP is needed for Level %d",
 		        add_exp, pct_level_gain, add_aaxp, pct_aa_gain, neededxp, GetLevel() + 1);
 	}
@@ -395,7 +395,7 @@ void Client::SetEXP(uint32 set_exp, uint32 set_aaxp, bool isrezzexp, bool is_spl
 		// Message(CC_Yellow, "You now have %d skill points available to spend.", m_pp.aapoints);
 	}
 
-	uint8 maxlevel = RuleI(Character, MaxExpLevel) + 1;
+	uint8 maxlevel = RuleI(Experience, MaxExpLevel) + 1;
 
 	if (maxlevel <= 1)
 		maxlevel = RuleI(Character, MaxLevel) + 1;
@@ -446,7 +446,7 @@ void Client::SetEXP(uint32 set_exp, uint32 set_aaxp, bool isrezzexp, bool is_spl
 			if (check_level == RuleI(Character, DeathItemLossLevel))
 				Message_StringID(CC_Yellow, CORPSE_ITEM_LOST);
 
-			if (check_level == RuleI(Character, DeathExpLossLevel))
+			if (check_level == RuleI(Experience, DeathExpLossLevel))
 				Message_StringID(CC_Yellow, CORPSE_EXP_LOST);
 
 			if (check_level == 30) {
@@ -582,8 +582,9 @@ uint32 Client::GetEXPForLevel(uint16 check_level, bool aa) {
 
 	// Note: Sony's AA exp was 15,000,000 but they also reduced AA exp by 20%, so the effective AAExp was 18,750,000
 	// This rule should be 18,750,000 to be non-custom since we do not reduce by 20%
-	if (aa)
-		return (RuleI(AA, ExpPerPoint));
+	if (aa) {
+		return (RuleI(Experience, BaseToAA));
+	}
 
 	check_level -= 1;
 	float base = (check_level) * (check_level) * (check_level);
@@ -685,7 +686,7 @@ void Group::SplitExp(uint32 exp, Mob* killed_mob) {
 	}
 
 	// Give XP out to lower toons from NPCs that are green to the highest player.
-	if (isgreen && !RuleB(AlKabor, GreensGiveXPToGroup) && !killed_mob->IsZomm())
+	if (isgreen && !RuleB(Experience, IsGreenGivingXPToGroupEnabled) && !killed_mob->IsZomm())
 		return;
 
 	if (!ProcessGroupSplit(killed_mob, gs, isgreen))
@@ -694,10 +695,11 @@ void Group::SplitExp(uint32 exp, Mob* killed_mob) {
 	float groupmod = 1.0;
 
 	int8 members = gs.close_membercount;
-	if (RuleB(AlKabor, OutOfRangeGroupXPBonus))
+	if (RuleB(Experience, IsOutOfRangeGroupXPBonusEnabled)) {
 		members = gs.membercount;
+	}
 
-	if (RuleB(AlKabor, VeliousGroupEXPBonuses)) {
+	if (RuleB(Experience, IsVeliousGroupEXPBonusesEnabled)) {
 		// group bonus from Jan 2001 until June 2003.
 		switch (members) {
 			case 2:
@@ -724,7 +726,7 @@ void Group::SplitExp(uint32 exp, Mob* killed_mob) {
 		else if (members == 3)
 			groupmod += 0.40;
 
-		if (RuleB(AlKabor, GroupEXPBonuses)) {
+		if (RuleB(Experience, IsBrokenGroupEXPBonusesEnabled)) {
 			// Use the "broken" bonuses on AK.
 			if (members == 4)
 				groupmod += 1.20;
@@ -738,11 +740,11 @@ void Group::SplitExp(uint32 exp, Mob* killed_mob) {
 		}
 	}
 
-	float groupexp = (static_cast<float>(exp) * groupmod) * RuleR(Character, GroupExpMultiplier);
+	float groupexp = (static_cast<float>(exp) * groupmod) * RuleR(Experience, GroupExpMultiplier);
 	Log(Logs::Detail, Logs::Group, "Group Base XP: %d GroupMod: %0.2f Final XP: %0.2f", exp, groupmod, groupexp);
 
 	// 6th member is free in the split under mid-Ykesha+ era rules, but not on AK or under classic rules
-	if (!RuleB(AlKabor, Count6thGroupMember) && gs.close_membercount == 6) {
+	if (!RuleB(Experience, Is6thGroupMemberIncluded) && gs.close_membercount == 6) {
 		gs.weighted_levels -= minlevel;
 	}
 
@@ -784,7 +786,7 @@ bool Group::ProcessGroupSplit(Mob* killed_mob, struct GroupExpSplit_Struct& gs, 
 				if (cmember->IsInExpRange(killed_mob)) {
 					++gs.close_membercount;
 
-					if (cmember->GetLevelCon(killed_mob->GetLevel()) == CON_GREEN && RuleB(AlKabor, GreenExpBonus)) {
+					if (cmember->GetLevelCon(killed_mob->GetLevel()) == CON_GREEN && RuleB(Experience, IsGreenExpBonusEnabled)) {
 						// When a green is giving XP to the group, the players who don't get XP are considered equal to the highest player who does.
 						// This is according to Placer.  No hard evidence of this is known, so this is iffy.
 						// This results in higher level players being able to powerlevel lower level players by simply grouping with them and mass killing greens.
@@ -895,7 +897,7 @@ void Raid::SplitExp(uint32 exp, Mob* killed_mob) {
 	if (membercount == 0)
 		return;
 
-	float groupexp = static_cast<float>(exp) * RuleR(Character, RaidExpMultiplier);
+	float groupexp = static_cast<float>(exp) * RuleR(Experience, RaidExpMultiplier);
 	Log(Logs::Detail, Logs::Group, "Raid XP: %d Final XP: %0.2f", exp, groupexp);
 
 	// Assigns XP if the qualifications are met.
@@ -1001,9 +1003,9 @@ void Client::GetExpLoss(Mob* killerMob, uint16 spell, int& exploss, uint8 killed
 		loss = 0.07f;
 
 	int requiredxp = GetEXPForLevel(level + 1) - GetEXPForLevel(level);
-	exploss = (int)((float)requiredxp * (loss * RuleR(Character, EXPLossMultiplier)));
+	exploss = (int)((float)requiredxp * (loss * RuleR(Experience, EXPLossMultiplier)));
 
-	if ((level < RuleI(Character, DeathExpLossLevel)) || (level > RuleI(Character, DeathExpLossMaxLevel)) || IsBecomeNPC()) {
+	if ((level < RuleI(Experience, DeathExpLossLevel)) || (level > RuleI(Experience, DeathExpLossMaxLevel)) || IsBecomeNPC()) {
 		exploss = 0;
 	} else if (killerMob) {
 		if (killerMob->IsClient()) {

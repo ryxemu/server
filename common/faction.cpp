@@ -60,7 +60,6 @@ FACTION_VALUE CalculateFaction(FactionMods* fm, int32 tmpCharacter_value, bool l
 bool IsOfEqualRace(int r1, int r2) {
 	if (r1 == r2)
 		return true;
-	// TODO: add more values
 	switch (r1) {
 		case DARK_ELF:
 			if (r2 == 77)
@@ -77,7 +76,6 @@ bool IsOfEqualRace(int r1, int r2) {
 bool IsOfIndiffRace(int r1, int r2) {
 	if (r1 == r2)
 		return true;
-	// TODO: add more values
 	switch (r1) {
 		case DARK_ELF:
 		case OGRE:

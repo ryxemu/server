@@ -43,7 +43,6 @@ class additive_lagged_fibonacci_engine {
 			state[i] = (state[i - 1] + state[i - 2]) & ((1u << word_size) - 1);
 		return;
 	}
-	// TODO: seed via seed_seq
 
 	static constexpr result_type min() { return 0; }
 	static constexpr result_type max() { return ((1u << word_size) - 1) >> 6; }

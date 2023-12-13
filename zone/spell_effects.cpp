@@ -985,7 +985,7 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 				//	buffs[buffslot].ticsremaining = spells[spell_id].buffduration; // Prevent focus/aa buff extension
 
 				// DA spells seemed to have reduced hate on AK by an unknown amount, but likely not all of it.  Half is a wild guess
-				if (RuleB(AlKabor, InvulnHateReduction))
+				if (RuleB(Server, InvulnHateReduction))
 					entity_list.HalveAggro(this);
 
 				SetInvul(true);
@@ -1257,7 +1257,6 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 #ifdef SPELL_EFFECT_SPAM
 				snprintf(effect_desc, _EDLEN, "Feign Death");
 #endif
-				// todo, look up spell ID in DB
 				if (spell_id == 2488)  // Dook- Lifeburn fix
 					break;
 
@@ -1463,7 +1462,6 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 #ifdef SPELL_EFFECT_SPAM
 				snprintf(effect_desc, _EDLEN, "Lull");
 #endif
-				// TODO: check vs. CHA when harmony effect failed, if caster is to be added to hatelist
 				break;
 			}
 

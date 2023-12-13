@@ -78,6 +78,13 @@ void QuestParserCollection::RemoveEncounter(const std::string name) {
 	}
 }
 
+QuestInterface *QuestParserCollection::GetQuestInterface(uint32 id) {
+	auto it = _interfaces.find(id);
+	if (it != _interfaces.end())
+		return it->second;
+	return nullptr;
+}
+
 bool QuestParserCollection::HasQuestSub(uint32 npcid, QuestEventID evt, bool check_encounters) {
 	return HasQuestSubLocal(npcid, evt) || HasQuestSubGlobal(evt) || (check_encounters && NPCHasEncounterSub(npcid, evt));
 }
@@ -226,6 +233,14 @@ bool QuestParserCollection::ItemHasQuestSub(EQ::ItemInstance *itm, QuestEventID 
 
 	std::string item_script;
 	item_script = std::to_string(itm->GetID());
+	// if(itm->GetItem()->ScriptFileID != 0) {
+	// 	item_script = "script_";
+	// 	item_script += std::to_string(itm->GetItem()->ScriptFileID);
+	// } else if(strlen(itm->GetItem()->CharmFile) > 0) {
+	// 	item_script = itm->GetItem()->CharmFile;
+	// } else {
+	// 	item_script = std::to_string(itm->GetID());
+	// }
 
 	uint32 item_id = itm->GetID();
 	auto iter = _item_quest_status.find(item_id);
@@ -385,7 +400,14 @@ int QuestParserCollection::EventItem(QuestEventID evt, Client *client, EQ::ItemI
 	// needs pointer validation check on 'item' argument
 
 	std::string item_script;
+	// if(item->GetItem()->ScriptFileID != 0) {
+	// 	item_script = "script_";
+	// 	item_script += std::to_string(item->GetItem()->ScriptFileID);
+	// } else if(strlen(item->GetItem()->CharmFile) > 0) {
+	// 	item_script = item->GetItem()->CharmFile;
+	// } else {
 	item_script = std::to_string(item->GetID());
+	// }
 
 	uint32 item_id = item->GetID();
 	auto iter = _item_quest_status.find(item_id);
@@ -997,6 +1019,116 @@ void QuestParserCollection::GetErrors(std::list<std::string> &quest_errors) {
 		++iter;
 	}
 }
+
+/*
+void QuestParserCollection::MeleeMitigation(Mob *self, Mob *attacker, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault)
+{
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        (*iter)->MeleeMitigation(self, attacker, hit, opts, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+}
+
+void QuestParserCollection::ApplyDamageTable(Mob *self, DamageHitInfo &hit, bool &ignoreDefault)
+{
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        (*iter)->ApplyDamageTable(self, hit, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+}
+
+bool QuestParserCollection::AvoidDamage(Mob *self, Mob *other, DamageHitInfo &hit, bool &ignoreDefault)
+{
+    bool ret = false;
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        ret = (*iter)->AvoidDamage(self, other, hit, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+    return ret;
+}
+
+bool QuestParserCollection::CheckHitChance(Mob *self, Mob* other, DamageHitInfo &hit, bool &ignoreDefault)
+{
+    bool ret = false;
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        ret = (*iter)->CheckHitChance(self, other, hit, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+    return ret;
+}
+
+void QuestParserCollection::TryCriticalHit(Mob *self, Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault)
+{
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        (*iter)->TryCriticalHit(self, defender, hit, opts, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+}
+
+void QuestParserCollection::CommonOutgoingHitSuccess(Mob *self, Mob* other, DamageHitInfo &hit, ExtraAttackOptions *opts, bool &ignoreDefault)
+{
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        (*iter)->CommonOutgoingHitSuccess(self, other, hit, opts, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+}
+
+uint32 QuestParserCollection::GetRequiredAAExperience(Client *self, bool &ignoreDefault)
+{
+    uint32 ret = 0;
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        ret = (*iter)->GetRequiredAAExperience(self, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+    return ret;
+}
+
+uint32 QuestParserCollection::GetEXPForLevel(Client *self, uint16 level, bool &ignoreDefault)
+{
+    uint32 ret = 0;
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        ret = (*iter)->GetEXPForLevel(self, level, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+    return ret;
+}
+
+uint32 QuestParserCollection::GetExperienceForKill(Client *self, Mob *against, bool &ignoreDefault)
+{
+    uint32 ret = 0;
+    auto iter = _load_precedence.begin();
+    while (iter != _load_precedence.end()) {
+        ret = (*iter)->GetExperienceForKill(self, against, ignoreDefault);
+        if (ignoreDefault) // hit a mod
+            break;
+        ++iter;
+    }
+    return ret;
+} */
 
 int QuestParserCollection::DispatchEventNPC(QuestEventID evt, NPC *npc, Mob *init, std::string data, uint32 extra_data,
                                             std::vector<std::any> *extra_pointers) {

@@ -117,7 +117,7 @@ void Client::SummonHorse(uint16 spell_id) {
 
 	EQApplicationPacket outapp;
 	horse->CreateHorseSpawnPacket(&outapp, GetName(), GetID());
-	/*	// Doodman: Kludged in here instead of adding a field to PCType. FIXME!
+	/*	// Doodman: Kludged in here instead of adding a field to PCType. !
 	    NewSpawn_Struct* ns=(NewSpawn_Struct*)outapp->pBuffer;
 	    ns->spawn.texture=mount_color;
 	    ns->spawn.pet_owner_id=0;

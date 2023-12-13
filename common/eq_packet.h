@@ -16,28 +16,28 @@ class EQOldStream;
 
 /************ PACKETS ************/
 struct EQPACKET_HDR_INFO {
-	uint8 a0_Unknown : 1;   // TODO: What is this one?
-	uint8 a1_ARQ : 1;       // TODO: What is this one?
-	uint8 a2_Closing : 1;   // TODO: What is this one?
-	uint8 a3_Fragment : 1;  // TODO: What is this one?
-	uint8 a4_ASQ : 1;       // TODO: What is this one?
-	uint8 a5_SEQStart : 1;  // TODO: What is this one?
-	uint8 a6_Closing : 1;   // TODO: What is this one?
-	uint8 a7_SEQEnd : 1;    // TODO: What is this one?
-	uint8 b0_SpecARQ : 1;   // TODO: What is this one?
-	uint8 b1_Unknown : 1;   // TODO: What is this one?
-	uint8 b2_ARSP : 1;      // TODO: What is this one?
-	uint8 b3_Unknown : 1;   // TODO: What is this one?
-	uint8 b4_Unknown : 1;   // TODO: What is this one?
-	uint8 b5_Unknown : 1;   // TODO: What is this one?
-	uint8 b6_Unknown : 1;   // TODO: What is this one?
-	uint8 b7_Unknown : 1;   // TODO: What is this one?
+	uint8 a0_Unknown : 1;
+	uint8 a1_ARQ : 1;
+	uint8 a2_Closing : 1;
+	uint8 a3_Fragment : 1;
+	uint8 a4_ASQ : 1;
+	uint8 a5_SEQStart : 1;
+	uint8 a6_Closing : 1;
+	uint8 a7_SEQEnd : 1;
+	uint8 b0_SpecARQ : 1;
+	uint8 b1_Unknown : 1;
+	uint8 b2_ARSP : 1;
+	uint8 b3_Unknown : 1;
+	uint8 b4_Unknown : 1;
+	uint8 b5_Unknown : 1;
+	uint8 b6_Unknown : 1;
+	uint8 b7_Unknown : 1;
 };
 
 struct FRAGMENT_INFO {
-	uint16 dwSeq;    // TODO: What is this one?
-	uint16 dwCurr;   // TODO: What is this one?
-	uint16 dwTotal;  // TODO: What is this one?
+	uint16 dwSeq;
+	uint16 dwCurr;
+	uint16 dwTotal;
 };
 
 class EQPacket : public BasePacket {
@@ -147,15 +147,15 @@ class EQOldPacket {
 		this->Resend = false;
 	}
 
-	EQPACKET_HDR_INFO HDR;  // TODO: What is this one?
+	EQPACKET_HDR_INFO HDR;
 	uint16 dwSEQ;           // Sequence number
-	uint16 dwARSP;          // TODO: What is this one?
+	uint16 dwARSP;
 	uint16 b3ARSP;
 	uint16 b4_size;
 	uchar *ack_fields;
-	uint16 dwARQ;            // TODO: What is this one?
-	uint16 dbASQ_high : 8;   // TODO: What is this one?
-	uint16 dbASQ_low : 8;    // TODO: What is this one?
+	uint16 dwARQ;
+	uint16 dbASQ_high : 8;
+	uint16 dbASQ_low : 8;
 	uint16 dwOpCode;         // Not all packet have opcodes.
 	FRAGMENT_INFO fraginfo;  // Fragment info
 	uint16 dwExtraSize;      // Size of additional info.

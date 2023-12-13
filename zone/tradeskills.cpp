@@ -392,7 +392,7 @@ bool ZoneDatabase::GetTradeRecipe(const EQ::ItemInstance* container, uint8 c_typ
 	std::string buf2;
 	uint32 count = 0;
 	uint32 sum = 0;
-	for (uint8 i = 0; i < 10; i++) {  // <watch> TODO: need to determine if this is bound to world/item container size
+	for (uint8 i = 0; i < 10; i++) {  //
 		LogTradeskills("[GetTradeRecipe] Fetching item [{}]", i);
 
 		const EQ::ItemInstance* inst = container->GetItem(i);

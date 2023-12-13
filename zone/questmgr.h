@@ -19,6 +19,7 @@ class QuestManager {
 		Mob *owner;
 		Client *initiator;
 		EQ::ItemInstance *questitem;
+		const SPDat_Spell_Struct *questspell;
 		bool depop_npc;
 		std::string encounter;
 	};
@@ -34,7 +35,7 @@ class QuestManager {
 	QuestManager();
 	virtual ~QuestManager();
 
-	void StartQuest(Mob *_owner, Client *_initiator = nullptr, EQ::ItemInstance *_questitem = nullptr, std::string encounter = "");
+	void StartQuest(Mob *_owner, Client *_initiator = nullptr, EQ::ItemInstance *_questitem = nullptr, const SPDat_Spell_Struct *_questspell = nullptr, std::string encounter = "");
 	void EndQuest();
 	bool QuestsRunning() { return !quests_running_.empty(); }
 

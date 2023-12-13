@@ -1501,8 +1501,6 @@ ZonePoint* Zone::GetClosestZonePoint(const glm::vec3& location, uint32 to, Clien
 		iterator.Advance();
 	}
 
-	// solar 20231008 commented out, this is spamming up the log for legitimate ports/gates
-	// TODO: there are some issues with the client side things like succor and gate failures that may be making this worse and this fallthrough log spam could be useful to find error cases in the above code.
 	/*
 	if(closest_dist > 400.0f && closest_dist < max_distance2)
 	{
@@ -2214,7 +2212,6 @@ void Zone::NexusProcess() {
 			Log(Logs::Detail, Logs::Nexus, "time_remaining %d on step %d in zone %s", time_remaining, nexus_timer_step, GetShortName());
 		} else if (Nexus_Scion_Timer->Check()) {
 			if (spires) {
-				// Todo: Figure out animation
 				spires->CastSpell(2935, spires->GetID());
 				Log(Logs::General, Logs::Nexus, "Spires in %s are beginning to cast the port spell to nexus.", GetShortName());
 			} else {

@@ -257,7 +257,7 @@ void Client::ActivateAA(aaID aaid) {
 
 			case aaActionActOfValor:
 				if (GetTarget() != nullptr) {
-					int curhp = GetHP();  // TODO - range check and maybe cast spell 2775 instead of doing this
+					int curhp = GetHP();
 					GetTarget()->HealDamage(curhp, this);
 					Death(this, 0, SPELL_UNKNOWN, EQ::skills::SkillHandtoHand);
 				}

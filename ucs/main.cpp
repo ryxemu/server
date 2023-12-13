@@ -50,7 +50,7 @@ int main() {
 
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
-	LogInfo("Starting EQEmu Universal Chat Server.");
+	LogInfo("Starting UCS v{}", VERSION);
 
 	auto load_result = ucsconfig::LoadConfig();
 	if (!load_result.empty()) {

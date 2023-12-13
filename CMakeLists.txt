@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_MODULE_PATH})
 
@@ -16,6 +16,7 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
+
 IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. Should also consider global variables on OS.
 	IF(CMAKE_CL_64)
 		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
@@ -24,22 +25,20 @@ IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. 
 		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x64") #We should not just be looking for this within the dependencies folder.
 		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x64") #We should not just be looking for this within the dependencies folder.
 	ELSE(CMAKE_CL_64)
-		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
-		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x86") #We should not just be looking for this within the dependencies folder.
-		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x86") #We should not just be looking for this within the dependencies folder.
-		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x86") #We should not just be looking for this within the dependencies folder.
-		SET(CURL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/curl_x86") #We should not just be looking for this within the dependencies folder.
+		MESSAGE(FATAL_ERROR "x86 is no longer supported. Change to x64")
 	ENDIF(CMAKE_CL_64)
 
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 	ADD_DEFINITIONS(-DNOMINMAX)
 	ADD_DEFINITIONS(-DCRASH_LOGGING)
+	ADD_COMPILE_OPTIONS(/bigobj) # sol2 templates can use lots of memory
 
-	ADD_DEFINITIONS(-D_HAS_AUTO_PTR_ETC) # for Luabind on C++17
+	# ADD_DEFINITIONS(-D_HAS_AUTO_PTR_ETC) # for Luabind on C++17
 
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 ELSE(MSVC)
 	ADD_DEFINITIONS(-DHAS_UNION_SEMUN)
+	# ADD_COMPILE_OPTIONS(-Wa,-mbig-obj) # sol2 templates can use lots of memory
 ENDIF(MSVC)
 
 #FreeBSD support
@@ -70,7 +69,8 @@ FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(OpenSSL)
-FIND_PACKAGE(Lua51)
+FIND_PACKAGE(Lua 5.2)
+#FIND_PACKAGE(LuaJit)
 FIND_PACKAGE(mbedTLS)
 FIND_PACKAGE(CURL REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
@@ -97,7 +97,7 @@ ELSE()
 	MESSAGE(STATUS "* ZLIB:                                  MISSING *")
 ENDIF()
 
-IF(Lua51_FOUND)
+IF(Lua_FOUND)
 	MESSAGE(STATUS "* Lua:                                     FOUND *")
 ELSE()
 	MESSAGE(STATUS "* Lua:                                   MISSING *")
@@ -122,7 +122,6 @@ OPTION(EQEMU_DEPOP_INVALIDATES_CACHE "#repop invalidates the npc_types cache (wi
 OPTION(EQEMU_COMMANDS_LOGGING "Enable GM Command logs" ON)
 OPTION(EQEMU_BUILD_SERVER "Build the game server." ON)
 OPTION(EQEMU_BUILD_LOGIN "Build the login server." ON)
-OPTION(EQEMU_BUILD_HC "Build the headless client." OFF)
 OPTION(EQEMU_BUILD_TESTS "Build utility tests." OFF)
 OPTION(EQEMU_BUILD_CLIENT_FILES "Build Client Import/Export Data Programs." OFF)
 
@@ -242,14 +241,16 @@ ELSE()
 	SET(TLS_LIBRARY_ENABLED OFF)
 ENDIF()
 
-IF(Lua51_FOUND)
-	SET(LUA_LIBRARY_TYPE " Lua 5.1")
-	SET(LUA_LIBRARY_ENABLED ON)
-	SET(LUA_LIBRARY_LIBS ${LUA_LIBRARY} luabind)
-	SET(LUA_LIBRARY_INCLUDE ${LUA_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/libs/luabind")
+IF(Lua_FOUND)
+	SET(LUA_LIBRARY_TYPE " Lua ${LUA_VERSION_STRING}")
+	ADD_DEFINITIONS(-DSOL_SAFE_USERTYPE)
+	ADD_DEFINITIONS(-DSOL_SAFE_REFERENCES)
+	ADD_DEFINITIONS(-DSOL_SAFE_FUNCTION_CALLS)
+	ADD_DEFINITIONS(-DSOL_SAFE_FUNCTION)
+	SET(LUA_LIBRARY_LIBS ${LUA_LIBRARY})
+	SET(LUA_LIBRARY_INCLUDE ${LUA_INCLUDE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/sol2")
 ELSE()
-	SET(LUA_LIBRARY_TYPE "Disabled")
-	SET(LUA_LIBRARY_ENABLED OFF)
+	MESSAGE(FATAL_ERROR "Lua is required to build.")
 ENDIF()
 
 #use zlib if exists
@@ -258,8 +259,8 @@ IF(ZLIB_FOUND)
 	IF(EQEMU_BUILD_ZLIB)
 		SET(ZLIB_LIBRARY_TYPE "zlib-ng")
 		SET(ZLIB_LIBRARY_LIBS "zlibstatic")
-		SET(ZLIB_LIBRARY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlibng")
-		INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_BINARY_DIR}/libs/zlibng")
+		SET(ZLIB_LIBRARY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlibng")
+		INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_BINARY_DIR}/dependencies/zlibng")
 	ELSE()
 		SET(ZLIB_LIBRARY_TYPE "   zlib")
 		SET(ZLIB_LIBRARY_LIBS ${ZLIB_LIBRARY})
@@ -268,7 +269,7 @@ IF(ZLIB_FOUND)
 ELSE()
 	SET(ZLIB_LIBRARY_TYPE "zlib-ng")
 	SET(ZLIB_LIBRARY_LIBS "zlibstatic")
-	SET(ZLIB_LIBRARY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/libs/zlibng")
+	SET(ZLIB_LIBRARY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlibng")
 ENDIF()
 
 MESSAGE(STATUS "")
@@ -287,16 +288,14 @@ SET(SERVER_LIBS common ${DATABASE_LIBRARY_LIBS} ${ZLIB_LIBRARY_LIBS} ${Boost_LIB
 INCLUDE_DIRECTORIES(SYSTEM "${DATABASE_LIBRARY_INCLUDE}")
 INCLUDE_DIRECTORIES(SYSTEM "${ZLIB_LIBRARY_INCLUDE}")
 INCLUDE_DIRECTORIES(SYSTEM "${Boost_INCLUDE_DIRS}")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/glm")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/cereal/include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/fmt/include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/libuv/include" )
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/DebugUtils/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/Detour/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/DetourCrowd/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/DetourTileCache/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/Recast/Include")
-INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/fmt/include")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libuv/include" )
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/DebugUtils/Include")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/Detour/Include")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/DetourCrowd/Include")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/DetourTileCache/Include")
+INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/recastnavigation/Recast/Include")
 INCLUDE_DIRECTORIES(${YAML_INCLUDE_DIRS})
 
 OPTION(EQEMU_BUILD_LOGGING "Build Logging (To speed up compilation)" ON)
@@ -309,11 +308,10 @@ IF(TLS_LIBRARY_ENABLED)
 	INCLUDE_DIRECTORIES(SYSTEM "${TLS_LIBRARY_INCLUDE}")
 ENDIF()
 
-IF(LUA_LIBRARY_ENABLED)
+IF(Lua_FOUND)
 	OPTION(EQEMU_BUILD_LUA "Build Lua parser." ON)
 
 	IF(EQEMU_BUILD_LUA)
-		ADD_DEFINITIONS(-DLUA_EQEMU)
 		SET(SERVER_LIBS ${SERVER_LIBS} ${LUA_LIBRARY_LIBS})
 		INCLUDE_DIRECTORIES(SYSTEM "${LUA_LIBRARY_INCLUDE}")
 
@@ -347,23 +345,22 @@ IF(EQEMU_BUILD_LOGIN AND NOT TLS_LIBRARY_ENABLED)
 	MESSAGE(FATAL_ERROR "Login server requires a TLS Library to build.")
 ENDIF()
 
-IF(EQEMU_BUILD_SERVER OR EQEMU_BUILD_LOGIN OR EQEMU_BUILD_TESTS OR EQEMU_BUILD_HC)
+IF(EQEMU_BUILD_SERVER OR EQEMU_BUILD_LOGIN OR EQEMU_BUILD_TESTS)
 	ADD_SUBDIRECTORY(common)
-	ADD_SUBDIRECTORY(libs)
-	ADD_SUBDIRECTORY(submodules/fmt)
-	ADD_SUBDIRECTORY(submodules/libuv)
+	ADD_SUBDIRECTORY(dependencies/fmt)
+	ADD_SUBDIRECTORY(dependencies/libuv)
 
 	IF(EQEMU_BUILD_ZLIB)
 		SET(ZLIB_COMPAT ON CACHE BOOL "Compile with zlib compatible API")
 		SET(ZLIB_ENABLE_TESTS OFF CACHE BOOL "Build test binaries")
-		ADD_SUBDIRECTORY(libs/zlibng)
+		ADD_SUBDIRECTORY(dependencies/zlibng)
 	ENDIF()
 
 	SET(RECASTNAVIGATION_DEMO OFF CACHE BOOL "Build demo")
 	SET(RECASTNAVIGATION_TESTS OFF CACHE BOOL "Build tests")
 	SET(RECASTNAVIGATION_EXAMPLES OFF CACHE BOOL "Build examples")
-	ADD_SUBDIRECTORY(submodules/recastnavigation)
-ENDIF(EQEMU_BUILD_SERVER OR EQEMU_BUILD_LOGIN OR EQEMU_BUILD_TESTS OR EQEMU_BUILD_HC)
+	ADD_SUBDIRECTORY(dependencies/recastnavigation)
+ENDIF(EQEMU_BUILD_SERVER OR EQEMU_BUILD_LOGIN OR EQEMU_BUILD_TESTS)
 
 IF(EQEMU_BUILD_SERVER)
 	ADD_SUBDIRECTORY(shared_memory)
@@ -376,10 +373,6 @@ ENDIF(EQEMU_BUILD_SERVER)
 IF(EQEMU_BUILD_LOGIN)
 	ADD_SUBDIRECTORY(loginserver)
 ENDIF(EQEMU_BUILD_LOGIN)
-
-IF(EQEMU_BUILD_HC)
-	ADD_SUBDIRECTORY(hc)
-ENDIF(EQEMU_BUILD_HC)
 
 IF(EQEMU_BUILD_TESTS)
 	ADD_SUBDIRECTORY(tests)

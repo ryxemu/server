@@ -95,11 +95,12 @@ void QuestManager::Process() {
 	}
 }
 
-void QuestManager::StartQuest(Mob *_owner, Client *_initiator, EQ::ItemInstance *_questitem, std::string encounter) {
+void QuestManager::StartQuest(Mob *_owner, Client *_initiator, EQ::ItemInstance *_questitem, const SPDat_Spell_Struct *_questspell, std::string encounter) {
 	running_quest run;
 	run.owner = _owner;
 	run.initiator = _initiator;
 	run.questitem = _questitem;
+	run.questspell = _questspell;
 	run.depop_npc = false;
 	run.encounter = encounter;
 	quests_running_.push(run);
@@ -1847,7 +1848,6 @@ void QuestManager::clearspawntimers() {
 	if (!zone)
 		return;
 
-	// TODO: Dec 19, 2008, replace with code updated for current spawn timers.
 	LinkedListIterator<Spawn2 *> iterator(zone->spawn2_list);
 	iterator.Reset();
 	while (iterator.MoreElements()) {
