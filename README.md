@@ -1,4 +1,4 @@
-## Project Overview: Untitled For Now
+## Project Overview: RyxEmu
 
 ### Project Goals:
 

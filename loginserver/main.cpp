@@ -28,7 +28,7 @@ int main() {
 	RegisterExecutablePlatform(ExePlatformLogin);
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
-	LogInfo("Logging System Init.");
+	LogInfo("Starting LoginServer v{}", VERSION);
 
 	LogSys.log_settings[Logs::Error].log_to_console = Logs::General;
 

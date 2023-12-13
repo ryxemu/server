@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 	set_exception_handler();
 	QServ = new QueryServ;
 
-	LogInfo("Loading config.yaml");
+	LogInfo("Starting Zone v{}", VERSION);
 	auto load_result = ZoneConfig::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);

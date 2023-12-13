@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
 
-	Log(Logs::General, Logs::Status, "Shared Memory Loader Program");
+	LogInfo("Starting SharedMemory v{}", VERSION);
+
 	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
