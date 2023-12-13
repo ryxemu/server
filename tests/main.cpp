@@ -17,6 +17,8 @@ const Config *Config;
 int main() {
 	auto ConfigLoadResult = Config::LoadConfig();
 	Config = Config::get();
+	std::cout << "Tests starting..." << std::endl;
+
 	try {
 		std::ofstream outfile("test_output.txt");
 		std::unique_ptr<Test::Output> output(new Test::TextOutput(Test::TextOutput::Verbose, outfile));
@@ -32,7 +34,9 @@ int main() {
 		tests.add(new SkillsUtilsTest());
 		tests.run(*output, true);
 	} catch (...) {
+		std::cout << "Tests failed" << std::endl;
 		return -1;
 	}
+	std::cout << "Tests completed successfully" << std::endl;
 	return 0;
 }

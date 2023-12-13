@@ -28,8 +28,8 @@ jobs:
 
     - run: sudo apt update && sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils git liblua5.2-0 liblua5.2-dev libmariadb-dev libssl-dev minizip make mariadb-client locales nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb libyaml-cpp-dev ccache ninja-build pv mariadb-server libboost-dev
     - run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DEQEMU_BUILD_LOGIN=ON -DEQEMU_BUILD_TESTS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja
-
     - run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - run: make test
     - uses: actions/cache/save@v3
       if: github.ref == 'refs/heads/main'
       with:

@@ -17,7 +17,7 @@ build:
 cmake:
 	mkdir -p build$$BUILD_SUFFIX
 	@cd build$$BUILD_SUFFIX && cmake -DEQEMU_BUILD_LOGIN=ON \
-			-DEQEMU_BUILD_TESTS=OFF \
+			-DEQEMU_BUILD_TESTS=ON \
 			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
 
 clean:
@@ -74,6 +74,11 @@ prep:
 	@mkdir -p build/bin/logs
 	@mkdir -p build/bin/shared
 	@echo "RyXEmu is prepared"
+
+# Runs tests
+.PHONY: test
+test:
+	cd build/bin && ./tests
 
 # Runs loginserver binary
 .PHONY: loginserver

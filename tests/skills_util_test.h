@@ -4,9 +4,10 @@
 #include "cppunit/cpptest.h"
 #include "../common/skills.h"
 
-class SkillsUtilsTest: public Test::Suite {
-	typedef void(SkillsUtilsTest::*TestFunction)(void);
-public:
+class SkillsUtilsTest : public Test::Suite {
+	typedef void (SkillsUtilsTest::*TestFunction)(void);
+
+   public:
 	SkillsUtilsTest() {
 		TEST_ADD(SkillsUtilsTest::IsTradeskill);
 		TEST_ADD(SkillsUtilsTest::IsSpecializedSkill);
@@ -15,7 +16,7 @@ public:
 	~SkillsUtilsTest() {
 	}
 
-	private:
+   private:
 	void IsTradeskill() {
 		TEST_ASSERT(EQ::skills::IsTradeskill(EQ::skills::SkillPottery));
 		TEST_ASSERT(!EQ::skills::IsTradeskill(EQ::skills::SkillParry));
