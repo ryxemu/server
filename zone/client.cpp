@@ -2768,7 +2768,7 @@ void Client::Sacrifice(Client* caster) {
 			loss = 0.07f;
 
 		int requiredxp = GetEXPForLevel(level + 1) - GetEXPForLevel(level);
-		int exploss = (int)((float)requiredxp * (loss * RuleR(Character, EXPLossMultiplier)));
+		int exploss = (int)((float)requiredxp * (loss * RuleR(Experience, EXPLossMultiplier)));
 
 		if (exploss < GetEXP()) {
 			SetEXP(GetEXP() - exploss, GetAAXP());

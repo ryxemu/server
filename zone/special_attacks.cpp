@@ -746,7 +746,7 @@ void Mob::DoArcheryAttackDmg(Mob* other) {
 		z_angle = vector_x;
 	}
 
-	if (other->IsNPC() && RuleB(AlKabor, BlockProjectileWalls) && other->CastToNPC()->IsWalled()) {
+	if (other->IsNPC() && RuleB(Server, BlockProjectileWalls) && other->CastToNPC()->IsWalled()) {
 		float xy_angle = 0.0f;
 
 		// There were a few known edge cases of archery hitting cornered mobs.  Hardcoding these here
@@ -778,7 +778,7 @@ void Mob::DoArcheryAttackDmg(Mob* other) {
 		}
 	}
 
-	if (other->IsNPC() && RuleB(AlKabor, BlockProjectileCorners) && other->CastToNPC()->IsCornered() && (z_angle > 0.85f || z_angle < -0.85f)) {
+	if (other->IsNPC() && RuleB(Server, BlockProjectileCorners) && other->CastToNPC()->IsCornered() && (z_angle > 0.85f || z_angle < -0.85f)) {
 		Log(Logs::Moderate, Logs::Combat, "Poofing arrow; %s is cornered.  z_angle: %0.2f", other->GetName(), z_angle);
 		return;
 	}

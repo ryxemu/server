@@ -68,7 +68,6 @@ void Trade::Start(uint32 mob_id, bool initiate_with) {
 
 // Add item from a given slot to trade bucket (automatically does bag data too)
 void Trade::AddEntity(uint16 trade_slot_id, uint32 stack_size) {
-
 	if (!owner || !owner->IsClient()) {
 		// This should never happen
 		Log(Logs::General, Logs::Trading, "Programming error: NPC's should not call Trade::AddEntity()");
@@ -2038,7 +2037,7 @@ void Client::HandleTraderPriceUpdate(const EQApplicationPacket* app) {
 
 	// This is a safeguard against a Trader increasing the price of an item while a customer is browsing and
 	// unwittingly buying it at a higher price than they were expecting to.
-	if (!RuleB(AlKabor, AllowPriceIncWhileBrowsing)) {
+	if (!RuleB(Bazaar, IsPriceTweakingEnabled)) {
 		if ((OldPrice != 0) && (tpus->NewPrice > OldPrice) && WithCustomer) {
 			tsis->SubAction = BazaarPriceChange_Fail;
 			QueuePacket(outapp);

@@ -2083,7 +2083,7 @@ void Mob::AI_Event_Engaged(Mob* attacker) {
 	}
 
 	if (IsNPC() && !IsPet() && !CastToNPC()->IsAssisting()) {
-		if (!RuleB(AlKabor, AllowTickSplit) || GetSpecialAbility(ALWAYS_CALL_HELP)) {
+		if (!RuleB(NPC, IsTickSplitEnabled) || GetSpecialAbility(ALWAYS_CALL_HELP)) {
 			CastToNPC()->CallForHelp(attacker, true);
 		}
 	}

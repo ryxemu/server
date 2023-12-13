@@ -694,9 +694,9 @@ Mob *HateList::GetTop() {
 				topMeleeClientHate = currentHate;
 				topMeleeClient = cur->ent;
 			}
-		} else if (cur->ent->IsCharmedPet() && !RuleB(AlKabor, AllowCharmPetRaidTanks)) {
+		} else if (cur->ent->IsCharmedPet() && RuleI(Pets, CharmPetAllyBreak) > 0) {
 			// this makes NPCs ignore charmed pets if more than X players+pets get on the hate list
-			if (list.size() > RuleI(AlKabor, MaxEntitiesCharmTanks))
+			if (list.size() > RuleI(Pets, CharmPetAllyBreak))
 				currentHate = 0;
 		}
 

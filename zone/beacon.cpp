@@ -223,12 +223,12 @@ bool Beacon::Process() {
 								float ignoreDistance = target->CastToNPC()->GetIgnoreDistance();
 								fail_cast = ignoreDistance > 0 && DistanceSquared(target->GetPosition(), caster->GetPosition()) > ignoreDistance * ignoreDistance;
 
-								if (!fail_cast && RuleB(AlKabor, BlockProjectileCorners) && target->CastToNPC()->IsCornered()) {
+								if (!fail_cast && RuleB(Server, BlockProjectileCorners) && target->CastToNPC()->IsCornered()) {
 									Log(Logs::Moderate, Logs::Combat, "Poofing bolt; %s is cornered", target->GetName());
 									fail_cast = true;
 								}
 
-								if (!fail_cast && RuleB(AlKabor, BlockProjectileWalls) && target->CastToNPC()->IsWalled()) {
+								if (!fail_cast && RuleB(Server, BlockProjectileWalls) && target->CastToNPC()->IsWalled()) {
 									float height_diff = fabs(origin.x - target->GetZ());
 									float vector_x, vector_y, magnitude;
 									float xy_angle = 0.0f;

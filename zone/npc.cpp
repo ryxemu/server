@@ -490,7 +490,7 @@ bool NPC::Process() {
 		if (GetHP() < GetMaxHP())
 			SetHP(GetHP() + GetHPRegen());
 
-		if (RuleB(Alkabor, NPCsSendHPUpdatesPerTic) && (IsTargeted() || (IsPet() && GetOwner() && GetOwner()->IsClient()))) {
+		if (RuleB(Server, NPCsSendHPUpdatesPerTic) && (IsTargeted() || (IsPet() && GetOwner() && GetOwner()->IsClient()))) {
 			if (old_hp != cur_hp || cur_hp < max_hp) {
 				SendHPUpdate(false);
 			}
@@ -500,7 +500,7 @@ bool NPC::Process() {
 			SetMana(GetMana() + GetManaRegen());
 	}
 
-	if (!RuleB(Alkabor, NPCsSendHPUpdatesPerTic) && sendhpupdate_timer.Check() && (IsTargeted() || (IsPet() && GetOwner() && GetOwner()->IsClient()))) {
+	if (!RuleB(Server, NPCsSendHPUpdatesPerTic) && sendhpupdate_timer.Check() && (IsTargeted() || (IsPet() && GetOwner() && GetOwner()->IsClient()))) {
 		if (!IsFullHP || cur_hp < max_hp) {
 			SendHPUpdate();
 		}
@@ -2307,10 +2307,10 @@ float NPC::ApplyPushVector(bool noglance) {
 						newLoc.z += magnitude / hitNormal.z;
 				}
 			}  // if (hitNormal.x != 0.0f || hitNormal.y != 0.0f)
-			/*else
-			{
-			Shout("Error: hitNormal x and y both 0");
-			}*/
+			   /*else
+			   {
+			   Shout("Error: hitNormal x and y both 0");
+			   }*/
 		}
 	}
 

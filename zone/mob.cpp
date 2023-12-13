@@ -1006,7 +1006,7 @@ void Mob::CreateHPPacket(EQApplicationPacket* app) {
 
 // sends hp update of this mob to people who might care
 void Mob::SendHPUpdate(bool skipnpc, bool sendtoself) {
-	if (IsNPC() && skipnpc && RuleB(AlKabor, NPCsSendHPUpdatesPerTic))
+	if (IsNPC() && skipnpc && RuleB(Server, NPCsSendHPUpdatesPerTic))
 		return;
 
 	if (IsClient() && !CastToClient()->Connected())

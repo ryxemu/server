@@ -1654,7 +1654,7 @@ bool NPC::Death(Mob* killerMob, int32 damage, uint16 spell, EQ::skills::SkillTyp
 	int32 dmg_amt = 0;
 	Mob* killer = nullptr;
 	// give_exp is whoever gets XP credit.
-	uint8 force_level = RuleI(AlKabor, LevelCorpsesAlwaysSpawn);
+	uint8 force_level = RuleI(Corpse, LevelCorpsesAlwaysSpawn);
 	bool force_corpse = GetLevel() >= force_level;
 
 	if (oos && oos->IsNPC() && !force_corpse) {
@@ -1800,7 +1800,7 @@ void NPC::CreateCorpse(Mob* killer, bool& corpse_bool) {
 		is_client_pet = true;
 
 	auto corpse = new Corpse(this, &itemlist, GetNPCTypeID(), &NPCTypedata,
-	                         level > 54 ? RuleI(NPC, MajorNPCCorpseDecayTimeMS) : RuleI(NPC, MinorNPCCorpseDecayTimeMS),
+	                         level > 54 ? RuleI(Corpse, MajorNPCCorpseDecayTimeMS) : RuleI(Corpse, MinorNPCCorpseDecayTimeMS),
 	                         is_client_pet);
 	corpse_bool = true;
 	entity_list.LimitRemoveNPC(this);
@@ -4066,7 +4066,7 @@ int Client::GetMitigation(bool ignoreCap, int item_ac_sum, int shield_ac, int sp
 			break;
 		}
 		case MONK: {
-			softcap = RuleB(AlKabor, ReducedMonkAC) ? 315 : 350;
+			softcap = RuleB(Server, ReducedMonkAC) ? 315 : 350;
 			break;
 		}
 		default: {

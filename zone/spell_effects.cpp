@@ -985,7 +985,7 @@ bool Mob::SpellEffect(Mob *caster, uint16 spell_id, int buffslot, int caster_lev
 				//	buffs[buffslot].ticsremaining = spells[spell_id].buffduration; // Prevent focus/aa buff extension
 
 				// DA spells seemed to have reduced hate on AK by an unknown amount, but likely not all of it.  Half is a wild guess
-				if (RuleB(AlKabor, InvulnHateReduction))
+				if (RuleB(Server, InvulnHateReduction))
 					entity_list.HalveAggro(this);
 
 				SetInvul(true);

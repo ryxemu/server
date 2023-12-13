@@ -625,7 +625,7 @@ void EntityList::AIYellForHelp(Mob *sender, Mob *attacker) {
 			// then jump in if they are our friend
 			if (attacker->GetLevelCon(npc->GetLevel()) != CON_GREEN ||
 			    (attacker->IsNPC() && !attacker->IsPlayerOwned())) {
-				if (RuleB(AlKabor, AllowPetPull)) {
+				if (RuleB(NPC, IsGreenPetPullAllowed)) {
 					if (attacker->IsPet() && npc->GetLevelCon(attacker->GetLevel()) == CON_GREEN)
 						return;
 				}
@@ -1413,7 +1413,7 @@ int32 Mob::CheckHealAggroAmount(uint16 spell_id, Mob *target, uint32 heal_possib
 			// Aggro is reduced to 1 here otherwise items like invis to animals clickies and
 			// jboots will create a stupid amount of hate to all NPCs when spammed
 			if (from_clickable) {
-				if (RuleB(AlKabor, ClickyHateExploit) && (spell_id == 255 || spell_id == 894)) {
+				if (RuleB(Server, ClickyHateExploit) && (spell_id == 255 || spell_id == 894)) {
 					AggroAmount = 9;
 				} else {
 					AggroAmount = 1;

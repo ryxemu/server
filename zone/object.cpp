@@ -559,7 +559,7 @@ bool Object::HandleClick(Client* sender, const ClickObject_Struct* click_object)
 		// Send items inside of container
 
 		if (m_inst && m_inst->IsType(EQ::item::ItemClassBag)) {
-			if (RuleB(AlKabor, NoDropRemoveTradeskill)) {
+			if (RuleB(Server, NoDropRemoveTradeskill)) {
 				// Clear out no-drop and no-rent items first
 				m_inst->ClearByFlags(byFlagSet, byFlagSet);
 			} else if (user != last_user) {

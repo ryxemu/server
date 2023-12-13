@@ -653,7 +653,6 @@ void Client::CompleteConnect() {
 }
 
 void Client::CheatDetected(CheatTypes CheatType, float x, float y, float z) {
-
 	switch (CheatType) {
 		case MQWarp:  // Some zones may still have issues. Database updates will eliminate most if not all problems.
 			if (RuleB(Zone, EnableMQWarpDetector) && ((this->Admin() < RuleI(Zone, MQWarpExemptStatus) || (RuleI(Zone, MQWarpExemptStatus)) == -1))) {
@@ -997,7 +996,7 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 
 	exp_sessionStart = Timer::GetCurrentTime();
 	exp_sessionGained = 0;
-	exp_nextCheck = RuleI(AA, ExpPerPoint);
+	exp_nextCheck = RuleI(Experience, BaseToAA);
 	exp_nextCheck *= 2;
 	uint32 i;
 	std::string query;
@@ -1370,8 +1369,9 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 		BuffFadeByEffect(SE_SummonHorse);
 	}
 
-	if (RuleB(AlKabor, StripBuffsOnLowHP) && GetHP() < itembonuses.HP)
+	if (RuleR(Zone, StripBuffsLowHPRatio) > 0 && GetHPRatio() <= RuleR(Zone, StripBuffsLowHPRatio)) {
 		stripbuffs = true;
+	}
 
 	for (int i = 0; i < max_slots; i++) {
 		if ((buffs[i].spellid != SPELL_UNKNOWN && !stripbuffs) ||
@@ -1450,7 +1450,7 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 #endif
 
 	/* Reset to max so they dont drown on zone in if its underwater */
-	if (!RuleB(AlKabor, RememberAir)) {
+	if (!RuleB(Server, RememberAir)) {
 		m_pp.air_remaining = CalculateLungCapacity();
 	}
 	/* Check for PVP Zone status*/
@@ -2347,11 +2347,10 @@ void Client::Handle_OP_CastSpell(const EQApplicationPacket *app) {
 	}
 
 	if (Admin() > 20 && GetGM() && IsValidSpell(castspell->spell_id)) {
-        Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
-        char szArguments[64];
-        snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
-        QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
-
+		Mob *SpellTarget = entity_list.GetMob(castspell->target_id);
+		char szArguments[64];
+		snprintf(szArguments, sizeof(szArguments), "ID %i (%.*s), Slot %i, InvSlot %i", castspell->spell_id, (int)(sizeof(spells[castspell->spell_id].name) - 1), spells[castspell->spell_id].name, castspell->slot, castspell->inventoryslot);
+		QServ->QSLogCommands(this, "spell", szArguments, SpellTarget);
 	}
 
 	/* Memorized Spell */
