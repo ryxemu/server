@@ -54,16 +54,7 @@ We'll be using a standalone binary mysql install for dev purposes. It is suggest
 
 ## Database Inject
 
-- Two ways to do this: run `make inject-mariadb`, OR follow steps manually below.
-- `mysql -u vscode -S build/bin/db/mysql/mysqld.sock`, Starts a mysql root console
-- `CREATE DATABASE ryx;` Create a database called ryx
-- `CREATE USER 'ryx'@'127.0.0.1' IDENTIFIED BY 'ryxpass';` Create a user named ryx with password ryxpass
-- `GRANT ALL PRIVILEGES ON *.* TO 'ryx'@'127.0.0.1';` Give it access to everything.
-- Exit the console by pressing CTRL+C.
-- `mysql -u ryx -h 127.0.0.1 -p` Starts a myql ryx user console, will prompt for password, type `ryxpass` and enter.
-- Above worked? Awesome. CTRL+C to exit
-- `unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database ryx` Source a database
-- Or if you're lazy, copy paste th
+- `make inject-mariadb`
 
 
 ## Content Prep
