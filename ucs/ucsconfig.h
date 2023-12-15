@@ -5,8 +5,6 @@
 
 class ucsconfig : public Config {
    public:
-	virtual std::string GetByName(const std::string &var_name) const;
-
    private:
 	static ucsconfig *_chat_config;
 

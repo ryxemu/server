@@ -4,7 +4,7 @@
 #include "../common/md5.h"
 #include "../common/emu_tcp_connection.h"
 #include "../common/packet_dump.h"
-#include "world_config.h"
+#include "../common/config.h"
 #include "clientlist.h"
 #include "zonelist.h"
 #include "remote_call.h"

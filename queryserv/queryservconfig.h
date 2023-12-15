@@ -4,9 +4,6 @@
 #include "../common/config.h"
 
 class queryservconfig : public Config {
-   public:
-	virtual std::string GetByName(const std::string &var_name) const;
-
    private:
 	static queryservconfig *_chat_config;
 

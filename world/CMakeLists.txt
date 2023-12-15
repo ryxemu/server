@@ -14,7 +14,6 @@ SET(world_sources
 	queryserv.cpp
 	ucs.cpp
 	wguild_mgr.cpp
-	world_config.cpp
 	worlddb.cpp
 	zonelist.cpp
 	zoneserver.cpp
@@ -35,7 +34,6 @@ SET(world_headers
 	char_create_data.h
 	ucs.h
 	wguild_mgr.h
-	world_config.h
 	world_tcp_connection.h
 	worlddb.h
 	zonelist.h
