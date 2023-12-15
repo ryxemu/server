@@ -8,70 +8,70 @@
 #include <string.h>
 
 namespace EQ {
-using Mac::IINVALID;
-using Mac::INULL;
+using Ls20231211::IINVALID;
+using Ls20231211::INULL;
 
 namespace inventory {
 
 }  // namespace inventory
 
 namespace invtype {
-using namespace Mac::invtype::enum_;
+using namespace Ls20231211::invtype::enum_;
 
-using Mac::invtype::BANK_SIZE;
-using Mac::invtype::BAZAAR_SIZE;
-using Mac::invtype::CORPSE_SIZE;
-using Mac::invtype::INSPECT_SIZE;
-using Mac::invtype::LIMBO_SIZE;
-using Mac::invtype::MERCHANT_SIZE;
-using Mac::invtype::POSSESSIONS_SIZE;
-using Mac::invtype::TRADE_SIZE;
-using Mac::invtype::WORLD_SIZE;
+using Ls20231211::invtype::BANK_SIZE;
+using Ls20231211::invtype::BAZAAR_SIZE;
+using Ls20231211::invtype::CORPSE_SIZE;
+using Ls20231211::invtype::INSPECT_SIZE;
+using Ls20231211::invtype::LIMBO_SIZE;
+using Ls20231211::invtype::MERCHANT_SIZE;
+using Ls20231211::invtype::POSSESSIONS_SIZE;
+using Ls20231211::invtype::TRADE_SIZE;
+using Ls20231211::invtype::WORLD_SIZE;
 
-using Mac::invtype::TRADE_NPC_SIZE;
+using Ls20231211::invtype::TRADE_NPC_SIZE;
 
-using Mac::invtype::TYPE_BEGIN;
-using Mac::invtype::TYPE_COUNT;
-using Mac::invtype::TYPE_END;
-using Mac::invtype::TYPE_INVALID;
+using Ls20231211::invtype::TYPE_BEGIN;
+using Ls20231211::invtype::TYPE_COUNT;
+using Ls20231211::invtype::TYPE_END;
+using Ls20231211::invtype::TYPE_INVALID;
 
 int16 GetInvTypeSize(int16 inv_type);
-using Mac::invtype::GetInvTypeName;
+using Ls20231211::invtype::GetInvTypeName;
 
 }  // namespace invtype
 
 namespace invslot {
-using namespace Mac::invslot::enum_;
+using namespace Ls20231211::invslot::enum_;
 
-using Mac::invslot::SLOT_BEGIN;
-using Mac::invslot::SLOT_INVALID;
+using Ls20231211::invslot::SLOT_BEGIN;
+using Ls20231211::invslot::SLOT_INVALID;
 
-using Mac::invslot::POSSESSIONS_BEGIN;
-using Mac::invslot::POSSESSIONS_COUNT;
-using Mac::invslot::POSSESSIONS_END;
+using Ls20231211::invslot::POSSESSIONS_BEGIN;
+using Ls20231211::invslot::POSSESSIONS_COUNT;
+using Ls20231211::invslot::POSSESSIONS_END;
 
-using Mac::invslot::EQUIPMENT_BEGIN;
-using Mac::invslot::EQUIPMENT_COUNT;
-using Mac::invslot::EQUIPMENT_END;
+using Ls20231211::invslot::EQUIPMENT_BEGIN;
+using Ls20231211::invslot::EQUIPMENT_COUNT;
+using Ls20231211::invslot::EQUIPMENT_END;
 
-using Mac::invslot::GENERAL_BEGIN;
-using Mac::invslot::GENERAL_COUNT;
-using Mac::invslot::GENERAL_END;
+using Ls20231211::invslot::GENERAL_BEGIN;
+using Ls20231211::invslot::GENERAL_COUNT;
+using Ls20231211::invslot::GENERAL_END;
 
-using Mac::invslot::BONUS_BEGIN;
-using Mac::invslot::BONUS_SKILL_END;
-using Mac::invslot::BONUS_STAT_END;
+using Ls20231211::invslot::BONUS_BEGIN;
+using Ls20231211::invslot::BONUS_SKILL_END;
+using Ls20231211::invslot::BONUS_STAT_END;
 
-using Mac::invslot::BANK_BEGIN;
-using Mac::invslot::BANK_END;
+using Ls20231211::invslot::BANK_BEGIN;
+using Ls20231211::invslot::BANK_END;
 
-using Mac::invslot::TRADE_BEGIN;
-using Mac::invslot::TRADE_END;
+using Ls20231211::invslot::TRADE_BEGIN;
+using Ls20231211::invslot::TRADE_END;
 
-using Mac::invslot::TRADE_NPC_END;
+using Ls20231211::invslot::TRADE_NPC_END;
 
-using Mac::invslot::WORLD_BEGIN;
-using Mac::invslot::WORLD_END;
+using Ls20231211::invslot::WORLD_BEGIN;
+using Ls20231211::invslot::WORLD_END;
 
 const int16 CORPSE_BEGIN = invslot::slotGeneral1;
 const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotGeneral8;
@@ -79,21 +79,21 @@ const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotGeneral8;
 const int16 CURSOR_QUEUE_BEGIN = 8000;
 const int16 CURSOR_QUEUE_END = 8999;
 
-using Mac::invslot::CORPSE_BITMASK;
-using Mac::invslot::POSSESSIONS_BITMASK;
+using Ls20231211::invslot::CORPSE_BITMASK;
+using Ls20231211::invslot::POSSESSIONS_BITMASK;
 
-using Mac::invslot::GetInvPossessionsSlotName;
-using Mac::invslot::GetInvSlotName;
+using Ls20231211::invslot::GetInvPossessionsSlotName;
+using Ls20231211::invslot::GetInvSlotName;
 
 }  // namespace invslot
 
 namespace invbag {
-using Mac::invbag::SLOT_BEGIN;
-using Mac::invbag::SLOT_COUNT;
-using Mac::invbag::SLOT_END;
-using Mac::invbag::SLOT_INVALID;
+using Ls20231211::invbag::SLOT_BEGIN;
+using Ls20231211::invbag::SLOT_COUNT;
+using Ls20231211::invbag::SLOT_END;
+using Ls20231211::invbag::SLOT_INVALID;
 
-using Mac::invbag::GENERAL_BAGS_BEGIN;
+using Ls20231211::invbag::GENERAL_BAGS_BEGIN;
 const int16 GENERAL_BAGS_COUNT = invslot::GENERAL_COUNT * SLOT_COUNT;
 const int16 GENERAL_BAGS_END = (GENERAL_BAGS_BEGIN + GENERAL_BAGS_COUNT) - 1;
 
@@ -104,28 +104,28 @@ const int16 CURSOR_BAG_BEGIN = 330;
 const int16 CURSOR_BAG_COUNT = SLOT_COUNT;
 const int16 CURSOR_BAG_END = (CURSOR_BAG_BEGIN + CURSOR_BAG_COUNT) - 1;
 
-using Mac::invbag::BANK_BAGS_BEGIN;
+using Ls20231211::invbag::BANK_BAGS_BEGIN;
 const int16 BANK_BAGS_COUNT = (invtype::BANK_SIZE * SLOT_COUNT);
 const int16 BANK_BAGS_END = (BANK_BAGS_BEGIN + BANK_BAGS_COUNT) - 1;
 
 const int16 BANK_BAGS_8_COUNT = 8 * SLOT_COUNT;
 const int16 BANK_BAGS_8_END = (BANK_BAGS_BEGIN + BANK_BAGS_8_COUNT) - 1;
 
-using Mac::invbag::TRADE_BAGS_BEGIN;
+using Ls20231211::invbag::TRADE_BAGS_BEGIN;
 const int16 TRADE_BAGS_COUNT = invtype::TRADE_SIZE * SLOT_COUNT;
 const int16 TRADE_BAGS_END = (TRADE_BAGS_BEGIN + TRADE_BAGS_COUNT) - 1;
 
-using Mac::invbag::GetInvBagIndexName;
+using Ls20231211::invbag::GetInvBagIndexName;
 
 }  // namespace invbag
 
 namespace constants {
 // database
-static const EQ::versions::ClientVersion CharacterCreationClient = EQ::versions::ClientVersion::Mac;  // adjust according to starting item placement and target client
-using Mac::constants::CHARACTER_CREATION_LIMIT;
+static const EQ::versions::ClientVersion CharacterCreationClient = EQ::versions::ClientVersion::Ls20231211;  // adjust according to starting item placement and target client
+using Ls20231211::constants::CHARACTER_CREATION_LIMIT;
 
 const size_t SAY_LINK_OPENER_SIZE = 1;
-using Mac::constants::SAY_LINK_BODY_SIZE;
+using Ls20231211::constants::SAY_LINK_BODY_SIZE;
 const size_t SAY_LINK_TEXT_SIZE = 200;
 const size_t SAY_LINK_CLOSER_SIZE = 1;
 const size_t SAY_LINK_MAXIMUM_SIZE = (SAY_LINK_OPENER_SIZE + SAY_LINK_BODY_SIZE + SAY_LINK_TEXT_SIZE + SAY_LINK_CLOSER_SIZE);
@@ -185,20 +185,20 @@ enum class CastingSlot : int32 {
 	AltAbility = 0xFF
 };
 
-using Mac::spells::SPELL_GEM_COUNT;
-using Mac::spells::SPELL_ID_MAX;
-using Mac::spells::SPELLBOOK_SIZE;
+using Ls20231211::spells::SPELL_GEM_COUNT;
+using Ls20231211::spells::SPELL_ID_MAX;
+using Ls20231211::spells::SPELLBOOK_SIZE;
 
 }  // namespace spells
 
 namespace profile {
 
-using Mac::profile::SKILL_ARRAY_SIZE;
+using Ls20231211::profile::SKILL_ARRAY_SIZE;
 
 }  // namespace profile
 
 namespace behavior {
-using Mac::behavior::CoinHasWeight;
+using Ls20231211::behavior::CoinHasWeight;
 
 }  // namespace behavior
 

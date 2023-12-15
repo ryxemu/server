@@ -5,6 +5,7 @@
 #include "eq_constants.h"
 #include "emu_versions.h"
 #include "../common/patches/mac_limits.h"
+#include "../common/patches/ls20231211_limits.h"
 
 namespace EQ {
 namespace inventory {
