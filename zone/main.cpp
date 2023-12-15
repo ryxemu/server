@@ -26,14 +26,13 @@
 #include "../common/spdat.h"
 #include "../common/eqemu_logsys.h"
 #include "../common/event/timer.h"
+#include "../common/config.h"
 
-#include "zone_config.h"
 #include "masterentity.h"
 #include "worldserver.h"
 #include "zone.h"
 #include "queryserv.h"
 #include "command.h"
-#include "zone_config.h"
 #include "titles.h"
 #include "guild_mgr.h"
 #include "quest_parser_collection.h"
@@ -80,7 +79,6 @@ QuestParserCollection* parse = 0;
 EQEmuLogSys LogSys;
 const SPDat_Spell_Struct* spells;
 int32 SPDAT_RECORDS = -1;
-const ZoneConfig* Config;
 double frame_time = 0.0;
 
 void Shutdown();
@@ -96,12 +94,11 @@ int main(int argc, char** argv) {
 	QServ = new QueryServ;
 
 	LogInfo("Starting Zone v{}", VERSION);
-	auto load_result = ZoneConfig::LoadConfig();
+	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
 		return 1;
 	}
-	Config = ZoneConfig::get();
 
 	const char* zone_name;
 	std::string z_name;
@@ -115,7 +112,7 @@ int main(int argc, char** argv) {
 
 		if (zone_port.size() > 1) {
 			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
+			Config::get()->SetZonePort(atoi(p_name.c_str()));
 		}
 
 		worldserver.SetLaunchedName(z_name.c_str());
@@ -134,7 +131,7 @@ int main(int argc, char** argv) {
 
 		if (zone_port.size() > 1) {
 			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
+			Config::get()->SetZonePort(atoi(p_name.c_str()));
 		}
 
 		worldserver.SetLaunchedName(z_name.c_str());
@@ -153,7 +150,7 @@ int main(int argc, char** argv) {
 
 		if (zone_port.size() > 1) {
 			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
+			Config::get()->SetZonePort(atoi(p_name.c_str()));
 		}
 
 		worldserver.SetLaunchedName(z_name.c_str());
@@ -168,15 +165,15 @@ int main(int argc, char** argv) {
 		worldserver.SetLauncherName("NONE");
 	}
 
-	worldserver.SetPassword(Config->SharedKey.c_str());
+	worldserver.SetPassword(Config::get()->SharedKey.c_str());
 
 	LogInfo("Connecting to MySQL...");
 	if (!database.Connect(
-	        Config->DatabaseHost.c_str(),
-	        Config->DatabaseUsername.c_str(),
-	        Config->DatabasePassword.c_str(),
-	        Config->DatabaseDB.c_str(),
-	        Config->DatabasePort)) {
+	        Config::get()->DatabaseHost.c_str(),
+	        Config::get()->DatabaseUsername.c_str(),
+	        Config::get()->DatabasePassword.c_str(),
+	        Config::get()->DatabaseDB.c_str(),
+	        Config::get()->DatabasePort)) {
 		LogError("Cannot continue without a database connection.");
 		return 1;
 	}
@@ -361,11 +358,11 @@ int main(int argc, char** argv) {
 
 			worldserver.Process();
 
-			if (!eqsf.IsOpen() && Config->ZonePort != 0) {
-				LogInfo("Starting EQ Network server on port {} ", Config->ZonePort);
-				if (!eqsf.Open(Config->ZonePort)) {
-					LogError("Failed to open port {} ", Config->ZonePort);
-					ZoneConfig::SetZonePort(0);
+			if (!eqsf.IsOpen() && Config::get()->ZonePortCurrent != 0) {
+				LogInfo("Starting EQ Network server on port {} ", Config::get()->ZonePortCurrent);
+				if (!eqsf.Open(Config::get()->ZonePortCurrent)) {
+					LogError("Failed to open port {} ", Config::get()->ZonePortCurrent);
+					Config::get()->SetZonePort(0);
 					worldserver.Disconnect();
 					worldwasconnected = false;
 				}
@@ -474,7 +471,6 @@ int main(int argc, char** argv) {
 
 	parse->ClearInterfaces();
 
-	safe_delete(Config);
 	title_manager.ClearTitles();
 	if (zone != 0)
 		Zone::Shutdown(true);
@@ -505,19 +501,19 @@ void UpdateWindowTitle(char* iNewTitle) {
 #ifdef _WINDOWS
 	char tmp[500];
 	if (iNewTitle) {
-		snprintf(tmp, sizeof(tmp), "%i: %s", ZoneConfig::get()->ZonePort, iNewTitle);
+		snprintf(tmp, sizeof(tmp), "%i: %s", Config::get()->ZonePort, iNewTitle);
 	} else {
 		if (zone) {
 #if defined(GOTFRAGS) || defined(_EQDEBUG)
-			snprintf(tmp, sizeof(tmp), "%i: %s, %i clients, %i", ZoneConfig::get()->ZonePort, zone->GetShortName(), numclients, getpid());
+			snprintf(tmp, sizeof(tmp), "%i: %s, %i clients, %i", Config::get()->ZonePort, zone->GetShortName(), numclients, getpid());
 #else
-			snprintf(tmp, sizeof(tmp), "%s :: clients: %i :: port: %i", zone->GetShortName(), numclients, ZoneConfig::get()->ZonePort);
+			snprintf(tmp, sizeof(tmp), "%s :: clients: %i :: port: %i", zone->GetShortName(), numclients, Config::get()->ZonePort);
 #endif
 		} else {
 #if defined(GOTFRAGS) || defined(_EQDEBUG)
-			snprintf(tmp, sizeof(tmp), "%i: sleeping, %i", ZoneConfig::get()->ZonePort, getpid());
+			snprintf(tmp, sizeof(tmp), "%i: sleeping, %i", Config::get()->ZonePort, getpid());
 #else
-			snprintf(tmp, sizeof(tmp), "%i: sleeping", ZoneConfig::get()->ZonePort);
+			snprintf(tmp, sizeof(tmp), "%i: sleeping", Config::get()->ZonePort);
 #endif
 		}
 	}

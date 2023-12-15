@@ -1,5 +1,6 @@
 #include "../common/global_define.h"
 #include "../common/misc_functions.h"
+#include "../common/config.h"
 
 #include "map.h"
 #include "raycast_mesh.h"
@@ -366,7 +367,7 @@ bool Map::DoCollisionCheck(glm::vec3 myloc, glm::vec3 oloc, glm::vec3 &outnorm, 
 }
 
 Map *Map::LoadMapFile(std::string file) {
-	std::string filename = Config->MapDir;
+	std::string filename = Config::get()->MapDir;
 	filename += "/";
 	std::transform(file.begin(), file.end(), file.begin(), ::tolower);
 	filename += file;

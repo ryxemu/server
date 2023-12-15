@@ -16,15 +16,12 @@
 
 #include "quest_interface.h"
 
-#include "zone_config.h"
-
 #include <list>
 #include <map>
 
 #define QuestFailedToLoad 0xFFFFFFFF
 #define QuestUnloaded 0x00
 
-extern const ZoneConfig *Config;
 class Client;
 class Mob;
 class NPC;

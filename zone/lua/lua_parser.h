@@ -8,10 +8,6 @@
 #include <memory>
 #include <sol/forward.hpp>
 
-#include "../zone_config.h"
-
-extern const ZoneConfig *Config;
-
 struct lua_State;
 class Client;
 class NPC;

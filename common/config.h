@@ -70,6 +70,8 @@ class Config {
 	uint16 ZonePortLow;
 	uint16 ZonePortHigh;
 	uint8 DefaultStatus;
+	uint16 ZonePortCurrent;  // temporary variable (not loaded from config) TODO: add to a proper state system
+
 	//	uint16 DynamicCount;
 	//	map<string,uint16> StaticZones;
    protected:
@@ -148,6 +150,14 @@ class Config {
 			return;
 		}
 		_config->WorldAddress = value;
+		return;
+	}
+
+	static void SetZonePort(uint16 value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->ZonePortCurrent = value;
 		return;
 	}
 
