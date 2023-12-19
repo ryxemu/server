@@ -211,46 +211,35 @@ ProcLauncher::ProcRef ProcLauncher::Launch(Spec *&to_launch) {
 	}
 
 	if (res == 0) {
-        // Child process...
+		// child... exec this bitch
 
-        // Handle output redirection if requested.
-        if (!it->logFile.empty()) {
-            // Open the log file for writing, creating it if it doesn't exist.
-            int outfd = open(it->logFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP);
-            if (outfd == -1) {
-                fprintf(stderr, "Unable to open log file %s: %s.\n", it->logFile.c_str(), strerror(errno));
-                _exit(1);
-            }
+		// handle output redirection if requested.
+		if (it->logFile.length() > 0) {
+			// we will put their output directly into a file.
+			int outfd = creat(it->logFile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP);  // S_I + R/W/X + USR/GRP/OTH
+			if (outfd == -1) {
+				fprintf(stderr, "Unable to open log file %s: %s.\n", it->logFile.c_str(), strerror(errno));
+				close(STDOUT_FILENO);
+				close(STDERR_FILENO);
+				close(STDIN_FILENO);
+			} else {
+				close(STDOUT_FILENO);
+				if (dup2(outfd, STDOUT_FILENO) == -1) {
+					fprintf(stderr, "Unable to duplicate FD %d to %d. Log file will be empty: %s\n", outfd, STDOUT_FILENO, strerror(errno));
+					const char *err = "Unable to redirect stdout into this file. That sucks.";
+					write(outfd, err, strlen(err));
+				}
+				close(STDERR_FILENO);
+				if (dup2(outfd, STDERR_FILENO) == -1) {
+					// can no longer print to screen..
+					const char *err = "Unable to redirect stderr into this file. You might miss some error info in this log.";
+					write(outfd, err, strlen(err));
+				}
+				close(STDIN_FILENO);
 
-            // Redirect stdout and stderr to the log file.
-            if (dup2(outfd, STDOUT_FILENO) == -1 || dup2(outfd, STDERR_FILENO) == -1) {
-                fprintf(stderr, "Unable to duplicate FD to STDOUT/STDERR: %s\n", strerror(errno));
-                close(outfd);
-                _exit(1);
-            }
-
-            close(outfd);
-        }
-
-        // Execute the new program.
-        execv(argv[0], argv);
-
-        // If execv fails...
-        fprintf(stderr, "Unable to execute %s: %s\n", argv[0], strerror(errno));
-        _exit(1);
-    }
-
-    safe_delete_array(argv);
-
-    // Parent process...
-
-    // Record this entry.
-    m_running[res] = it;
-
-    return res;
-
-#endif  //! WIN32
-}
+				close(outfd);  // dont need this one, we have two more copies...
+			}
+		}
 
 		// call it...
 		execv(argv[0], argv);
