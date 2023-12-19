@@ -21,7 +21,7 @@ struct LoginConfig {
 class Config {
    public:
 	// From <world/>
-	bool UpdateStats;  // temporary variable (not loaded from config) TODO: add to a proper state system
+	bool UpdateStats;  // temporary variable (not loaded from config) // TODO: add to a proper state system
 	std::string ShortName;
 	std::string LongName;
 	std::string WorldAddress;
@@ -70,7 +70,7 @@ class Config {
 	uint16 ZonePortLow;
 	uint16 ZonePortHigh;
 	uint8 DefaultStatus;
-	uint16 ZonePortCurrent;  // temporary variable (not loaded from config) TODO: add to a proper state system
+	uint16 ZonePortCurrent;  // temporary variable (not loaded from config) // TODO: add to a proper state system
 
 	//	uint16 DynamicCount;
 	//	map<string,uint16> StaticZones;
