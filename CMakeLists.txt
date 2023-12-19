@@ -19,7 +19,7 @@ SET(CMAKE_CXX_EXTENSIONS OFF)
 
 IF(MSVC) #Need these pulled for Windows OS. Also the set variable for location. Should also consider global variables on OS.
 	IF(CMAKE_CL_64)
-		SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
+		#SET(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/boost") #We should not just be looking for this within the dependencies folder.
 		SET(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/zlib_x64") #We should not just be looking for this within the dependencies folder.
 		SET(MYSQL_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mysql_x64") #We should not just be looking for this within the dependencies folder.
 		SET(LUA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/luaj_x64") #We should not just be looking for this within the dependencies folder.
@@ -64,7 +64,7 @@ ADD_DEFINITIONS(-DGLM_ENABLE_EXPERIMENTAL)
 #ENDIF()
 
 #Find everything we need.. Either use a apt/yum or a docker. Preferably a docker to have it the same across the board.
-FIND_PACKAGE(Boost REQUIRED)
+#FIND_PACKAGE(Boost REQUIRED)
 FIND_PACKAGE(MySQL) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(MariaDB) #Redundant if have the other as statment shows missing
 FIND_PACKAGE(ZLIB)
@@ -283,11 +283,11 @@ MESSAGE(STATUS "* zlib:                                  ${ZLIB_LIBRARY_TYPE} *"
 MESSAGE(STATUS "**************************************************")
 
 #setup server libs and headers
-SET(SERVER_LIBS common ${DATABASE_LIBRARY_LIBS} ${ZLIB_LIBRARY_LIBS} ${Boost_LIBRARIES} uv_a fmt RecastNavigation::Detour ${CURL_LIBRARY} ${YAML_CPP_LIBRARIES})
+SET(SERVER_LIBS common ${DATABASE_LIBRARY_LIBS} ${ZLIB_LIBRARY_LIBS} uv_a fmt RecastNavigation::Detour ${CURL_LIBRARY} ${YAML_CPP_LIBRARIES})
 
 INCLUDE_DIRECTORIES(SYSTEM "${DATABASE_LIBRARY_INCLUDE}")
 INCLUDE_DIRECTORIES(SYSTEM "${ZLIB_LIBRARY_INCLUDE}")
-INCLUDE_DIRECTORIES(SYSTEM "${Boost_INCLUDE_DIRS}")
+#INCLUDE_DIRECTORIES(SYSTEM "${Boost_INCLUDE_DIRS}")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/fmt/include")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libuv/include" )
