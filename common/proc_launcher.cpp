@@ -251,7 +251,6 @@ ProcLauncher::ProcRef ProcLauncher::Launch(Spec *&to_launch) {
 
 #endif  //! WIN32
 }
-		}
 
 		// call it...
 		execv(argv[0], argv);
