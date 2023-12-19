@@ -1211,7 +1211,10 @@ void Mob::AI_Process() {
 			// this is for mobs that might still be pathing to get LOS
 			glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 			glm::vec3 tar_pos(GetTarget()->GetX(), GetTarget()->GetY(), GetTarget()->GetZ());
-			bool has_los = zone->zonemap->CheckLoS(my_loc, tar_pos);
+			bool has_los = false;
+			if (zone->zonemap != nullptr) {
+				has_los = zone->zonemap->CheckLoS(my_loc, tar_pos);
+			}
 			if (!has_los && Distance(my_loc, tar_pos) > 14.0f)
 				is_combat_range = false;
 		} else if (!is_combat_range) {
@@ -1475,9 +1478,13 @@ void Mob::AI_Process() {
 								} else {
 									bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(dest) || zone->IsWaterZone(dest.z);
 									if (!in_liquid) {
-										float newz = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
-										if (newz == BEST_Z_INVALID)
-											newz = zone->zonemap->FindBestZ(dest, nullptr);
+										float newz = BEST_Z_INVALID;
+										if (zone->zonemap != nullptr) {
+											float newz = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
+											if (newz == BEST_Z_INVALID) {
+												newz = zone->zonemap->FindBestZ(dest, nullptr);
+											}
+										}
 
 										if (newz != BEST_Z_INVALID)
 											newz = SetBestZ(newz);

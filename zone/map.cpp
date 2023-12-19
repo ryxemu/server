@@ -63,12 +63,13 @@ Map::~Map() {
 }
 
 float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result) const {
-	if (imp == nullptr)
+	if (imp == nullptr) {
 		return BEST_Z_INVALID;
-
+	}
 	glm::vec3 tmp;
-	if (!result)
+	if (!result) {
 		result = &tmp;
+	}
 	float start_z = start.z + RuleI(Map, FindBestZHeightAdjust);
 	glm::vec3 from(start.x, start.y, start_z);
 	glm::vec3 to(start.x, start.y, BEST_Z_INVALID);
@@ -99,12 +100,14 @@ float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result) const {
 }
 
 float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result, float limit, float offset) const {
-	if (imp == nullptr)
+	if (imp == nullptr) {
 		return BEST_Z_INVALID;
+	}
 
 	glm::vec3 tmp;
-	if (!result)
+	if (!result) {
 		result = &tmp;
+	}
 
 	float size_adjust = RuleI(Map, FindBestZHeightAdjust);
 	if (offset > 0.0f && offset < 5.0f) {
@@ -117,8 +120,9 @@ float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result, float limit, float off
 	float hit_distance;
 	bool hit = false;
 	hit = imp->rm->raycast((const RmReal *)&from, (const RmReal *)&to, (RmReal *)result, nullptr, &hit_distance);
-	if (hit && (std::abs(start.z - result->z) > (limit + offset)))
+	if (hit && (std::abs(start.z - result->z) > (limit + offset))) {
 		hit = false;
+	}
 
 	if (hit && zone->newzone_data.underworld != 0.0f && result->z < zone->newzone_data.underworld) {
 		hit = false;
@@ -143,14 +147,16 @@ float Map::FindBestZ(glm::vec3 &start, glm::vec3 *result, float limit, float off
 float Map::FindClosestZ(glm::vec3 &start, glm::vec3 *result, float z_offset) const {
 	// Unlike FindBestZ, this method finds the closest Z value above or below the specified point.
 	//
-	if (!imp)
+	if (!imp) {
 		return false;
+	}
 
 	float ClosestZ = BEST_Z_INVALID;
 
 	glm::vec3 tmp;
-	if (!result)
+	if (!result) {
 		result = &tmp;
+	}
 
 	glm::vec3 from(start.x, start.y, start.z + 1.0f);
 	glm::vec3 to(start.x, start.y, BEST_Z_INVALID);

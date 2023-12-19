@@ -1661,9 +1661,13 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 		glm::vec3 loc(m_Position.x, m_Position.y, m_Position.z);
 		if (!IsEncumbered() && m_pp.boatid == 0 && (!zone->HasWaterMap() || !zone->watermap->InLiquid(loc)) &&
 		    zone->GetZoneID() != hole && zone->GetZoneID() != freporte) {
-			float bestz = zone->zonemap->FindBestZ(loc, nullptr);
-			if (bestz != BEST_Z_INVALID && size > 0)
+			float bestz = BEST_Z_INVALID;
+			if (zone->zonemap != nullptr) {
+				bestz = zone->zonemap->FindBestZ(loc, nullptr);
+			}
+			if (bestz != BEST_Z_INVALID && size > 0) {
 				m_Position.z = bestz + CalcZOffset();
+			}
 		}
 		sze->z_pos = m_Position.z;
 	}

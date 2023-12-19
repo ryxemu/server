@@ -206,7 +206,10 @@ bool Spawn2::Process() {
 				x = zone->random.Real(spawn_group->roambox[1], spawn_group->roambox[0]);
 				y = zone->random.Real(spawn_group->roambox[3], spawn_group->roambox[2]);
 				glm::vec3 loc(x, y, 0);
-				z = zone->zonemap->FindBestZ(loc, nullptr);
+				z = BEST_Z_INVALID;
+				if (zone->zonemap != nullptr) {
+					z = zone->zonemap->FindBestZ(loc, nullptr);
+				}
 				++count;
 			}
 

@@ -4520,7 +4520,7 @@ void command_loc(Client *c, const Seperator *sep) {
 	c->Message(CC_Default, fmt::format(" {} Location | XYZ: {:.2f}, {:.2f}, {:.2f} Heading: {:.2f} ", (c == target ? "Your" : fmt::format(" {} ({}) ", target->GetCleanName(), target->GetID())), target_position.x, target_position.y, target_position.z, target_position.w).c_str());
 
 	float newz = 0;
-	if (!zone->zonemap) {
+	if (zone->zonemap == nullptr) {
 		c->Message(CC_Default, "Map not loaded for this zone.");
 	} else {
 		auto z = c->GetZ() + (c->GetSize() == 0.0 ? 6 : c->GetSize()) * HEAD_POSITION;

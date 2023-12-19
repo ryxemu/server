@@ -116,7 +116,10 @@ bool Beacon::Process() {
 			if (spell_iterations > 0) {
 				tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ());
 				if (!target->IsClient() && (!zone->watermap || !zone->watermap->InLiquid(tarpos))) {
-					float newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+					float newz = BEST_Z_INVALID;
+					if (zone->zonemap != nullptr) {
+						newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+					}
 					if (newz != BEST_Z_INVALID) {
 						tarpos.z = target->SetProjectileZ(newz);
 					}
@@ -364,7 +367,10 @@ void Beacon::BoltSpell(Mob *caster, Mob *target, int16 cast_spell_id) {
 	tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ() + target->GetSize() * 0.2f);
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(tarpos) || zone->IsWaterZone(tarpos.z);
 	if (!target->IsClient() && !in_liquid) {
-		float newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+		float newz = BEST_Z_INVALID;
+		if (zone->zonemap != nullptr) {
+			newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+		}
 		if (newz != BEST_Z_INVALID) {
 			tarpos.z = target->SetProjectileZ(newz);
 		}
@@ -394,7 +400,10 @@ void Beacon::Projectile(Mob *attacker, Mob *target, EQ::skills::SkillType skill,
 	tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ() + target->GetSize() * 0.2f);
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(tarpos) || zone->IsWaterZone(tarpos.z);
 	if (!target->IsClient() && !in_liquid) {
-		float newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+		float newz = BEST_Z_INVALID;
+		if (zone->zonemap != nullptr) {
+			newz = zone->zonemap->FindBestZ(tarpos, nullptr);
+		}
 		if (newz != BEST_Z_INVALID) {
 			tarpos.z = target->SetProjectileZ(newz);
 		}

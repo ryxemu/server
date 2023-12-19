@@ -250,16 +250,16 @@ void Mob::CalculateNewFearpoint() {
 						previous_pos = current_node.pos;
 						auto &next_node = (*iter);
 
-						if (next_node.teleport)
+						if (next_node.teleport) {
 							continue;
+						}
 
-						if ((route_size - route_count) < 5 && !zone->zonemap->CheckLoS(previous_pos, next_node.pos)) {
+						last_good_loc = next_node.pos;
+
+						if ((route_size - route_count) < 5 && zone->zonemap != nullptr && !zone->zonemap->CheckLoS(previous_pos, next_node.pos)) {
 							// Shout("Loc %0.1f, %0.1f, %0.1f TO %0.1f, %0.1f, %0.1f FAILED LOS", previous_pos.x, previous_pos.y, previous_pos.z, next_node.pos.x, next_node.pos.y, next_node.pos.z);
 							have_los = false;
 							break;
-						} else {
-							last_good_loc = next_node.pos;
-							// Shout("Loc %0.1f, %0.1f, %0.1f TO %0.1f, %0.1f, %0.1f has LOS or not checking", previous_pos.x, previous_pos.y, previous_pos.z, next_node.pos.x, next_node.pos.y, next_node.pos.z);
 						}
 					}
 				}
@@ -289,7 +289,10 @@ void Mob::CalculateNewFearpoint() {
 	curfp = false;
 	glm::vec3 myloc(GetX(), GetY(), GetZ());
 	glm::vec3 myceil = myloc;
-	float ceil = zone->zonemap->FindCeiling(myloc, &myceil);
+	float ceil = 0;
+	if (zone->zonemap != nullptr) {
+		ceil = zone->zonemap->FindCeiling(myloc, &myceil);
+	}
 	if (ceil != BEST_Z_INVALID) {
 		ceil -= 1.0f;
 	}
@@ -314,7 +317,7 @@ void Mob::CalculateNewFearpoint() {
 		glm::vec3 newloc(ranx, rany, ceil != BEST_Z_INVALID ? ceil : GetZ());
 
 		if (stay_inliquid || levitating || (loop > 50 && inliquid)) {
-			if (zone->zonemap->CheckLoS(myloc, newloc)) {
+			if (zone->zonemap != nullptr && zone->zonemap->CheckLoS(myloc, newloc)) {
 				ranz = GetZ();
 				curfp = true;
 				break;

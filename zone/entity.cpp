@@ -4785,7 +4785,7 @@ void EntityList::ReportUnderworldNPCs(Client *sendto, float min_z) {
 				sendto->Message(type, "%s: %0.2f,%0.2f,%0.2f NPCID: %d Spawn2ID: %s (DB Z: %0.2f Underworld Z: %0.2f)", current->GetName(), coords.x, coords.y, coords.z, current->GetNPCTypeID(), spawn2.c_str(), min_z, underworld_z);
 				if (type == CC_Red && find_best_z) {
 					float best_z = 0;
-					if (zone->zonemap) {
+					if (zone->zonemap != nullptr) {
 						best_z = zone->zonemap->FindBestZ(coords, nullptr);
 						if (best_z > underworld_z) {
 							sendto->Message(type, "BestZ for %s is %0.2f", current->GetName(), best_z);
