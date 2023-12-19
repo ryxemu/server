@@ -1,5 +1,6 @@
-
 #include <iostream>
+#include <openssl/aes.h>
+#include <openssl/rand.h>
 #include "../common/types.h"
 #include "../common/database.h"
 
