@@ -164,3 +164,19 @@ inject-mariadb:
 	-mysql -u root -S /var/run/mysqld/mysqld.sock -e "GRANT ALL PRIVILEGES ON *.* TO 'ryx'@'127.0.0.1';"
 	-unzip -p base/db.sql.zip | mysql -u root -S /var/run/mysqld/mysqld.sock --database ryx
 	@echo "MariaDB is now injected."
+
+
+depends:
+	sudo apt install graphviz pip time
+	pip3 install graphviz
+	mkdir -p build/depends
+	@if [ ! -f "build/depends/dependency_graph.py" ]; then \
+		wget https://raw.githubusercontent.com/pvigier/dependency-graph/master/dependency_graph.py -O build/depends/dependency_graph.py; \
+	fi
+	@echo "Generating dependency graphs (This may take a while)..."
+	@echo "Loginserver..."
+	time python3 build/depends/dependency_graph.py -f png loginserver build/depends/loginserver.dot
+	@echo "World..."
+	time python3 build/depends/dependency_graph.py -f png world build/depends/world.dot
+	@echo "Zone..."
+	time python3 build/depends/dependency_graph.py -f png zone build/depends/zone.dot
