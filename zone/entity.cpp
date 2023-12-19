@@ -3559,8 +3559,9 @@ void EntityList::AddTempPetsToHateList(Mob *owner, Mob *other, bool bFrenzy) {
 
 bool Entity::CheckCoordLosNoZLeaps(float cur_x, float cur_y, float cur_z,
                                    float trg_x, float trg_y, float trg_z, float perwalk) {
-	if (zone->zonemap == nullptr)
+	if (!zone->HasMap()) {
 		return true;
+	}
 
 	glm::vec3 myloc;
 	glm::vec3 oloc;
@@ -3577,7 +3578,7 @@ bool Entity::CheckCoordLosNoZLeaps(float cur_x, float cur_y, float cur_z,
 	if (myloc.x == oloc.x && myloc.y == oloc.y && myloc.z == oloc.z)
 		return true;
 
-	if (!zone->zonemap->LineIntersectsZoneNoZLeaps(myloc, oloc, perwalk, &hit))
+	if (!zone->MapLineIntersectsZoneNoZLeaps(myloc, oloc, perwalk, &hit))
 		return true;
 	return false;
 }
@@ -4784,12 +4785,9 @@ void EntityList::ReportUnderworldNPCs(Client *sendto, float min_z) {
 
 				sendto->Message(type, "%s: %0.2f,%0.2f,%0.2f NPCID: %d Spawn2ID: %s (DB Z: %0.2f Underworld Z: %0.2f)", current->GetName(), coords.x, coords.y, coords.z, current->GetNPCTypeID(), spawn2.c_str(), min_z, underworld_z);
 				if (type == CC_Red && find_best_z) {
-					float best_z = 0;
-					if (zone->zonemap != nullptr) {
-						best_z = zone->zonemap->FindBestZ(coords, nullptr);
-						if (best_z > underworld_z) {
-							sendto->Message(type, "BestZ for %s is %0.2f", current->GetName(), best_z);
-						}
+					float best_z = zone->MapFindBestZ(coords, nullptr);
+					if (best_z > underworld_z) {
+						sendto->Message(type, "BestZ for %s is %0.2f", current->GetName(), best_z);
 					}
 				}
 				++count;

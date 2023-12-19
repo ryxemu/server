@@ -148,14 +148,14 @@ IPathfinder::IPath PathfinderNavmesh::FindPath(const glm::vec3 &start, const glm
 		return Route;
 	}
 
-	if (Distance(start, end) < 200.0f && zone->zonemap->CheckLoS(start, end)) {
+	if (Distance(start, end) < 200.0f && zone->MapCheckLoS(start, end)) {
 		if (zone->HasWaterMap() && (zone->watermap->InLiquid(start) || zone->IsWaterZone(start.z)) && (zone->watermap->InLiquid(end) || zone->IsWaterZone(end.z))) {
 			IPath Route;
 			Route.push_back(start);
 			Route.push_back(end);
 			return Route;
 		}
-		if (zone->zonemap->NoHazardsAccurate(start, end, 6.0, 50, 5.0)) {
+		if (zone->MapNoHazardsAccurate(start, end, 6.0, 50, 5.0)) {
 			IPath Route;
 			Route.push_back(start);
 			Route.push_back(end);

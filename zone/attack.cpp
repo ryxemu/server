@@ -1244,11 +1244,9 @@ bool Client::Death(Mob* killerMob, int32 damage, uint16 spell, EQ::skills::Skill
 		if ((RuleB(Character, LeaveCorpses) && GetLevel() >= RuleI(Character, DeathItemLossLevel)) || RuleB(Character, LeaveNakedCorpses)) {
 			// If we've died on a boat, make sure corpse falls overboard.
 			if (GetBoatNPCID() != 0) {
-				if (zone->zonemap != nullptr) {
-					glm::vec3 dest(GetX(), GetY(), GetZ());
-					m_Position.z = zone->zonemap->FindBestZ(dest, nullptr);
-					Log(Logs::General, Logs::Corpse, "Corpse was on a boat. Moving to %0.2f, %0.2f, %0.2f", GetX(), GetY(), m_Position.z);
-				}
+				glm::vec3 dest(GetX(), GetY(), GetZ());
+				m_Position.z = zone->MapFindBestZ(dest, nullptr);
+				Log(Logs::General, Logs::Corpse, "Corpse was on a boat. Moving to %0.2f, %0.2f, %0.2f", GetX(), GetY(), m_Position.z);
 			}
 
 			// creating the corpse takes the cash/items off the player too

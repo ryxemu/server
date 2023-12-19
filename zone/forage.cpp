@@ -154,7 +154,7 @@ bool Client::CanFish() {
 		return false;
 	}
 
-	if (zone->zonemap != nullptr && zone->watermap != nullptr && RuleB(Watermap, CheckForWaterWhenFishing)) {
+	if (!zone->HasMap() && zone->watermap != nullptr && RuleB(Watermap, CheckForWaterWhenFishing)) {
 		glm::vec3 rodPosition;
 		// Tweak Rod and LineLength if required
 		const float RodLength = RuleR(Watermap, FishingRodLength);

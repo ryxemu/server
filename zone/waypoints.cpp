@@ -37,11 +37,11 @@ void NPC::AI_SetRoambox(float iMaxX, float iMinX, float iMaxY, float iMinY, uint
 		roambox_distance = true;
 	}
 	roambox_ceil = 5000.0f;
-	if (zone && zone->zonemap) {
+	if (zone && zone->HasMap()) {
 		glm::vec3 start(GetPosition());
 		glm::vec3 dest;
 
-		float ceil = zone->zonemap->FindCeiling(start, &dest);
+		float ceil = zone->MapFindCeiling(start, &dest);
 		if (ceil != BEST_Z_INVALID)
 			roambox_ceil = ceil - 1.0f;
 	}
@@ -674,7 +674,7 @@ void NPC::AssignWaypoints(int32 grid_id, int start_wp) {
 				    (zone->HasWaterMap() && !zone->watermap->InWater(positon))) {
 					glm::vec3 dest(new_waypoint.x, new_waypoint.y, new_waypoint.z);
 
-					float newz = zone->zonemap->FindBestZ(dest, nullptr);
+					float newz = zone->MapFindBestZ(dest, nullptr);
 
 					if ((newz != BEST_Z_INVALID) && std::abs(newz + GetZOffset() - dest.z) < (RuleR(Map, FixPathingZMaxDeltaLoading) + GetZOffset())) {
 						new_waypoint.z = SetBestZ(newz);
@@ -802,7 +802,7 @@ void Mob::SendTo(float new_x, float new_y, float new_z) {
 		    !zone->watermap->InWater(glm::vec3(m_Position))) {
 			glm::vec3 dest(m_Position.x, m_Position.y, m_Position.z);
 
-			float newz = zone->zonemap->FindBestZ(dest, nullptr);
+			float newz = zone->MapFindBestZ(dest, nullptr);
 
 			Log(Logs::Detail, Logs::AI, "BestZ returned %4.3f at %4.3f, %4.3f, %4.3f", newz, m_Position.x, m_Position.y, m_Position.z);
 
@@ -830,7 +830,7 @@ void Mob::SendToFixZ(float new_x, float new_y, float new_z) {
 		    !zone->watermap->InWater(glm::vec3(m_Position))) {
 			glm::vec3 dest(m_Position.x, m_Position.y, m_Position.z);
 
-			float newz = zone->zonemap->FindBestZ(dest, nullptr);
+			float newz = zone->MapFindBestZ(dest, nullptr);
 
 			if ((newz > -2000) && std::abs(newz - dest.z) < RuleR(Map, FixPathingZMaxDeltaSendTo))  // Sanity check.
 				m_Position.z = newz + z_offset;
@@ -854,11 +854,11 @@ float Mob::GetFixedZ(const glm::vec3& destination, float z_find_offset) {
 		 */
 		glm::vec3 dest(destination.x, destination.y, destination.z);
 		if (IsClient()) {
-			new_z = zone->zonemap->FindBestZ(dest, nullptr);
+			new_z = zone->MapFindBestZ(dest, nullptr);
 		} else {
-			new_z = zone->zonemap->FindBestZ(dest, nullptr, 20.0f);
+			new_z = zone->MapFindBestZ(dest, nullptr, 20.0f);
 			if (new_z == BEST_Z_INVALID)
-				new_z = zone->zonemap->FindBestZ(dest, nullptr);
+				new_z = zone->MapFindBestZ(dest, nullptr);
 		}
 		if (new_z != BEST_Z_INVALID) {
 			new_z += this->GetZOffset();
@@ -884,9 +884,9 @@ void Mob::FixZ(bool force) {
 	bool underwater_mob = IsNPC() && (CastToNPC()->IsUnderwaterOnly() || zone->IsWaterZone(m_Position.z) || (zone->HasWaterMap() && (zone->watermap->InLiquid(glm::vec3(m_Position.x, m_Position.y, m_Position.z)))));
 	if (!underwater_mob && !NPCFlyMode && !IsBoat() && zone->HasMap()) {
 		glm::vec3 dest(m_Position.x, m_Position.y, m_Position.z);
-		float newz = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetZOffset());
+		float newz = zone->MapFindBestZ(dest, nullptr, 20.0f, GetZOffset());
 		if (newz == BEST_Z_INVALID)
-			newz = zone->zonemap->FindBestZ(dest, nullptr);
+			newz = zone->MapFindBestZ(dest, nullptr);
 
 		if (!zone->HasWaterMap()) {
 			// no water map
@@ -919,7 +919,7 @@ void Mob::FixZ(bool force) {
 					// new position is in water
 					glm::vec3 cur_loc(m_Position.x, m_Position.y, m_Position.z);
 					bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(cur_loc) || zone->IsWaterZone(cur_loc.z);
-					if (zone->zonemap->CheckLoS(cur_loc, new_loc) && !in_liquid) {
+					if (zone->MapCheckLoS(cur_loc, new_loc) && !in_liquid) {
 						// transition into water, and have LOS to new position
 						if (cur_loc.z - new_loc.z > 10.0f) {
 							// try smaller change
@@ -935,7 +935,7 @@ void Mob::FixZ(bool force) {
 						FixZInWater();
 					} else {
 						// no LOS to new position
-						newz = zone->zonemap->FindClosestZ(cur_loc, nullptr, GetZOffset());
+						newz = zone->MapFindClosestZ(cur_loc, nullptr, GetZOffset());
 						if (newz != BEST_Z_INVALID) {
 							newz = SetBestZ(newz);
 							if (force || best_z_fail_count > 1 || std::abs(newz - dest.z) < (2.0f * GetZOffset())) {
@@ -962,8 +962,8 @@ void Mob::FixZInWater() {
 		if (underwater_mob || zone->HasWaterMap() && (zone->watermap->InLiquid(glm::vec3(m_Position.x, m_Position.y, m_Position.z)) || zone->IsWaterZone(m_Position.z))) {
 			// in water
 			glm::vec3 dest(m_Position.x, m_Position.y, m_Position.z);
-			float ceiling = zone->zonemap->FindCeiling(dest, nullptr);
-			float ground = zone->zonemap->FindGround(dest, nullptr);
+			float ceiling = zone->MapFindCeiling(dest, nullptr);
+			float ground = zone->MapFindGround(dest, nullptr);
 
 			if (ground != BEST_Z_INVALID && m_Position.z < (ground + GetZOffset()))
 				m_Position.z = ground + GetZOffset();

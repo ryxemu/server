@@ -1599,7 +1599,7 @@ void Mob::ChangeSize(float in_size = 0, bool bNoRestriction) {
 	if (IsNPC() && IsPet() && pStandingPetOrder == SPO_Guard) {
 		glm::vec4 guard_spot(CastToNPC()->GetGuardPoint());
 		glm::vec3 new_loc(guard_spot.x, guard_spot.y, guard_spot.z);
-		float newz = zone->zonemap->FindBestZ(new_loc, nullptr);
+		float newz = zone->MapFindBestZ(new_loc, nullptr);
 		if (newz != BEST_Z_INVALID) {
 			guard_spot.z = newz + z_offset;
 			CastToNPC()->SetGuardSpot(guard_spot.x, guard_spot.y, guard_spot.z, guard_spot.w);
@@ -1976,7 +1976,7 @@ bool Mob::HateSummon(Mob* summoned) {
 			else if (GetHeading() > 149.0f && GetHeading() < 234.0f)
 				dest.x -= 1.0f;
 
-			float newz = zone->zonemap->FindBestZ(dest, nullptr);
+			float newz = zone->MapFindBestZ(dest, nullptr);
 			if (newz != BEST_Z_INVALID)
 				newz = target->SetBestZ(newz);
 			bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(glm::vec3(m_Position.x, m_Position.y, newz)) || zone->IsWaterZone(newz);
@@ -2445,13 +2445,13 @@ void Mob::SetTarget(Mob* mob) {
 
 float Mob::FindGroundZ(float new_x, float new_y, float z_offset) {
 	float ret = BEST_Z_INVALID;
-	if (zone->zonemap != nullptr) {
+	if (zone->HasMap()) {
 		glm::vec3 me;
 		me.x = new_x;
 		me.y = new_y;
 		me.z = m_Position.z + z_offset;
 		glm::vec3 hit;
-		float best_z = zone->zonemap->FindBestZ(me, &hit);
+		float best_z = zone->MapFindBestZ(me, &hit);
 		if (best_z != BEST_Z_INVALID) {
 			ret = best_z;
 		}
@@ -2462,14 +2462,14 @@ float Mob::FindGroundZ(float new_x, float new_y, float z_offset) {
 // Copy of above function that isn't protected to be exported to Lua
 float Mob::GetGroundZ(float new_x, float new_y, float z_find_offset) {
 	float ret = BEST_Z_INVALID;
-	if (zone->zonemap != 0) {
+	if (zone->HasMap()) {
 		glm::vec3 me;
 		me.x = new_x;
 		me.y = new_y;
 		if (z_offset < z_find_offset)
 			me.z = m_Position.z + z_find_offset;
 		glm::vec3 hit;
-		float best_z = zone->zonemap->FindBestZ(me, &hit);
+		float best_z = zone->MapFindBestZ(me, &hit);
 		if (best_z != BEST_Z_INVALID) {
 			ret = best_z;
 		}
@@ -2565,10 +2565,10 @@ float Mob::GetDefaultRaceSize() const {
 // Like MoveTo.
 float Mob::FindDestGroundZ(glm::vec3 dest, float z_find_offset) {
 	float best_z = BEST_Z_INVALID;
-	if (zone->zonemap != nullptr) {
+	if (zone->HasMap()) {
 		if (z_offset < z_find_offset)
 			dest.z += (z_find_offset - z_offset);
-		best_z = zone->zonemap->FindBestZ(dest, nullptr);
+		best_z = zone->MapFindBestZ(dest, nullptr);
 	}
 	return best_z;
 }
@@ -2848,8 +2848,8 @@ bool Mob::DoKnockback(Mob* caster, float pushback, float pushup, bool send_packe
 	float newz = GetZ();
 
 	GetPushHeadingMod(caster, pushback, newloc.x, newloc.y);
-	if (pushup == 0 && zone->zonemap) {
-		newz = zone->zonemap->FindBestZ(newloc, nullptr);
+	if (pushup == 0 && zone->HasMap()) {
+		newz = zone->MapFindBestZ(newloc, nullptr);
 		if (newz != BEST_Z_INVALID)
 			newloc.z = SetBestZ(newz);
 	}
@@ -2879,8 +2879,8 @@ bool Mob::CombatPush(Mob* attacker, float pushback) {
 	float newz = GetZ();
 
 	GetPushHeadingMod(attacker, pushback, newloc.x, newloc.y);
-	if (zone->zonemap) {
-		newz = zone->zonemap->FindBestZ(newloc, nullptr);
+	if (zone->HasMap()) {
+		newz = zone->MapFindBestZ(newloc, nullptr);
 		if (newz != BEST_Z_INVALID)
 			newloc.z = SetBestZ(newz);
 

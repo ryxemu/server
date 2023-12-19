@@ -182,6 +182,7 @@ class Zone {
 	WaterMap* watermap;
 	IPathfinder* pathing;
 	NewZone_Struct newzone_data;
+	bool is_zonemap_loaded;  // Is a zonemap loaded? While zonemap != nullptr may sound appealing, it was causing seg faults, so added a simple bool.
 
 	SpawnConditionManager spawn_conditions;
 
@@ -208,6 +209,80 @@ class Zone {
 	bool ZoneWillNotIdle() { return newzone_data.never_idle; };
 	bool IsIdling() { return (idle || (numclients <= 0 && ZoneWillNotIdle())); };
 	inline bool BuffTimersSuspended() const { return newzone_data.SuspendBuffs != 0; };
+	// MapCheckLoS wraps the zonemap->CheckLoS function, and returns false if the zonemap is not loaded.
+	bool MapCheckLoS(glm::vec3 myloc, glm::vec3 oloc) const {
+		if (!is_zonemap_loaded) {
+			return false;
+		}
+		return (zonemap->CheckLoS(myloc, oloc));
+	};
+
+	// MapFindBestZ wraps the zonemap->FindBestZ function, and returns start.z if the zonemap is not loaded.
+	float MapFindBestZ(glm::vec3& start, glm::vec3* result) const {
+		if (!is_zonemap_loaded) {
+			return start.z;
+		}
+		return (zonemap->FindBestZ(start, result));
+	};
+
+	// MapFindBestZ wraps the zonemap->FindBestZ function, and returns start.z if the zonemap is not loaded.
+	float MapFindBestZ(glm::vec3& start, glm::vec3* result, float limit, float offset = 0.0f) const {
+		if (!is_zonemap_loaded) {
+			return start.z;
+		}
+		return (zonemap->FindBestZ(start, result, limit, offset));
+	};
+
+	// MapLineIntersectsZone wraps the zonemap->LineIntersectsZone function, and returns false if the zonemap is not loaded.
+	bool MapLineIntersectsZone(glm::vec3 start, glm::vec3 end, float step, glm::vec3* hitLocation, glm::vec3* hitNormal = nullptr, float* hitDistance = nullptr) const {
+		if (!is_zonemap_loaded) {
+			return false;
+		}
+		return (zonemap->LineIntersectsZone(start, end, step, hitLocation, hitNormal, hitDistance));
+	};
+
+	// MapLineIntersectsZoneNoZLeaps wraps the zonemap->LineIntersectsZoneNoZLeaps function, and returns false if the zonemap is not loaded.
+	bool MapLineIntersectsZoneNoZLeaps(glm::vec3 start, glm::vec3 end, float step_mag, glm::vec3* result) const {
+		if (!is_zonemap_loaded) {
+			return false;
+		}
+		return (zonemap->LineIntersectsZoneNoZLeaps(start, end, step_mag, result));
+	};
+
+	// MapFindCeiling wraps the zonemap->FindCeiling function, and returns start.z if the zonemap is not loaded.
+	float MapFindCeiling(glm::vec3& start, glm::vec3* result) const {
+		if (!is_zonemap_loaded) {
+			return start.z;
+		}
+		return (zonemap->FindCeiling(start, result));
+	};
+
+	// MapFindGround wraps the zonemap->FindGround function, and returns start.z if the zonemap is not loaded.
+	float MapFindGround(glm::vec3& start, glm::vec3* result) const {
+		if (!is_zonemap_loaded) {
+			return start.z;
+		}
+		return (zonemap->FindGround(start, result));
+	};
+
+	// MapNoHazardsAccurate wraps the zonemap->NoHazardsAccurate function, and returns false if the zonemap is not loaded.
+	bool MapNoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_steps, float interval) {
+		if (!is_zonemap_loaded) {
+			return false;
+		}
+		return (zonemap->NoHazardsAccurate(From, To, size, max_steps, interval));
+	};
+
+	// MapFindClosestZ wraps the zonemap->FindClosestZ function, and returns start.z if the zonemap is not loaded.
+	float MapFindClosestZ(glm::vec3& start, glm::vec3* result, float z_offset) const {
+		if (!is_zonemap_loaded) {
+			return start.z;
+		}
+		return (zonemap->FindClosestZ(start, result, z_offset));
+	};
+
+	// HasMap returns true if the zonemap is loaded.
+	bool HasMap() const { return (is_zonemap_loaded); };
 
 	std::vector<GridRepository::Grid> grids;
 	std::vector<GridEntriesRepository::GridEntries> grid_entries;
@@ -229,7 +304,7 @@ class Zone {
 	bool IsSpellBlocked(uint32 spell_id, const glm::vec3& location);
 	const char* GetSpellBlockedMessage(uint32 spell_id, const glm::vec3& location);
 	int GetTotalBlockedSpells() { return totalBS; }
-	inline bool HasMap() { return zonemap != nullptr; }
+	inline bool HasMap() { return is_zonemap_loaded; }
 	inline bool HasWaterMap() { return watermap != nullptr; }
 
 	QGlobalCache* GetQGlobals() { return qGlobals; }

@@ -1137,10 +1137,11 @@ bool Mob::CheckLosFN(float posX, float posY, float posZ, float mobSize, Mob *oth
 	glm::vec3 myloc(GetX(), GetY(), GetZ());
 	glm::vec3 oloc(posX, posY, posZ);
 
-	if (IsClient() && (GetRace() == DWARF || GetRace() == GNOME || GetRace() == HALFLING))
+	if (IsClient() && (GetRace() == DWARF || GetRace() == GNOME || GetRace() == HALFLING)) {
 		myloc.z += 1.0f;
+	}
 
-	if (zone->zonemap == nullptr) {
+	if (!zone->HasMap()) {
 		// not sure what the best return is on error
 		// should make this a database variable, but im lazy today
 #ifdef LOS_DEFAULT_CAN_SEE
@@ -1151,7 +1152,7 @@ bool Mob::CheckLosFN(float posX, float posY, float posZ, float mobSize, Mob *oth
 	}
 
 	Log(Logs::Detail, Logs::Maps, "LOS from (%.2f, %.2f, %.2f) to (%.2f, %.2f, %.2f) sizes: (%.2f, %.2f)", myloc.x, myloc.y, myloc.z, oloc.x, oloc.y, oloc.z, GetSize(), mobSize);
-	return zone->zonemap->CheckLoS(myloc, oloc);
+	return zone->MapCheckLoS(myloc, oloc);
 }
 
 // offensive spell aggro

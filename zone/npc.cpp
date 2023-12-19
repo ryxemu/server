@@ -2058,7 +2058,7 @@ void NPC::AddPush(float heading, float magnitude) {
 */
 float NPC::ApplyPushVector(bool noglance) {
 	// if mob is perma rooted do not push
-	if (!zone->zonemap || GetBaseRunspeed() <= 0.0f) {
+	if (!zone->HasMap() || GetBaseRunspeed() <= 0.0f) {
 		push_vector = glm::vec3(0.0f, 0.0f, 0.0f);
 		return 0.0f;
 	}
@@ -2095,13 +2095,13 @@ float NPC::ApplyPushVector(bool noglance) {
 	    Shout("starting loc: %.2f, %.2f, %.2f  newLoc: %.2f, %.2f, %.2f (%.2f)  push mag: %.2f;  sizeCushion: %.2f",
 	    currentLoc.x, currentLoc.y, currentLoc.z, newLoc.x, newLoc.y, newLoc.z, GetZ(), magnitude, sizeCushion);
 	glm::vec3 down(currentLoc.x, currentLoc.y, -99999);
-	zone->zonemap->LineIntersectsZone(currentLoc, down, 0.0f, &hitLocation, &hitNormal, &hitDistance);
+	zone->MapLineIntersectsZone(currentLoc, down, 0.0f, &hitLocation, &hitNormal, &hitDistance);
 	Say("curentLoc.z to floor == %.2f", hitDistance);
 
 	glm::vec3 towall(currentLoc.x, currentLoc.y, currentLoc.y);
 	towall.x -= pushUnitV.x * 1000.0f;
 	towall.y += pushUnitV.y * 1000.0f;
-	zone->zonemap->LineIntersectsZone(currentLoc, towall, 0.0f, &hitLocation, &hitNormal, &hitDistance);
+	zone->MapLineIntersectsZone(currentLoc, towall, 0.0f, &hitLocation, &hitNormal, &hitDistance);
 	Say("curentLoc to wall == %.5f", hitDistance);
 	*/
 
@@ -2121,7 +2121,7 @@ float NPC::ApplyPushVector(bool noglance) {
 			wall_normal1_x = wall_normal1_y = wall_normal2_x = wall_normal2_y = 0.0f;  // delete previous wall detection prior to each push; SetNotCornered() does this too
 	}
 
-	if (zone->zonemap->LineIntersectsZone(currentLoc, newLoc, 0.0f, &hitLocation, &hitNormal, &hitDistance)) {
+	if (zone->MapLineIntersectsZone(currentLoc, newLoc, 0.0f, &hitLocation, &hitNormal, &hitDistance)) {
 		// Shout("Destination loc behind wall; dist: %.2f point: %.2f, %.2f; hitLoc: %.2f, %.2f, %.2f  push_vector: %.2f, %.2f; normal: %.2f, %.2f, %.2f",
 		//	hitDistance, newLoc.x, newLoc.y, hitLocation.x, hitLocation.y, hitLocation.z, push_vector.x, push_vector.y, hitNormal.x, hitNormal.y, hitNormal.z);
 
@@ -2237,7 +2237,7 @@ float NPC::ApplyPushVector(bool noglance) {
 		point.y = newLoc.y + pointsUnitV[i].y * sizeCushion;
 		point.z = newLoc.z;
 
-		if (zone->zonemap->LineIntersectsZone(newLoc, point, 0.0f, &hitLocation, &hitNormal, &hitDistance)) {
+		if (zone->MapLineIntersectsZone(newLoc, point, 0.0f, &hitLocation, &hitNormal, &hitDistance)) {
 			// Shout("Hit Wall %i; dist: %.2f point: %.2f, %.2f; hitLoc: %.2f, %.2f, %.2f  push_vector: %.2f, %.2f; normal: %.2f, %.2f, %.2f",
 			//	i, hitDistance, point.x, point.y, hitLocation.x, hitLocation.y, hitLocation.z, push_vector.x, push_vector.y, hitNormal.x, hitNormal.y, hitNormal.z);
 
@@ -2366,7 +2366,7 @@ float NPC::ApplyPushVector(bool noglance) {
 	if ((pointsHit == 0 || bounce) && (newLoc.x != currentLoc.x || newLoc.y != currentLoc.y)) {
 		bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(newLoc) || zone->IsWaterZone(newLoc.z);
 		if (!IsUnderwaterOnly() && !in_liquid) {
-			newz = zone->zonemap->FindBestZ(newLoc, nullptr);
+			newz = zone->MapFindBestZ(newLoc, nullptr);
 			if (newz != BEST_Z_INVALID) {
 				newLoc.z = SetBestZ(newz);
 			} else {
@@ -2377,7 +2377,7 @@ float NPC::ApplyPushVector(bool noglance) {
 			}
 		}
 
-		if (!zone->zonemap->LineIntersectsZone(currentLoc, newLoc, 0.0f, &hitLocation, nullptr, &hitDistance)) {
+		if (!zone->MapLineIntersectsZone(currentLoc, newLoc, 0.0f, &hitLocation, nullptr, &hitDistance)) {
 			pushedDist += magnitude;
 			if (!glancing || noglance) {
 				glm::vec4 new_pos(newLoc, m_Position.w);

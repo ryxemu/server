@@ -191,14 +191,14 @@ IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3 &start, const gl
 	stuck = false;
 	partial = false;
 
-	if (Distance(start, end) < 200.0f && zone->zonemap->CheckLoS(start, end)) {
+	if (Distance(start, end) < 200.0f && zone->MapCheckLoS(start, end)) {
 		if (zone->HasWaterMap() && (zone->watermap->InLiquid(start) || zone->IsWaterZone(start.z)) && (zone->watermap->InLiquid(end) || zone->IsWaterZone(end.z))) {
 			IPath Route;
 			Route.push_back(start);
 			Route.push_back(end);
 			return Route;
 		}
-		if (zone->zonemap->NoHazardsAccurate(start, end, 6.0, 40, 5.0)) {
+		if (zone->MapNoHazardsAccurate(start, end, 6.0, 40, 5.0)) {
 			IPath Route;
 			Route.push_back(start);
 			Route.push_back(end);
@@ -269,7 +269,7 @@ IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3 &start, const gl
 			auto Second = First;
 			--Second;
 
-			if (!zone->zonemap->LineIntersectsZone(end, Second->pos, 1.0f, nullptr) && zone->zonemap->NoHazardsAccurate(end, Second->pos, 6.0f, 20, 5.0f)) {
+			if (!zone->MapLineIntersectsZone(end, Second->pos, 1.0f, nullptr) && zone->MapNoHazardsAccurate(end, Second->pos, 6.0f, 20, 5.0f)) {
 				Route.erase(First);
 				++CulledNodes;
 			} else
@@ -283,7 +283,7 @@ IPathfinder::IPath PathfinderWaypoint::FindPath(const glm::vec3 &start, const gl
 			auto Second = First;
 			++Second;
 
-			if (!zone->zonemap->LineIntersectsZone(start, Second->pos, 1.0f, nullptr) && zone->zonemap->NoHazardsAccurate(start, Second->pos, 6.0f, 20, 5.0f)) {
+			if (!zone->MapLineIntersectsZone(start, Second->pos, 1.0f, nullptr) && zone->MapNoHazardsAccurate(start, Second->pos, 6.0f, 20, 5.0f)) {
 				Route.erase(First);
 				++CulledNodes;
 			} else
@@ -805,12 +805,12 @@ int PathfinderWaypoint::FindNearestPathNode(glm::vec3 Position) {
 	for (auto Iterator = SortedByDistance.begin(); Iterator != SortedByDistance.end(); ++Iterator) {
 		// Log(Logs::Detail, Logs::Pathing, "Checking Reachability of Node %i from Start Position.", PathNodes[(*Iterator).id].id);
 
-		if (!zone->zonemap->LineIntersectsZone(Position, m_impl->Nodes[(*Iterator).id].v, 1.0f, nullptr)) {
+		if (!zone->MapLineIntersectsZone(Position, m_impl->Nodes[(*Iterator).id].v, 1.0f, nullptr)) {
 			// limit how many hazard checks we are doing
 			if (haz_check > 5)
 				break;
 			// check hazards to nearest nodes
-			if (zone->zonemap->NoHazardsAccurate(Position, m_impl->Nodes[(*Iterator).id].v, 6.0f, 20, 5.0f)) {
+			if (zone->MapNoHazardsAccurate(Position, m_impl->Nodes[(*Iterator).id].v, 6.0f, 20, 5.0f)) {
 				result = (*Iterator).id;
 				break;
 			}

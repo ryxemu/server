@@ -116,10 +116,7 @@ bool Beacon::Process() {
 			if (spell_iterations > 0) {
 				tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ());
 				if (!target->IsClient() && (!zone->watermap || !zone->watermap->InLiquid(tarpos))) {
-					float newz = BEST_Z_INVALID;
-					if (zone->zonemap != nullptr) {
-						newz = zone->zonemap->FindBestZ(tarpos, nullptr);
-					}
+					float newz = zone->MapFindBestZ(tarpos, nullptr);
 					if (newz != BEST_Z_INVALID) {
 						tarpos.z = target->SetProjectileZ(newz);
 					}
@@ -367,10 +364,7 @@ void Beacon::BoltSpell(Mob *caster, Mob *target, int16 cast_spell_id) {
 	tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ() + target->GetSize() * 0.2f);
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(tarpos) || zone->IsWaterZone(tarpos.z);
 	if (!target->IsClient() && !in_liquid) {
-		float newz = BEST_Z_INVALID;
-		if (zone->zonemap != nullptr) {
-			newz = zone->zonemap->FindBestZ(tarpos, nullptr);
-		}
+		float newz = zone->MapFindBestZ(tarpos, nullptr);
 		if (newz != BEST_Z_INVALID) {
 			tarpos.z = target->SetProjectileZ(newz);
 		}
@@ -400,10 +394,7 @@ void Beacon::Projectile(Mob *attacker, Mob *target, EQ::skills::SkillType skill,
 	tarpos = glm::vec3(target->GetX(), target->GetY(), target->GetZ() + target->GetSize() * 0.2f);
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(tarpos) || zone->IsWaterZone(tarpos.z);
 	if (!target->IsClient() && !in_liquid) {
-		float newz = BEST_Z_INVALID;
-		if (zone->zonemap != nullptr) {
-			newz = zone->zonemap->FindBestZ(tarpos, nullptr);
-		}
+		float newz = zone->MapFindBestZ(tarpos, nullptr);
 		if (newz != BEST_Z_INVALID) {
 			tarpos.z = target->SetProjectileZ(newz);
 		}
@@ -451,14 +442,14 @@ void Beacon::Tracer(int16 src_id, int16 tgt_id, glm::vec4 pos) {
 
 bool Beacon::CheckProjectileCollision(glm::vec3 oloc) {
 	// returns false if no map, or has a collision
-	if (zone->zonemap == NULL) {
-		return (false);
+	if (!zone->HasMap()) {
+		return false;
 	}
-
 	glm::vec3 mypos = glm::vec3(GetPosition());
 	// see if anything is in the way
-	if (zone->zonemap->LineIntersectsZone(mypos, oloc, 1.0f, nullptr))
+	if (zone->MapLineIntersectsZone(mypos, oloc, 1.0f, nullptr)) {
 		return false;
+	}
 
 	return true;
 }

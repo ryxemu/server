@@ -498,13 +498,13 @@ bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_st
 	float haz_size = 2.0f * size;
 
 	glm::vec3 begin(From.x, From.y, From.z);
-	float new_z = zone->zonemap->FindBestZ(begin, nullptr);
+	float new_z = zone->MapFindBestZ(begin, nullptr);
 	if (new_z != BEST_Z_INVALID) {
 		begin.z = new_z + size;
 	}
 
 	glm::vec3 end(To.x, To.y, To.z);
-	new_z = zone->zonemap->FindBestZ(end, nullptr);
+	new_z = zone->MapFindBestZ(end, nullptr);
 	if (new_z != BEST_Z_INVALID) {
 		end.z = new_z + size;
 	}
@@ -534,7 +534,7 @@ bool Map::NoHazardsAccurate(glm::vec3 From, glm::vec3 To, float size, int max_st
 		begin.y += step.y;
 		begin.z += step.z;
 
-		float NewZ = zone->zonemap->FindBestZ(begin, nullptr);
+		float NewZ = zone->MapFindBestZ(begin, nullptr);
 		NewZ += size;
 
 		if (std::abs(NewZ - last_z) > haz_size) {

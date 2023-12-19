@@ -795,8 +795,8 @@ void AdjustRoute(std::list<IPathfinder::IPathNode> &nodes, Mob *who) {
 		if (node.teleport)
 			continue;
 		if (underwater_mob || zone->IsWaterZone(node.pos.z) || zone->watermap->InLiquid(node.pos)) {
-			float ceiling = zone->zonemap->FindCeiling(node.pos, nullptr);
-			float ground = zone->zonemap->FindGround(node.pos, nullptr);
+			float ceiling = zone->MapFindCeiling(node.pos, nullptr);
+			float ground = zone->MapFindGround(node.pos, nullptr);
 
 			if (ground != BEST_Z_INVALID && (node.pos.z < (ground + offset)))
 				node.pos.z = ground + offset;
@@ -804,9 +804,9 @@ void AdjustRoute(std::list<IPathfinder::IPathNode> &nodes, Mob *who) {
 				node.pos.z = ceiling - 1.0f;
 			}
 		} else {
-			auto best_z = zone->zonemap->FindBestZ(node.pos, nullptr, 20.0f);
+			auto best_z = zone->MapFindBestZ(node.pos, nullptr, 20.0f);
 			if (best_z == BEST_Z_INVALID)
-				best_z = zone->zonemap->FindBestZ(node.pos, nullptr);
+				best_z = zone->MapFindBestZ(node.pos, nullptr);
 			if (best_z != BEST_Z_INVALID) {
 				node.pos.z = best_z + offset;
 			}
@@ -1196,13 +1196,13 @@ void MobMovementManager::UpdatePathGround(Mob *who, float x, float y, float z, M
 	bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(begin) || zone->IsWaterZone(begin.z);
 	if (!in_liquid) {
 		if (who->IsClient()) {
-			float best_z = zone->zonemap->FindBestZ(begin, nullptr);
+			float best_z = zone->MapFindBestZ(begin, nullptr);
 			if (best_z != BEST_Z_INVALID)
 				begin.z = best_z + who->GetZOffset();
 		} else {
-			float best_z = zone->zonemap->FindBestZ(begin, nullptr, 20.0f);
+			float best_z = zone->MapFindBestZ(begin, nullptr, 20.0f);
 			if (best_z == BEST_Z_INVALID)
-				best_z = zone->zonemap->FindBestZ(begin, nullptr);
+				best_z = zone->MapFindBestZ(begin, nullptr);
 			if (best_z != BEST_Z_INVALID)
 				begin.z = best_z + who->GetZOffset();
 		}
@@ -1369,7 +1369,7 @@ void MobMovementManager::UpdatePathUnderwater(Mob *who, float x, float y, float 
 	bool underwater_mob = who->IsNPC() && (who->CastToNPC()->IsUnderwaterOnly() || (zone->IsWaterZone(who->GetZ()) && zone->IsWaterZone(z)) ||
 	                                       (zone->HasWaterMap() && zone->watermap->InLiquid(who->GetPosition()) && zone->watermap->InLiquid(glm::vec3(x, y, z))));
 
-	if (underwater_mob && zone->zonemap->CheckLoS(who->GetPosition(), glm::vec3(x, y, z))) {
+	if (underwater_mob && zone->MapCheckLoS(who->GetPosition(), glm::vec3(x, y, z))) {
 		PushSwimTo(ent.second, x, y, z, movement_mode);
 		return;
 	}

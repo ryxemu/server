@@ -88,6 +88,9 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 	zone->zonemap = Map::LoadMapFile(zone->map_name);
 	zone->watermap = WaterMap::LoadWaterMapfile(zone->map_name);
 	zone->pathing = IPathfinder::Load(zone->map_name);
+	if (zone->zonemap == nullptr) {
+		zone->is_zonemap_loaded = false;
+	}
 
 	std::string tmp;
 	if (database.GetVariable("loglevel", tmp)) {
@@ -755,6 +758,7 @@ Zone::Zone(uint32 in_zoneid, const char* in_short_name)
 	watermap = nullptr;
 	pathing = nullptr;
 	qGlobals = nullptr;
+	is_zonemap_loaded = false;
 	default_ruleset = 0;
 
 	process_mobs_while_empty = false;

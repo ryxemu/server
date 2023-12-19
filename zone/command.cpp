@@ -4520,7 +4520,7 @@ void command_loc(Client *c, const Seperator *sep) {
 	c->Message(CC_Default, fmt::format(" {} Location | XYZ: {:.2f}, {:.2f}, {:.2f} Heading: {:.2f} ", (c == target ? "Your" : fmt::format(" {} ({}) ", target->GetCleanName(), target->GetID())), target_position.x, target_position.y, target_position.z, target_position.w).c_str());
 
 	float newz = 0;
-	if (zone->zonemap == nullptr) {
+	if (!zone->HasMap()) {
 		c->Message(CC_Default, "Map not loaded for this zone.");
 	} else {
 		auto z = c->GetZ() + (c->GetSize() == 0.0 ? 6 : c->GetSize()) * HEAD_POSITION;
@@ -4529,7 +4529,7 @@ void command_loc(Client *c, const Seperator *sep) {
 		glm::vec3 bme(me);
 		bme.z -= 500;
 
-		auto newz = zone->zonemap->FindBestZ(me, &hit);
+		auto newz = zone->MapFindBestZ(me, &hit);
 		if (newz != BEST_Z_INVALID) {
 			me.z = target->SetBestZ(newz);
 			c->Message(CC_Default, fmt::format("Best Z is {:.2f} ", newz).c_str());
@@ -7308,7 +7308,7 @@ void command_bestz(Client *c, const Seperator *sep) {
 		ycoord = atof(sep->arg[2]);
 	}
 
-	if (zone->zonemap == nullptr) {
+	if (!zone->HasMap()) {
 		c->Message(CC_Default, "Map not loaded for this zone");
 	} else {
 		glm::vec3 me;
@@ -7319,7 +7319,7 @@ void command_bestz(Client *c, const Seperator *sep) {
 		glm::vec3 bme(me);
 		bme.z -= 500;
 
-		float best_z = zone->zonemap->FindBestZ(me, &hit);
+		float best_z = zone->MapFindBestZ(me, &hit);
 
 		if (best_z != BEST_Z_INVALID) {
 			c->Message(CC_Default, "Z is %.3f at (%.3f, %.3f).", best_z, me.x, me.y);

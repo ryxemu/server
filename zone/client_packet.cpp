@@ -1656,15 +1656,12 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 
 	sze->curHP = 1;
 	sze->NPC = 0;
-	if (zone->zonemap) {
+	if (zone->HasMap()) {
 		// This prevents hopping on logging in.
 		glm::vec3 loc(m_Position.x, m_Position.y, m_Position.z);
 		if (!IsEncumbered() && m_pp.boatid == 0 && (!zone->HasWaterMap() || !zone->watermap->InLiquid(loc)) &&
 		    zone->GetZoneID() != hole && zone->GetZoneID() != freporte) {
-			float bestz = BEST_Z_INVALID;
-			if (zone->zonemap != nullptr) {
-				bestz = zone->zonemap->FindBestZ(loc, nullptr);
-			}
+			float bestz = zone->MapFindBestZ(loc, nullptr);
 			if (bestz != BEST_Z_INVALID && size > 0) {
 				m_Position.z = bestz + CalcZOffset();
 			}

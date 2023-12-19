@@ -793,7 +793,7 @@ void Client::AI_Process() {
 			// this is for mobs that might still be pathing to get LOS
 			glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 			glm::vec3 tar_pos(cur_tar->GetX(), cur_tar->GetY(), cur_tar->GetZ());
-			bool has_los = zone->zonemap->CheckLoS(my_loc, tar_pos);
+			bool has_los = zone->MapCheckLoS(my_loc, tar_pos);
 			if (!has_los && Distance(my_loc, tar_pos) > 14.0f)
 				is_combat_range = false;
 		} else if (!is_combat_range) {
@@ -802,7 +802,7 @@ void Client::AI_Process() {
 				// this is for mobs that might still be pathing to get LOS
 				glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 				glm::vec3 tar_pos(cur_tar->GetX(), cur_tar->GetY(), cur_tar->GetZ());
-				if (zone->zonemap->CheckLoS(my_loc, tar_pos))
+				if (zone->MapCheckLoS(my_loc, tar_pos))
 					is_combat_range = true;
 			}
 		}
@@ -886,20 +886,20 @@ void Client::AI_Process() {
 							glm::vec3 dest(m_Navigation.x, m_Navigation.y, m_Navigation.z);
 							if (GetTarget()->GetZOffset() < 5.0f)
 								m_Navigation.z += (5.0f - GetTarget()->GetZOffset());
-							float new_z = zone->zonemap->FindGround(dest, nullptr);
+							float new_z = zone->MapFindGround(dest, nullptr);
 							if (new_z == BEST_Z_INVALID)
-								new_z = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
+								new_z = zone->MapFindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
 							if (new_z == BEST_Z_INVALID)
-								new_z = zone->zonemap->FindBestZ(dest, nullptr);
+								new_z = zone->MapFindBestZ(dest, nullptr);
 							if (new_z != BEST_Z_INVALID)
 								m_Navigation.z = new_z + GetZOffset();
 						} else {
 							glm::vec3 dest(m_Navigation.x, m_Navigation.y, m_Navigation.z);
 							if (GetTarget()->GetZOffset() < 5.0f)
 								m_Navigation.z += (5.0f - GetTarget()->GetZOffset());
-							float new_z = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
+							float new_z = zone->MapFindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
 							if (new_z == BEST_Z_INVALID)
-								new_z = zone->zonemap->FindBestZ(dest, nullptr);
+								new_z = zone->MapFindBestZ(dest, nullptr);
 							if (new_z != BEST_Z_INVALID)
 								m_Navigation.z = new_z + GetZOffset();
 						}
@@ -929,25 +929,25 @@ void Client::AI_Process() {
 								// we are not in water
 								if (owner->FindType(SE_Levitate) || owner->GetFlyMode() != 0) {
 									// we are flying - use ground
-									float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+									float new_z = zone->MapFindBestZ(dest, nullptr);
 									if (new_z != BEST_Z_INVALID) {
 										m_Navigation.z = SetBestZ(new_z);
 									}
 								} else {
-									float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+									float new_z = zone->MapFindBestZ(dest, nullptr);
 									if (new_z != BEST_Z_INVALID)
 										m_Navigation.z = SetBestZ(new_z);
 								}
 							} else {
-								float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+								float new_z = zone->MapFindBestZ(dest, nullptr);
 								if (new_z != BEST_Z_INVALID)
 									m_Navigation.z = SetBestZ(new_z);
 							}
 
 						} else {
-							float new_z = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, owner->GetZOffset());
+							float new_z = zone->MapFindBestZ(dest, nullptr, 20.0f, owner->GetZOffset());
 							if (new_z == BEST_Z_INVALID)
-								new_z = zone->zonemap->FindBestZ(dest, nullptr);
+								new_z = zone->MapFindBestZ(dest, nullptr);
 							if (new_z != BEST_Z_INVALID)
 								m_Navigation.z = SetBestZ(new_z);
 						}
@@ -1211,10 +1211,7 @@ void Mob::AI_Process() {
 			// this is for mobs that might still be pathing to get LOS
 			glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 			glm::vec3 tar_pos(GetTarget()->GetX(), GetTarget()->GetY(), GetTarget()->GetZ());
-			bool has_los = false;
-			if (zone->zonemap != nullptr) {
-				has_los = zone->zonemap->CheckLoS(my_loc, tar_pos);
-			}
+			bool has_los = zone->MapCheckLoS(my_loc, tar_pos);
 			if (!has_los && Distance(my_loc, tar_pos) > 14.0f)
 				is_combat_range = false;
 		} else if (!is_combat_range) {
@@ -1223,7 +1220,7 @@ void Mob::AI_Process() {
 				// this is for mobs that might still be pathing to get LOS
 				glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 				glm::vec3 tar_pos(GetTarget()->GetX(), GetTarget()->GetY(), GetTarget()->GetZ());
-				if (zone->zonemap->CheckLoS(my_loc, tar_pos))
+				if (zone->MapCheckLoS(my_loc, tar_pos))
 					is_combat_range = true;
 			}
 		}
@@ -1234,13 +1231,13 @@ void Mob::AI_Process() {
 
 				glm::vec3 my_loc(m_Position.x, m_Position.y, m_Position.z);
 				glm::vec3 tar_pos(GetTarget()->GetX(), GetTarget()->GetY(), GetTarget()->GetZ());
-				bool has_los = zone->zonemap->CheckLoS(my_loc, tar_pos);
+				bool has_los = zone->MapCheckLoS(my_loc, tar_pos);
 				if (!has_los && !GetTarget()->IsMoving()) {
 					// warp on top of target?
 					if (zone->HasWaterMap() && zone->watermap->InLiquid(tar_pos) || zone->IsWaterZone(tar_pos.z)) {
 						// find our position above and below.
-						float ceiling = zone->zonemap->FindCeiling(tar_pos, nullptr);
-						float ground = zone->zonemap->FindGround(tar_pos, nullptr);
+						float ceiling = zone->MapFindCeiling(tar_pos, nullptr);
+						float ground = zone->MapFindGround(tar_pos, nullptr);
 
 						if (tar_pos.z < (ground + GetZOffset()))
 							tar_pos.z = ground + GetZOffset();
@@ -1250,13 +1247,13 @@ void Mob::AI_Process() {
 					} else {
 						// has water and target not in water
 						if (GetTarget()->IsClient()) {
-							float new_z = zone->zonemap->FindBestZ(tar_pos, nullptr);
+							float new_z = zone->MapFindBestZ(tar_pos, nullptr);
 							if (new_z != BEST_Z_INVALID)
 								tar_pos.z = SetBestZ(new_z);
 						} else {
-							float new_z = zone->zonemap->FindBestZ(tar_pos, nullptr, 20.0f);
+							float new_z = zone->MapFindBestZ(tar_pos, nullptr, 20.0f);
 							if (new_z == BEST_Z_INVALID)
-								new_z = zone->zonemap->FindBestZ(tar_pos, nullptr);
+								new_z = zone->MapFindBestZ(tar_pos, nullptr);
 							if (new_z != BEST_Z_INVALID)
 								tar_pos.z = SetBestZ(new_z);
 						}
@@ -1420,8 +1417,8 @@ void Mob::AI_Process() {
 								// warp on top of target
 								if (zone->HasWaterMap() && zone->watermap->InLiquid(tar_pos) || zone->IsWaterZone(tar_pos.z)) {
 									// find our position above and below.
-									float ceiling = zone->zonemap->FindCeiling(tar_pos, nullptr);
-									float ground = zone->zonemap->FindGround(tar_pos, nullptr);
+									float ceiling = zone->MapFindCeiling(tar_pos, nullptr);
+									float ground = zone->MapFindGround(tar_pos, nullptr);
 
 									if (tar_pos.z < (ground + GetZOffset()))
 										tar_pos.z = ground + GetZOffset();
@@ -1431,13 +1428,13 @@ void Mob::AI_Process() {
 								} else {
 									// has water and target not in water
 									if (GetTarget()->IsClient()) {
-										float new_z = zone->zonemap->FindBestZ(tar_pos, nullptr);
+										float new_z = zone->MapFindBestZ(tar_pos, nullptr);
 										if (new_z != BEST_Z_INVALID)
 											tar_pos.z = SetBestZ(new_z);
 									} else {
-										float new_z = zone->zonemap->FindBestZ(tar_pos, nullptr, 20.0f);
+										float new_z = zone->MapFindBestZ(tar_pos, nullptr, 20.0f);
 										if (new_z == BEST_Z_INVALID)
-											new_z = zone->zonemap->FindBestZ(tar_pos, nullptr);
+											new_z = zone->MapFindBestZ(tar_pos, nullptr);
 										if (new_z != BEST_Z_INVALID)
 											tar_pos.z = SetBestZ(new_z);
 									}
@@ -1459,8 +1456,8 @@ void Mob::AI_Process() {
 									if (zone->HasWaterMap() && zone->watermap->InLiquid(dest) || zone->IsWaterZone(dest.z)) {
 										// we are in water, so target is client
 										// find our position above and below.
-										float ceiling = zone->zonemap->FindCeiling(dest, nullptr);
-										float ground = zone->zonemap->FindGround(dest, nullptr);
+										float ceiling = zone->MapFindCeiling(dest, nullptr);
+										float ground = zone->MapFindGround(dest, nullptr);
 
 										if (ground != BEST_Z_INVALID && dest.z < (ground + GetZOffset()))
 											dest.z = ground + GetZOffset();
@@ -1470,7 +1467,7 @@ void Mob::AI_Process() {
 										m_Navigation.z = dest.z;
 									} else if (GetTarget()->FindType(SE_Levitate) || (GetTarget()->GetFlyMode() == 1 || GetTarget()->GetFlyMode() == 2)) {
 										// we are flying - use ground
-										float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+										float new_z = zone->MapFindBestZ(dest, nullptr);
 										if (new_z != BEST_Z_INVALID) {
 											m_Navigation.z = SetBestZ(new_z);
 										}
@@ -1478,12 +1475,9 @@ void Mob::AI_Process() {
 								} else {
 									bool in_liquid = zone->HasWaterMap() && zone->watermap->InLiquid(dest) || zone->IsWaterZone(dest.z);
 									if (!in_liquid) {
-										float newz = BEST_Z_INVALID;
-										if (zone->zonemap != nullptr) {
-											float newz = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
-											if (newz == BEST_Z_INVALID) {
-												newz = zone->zonemap->FindBestZ(dest, nullptr);
-											}
+										float newz = zone->MapFindBestZ(dest, nullptr, 20.0f, GetTarget()->GetZOffset());
+										if (newz == BEST_Z_INVALID) {
+											newz = zone->MapFindBestZ(dest, nullptr);
 										}
 
 										if (newz != BEST_Z_INVALID)
@@ -1496,8 +1490,8 @@ void Mob::AI_Process() {
 										}
 									} else {
 										// target in water
-										float ceiling = zone->zonemap->FindCeiling(dest, nullptr);
-										float ground = zone->zonemap->FindGround(dest, nullptr);
+										float ceiling = zone->MapFindCeiling(dest, nullptr);
+										float ground = zone->MapFindGround(dest, nullptr);
 
 										if (dest.z < (ground + GetZOffset()))
 											dest.z = ground + GetZOffset();
@@ -1574,24 +1568,24 @@ void Mob::AI_Process() {
 											// we are not in water
 											if (owner->FindType(SE_Levitate) || owner->GetFlyMode() != 0) {
 												// we are flying - use ground
-												float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+												float new_z = zone->MapFindBestZ(dest, nullptr);
 												if (new_z != BEST_Z_INVALID) {
 													m_Navigation.z = SetBestZ(new_z);
 												}
 											} else {
-												float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+												float new_z = zone->MapFindBestZ(dest, nullptr);
 												if (new_z != BEST_Z_INVALID)
 													m_Navigation.z = SetBestZ(new_z);
 											}
 										} else {
-											float new_z = zone->zonemap->FindBestZ(dest, nullptr);
+											float new_z = zone->MapFindBestZ(dest, nullptr);
 											if (new_z != BEST_Z_INVALID)
 												m_Navigation.z = SetBestZ(new_z);
 										}
 									} else {
-										float new_z = zone->zonemap->FindBestZ(dest, nullptr, 20.0f, owner->GetZOffset());
+										float new_z = zone->MapFindBestZ(dest, nullptr, 20.0f, owner->GetZOffset());
 										if (new_z == BEST_Z_INVALID)
-											new_z = zone->zonemap->FindBestZ(dest, nullptr);
+											new_z = zone->MapFindBestZ(dest, nullptr);
 										if (new_z != BEST_Z_INVALID)
 											m_Navigation.z = SetBestZ(new_z);
 									}
@@ -1884,7 +1878,7 @@ void NPC::AI_DoMovement() {
 				glm::vec3 dest(roambox_movingto_x, roambox_movingto_y, GetZ());
 
 				if (zone->HasMap() && zone->HasWaterMap() && zone->watermap->InLiquid(GetPosition()) || zone->IsWaterZone(GetZ())) {
-					has_los = zone->zonemap->CheckLoS(GetPosition(), dest);
+					has_los = zone->MapCheckLoS(GetPosition(), dest);
 				}
 				if (zone->random.Roll(5)) {
 					// randomly return to spawn point
@@ -1895,9 +1889,9 @@ void NPC::AI_DoMovement() {
 					has_los = false;
 				}
 				if (!has_los && zone->HasMap()) {
-					float roam_z = zone->zonemap->FindGround(start, &dest);
+					float roam_z = zone->MapFindGround(start, &dest);
 					// self correcting ceiling cap - for mobs that spawn under objects
-					float ceil = zone->zonemap->FindCeiling(start, &dest);
+					float ceil = zone->MapFindCeiling(start, &dest);
 					if (ceil != BEST_Z_INVALID && ((ceil - 10.0f) > roambox_ceil)) {
 						roambox_ceil = ceil - 1.0f;
 					}
