@@ -180,3 +180,5 @@ depends:
 	time python3 build/depends/dependency_graph.py -f png world build/depends/world.dot
 	@echo "Zone..."
 	time python3 build/depends/dependency_graph.py -f png zone build/depends/zone.dot
+	@echo "Common..."
+	time python3 build/depends/dependency_graph.py -f png common build/depends/common.dot
