@@ -17,6 +17,7 @@
 #include "../common/misc_functions.h"
 #include "../common/rulesys.h"
 #include "../common/servertalk.h"
+#include "../common/config.h"
 
 #include "client.h"
 #include "corpse.h"
@@ -29,7 +30,6 @@
 #include "titles.h"
 #include "worldserver.h"
 #include "zone.h"
-#include "zone_config.h"
 
 extern EntityList entity_list;
 extern Zone* zone;
@@ -76,13 +76,12 @@ void WorldServer::OnConnected() {
 	pack = new ServerPacket(ServerOP_SetConnectInfo, sizeof(ServerConnectInfo));
 	ServerConnectInfo* sci = (ServerConnectInfo*)pack->pBuffer;
 
-	auto config = ZoneConfig::get();
-	sci->port = ZoneConfig::get()->ZonePort;
-	if (config->WorldAddress.length() > 0) {
-		strn0cpy(sci->address, config->WorldAddress.c_str(), 250);
+	sci->port = Config::get()->ZonePortCurrent;
+	if (Config::get()->WorldAddress.length() > 0) {
+		strn0cpy(sci->address, Config::get()->WorldAddress.c_str(), 250);
 	}
-	if (config->LocalAddress.length() > 0) {
-		strn0cpy(sci->local_address, config->LocalAddress.c_str(), 250);
+	if (Config::get()->LocalAddress.length() > 0) {
+		strn0cpy(sci->local_address, Config::get()->LocalAddress.c_str(), 250);
 	}
 
 	/* Fetch process ID */
@@ -142,7 +141,7 @@ void WorldServer::Process() {
 					break;
 				ServerConnectInfo* sci = (ServerConnectInfo*)pack->pBuffer;
 				Log(Logs::Detail, Logs::ZoneServer, "World assigned Port: %d for this zone.", sci->port);
-				ZoneConfig::SetZonePort(sci->port);
+				Config::SetZonePort(sci->port);
 				break;
 			}
 			case ServerOP_ZAAuthFailed: {
@@ -353,22 +352,22 @@ void WorldServer::Process() {
 				break;
 			}
 			case ServerOP_Motd: {
-                        ServerMotd_Struct* smotd = reinterpret_cast<ServerMotd_Struct*>(pack->pBuffer);
-                        auto outapp = new EQApplicationPacket(OP_MOTD);
-                        char tmp[500] = {0};
-                        snprintf(tmp, sizeof(tmp), "%s", smotd->motd);
+				ServerMotd_Struct* smotd = reinterpret_cast<ServerMotd_Struct*>(pack->pBuffer);
+				auto outapp = new EQApplicationPacket(OP_MOTD);
+				char tmp[500] = {0};
+				snprintf(tmp, sizeof(tmp), "%s", smotd->motd);
 
-                        size_t motdLength = strlen(tmp) + 1; // +1 for the null terminator
+				size_t motdLength = strlen(tmp) + 1;  // +1 for the null terminator
 
-                        outapp->size = motdLength;
-                        outapp->pBuffer = new uchar[outapp->size];
-                        memcpy(outapp->pBuffer, tmp, outapp->size);
+				outapp->size = motdLength;
+				outapp->pBuffer = new uchar[outapp->size];
+				memcpy(outapp->pBuffer, tmp, outapp->size);
 
-                        entity_list.QueueClients(0, outapp);
-                        safe_delete(outapp);
+				entity_list.QueueClients(0, outapp);
+				safe_delete(outapp);
 
-                               break;
-                        }
+				break;
+			}
 
 			case ServerOP_ShutdownAll: {
 				entity_list.Save();

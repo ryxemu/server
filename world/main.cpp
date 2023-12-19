@@ -59,7 +59,7 @@ union semun {
 #include "console.h"
 #include "login_server.h"
 #include "login_server_list.h"
-#include "world_config.h"
+#include "../common/config.h"
 #include "zoneserver.h"
 #include "zonelist.h"
 #include "clientlist.h"
@@ -82,7 +82,6 @@ volatile bool RunLoops = true;
 uint32 numclients = 0;
 uint32 numzones = 0;
 bool holdzones = false;
-const WorldConfig* Config;
 EQEmuLogSys LogSys;
 
 extern ConsoleList console_list;
@@ -92,39 +91,30 @@ void CatchSignal(int sig_num);
 void LoadDatabaseConnections() {
 	LogInfo(
 	    "Connecting to MySQL {0}@{1}:{2}...",
-	    Config->DatabaseUsername.c_str(),
-	    Config->DatabaseHost.c_str(),
-	    Config->DatabasePort);
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
 	if (!database.Connect(
-	        Config->DatabaseHost.c_str(),
-	        Config->DatabaseUsername.c_str(),
-	        Config->DatabasePassword.c_str(),
-	        Config->DatabaseDB.c_str(),
-	        Config->DatabasePort)) {
+	        Config::get()->DatabaseHost.c_str(),
+	        Config::get()->DatabaseUsername.c_str(),
+	        Config::get()->DatabasePassword.c_str(),
+	        Config::get()->DatabaseDB.c_str(),
+	        Config::get()->DatabasePort)) {
 		LogError("Cannot continue without a database connection.");
 
 		std::exit(1);
 	}
 }
 
-void LoadServerConfig() {
-	LogInfo("Loading config.yaml");
-	auto load_result = WorldConfig::LoadConfig();
-	if (!load_result.empty()) {
-		LogError("{}", load_result);
-		std::exit(1);
-	}
-}
-
 void RegisterLoginservers() {
 	// add login server config to list
-	if (Config->LoginCount == 0) {
-		if (Config->LoginHost.length()) {
-			loginserverlist.Add(Config->LoginHost.c_str(), Config->LoginPort, Config->LoginAccount.c_str(), Config->LoginPassword.c_str(), Config->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", Config->LoginHost.c_str(), Config->LoginPort);
+	if (Config::get()->LoginCount == 0) {
+		if (Config::get()->LoginHost.length()) {
+			loginserverlist.Add(Config::get()->LoginHost.c_str(), Config::get()->LoginPort, Config::get()->LoginAccount.c_str(), Config::get()->LoginPassword.c_str(), Config::get()->LoginType);
+			LogInfo("Added loginserver [{0}]:[{1}]", Config::get()->LoginHost.c_str(), Config::get()->LoginPort);
 		}
 	} else {
-		LinkedList<LoginConfig*> loginlist = Config->loginlist;
+		LinkedList<LoginConfig*> loginlist = Config::get()->loginlist;
 		LinkedListIterator<LoginConfig*> iterator(loginlist);
 		iterator.Reset();
 		while (iterator.MoreElements()) {
@@ -140,11 +130,13 @@ int main(int argc, char** argv) {
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
 
-	LoadServerConfig();
-
-	Config = WorldConfig::get();
-
 	LogInfo("Starting World v{}", VERSION);
+
+	auto load_result = Config::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
+		return 1;
+	}
 
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -295,10 +287,10 @@ int main(int argc, char** argv) {
 	database.LoadCharacterCreateCombos();
 
 	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcps.Open(Config->WorldTCPPort, errbuf)) {
+	if (tcps.Open(Config::get()->WorldTCPPort, errbuf)) {
 		LogInfo("Zone (TCP) listener started.");
 	} else {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config->WorldTCPPort);
+		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config::get()->WorldTCPPort);
 		LogError("        {0}", errbuf);
 		return 1;
 	}

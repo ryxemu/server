@@ -13,7 +13,8 @@ enum ClientVersion {
 	MacPC,
 	MacIntel,
 	MacPPC,
-	Mac
+	Mac,
+	Ls20231211
 };
 
 enum ClientVersionBit : uint32 {
@@ -22,7 +23,8 @@ enum ClientVersionBit : uint32 {
 	bit_MacPC = 0x00000002,
 	bit_MacIntel = 0x00000004,
 	bit_MacPPC = 0x00000008,
-	bit_Mac = 0x0000000E,
+	bit_Mac = 0x000000010,
+	bit_Ls20231211 = 0x00000020,
 	bit_AllClients = 0xFFFFFFFF
 };
 
@@ -43,7 +45,8 @@ enum class MobVersion {
 	NPCMerchant,
 	ClientPet,
 	NPCPet,
-	OfflineMac
+	OfflineMac,
+	OfflineLs20231211
 };
 
 const MobVersion LastMobVersion = MobVersion::OfflineMac;

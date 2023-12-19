@@ -20,9 +20,8 @@ struct LoginConfig {
 
 class Config {
    public:
-	virtual std::string GetByName(const std::string &var_name) const;
-
 	// From <world/>
+	bool UpdateStats;  // temporary variable (not loaded from config) TODO: add to a proper state system
 	std::string ShortName;
 	std::string LongName;
 	std::string WorldAddress;
@@ -34,7 +33,7 @@ class Config {
 	uint16 LoginPort;
 	uint32 LoginCount;
 	LinkedList<LoginConfig *> loginlist;
-	bool Locked;
+	bool IsLocked;  // Is the world locked, not allowing new players to log in
 	uint16 WorldTCPPort;
 	std::string WorldIP;
 	bool TelnetEnabled;
@@ -71,6 +70,8 @@ class Config {
 	uint16 ZonePortLow;
 	uint16 ZonePortHigh;
 	uint8 DefaultStatus;
+	uint16 ZonePortCurrent;  // temporary variable (not loaded from config) TODO: add to a proper state system
+
 	//	uint16 DynamicCount;
 	//	map<string,uint16> StaticZones;
    protected:
@@ -123,6 +124,41 @@ class Config {
 			return "Failed during " + Config::ConfigFile + ": " + e.what();
 		}
 		return "";
+	}
+
+	// SetIsLocked is used to set the world lock status
+	static void SetIsLocked(bool value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->IsLocked = value;
+		return;
+	}
+
+	// SetLocalAddress is used to set the local address for the world server to use
+	static void SetLocalAddress(std::string value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->LocalAddress = value;
+		return;
+	}
+
+	// SetWorldAddress is used to set the world address for the world server to use
+	static void SetWorldAddress(std::string value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->WorldAddress = value;
+		return;
+	}
+
+	static void SetZonePort(uint16 value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->ZonePortCurrent = value;
+		return;
 	}
 
 	void Dump() const;

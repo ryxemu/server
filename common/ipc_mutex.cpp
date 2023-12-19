@@ -25,8 +25,7 @@ struct IPCMutex::Implementation {
 IPCMutex::IPCMutex(std::string name) : locked_(false) {
 	imp_ = new Implementation;
 #ifdef _WINDOWS
-	auto Config = Config::get();
-	std::string final_name = Config->SharedMemDir + "EQEmuMutex_";
+	std::string final_name = Config::get()->SharedMemDir + "EQEmuMutex_";
 	final_name += name;
 
 	imp_->mut_ = CreateMutex(nullptr,
@@ -37,8 +36,7 @@ IPCMutex::IPCMutex(std::string name) : locked_(false) {
 		EQ_EXCEPT("IPC Mutex", "Could not create mutex.");
 	}
 #else
-	auto Config = Config::get();
-	std::string final_name = Config->SharedMemDir + name;
+	std::string final_name = Config::get()->SharedMemDir + name;
 	final_name += ".lock";
 
 #ifdef __DARWIN

@@ -1,4 +1,4 @@
-
+#include "../common/config.h"
 
 #include "water_map.h"
 #include "water_map_v1.h"
@@ -31,7 +31,7 @@ WaterMap* WaterMap::LoadWaterMapfile(std::string zone_name) {
 	} else if (file_exists("Maps")) {
 		filename = "Maps";
 	} else {
-		filename = Config->MapDir;
+		filename = Config::get()->MapDir;
 	}
 
 	std::string file_path = filename + "/" + zone_name + std::string(".wtr");

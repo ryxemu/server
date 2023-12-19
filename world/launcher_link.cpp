@@ -1,7 +1,7 @@
 #include "../common/global_define.h"
 #include "launcher_link.h"
 #include "launcher_list.h"
-#include "world_config.h"
+#include "../common/config.h"
 
 #include "../common/md5.h"
 #include "../common/packet_dump.h"
@@ -50,10 +50,10 @@ bool LauncherLink::Process() {
 	ServerPacket *pack = 0;
 	while ((pack = tcpc->PopPacket())) {
 		if (!authenticated) {
-			if (WorldConfig::get()->SharedKey.length() > 0) {
+			if (Config::get()->SharedKey.length() > 0) {
 				if (pack->opcode == ServerOP_ZAAuth && pack->size == 16) {
 					uint8 tmppass[16];
-					MD5::Generate((const uchar *)WorldConfig::get()->SharedKey.c_str(), WorldConfig::get()->SharedKey.length(), tmppass);
+					MD5::Generate((const uchar *)Config::get()->SharedKey.c_str(), Config::get()->SharedKey.length(), tmppass);
 					if (memcmp(pack->pBuffer, tmppass, 16) == 0)
 						authenticated = true;
 					else {

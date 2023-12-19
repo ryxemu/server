@@ -17,7 +17,7 @@
 #include "worlddb.h"
 #include "zonelist.h"
 #include "clientlist.h"
-#include "world_config.h"
+#include "../common/config.h"
 
 extern ZSList zoneserver_list;
 extern LoginServerList loginserverlist;

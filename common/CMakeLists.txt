@@ -75,6 +75,8 @@ SET(common_sources
 	worldconn.cpp
 	platform.cpp
 	patches/patches.cpp
+	patches/ls20231211.cpp
+	patches/ls20231211_limits.cpp
 	patches/mac.cpp
 	patches/mac_limits.cpp
 	SocketLib/Base64.cpp
@@ -408,6 +410,10 @@ SET(common_headers
 	zone_numbers.h
 	platform.h
 	patches/patches.h
+	patches/ls20231211.h
+	patches/ls20231211_limits.h
+	patches/ls20231211_ops.h
+	patches/ls20231211_structs.h
 	patches/mac.h
 	patches/mac_limits.h
 	patches/mac_ops.h
@@ -443,6 +449,12 @@ SOURCE_GROUP(Patches FILES
 	patches/mac_limits.h
 	patches/mac.cpp
 	patches/mac_limits.cpp
+	patches/ls20231211.h
+	patches/ls20231211_ops.h
+	patches/ls20231211_structs.h
+	patches/ls20231211_limits.h
+	patches/ls20231211.cpp
+	patches/ls20231211_limits.cpp
 )
 
 SOURCE_GROUP(SocketLib FILES

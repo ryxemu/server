@@ -18,6 +18,7 @@
 #include "../common/seperator.h"
 #include "../common/strings.h"
 #include "../common/eqemu_logsys.h"
+#include "../common/config.h"
 
 #include "guild_mgr.h"
 #include "map.h"
@@ -34,7 +35,6 @@
 #include "water_map.h"
 #include "worldserver.h"
 #include "zone.h"
-#include "zone_config.h"
 
 #include <time.h>
 #include <ctime>
@@ -120,7 +120,7 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 
 	worldserver.SetZoneData(iZoneID);
 
-	LogInfo("---- Zone server [{}], listening on port:[{}] ----", zonename, ZoneConfig::get()->ZonePort);
+	LogInfo("---- Zone server [{}], listening on port:[{}] ----", zonename, Config::get()->ZonePortCurrent);
 	LogInfo("Zone Bootup: [{}] [{}] ([{}])",
 	        (iStaticZone) ? "Static" : "Dynamic", zonename, iZoneID);
 	parse->Init();
@@ -129,7 +129,7 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 
 	/* Set Logging */
 
-	LogSys.StartFileLogs(StringFormat("%s_port_%u", zone->GetShortName(), ZoneConfig::get()->ZonePort));
+	LogSys.StartFileLogs(StringFormat("%s_port_%u", zone->GetShortName(), Config::get()->ZonePortCurrent));
 
 	return true;
 }

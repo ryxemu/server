@@ -20,7 +20,7 @@
 #include "../common/rulesys.h"
 #include "../common/ruletypes.h"
 #include "../common/strings.h"
-#include "world_config.h"
+#include "../common/config.h"
 #include "zoneserver.h"
 #include "zonelist.h"
 #include "clientlist.h"
@@ -719,7 +719,7 @@ void Console::ProcessCommand(const char* command) {
 					zoneserver_list.WorldShutDown(0, 0);
 				}
 			} else if (strcasecmp(sep.arg[0], "lock") == 0 && admin >= consoleLockStatus) {
-				WorldConfig::LockWorld();
+				Config::get()->SetIsLocked(true);
 				if (loginserverlist.Connected()) {
 					loginserverlist.SendStatus();
 					SendMessage(1, "World locked.");
@@ -727,7 +727,7 @@ void Console::ProcessCommand(const char* command) {
 					SendMessage(1, "World locked, but login server not connected.");
 				}
 			} else if (strcasecmp(sep.arg[0], "unlock") == 0 && admin >= consoleLockStatus) {
-				WorldConfig::UnlockWorld();
+				Config::get()->SetIsLocked(false);
 				if (loginserverlist.Connected()) {
 					loginserverlist.SendStatus();
 					SendMessage(1, "World unlocked.");

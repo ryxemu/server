@@ -3,10 +3,7 @@
 
 #include "../common/types.h"
 #include "position.h"
-#include "zone_config.h"
 #include <string>
-
-extern const ZoneConfig* Config;
 
 enum WaterRegionType {
 	RegionTypeUnsupported = -2,

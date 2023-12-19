@@ -1,24 +1,12 @@
-#ifndef MAC_STRUCTS_H_
-#define MAC_STRUCTS_H_
+#ifndef LS_20231211_STRUCTS_H_
+#define LS_20231211_STRUCTS_H_
 
 #include <string>
-
-namespace Mac {
+#include "../types.h"
+namespace Ls20231211 {
 namespace structs {
 
-/*
-** Compiler override to ensure
-** byte aligned structures
-*/
 #pragma pack(1)
-
-/*
-** Color_Struct
-** Size: 4 bytes
-** Used for convenience
-** Merth: Gave struct a name so gcc 2.96 would compile
-**
-*/
 
 struct Texture_Struct {
 	uint32 Material;
@@ -313,7 +301,7 @@ struct Item_Struct {
 	/*0354*/ int16 BardType;
 	/*0356*/ int16 BardValue;
 	/*0358*/ int16 FocusEffect;  // Confirmed
-	/*0360*/
+	                             /*0360*/
 };
 
 struct PlayerItemsPacket_Struct {
@@ -422,7 +410,6 @@ struct SetDataRate_Struct {
 };
 
 // Added this struct for eqemu and started eimplimentation ProcessOP_SendLoginInfo
-// PPC Mac version of this is 196 bytes, Intel Mac version is 200 bytes
 struct LoginInfo_Struct {
 	/*000*/ char AccountName[127];
 	/*127*/ char Password[24];
@@ -647,6 +634,6 @@ struct ObjectDisplayOnly_Struct {
 };
 
 };  // end namespace structs
-};  // namespace Mac
+};  // namespace Ls20231211
 
-#endif /*MAC_STRUCTS_H_*/
+#endif /*LS_20231211_STRUCTS_H_*/

@@ -8,7 +8,7 @@
 #include "console.h"
 #include "client.h"
 #include "../common/md5.h"
-#include "world_config.h"
+#include "../common/config.h"
 #include "../common/guilds.h"
 #include "../common/packet_dump.h"
 #include "../common/misc.h"
@@ -94,7 +94,7 @@ bool ZoneServer::SetZone(uint32 iZoneID, bool iStaticZone) {
 }
 
 void ZoneServer::LSShutDownUpdate(uint32 zoneid) {
-	if (WorldConfig::get()->UpdateStats) {
+	if (Config::get()->UpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSZoneShutdown;
 		pack->size = sizeof(ZoneShutdown_Struct);
@@ -112,7 +112,7 @@ void ZoneServer::LSShutDownUpdate(uint32 zoneid) {
 }
 
 void ZoneServer::LSBootUpdate(uint32 zoneid, bool startup) {
-	if (WorldConfig::get()->UpdateStats) {
+	if (Config::get()->UpdateStats) {
 		auto pack = new ServerPacket;
 		if (startup)
 			pack->opcode = ServerOP_LSZoneStart;
@@ -132,7 +132,7 @@ void ZoneServer::LSBootUpdate(uint32 zoneid, bool startup) {
 }
 
 void ZoneServer::LSSleepUpdate(uint32 zoneid) {
-	if (WorldConfig::get()->UpdateStats) {
+	if (Config::get()->UpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSZoneSleep;
 		pack->size = sizeof(ServerLSZoneSleep_Struct);
@@ -167,10 +167,10 @@ bool ZoneServer::Process() {
 	ServerPacket* pack = 0;
 	while ((pack = tcpc->PopPacket())) {
 		if (!is_authenticated) {
-			if (WorldConfig::get()->SharedKey.length() > 0) {
+			if (Config::get()->SharedKey.length() > 0) {
 				if (pack->opcode == ServerOP_ZAAuth && pack->size == 16) {
 					uint8 tmppass[16];
-					MD5::Generate((const uchar*)WorldConfig::get()->SharedKey.c_str(), WorldConfig::get()->SharedKey.length(), tmppass);
+					MD5::Generate((const uchar*)Config::get()->SharedKey.c_str(), Config::get()->SharedKey.length(), tmppass);
 					if (memcmp(pack->pBuffer, tmppass, 16) == 0)
 						is_authenticated = true;
 					else {
@@ -822,8 +822,9 @@ bool ZoneServer::Process() {
 					break;
 				ZoneToZone_Struct* ztz = (ZoneToZone_Struct*)pack->pBuffer;
 				ClientListEntry* client = nullptr;
-				if (WorldConfig::get()->UpdateStats)
+				if (Config::get()->UpdateStats) {
 					client = client_list.FindCharacter(ztz->name);
+				}
 
 				Log(Logs::Detail, Logs::WorldServer, "ZoneToZone request for %s current zone %d req zone %d",
 				    ztz->name, ztz->current_zone_id, ztz->requested_zone_id);
@@ -1024,10 +1025,11 @@ bool ZoneServer::Process() {
 					break;
 				}
 				auto l = (ServerLock_Struct*)pack->pBuffer;
-				if (l->is_locked)
-					WorldConfig::LockWorld();
-				else
-					WorldConfig::UnlockWorld();
+				if (l->is_locked) {
+					Config::get()->SetIsLocked(true);
+				} else {
+					Config::get()->SetIsLocked(false);
+				}
 				if (loginserverlist.Connected()) {
 					loginserverlist.SendStatus();
 					SendEmoteMessage(l->character_name, 0, AccountStatus::Player, CC_Yellow, fmt::format("World {}.", l->is_locked ? "locked" : "unlocked").c_str());
