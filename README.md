@@ -2,7 +2,7 @@
 
 ### Project Goals:
 
-64-bit client will be default. We will support 32-bit but it's not that main goal.
+64-bit client will be default. We will support 32-bit but it's not the main goal.
 
 1. Much faster HP and mana regen. // To Be set by server admin and can be adjusted on the fly.
 
