@@ -69,6 +69,9 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/bin/zone",
 			"cwd": "${workspaceFolder}/build/bin",
+			"args": [
+				"ecommons",
+			],
 			"MIMode": "gdb",
 			"setupCommands": [
 				{
@@ -84,10 +87,10 @@
 			]
 		},
 		{
-			"name": "(gdb) loginserver",
+			"name": "(gdb) login",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/bin/loginserver",
+			"program": "${workspaceFolder}/build/bin/login",
 			"cwd": "${workspaceFolder}/build/bin",
 			"MIMode": "gdb",
 			"setupCommands": [

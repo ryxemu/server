@@ -80,10 +80,10 @@ prep:
 test:
 	cd build/bin && ./tests
 
-# Runs loginserver binary
-.PHONY: loginserver
-loginserver:
-	cd build/bin && ./loginserver
+# Runs login binary
+.PHONY: login
+login:
+	cd build/bin && ./login
 
 # Runs shared_memory binary
 .PHONY: shared
@@ -174,8 +174,8 @@ depends:
 		wget https://raw.githubusercontent.com/pvigier/dependency-graph/master/dependency_graph.py -O build/depends/dependency_graph.py; \
 	fi
 	@echo "Generating dependency graphs (This may take a while)..."
-	@echo "Loginserver..."
-	time python3 build/depends/dependency_graph.py -f png loginserver build/depends/loginserver.dot
+	@echo "Login..."
+	time python3 build/depends/dependency_graph.py -f png login build/depends/login.dot
 	@echo "World..."
 	time python3 build/depends/dependency_graph.py -f png world build/depends/world.dot
 	@echo "Zone..."

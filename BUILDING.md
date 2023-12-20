@@ -60,7 +60,7 @@ We'll be using a standalone binary mysql install for dev purposes. It is suggest
 
 - `make prep` This will create a build subfolder, and copy files from base. This can be ran multiple times, files are checked prior to copying.
 - `make shared` This should show 2 messages in yellow and exit quickly.
-- `make loginserver` This will lock the window on success, open a new terminal.
+- `make login` This will lock the window on success, open a new terminal.
 - `make world` Will spin up world, open a new terminal
 - `make zone` Now we have a fully running server
 
