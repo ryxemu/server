@@ -24,10 +24,10 @@ SET(eqlogin_headers
 	world_server.h
 )
 
-ADD_EXECUTABLE(loginserver ${eqlogin_sources} ${eqlogin_headers})
+ADD_EXECUTABLE(login ${eqlogin_sources} ${eqlogin_headers})
 
-INSTALL(TARGETS loginserver RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+INSTALL(TARGETS login RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
-TARGET_LINK_LIBRARIES(loginserver ${SERVER_LIBS})
+TARGET_LINK_LIBRARIES(login ${SERVER_LIBS})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
