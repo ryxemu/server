@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
 
 	SharedDatabase database;
 	Log(Logs::General, Logs::Status, "Connecting to database...");
-	if (!database.Connect(Config->DatabaseHost.c_str(), Config->DatabaseUsername.c_str(),
-	                      Config->DatabasePassword.c_str(), Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+	if (!database.Connect(Config::get()->DatabaseHost.c_str(), Config::get()->DatabaseUsername.c_str(),
+	                      Config::get()->DatabasePassword.c_str(), Config::get()->DatabaseDB.c_str(), Config::get()->DatabasePort)) {
 		LogError("Unable to connect to the database, cannot continue without a database connection");
 		return 1;
 	}

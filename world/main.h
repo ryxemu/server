@@ -31,17 +31,14 @@ class NetConnection {
 		memset(worldshortname, 0, sizeof(worldshortname));
 		memset(worldaccount, 0, sizeof(worldaccount));
 		memset(worldpassword, 0, sizeof(worldpassword));
-		memset(worldaddress, 0, sizeof(worldaddress));
 		memset(chataddress, 0, sizeof(chataddress));
 		DEFAULTSTATUS = 0;
 		LoginServerInfo = 0;  // ReadLoginINI();
-		UpdateStats = false;
 	}
 	~NetConnection() {}
 
 	bool ReadLoginINI();
 	bool LoginServerInfo;
-	bool UpdateStats;
 	char* GetLoginInfo(uint16* oPort);
 	inline char* GetLoginAddress(uint8 i) { return loginaddress[i]; }
 	inline uint16 GetLoginPort(uint8 i) { return loginport[i]; }
@@ -49,7 +46,6 @@ class NetConnection {
 	inline char* GetWorldShortName() { return worldshortname; }
 	inline char* GetWorldAccount() { return worldaccount; }
 	inline char* GetWorldPassword() { return worldpassword; }
-	inline char* GetWorldAddress() { return worldaddress; }
 	inline uint8 GetDefaultStatus() { return DEFAULTSTATUS; }
 	inline char* GetChatAddress() { return chataddress; }
 	uint16 GetChatPort() { return chatport; }
@@ -64,7 +60,6 @@ class NetConnection {
 	char worldshortname[31];
 	char worldaccount[31];
 	char worldpassword[31];
-	char worldaddress[255];
 	char chataddress[255];
 	uint8 DEFAULTSTATUS;
 };

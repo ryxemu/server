@@ -63,7 +63,6 @@ union semun {
 #include "zoneserver.h"
 #include "zonelist.h"
 #include "clientlist.h"
-#include "launcher_list.h"
 #include "wguild_mgr.h"
 #include "ucs.h"
 #include "queryserv.h"
@@ -76,7 +75,6 @@ ZSList zoneserver_list;
 LoginServerList loginserverlist;
 UCSConnection UCSLink;
 QueryServConnection QSLink;
-LauncherList launcher_list;
 EQ::Random emu_random;
 volatile bool RunLoops = true;
 uint32 numclients = 0;
@@ -107,21 +105,13 @@ void LoadDatabaseConnections() {
 }
 
 void RegisterLoginservers() {
-	// add login server config to list
-	if (Config::get()->LoginCount == 0) {
-		if (Config::get()->LoginHost.length()) {
-			loginserverlist.Add(Config::get()->LoginHost.c_str(), Config::get()->LoginPort, Config::get()->LoginAccount.c_str(), Config::get()->LoginPassword.c_str(), Config::get()->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", Config::get()->LoginHost.c_str(), Config::get()->LoginPort);
-		}
-	} else {
-		LinkedList<LoginConfig*> loginlist = Config::get()->loginlist;
-		LinkedListIterator<LoginConfig*> iterator(loginlist);
-		iterator.Reset();
-		while (iterator.MoreElements()) {
-			loginserverlist.Add(iterator.GetData()->LoginHost.c_str(), iterator.GetData()->LoginPort, iterator.GetData()->LoginAccount.c_str(), iterator.GetData()->LoginPassword.c_str(), iterator.GetData()->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", iterator.GetData()->LoginHost.c_str(), iterator.GetData()->LoginPort);
-			iterator.Advance();
-		}
+	LinkedList<LoginConfig*> login_list = Config::get()->WorldLoginList;
+	LinkedListIterator<LoginConfig*> iterator(login_list);
+	iterator.Reset();
+	while (iterator.MoreElements()) {
+		loginserverlist.Add(iterator.GetData()->LoginIP.c_str(), iterator.GetData()->LoginPort, iterator.GetData()->LoginUsername.c_str(), iterator.GetData()->LoginPassword.c_str(), iterator.GetData()->LoginType);
+		LogInfo("Added loginserver [{0}]:[{1}]", iterator.GetData()->LoginIP.c_str(), iterator.GetData()->LoginPort);
+		iterator.Advance();
 	}
 }
 
@@ -264,9 +254,6 @@ int main(int argc, char** argv) {
 	Timer EQTimeTimer(600000);
 	EQTimeTimer.Start(600000);
 
-	LogInfo("Loading launcher list..");
-	launcher_list.LoadList();
-
 	std::string tmp;
 	database.GetVariable("holdzones", tmp);
 	if (tmp.length() == 1 && tmp[0] == '1') {
@@ -287,19 +274,17 @@ int main(int argc, char** argv) {
 	database.LoadCharacterCreateCombos();
 
 	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcps.Open(Config::get()->WorldTCPPort, errbuf)) {
-		LogInfo("Zone (TCP) listener started.");
-	} else {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config::get()->WorldTCPPort);
+	if (!tcps.Open(Config::get()->WorldTelnetPort, errbuf)) {
+		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config::get()->WorldTelnetPort);
 		LogError("        {0}", errbuf);
 		return 1;
 	}
-	if (eqsf.Open()) {
-		LogInfo("Client (UDP) listener started.");
-	} else {
+	LogInfo("Zone (TCP) listener started on port {}.", Config::get()->WorldTelnetPort);
+	if (!eqsf.Open()) {
 		LogInfo("Failed to start client (UDP) listener (port 9000)");
 		return 1;
 	}
+	LogInfo("Client (UDP) listener started.");
 
 	// register all the patches we have avaliable with the stream identifier.
 	EQStreamIdentifier stream_identifier;
@@ -413,7 +398,6 @@ int main(int argc, char** argv) {
 		loginserverlist.Process();
 		console_list.Process();
 		zoneserver_list.Process();
-		launcher_list.Process();
 		UCSLink.Process();
 		QSLink.Process();
 

@@ -5,6 +5,7 @@
 #include "../common/misc_functions.h"
 #include "../common/eqemu_logsys.h"
 #include "../common/sha1.h"
+#include "../common/config.h"
 #include "eq_crypto.h"
 
 extern EQCrypto eq_crypto;
@@ -24,14 +25,14 @@ Client::Client(EQStreamInterface* c, ClientVersion v) {
 bool Client::Process() {
 	EQApplicationPacket* app = connection->PopPacket();
 	while (app) {
-		LogDebug("Application packet received from client.");
-		if (server.options.IsDumpInPacketsOn()) {
+		LogDebug("Application packet received from client");
+		if (Config::get()->IsLoginPacketInLoggingEnabled) {
 			LogDebug("[Size: {0}] [{1}]", app->size, DumpPacketToString(app).c_str());
 		}
 
 		switch (app->GetOpcode()) {
 			case OP_SessionReady: {
-				LogInfo("Session ready received from client.");
+				LogInfo("Session ready received from client");
 				Handle_SessionReady((const char*)app->pBuffer, app->Size());
 				break;
 			}
@@ -40,10 +41,10 @@ bool Client::Process() {
 				std::string check = DumpPacketToRawString(app->pBuffer, app->Size());
 
 				if (check.find("eqworld-52.989studios.com") != std::string::npos) {
-					LogInfo("Login received from OSX client.");
+					LogInfo("Login received from OSX client");
 					client = "OSX";
 				} else {
-					LogInfo("Login received from ticketed PC client.");
+					LogInfo("Login received from ticketed PC client");
 					client = "PCT";
 				}
 				Handle_Login((const char*)app->pBuffer, app->Size(), client);
@@ -51,35 +52,35 @@ bool Client::Process() {
 			}
 			case OP_LoginPC: {
 				if (app->Size() < 20) {
-					LogError("Login received but it is too small, discarding.");
+					LogError("Login received but it is too small, discarding");
 					break;
 				}
 
-				LogInfo("Login received from PC client.");
+				LogInfo("Login received from PC client");
 				Handle_Login((const char*)app->pBuffer, app->Size(), "PC");
 				break;
 			}
 			case OP_LoginComplete: {
-				LogInfo("Login complete received from client.");
+				LogInfo("Login complete received from client");
 				Handle_LoginComplete((const char*)app->pBuffer, app->Size());
 				break;
 			}
 			case OP_LoginUnknown1:  // Seems to be related to world status in older clients; we use our own logic for that though.
 			{
-				LogInfo("OP_LoginUnknown1 received from client.");
+				LogInfo("OP_LoginUnknown1 received from client");
 				auto outapp = new EQApplicationPacket(OP_LoginUnknown2, 0);
 				connection->QueuePacket(outapp);
 				delete (outapp);
 				break;
 			}
 			case OP_ServerListRequest: {
-				LogInfo("Server list request received from client.");
+				LogInfo("Server list request received from client");
 				SendServerListPacket();
 				break;
 			}
 			case OP_PlayEverquestRequest: {
 				if (app->Size() < sizeof(PlayEverquestRequest_Struct) && version != cv_old) {
-					LogError("Play received but it is too small, discarding.");
+					LogError("Play received but it is too small, discarding");
 					break;
 				}
 				Handle_Play((const char*)app->pBuffer);
@@ -105,19 +106,19 @@ bool Client::Process() {
 
 void Client::Handle_SessionReady(const char* data, unsigned int size) {
 	if (status != cs_not_sent_session_ready) {
-		LogError("Session ready received again after already being received.");
+		LogError("Session ready received again after already being received");
 		return;
 	}
 
 	if (version != cv_old) {
 		if (size < sizeof(unsigned int)) {
-			LogError("Session ready was too small.");
+			LogError("Session ready was too small");
 			return;
 		}
 
 		unsigned int mode = *((unsigned int*)data);
 		if (mode == (unsigned int)lm_from_world) {
-			LogError("Session ready indicated logged in from world(unsupported feature), disconnecting.");
+			LogError("Session ready indicated logged in from world(unsupported feature), disconnecting");
 			connection->Close();
 			return;
 		}
@@ -133,7 +134,7 @@ void Client::Handle_SessionReady(const char* data, unsigned int size) {
 		strcpy((char*)outapp->pBuffer, buf);
 		connection->QueuePacket(outapp);
 		delete outapp;
-		LogInfo("EQMac Stream selected.");
+		LogInfo("EQMac Stream selected");
 	}
 }
 
@@ -147,7 +148,7 @@ void Client::Handle_Login(const char* data, unsigned int size, std::string clien
 		LogError(error.c_str());
 		return;
 	} else if (status != cs_waiting_for_login) {
-		LogError("Login received after already having logged in.");
+		LogError("Login received after already having logged in");
 		return;
 	}
 
@@ -236,12 +237,8 @@ void Client::Handle_Login(const char* data, unsigned int size, std::string clien
 	if (!server.db->GetLoginDataFromAccountName(username, d_pass_hash, d_account_id)) {
 		LogError("Error logging in, user {0} does not exist in the database.", username.c_str());
 		LogError("platform : {} , username : {} does not exist", platform, username);
-		if (server.options.CanAutoCreateAccounts()) {
-			LogInfo("platform : {} , username : {} is created", platform, username);
-			server.db->CreateLoginData(username.c_str(), userandpass, d_account_id);
-
-		} else {
-			FatalError("Account does not exist and auto creation is not enabled.");
+		if (!Config::get()->IsLoginAutoCreateAccountsEnabled) {
+			FatalError("Account does not exist and auto creation is not enabled");
 			return;
 		}
 		result = false;
@@ -264,35 +261,17 @@ void Client::Handle_Login(const char* data, unsigned int size, std::string clien
 			account_id = d_account_id;
 			account_name = username.c_str();
 
-			if (client == "OSX") {
-				auto outapp = new EQApplicationPacket(OP_LoginAccepted, sizeof(SessionIdEQMacPPC_Struct));
-				SessionIdEQMacPPC_Struct* s_id = (SessionIdEQMacPPC_Struct*)outapp->pBuffer;
-				// this is submitted to world server as "username"
-				sprintf(s_id->session_id, "LS#%i", account_id);
-				strcpy(s_id->unused, "unused");
-				s_id->unknown = 4;
-				connection->QueuePacket(outapp);
-				delete outapp;
-
-				string buf = server.options.GetNetworkIP();
-				auto outapp2 = new EQApplicationPacket(OP_ServerName, (uint32)buf.length() + 1);
-				strncpy((char*)outapp2->pBuffer, buf.c_str(), buf.length() + 1);
-				connection->QueuePacket(outapp2);
-				delete outapp2;
-				sentsessioninfo = true;
-			} else {
-				auto outapp = new EQApplicationPacket(OP_LoginAccepted, sizeof(SessionId_Struct));
-				SessionId_Struct* s_id = (SessionId_Struct*)outapp->pBuffer;
-				// this is submitted to world server as "username"
-				sprintf(s_id->session_id, "LS#%i", account_id);
-				strcpy(s_id->unused, "unused");
-				s_id->unknown = 4;
-				connection->QueuePacket(outapp);
-				delete outapp;
-			}
+			auto outapp = new EQApplicationPacket(OP_LoginAccepted, sizeof(SessionId_Struct));
+			SessionId_Struct* s_id = (SessionId_Struct*)outapp->pBuffer;
+			// this is submitted to world server as "username"
+			sprintf(s_id->session_id, "LS#%i", account_id);
+			strcpy(s_id->unused, "unused");
+			s_id->unknown = 4;
+			connection->QueuePacket(outapp);
+			delete outapp;
 		}
 	} else {
-		FatalError("Invalid username or password.");
+		FatalError("Invalid username or password");
 	}
 	return;
 }
@@ -317,7 +296,7 @@ void Client::Handle_LoginComplete(const char* data, unsigned int size) {
 
 void Client::Handle_Play(const char* data) {
 	if (status != cs_logged_in) {
-		LogError("Client sent a play request when they either were not logged in, discarding.");
+		LogError("Client sent a play request when they either were not logged in, discarding");
 		return;
 	}
 
@@ -329,7 +308,7 @@ void Client::Handle_Play(const char* data) {
 void Client::SendServerListPacket() {
 	EQApplicationPacket* outapp = server.server_manager->CreateOldServerListPacket(this);
 
-	if (server.options.IsDumpOutPacketsOn()) {
+	if (Config::get()->IsLoginPacketOutLoggingEnabled) {
 		LogInfo("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 	}
 
@@ -357,7 +336,7 @@ void Client::Handle_Banner(unsigned int size) {
 }
 
 void Client::SendPlayResponse(EQApplicationPacket* outapp) {
-	LogDebug("Sending play response to client.");
+	LogDebug("Sending play response to client");
 	LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 
 	connection->QueuePacket(outapp);

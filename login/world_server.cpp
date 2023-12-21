@@ -1,7 +1,7 @@
 #include "world_server.h"
 #include "login_server.h"
 #include "login_structures.h"
-#include "config.h"
+#include "../common/config.h"
 
 #include "../common/eqemu_logsys.h"
 
@@ -43,7 +43,7 @@ bool WorldServer::Process() {
 	while (app = connection->PopPacket()) {
 		LogDebug("Application packet received from server: [{0}], (size {1})", app->opcode, app->size);
 
-		if (server.options.IsDumpInPacketsOn()) {
+		if (Config::get()->IsLoginPacketOutLoggingEnabled) {
 			LogInfo("[Size: {0}] [{1}]", app->size, DumpServerPacketToString(app).c_str());
 		}
 
@@ -52,11 +52,11 @@ bool WorldServer::Process() {
 				if (app->size < sizeof(ServerNewLSInfo_Struct)) {
 					LogError(
 					    "Received application packet from server that had opcode ServerOP_NewLSInfo, "
-					    "but was too small. Discarded to avoid buffer overrun.");
+					    "but was too small. Discarded to avoid buffer overrun");
 					break;
 				}
 
-				LogInfo("New Login Info Recieved.");
+				LogInfo("New Login Info Recieved");
 				ServerNewLSInfo_Struct *info = (ServerNewLSInfo_Struct *)app->pBuffer;
 				Handle_NewLSInfo(info);
 				break;
@@ -65,11 +65,11 @@ bool WorldServer::Process() {
 				if (app->size < sizeof(ServerLSStatus_Struct)) {
 					LogError(
 					    "Recieved application packet from server that had opcode ServerOP_LSStatus, "
-					    "but was too small. Discarded to avoid buffer overrun.");
+					    "but was too small. Discarded to avoid buffer overrun");
 					break;
 				}
 
-				LogDebug("World Server Status Recieved.");
+				LogDebug("World Server Status Recieved");
 
 				auto *ls_status = (ServerLSStatus_Struct *)app->pBuffer;
 
@@ -95,11 +95,11 @@ bool WorldServer::Process() {
 				if (app->size < sizeof(UsertoWorldResponse_Struct)) {
 					LogError(
 					    "Recieved application packet from server that had opcode ServerOP_UsertoWorldResp, "
-					    "but was too small. Discarded to avoid buffer overrun.");
+					    "but was too small. Discarded to avoid buffer overrun");
 					break;
 				}
 
-				LogInfo("User-To-World Response received.");
+				LogInfo("User-To-World Response received");
 
 				UsertoWorldResponse_Struct *utwr = (UsertoWorldResponse_Struct *)app->pBuffer;
 				LogInfo("Trying to find client with user id of [{0}].", utwr->lsaccountid);
@@ -113,22 +113,22 @@ bool WorldServer::Process() {
 						case 1:
 							break;
 						case 0:
-							c->FatalError("\nError 1020: Your chosen World Server is DOWN.\n\nPlease select another.");
+							c->FatalError("\nError 1020: Your chosen World Server is DOWN.\n\nPlease select another");
 							break;
 						case -1:
-							c->FatalError("You have been suspended from the worldserver.");
+							c->FatalError("You have been suspended from the worldserver");
 							break;
 						case -2:
-							c->FatalError("You have been banned from the worldserver.");
+							c->FatalError("You have been banned from the worldserver");
 							break;
 						case -3:
-							c->FatalError("That server is full.");
+							c->FatalError("That server is full");
 							break;
 						case -4:
-							c->FatalError("Error 1018: You currently have an active character on that EverQuest Server, please allow a minute for synchronization and try again.");
+							c->FatalError("Error 1018: You currently have an active character on that EverQuest Server, please allow a minute for synchronization and try again");
 							break;
 						case -5:
-							c->FatalError("Error IP Limit Exceeded: \n\nYou have exceeded the maximum number of allowed IP addresses for this account.");
+							c->FatalError("Error IP Limit Exceeded: \n\nYou have exceeded the maximum number of allowed IP addresses for this account");
 							break;
 					}
 					LogInfo("Found client with user id of {0} and account name of {1}.", utwr->lsaccountid, c->GetAccountName().c_str());
@@ -178,7 +178,7 @@ bool WorldServer::Process() {
 					LogInfo("Sending play response with following data, allowed {} , sequence {} , server number {} , message {} ",
 					        per->Allowed, per->Sequence, per->ServerNumber, per->Message);
 
-					if (server.options.IsDumpOutPacketsOn()) {
+					if (Config::get()->IsLoginPacketOutLoggingEnabled) {
 						LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 					}
 
@@ -193,7 +193,7 @@ bool WorldServer::Process() {
 				if (app->size < sizeof(ServerLSAccountUpdate_Struct)) {
 					LogError(
 					    "Recieved application packet from server that had opcode ServerLSAccountUpdate_Struct, "
-					    "but was too small. Discarded to avoid buffer overrun.");
+					    "but was too small. Discarded to avoid buffer overrun");
 					break;
 				}
 
@@ -224,35 +224,35 @@ bool WorldServer::Process() {
 
 void WorldServer::Handle_NewLSInfo(ServerNewLSInfo_Struct *i) {
 	if (is_server_logged_in) {
-		LogError("WorldServer::Handle_NewLSInfo called but the login server was already marked as logged in, aborting.");
+		LogError("WorldServer::Handle_NewLSInfo called but the login server was already marked as logged in, aborting");
 		return;
 	}
 
 	if (strlen(i->account) <= 30) {
 		account_name = i->account;
 	} else {
-		LogError("Handle_NewLSInfo error, account name was too long.");
+		LogError("Handle_NewLSInfo error, account name was too long");
 		return;
 	}
 
 	if (strlen(i->password) <= 30) {
 		account_password = i->password;
 	} else {
-		LogError("Handle_NewLSInfo error, account password was too long.");
+		LogError("Handle_NewLSInfo error, account password was too long");
 		return;
 	}
 
 	if (strlen(i->name) <= 200) {
 		long_name = i->name;
 	} else {
-		LogError("Handle_NewLSInfo error, long name was too long.");
+		LogError("Handle_NewLSInfo error, long name was too long");
 		return;
 	}
 
 	if (strlen(i->shortname) <= 50) {
 		short_name = i->shortname;
 	} else {
-		LogError("Handle_NewLSInfo error, short name was too long.");
+		LogError("Handle_NewLSInfo error, short name was too long");
 		return;
 	}
 
@@ -264,7 +264,7 @@ void WorldServer::Handle_NewLSInfo(ServerNewLSInfo_Struct *i) {
 			local_ip = i->local_address;
 		}
 	} else {
-		LogError("Handle_NewLSInfo error, local address was too long.");
+		LogError("Handle_NewLSInfo error, local address was too long");
 		return;
 	}
 
@@ -287,33 +287,33 @@ void WorldServer::Handle_NewLSInfo(ServerNewLSInfo_Struct *i) {
 	if (strlen(i->serverversion) <= 64) {
 		version = i->serverversion;
 	} else {
-		LogError("Handle_NewLSInfo error, server version was too long.");
+		LogError("Handle_NewLSInfo error, server version was too long");
 		return;
 	}
 
 	if (strlen(i->protocolversion) <= 25) {
 		protocol = i->protocolversion;
 	} else {
-		LogError("Handle_NewLSInfo error, protocol version was too long.");
+		LogError("Handle_NewLSInfo error, protocol version was too long");
 		return;
 	}
 
 	server_type = i->servertype;
 	is_server_logged_in = true;
 
-	if (server.options.IsRejectingDuplicateServers()) {
+	if (Config::get()->IsLoginDuplicateServerRejected) {
 		if (server.server_manager->ServerExists(long_name, short_name, this)) {
-			LogError("World tried to login but there already exists a server that has that name.");
+			LogError("World tried to login but there already exists a server that has that name");
 			return;
 		}
 	} else {
 		if (server.server_manager->ServerExists(long_name, short_name, this)) {
-			LogError("World tried to login but there already exists a server that has that name.");
+			LogError("World tried to login but there already exists a server that has that name");
 			server.server_manager->DestroyServerByName(long_name, short_name, this);
 		}
 	}
 
-	if (!server.options.IsUnregisteredAllowed()) {
+	if (!Config::get()->IsLoginUnregisteredAllowed) {
 		if (account_name.size() > 0 && account_password.size() > 0) {
 			unsigned int s_id = 0;
 			unsigned int s_list_type = 0;
@@ -460,7 +460,7 @@ void WorldServer::SendClientAuth(unsigned int ip, string account, string key, un
 
 	if (client_address.compare(world_address) == 0) {
 		client_auth->local = 1;
-	} else if (client_address.find(server.options.GetLocalNetwork()) != string::npos) {
+	} else if (client_address.find(Config::get()->LoginLANIP) != string::npos) {
 		client_auth->local = 1;
 	} else {
 		client_auth->local = 0;
@@ -468,7 +468,7 @@ void WorldServer::SendClientAuth(unsigned int ip, string account, string key, un
 
 	connection->SendPacket(outapp);
 
-	if (server.options.IsDumpInPacketsOn()) {
+	if (Config::get()->IsLoginPacketInLoggingEnabled) {
 		Log(Logs::General, Logs::LoginServer, "[Size: %u] %s", outapp->size, DumpServerPacketToString(outapp).c_str());
 	}
 	safe_delete(outapp);

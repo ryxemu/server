@@ -9,8 +9,8 @@
 #include "../common/crash.h"
 #include "../common/strings.h"
 #include "../common/event/timer.h"
+#include "../common/config.h"
 #include "database.h"
-#include "ucsconfig.h"
 #include "chatchannel.h"
 #include "worldserver.h"
 #include <list>
@@ -22,8 +22,6 @@ EQEmuLogSys LogSys;
 TimeoutManager timeout_manager;
 Database database;
 WorldServer *worldserver = nullptr;
-
-const ucsconfig *Config;
 
 std::string WorldShortName;
 
@@ -52,24 +50,22 @@ int main() {
 
 	LogInfo("Starting UCS v{}", VERSION);
 
-	auto load_result = ucsconfig::LoadConfig();
+	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
 		return 1;
 	}
 
-	Config = ucsconfig::get();
-
-	WorldShortName = Config->ShortName;
+	WorldShortName = Config::get()->WorldShortName;
 
 	LogInfo("Connecting to MySQL");
 
 	if (!database.Connect(
-	        Config->DatabaseHost.c_str(),
-	        Config->DatabaseUsername.c_str(),
-	        Config->DatabasePassword.c_str(),
-	        Config->DatabaseDB.c_str(),
-	        Config->DatabasePort)) {
+	        Config::get()->DatabaseHost.c_str(),
+	        Config::get()->DatabaseUsername.c_str(),
+	        Config::get()->DatabasePassword.c_str(),
+	        Config::get()->DatabaseDB.c_str(),
+	        Config::get()->DatabasePort)) {
 		LogInfo("Cannot continue without a database connection.");
 		return 1;
 	}
@@ -93,7 +89,7 @@ int main() {
 		}
 	}
 
-	g_Clientlist = new Clientlist(Config->ChatPort);
+	g_Clientlist = new Clientlist(Config::get()->ChatPort);
 
 	ChannelList = new ChatChannelList();
 

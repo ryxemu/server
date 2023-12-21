@@ -11,8 +11,8 @@
 #endif
 
 struct LoginConfig {
-	std::string LoginHost;
-	std::string LoginAccount;
+	std::string LoginIP;
+	std::string LoginUsername;
 	std::string LoginPassword;
 	uint16 LoginPort;
 	uint8 LoginType;
@@ -20,25 +20,45 @@ struct LoginConfig {
 
 class Config {
    public:
-	// From <world/>
-	bool UpdateStats;  // temporary variable (not loaded from config) // TODO: add to a proper state system
-	std::string ShortName;
-	std::string LongName;
-	std::string WorldAddress;
-	std::string LocalAddress;
-	std::string LoginHost;
-	std::string LoginAccount;
-	std::string LoginPassword;
-	uint8 LoginType;
-	uint16 LoginPort;
-	uint32 LoginCount;
-	LinkedList<LoginConfig *> loginlist;
-	bool IsLocked;  // Is the world locked, not allowing new players to log in
-	uint16 WorldTCPPort;
-	std::string WorldIP;
-	bool TelnetEnabled;
-	int32 MaxClients;
-	std::string SharedKey;
+	bool WorldUpdateStats;                     // world temporary variable (not loaded from config) // TODO: add to a proper state system
+	bool IsWorldLocked;                        // world.is_locked, Is the world locked, not allowing new players to log in
+	std::string WorldShortName;                // world.short_name
+	std::string WorldLongName;                 // world.long_name
+	std::string WorldWANIP;                    // world.wan_ip
+	uint16 WorldWANPort;                       // world.wan_port
+	std::string WorldLANIP;                    // world.lan_address
+	uint16 WorldLANPort;                       // world.lan_port
+	std::string WorldLoginIP;                  // world.login_ip
+	int32 WorldMaxClients;                     // world.max_players, maximum number of players allowed to log in
+	LinkedList<LoginConfig *> WorldLoginList;  // world.login_list, list of login servers to connect to
+	bool IsWorldTelnetEnabled;                 // world.telnet_enabled, is telnet enabled
+	std::string WorldTelnetIP;                 // world.telnet_ip
+	uint16 WorldTelnetPort;                    // world.telnet_port
+	std::string WorldSharedKey;                // world.shared_key
+
+	std::string LoginLANIP;                        // login.lan_address
+	uint16 LoginLANPort;                           // login.lan_port
+	std::string LoginUsername;                      // login.username
+	std::string LoginPassword;                     // login.password
+	bool IsLoginAutoCreateAccountsEnabled;         // login.is_auto_create_accounts_enabled
+	bool IsLoginAutoAccountActivated;              // login.is_auto_account_activated
+	bool IsLoginFailureLogged;                     // login.is_login_failure_logged
+	bool IsLoginIPLogged;                          // login.is_login_ip_logged
+	bool IsLoginUnregisteredAllowed;               // login.is_unregistered_allowed
+	bool IsLoginDuplicateServerRejected;           // login.is_duplicate_server_rejected
+	bool IsLoginTraceEnabled;                      // login.is_trace_enabled
+	bool IsLoginTraceWorldEnabled;                 // login.is_trace_world_enabled
+	bool IsLoginPacketInLoggingEnabled;            // login.is_packet_in_logging_enabled
+	bool IsLoginPacketOutLoggingEnabled;           // login.is_packet_out_logging_enabled
+	std::string LoginSalt;                         // login.salt
+	std::string LoginSecurityPlugin;               // login.security.plugin
+	int32 LoginSecurityMode;                       // login.security.mode
+	std::string LoginAccessLogTable;               // login.schema.access_log_table
+	std::string LoginAccountTable;                 // login.schema.account_table
+	std::string LoginWorldRegistrationTable;       // login.schema.world_registration_table
+	std::string LoginWorldAdminRegistrationTable;  // login.schema.world_admin_registration_table
+	std::string LoginWorldServerTypeTable;         // login.schema.world_server_type_table
+	std::string LoginLoginServerSettingTable;      // login.schema.loginserver_setting_table
 
 	// From <chatserver/>
 	std::string ChatHost;
@@ -90,25 +110,17 @@ class Config {
 		LoadConfig();
 		return (_config);
 	}
-	// Allow the use to set the conf file to be used.
-	static void SetConfigFile(std::string file) {
-		Config::ConfigFile = file;
-	}
+
 	// Load the config
 	static std::string LoadConfig() {
 		if (_config != nullptr) return "";
 
 		_config = new Config;
-
 		return parseFile();
 	}
 
 	// Load config file and parse data
 	static std::string parseFile() {
-		if (_config == nullptr) {
-			return LoadConfig();
-		}
-
 		try {
 			_config->_root = YAML::LoadFile(Config::ConfigFile);
 			_config->parse_config();
@@ -131,25 +143,7 @@ class Config {
 		if (_config == nullptr) {
 			return;
 		}
-		_config->IsLocked = value;
-		return;
-	}
-
-	// SetLocalAddress is used to set the local address for the world server to use
-	static void SetLocalAddress(std::string value) {
-		if (_config == nullptr) {
-			return;
-		}
-		_config->LocalAddress = value;
-		return;
-	}
-
-	// SetWorldAddress is used to set the world address for the world server to use
-	static void SetWorldAddress(std::string value) {
-		if (_config == nullptr) {
-			return;
-		}
-		_config->WorldAddress = value;
+		_config->IsWorldLocked = value;
 		return;
 	}
 
@@ -161,7 +155,21 @@ class Config {
 		return;
 	}
 
-	void Dump() const;
+	static void SetWorldWANIP(std::string value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->WorldWANIP = value;
+		return;
+	}
+
+	static void SetWorldLANIP(std::string value) {
+		if (_config == nullptr) {
+			return;
+		}
+		_config->WorldLANIP = value;
+		return;
+	}
 };
 
 #endif

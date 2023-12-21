@@ -4,9 +4,9 @@
 #include "../common/packet_dump.h"
 #include "../common/packet_functions.h"
 #include "../common/servertalk.h"
+#include "../common/config.h"
 
 #include "database.h"
-#include "queryservconfig.h"
 #include "worldserver.h"
 #include <iomanip>
 #include <iostream>
@@ -17,10 +17,9 @@
 #include <time.h>
 
 extern WorldServer worldserver;
-extern const queryservconfig *Config;
 extern Database database;
 
-WorldServer::WorldServer() : WorldConnection(EmuTCPConnection::packetModeQueryServ, Config->SharedKey.c_str()) {
+WorldServer::WorldServer() : WorldConnection(EmuTCPConnection::packetModeQueryServ, Config::get()->WorldSharedKey.c_str()) {
 	pTryReconnect = true;
 }
 

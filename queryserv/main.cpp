@@ -8,8 +8,8 @@
 #include "../common/crash.h"
 #include "../common/strings.h"
 #include "../common/event/timer.h"
+#include "../common/config.h"
 #include "database.h"
-#include "queryservconfig.h"
 #include "worldserver.h"
 #include <list>
 #include <signal.h>
@@ -19,7 +19,6 @@ volatile bool RunLoops = true;
 TimeoutManager timeout_manager;
 Database database;
 std::string WorldShortName;
-const queryservconfig* Config;
 WorldServer* worldserver = 0;
 EQEmuLogSys LogSys;
 
@@ -36,24 +35,23 @@ int main() {
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
 	LogInfo("Starting QueryServ v{}", VERSION);
-	auto load_result = queryservconfig::LoadConfig();
+	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
 		return 1;
 	}
 
-	Config = queryservconfig::get();
-	WorldShortName = Config->ShortName;
+	WorldShortName = Config::get()->WorldShortName;
 
 	LogInfo("Connecting to MySQL...");
 
 	/* MySQL Connection */
 	if (!database.Connect(
-	        Config->QSDatabaseHost.c_str(),
-	        Config->QSDatabaseUsername.c_str(),
-	        Config->QSDatabasePassword.c_str(),
-	        Config->QSDatabaseDB.c_str(),
-	        Config->QSDatabasePort)) {
+	        Config::get()->QSDatabaseHost.c_str(),
+	        Config::get()->QSDatabaseUsername.c_str(),
+	        Config::get()->QSDatabasePassword.c_str(),
+	        Config::get()->QSDatabaseDB.c_str(),
+	        Config::get()->QSDatabasePort)) {
 		LogInfo("Cannot continue without a database connection.");
 		return 1;
 	}

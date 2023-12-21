@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "../common/eqemu_logsys.h"
+#include "../common/config.h"
 
 extern EQEmuLogSys LogSys;
 extern LoginServer server;
@@ -12,14 +13,13 @@ extern bool run_server;
 ServerManager::ServerManager() {
 	char error_buffer[TCPConnection_ErrorBufferSize];
 
-	int listen_port = atoi(server.config->GetVariable("options", "listen_port").c_str());
-	tcps = new EmuTCPServer(listen_port, true);
-	if (tcps->Open(listen_port, error_buffer)) {
-		LogInfo("ServerManager listening on port {} ", listen_port);
-	} else {
-		LogError("ServerManager fatal error opening port on %u: %s", listen_port, error_buffer);
+	tcps = new EmuTCPServer(Config::get()->LoginLANPort, true);
+	if (!tcps->Open(Config::get()->LoginLANPort, error_buffer)) {
+		LogError("ServerManager fatal error opening port on %u: %s", Config::get()->LoginLANPort, error_buffer);
 		run_server = false;
+		return;
 	}
+	LogInfo("Listening on TCP {}:{}", Config::get()->LoginLANIP, Config::get()->LoginLANPort);
 }
 
 ServerManager::~ServerManager() {
@@ -68,7 +68,7 @@ void ServerManager::ProcessDisconnect() {
 		if (!connection->Connected()) {
 			in_addr tmp;
 			tmp.s_addr = connection->GetrIP();
-			LogInfo("World server disconnected from the server, removing server and freeing connection.");
+			LogInfo("World server disconnected from the server, removing server and freeing connection");
 			connection->Free();
 			delete (*iter);
 			iter = world_servers.erase(iter);
@@ -110,7 +110,7 @@ EQApplicationPacket* ServerManager::CreateOldServerListPacket(Client* c) {
 
 		if (world_ip.compare(client_ip) == 0) {
 			packet_size += servername.size() + 1 + (*iter)->GetLocalIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
-		} else if (client_ip.find(server.options.GetLocalNetwork()) != string::npos) {
+		} else if (client_ip.find(Config::get()->LoginLANIP) != string::npos) {
 			packet_size += servername.size() + 1 + (*iter)->GetLocalIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
 		} else {
 			packet_size += servername.size() + 1 + (*iter)->GetRemoteIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
@@ -155,7 +155,7 @@ EQApplicationPacket* ServerManager::CreateOldServerListPacket(Client* c) {
 		if (world_ip.compare(client_ip) == 0) {
 			memcpy(data_ptr, (*iter)->GetLocalIP().c_str(), (*iter)->GetLocalIP().size());
 			data_ptr += ((*iter)->GetLocalIP().size() + 1);
-		} else if (client_ip.find(server.options.GetLocalNetwork()) != string::npos) {
+		} else if (client_ip.find(Config::get()->LoginLANIP) != string::npos) {
 			memcpy(data_ptr, (*iter)->GetLocalIP().c_str(), (*iter)->GetLocalIP().size());
 			data_ptr += ((*iter)->GetLocalIP().size() + 1);
 		} else {
@@ -195,7 +195,7 @@ void ServerManager::SendOldUserToWorldRequest(const char* server_id, unsigned in
 			(*iter)->GetConnection()->SendPacket(outapp);
 			found = true;
 
-			if (server.options.IsDumpOutPacketsOn()) {
+			if (Config::get()->IsLoginPacketOutLoggingEnabled) {
 				LogInfo("[Size: {0}] [{1}]", outapp->size, DumpServerPacketToString(outapp).c_str());
 			}
 			delete outapp;

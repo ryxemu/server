@@ -1189,7 +1189,7 @@ void EQStream::SetStreamType(EQStreamType type) {
 			break;
 		case ZoneStream:
 		case WorldStream:
-		case OldStream:
+		case NewLSStream:
 		default:
 			app_opcode_size = 2;
 			compressed = true;
@@ -1725,8 +1725,8 @@ void EQOldStream::OutgoingARQ(uint16 dwARQ)  // An ack request is sent
 
 void EQOldStream::OutgoingARSP(void) {
 	no_ack_sent_timer->Disable();  // Agz: We have sent the ack response
-	//    if (debug_level >= 2)
-	//        cout << Timer::GetCurrentTime() << " no_ack_sent_timer->Disable()" << endl;
+	                               //    if (debug_level >= 2)
+	                               //        cout << Timer::GetCurrentTime() << " no_ack_sent_timer->Disable()" << endl;
 }
 
 /************ PARCE A EQPACKET ************/

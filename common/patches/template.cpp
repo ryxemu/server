@@ -16,7 +16,7 @@ static Strategy struct_strategy;
 void Register(EQStreamIdentifier &into) {
 	// create our opcode manager if we havent already
 	if (opcodes == NULL) {
-		string opfile = Config->PatchDir;
+		string opfile = Config::get()->PatchDir;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";
@@ -49,7 +49,7 @@ void Reload() {
 	// we need to go to every stream and replace it's manager.
 
 	if (opcodes != NULL) {
-		string opfile = Config->PatchDir;
+		string opfile = Config::get()->PatchDir;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";

@@ -208,7 +208,7 @@ void EQStreamFactory::ReaderLoop() {
 						s->SetLastPacketTime(Timer::GetCurrentTime());
 					} else {
 						EQOldStream *s = new EQOldStream(from, sock);
-						s->SetStreamType(OldStream);
+						s->SetStreamType(NewLSStream);
 						OldStreams[std::make_pair(from.sin_addr.s_addr, from.sin_port)] = s;
 						PushOld(s);
 						WriterWork.Signal();

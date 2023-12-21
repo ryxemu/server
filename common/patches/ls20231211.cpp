@@ -33,7 +33,7 @@ void Register(EQStreamIdentifier &into) {
 	auto Config = Config::get();
 	// create our opcode manager if we havent already
 	if (opcodes == nullptr) {
-		std::string opfile = Config->PatchDir;
+		std::string opfile = Config::get()->PatchDir;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";
@@ -82,7 +82,7 @@ void Reload() {
 
 	if (opcodes != nullptr) {
 		auto Config = Config::get();
-		std::string opfile = Config->PatchDir;
+		std::string opfile = Config::get()->PatchDir;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";

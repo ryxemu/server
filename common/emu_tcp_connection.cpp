@@ -286,22 +286,6 @@ bool EmuTCPConnection::LineOutQueuePush(char* line) {
 			safe_delete_array(line);
 			return (true);
 		}
-		if (strcmp(line, "**PACKETMODELAUNCHER**") == 0) {
-			MSendQueue.lock();
-			safe_delete_array(sendbuf);
-			if (TCPMode == modeConsole)
-				Send((const uchar*)"\0**PACKETMODELAUNCHER**\r", 24);
-			TCPMode = modePacket;
-			PacketMode = packetModeLauncher;
-			EmuTCPNetPacket_Struct* tnps = 0;
-			while ((tnps = InModeQueue.pop())) {
-				SendPacket(tnps);
-				safe_delete_array(tnps);
-			}
-			MSendQueue.unlock();
-			safe_delete_array(line);
-			return (true);
-		}
 		if (strcmp(line, "**PACKETMODEUCS**") == 0) {
 			MSendQueue.lock();
 			safe_delete_array(sendbuf);
@@ -373,13 +357,7 @@ bool EmuTCPConnection::ConnectIP(uint32 irIP, uint16 irPort, char* errbuf) {
 		TCPMode = modePacket;
 	} else if (TCPMode == modePacket || TCPMode == modeTransition) {
 		TCPMode = modeTransition;
-		if (PacketMode == packetModeLauncher) {
-			safe_delete_array(sendbuf);
-			sendbuf_size = 24;
-			sendbuf_used = sendbuf_size;
-			sendbuf = new uchar[sendbuf_size];
-			memcpy(sendbuf, "\0**PACKETMODELAUNCHER**\r", sendbuf_size);
-		} else if (PacketMode == packetModeLogin) {
+		if (PacketMode == packetModeLogin) {
 			safe_delete_array(sendbuf);
 			sendbuf_size = 16;
 			sendbuf_used = sendbuf_size;
@@ -434,44 +412,44 @@ void EmuTCPConnection::ClearBuffers() {
 }
 
 void EmuTCPConnection::SendNetErrorPacket(const char* reason) {
-    #if TCPC_DEBUG >= 1
-        struct in_addr in;
-        in.s_addr = GetrIP();
-        std::cout << "NetError: '";
-        if (reason)
-            std::cout << reason;
-        std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
-    #endif
+#if TCPC_DEBUG >= 1
+	struct in_addr in;
+	in.s_addr = GetrIP();
+	std::cout << "NetError: '";
+	if (reason)
+		std::cout << reason;
+	std::cout << "': " << inet_ntoa(in) << ":" << GetPort() << std::endl;
+#endif
 
-    auto pack = new ServerPacket(0);
-    pack->size = 1;
+	auto pack = new ServerPacket(0);
+	pack->size = 1;
 
-    if (reason != nullptr)
-        pack->size += strlen(reason) + 1;
+	if (reason != nullptr)
+		pack->size += strlen(reason) + 1;
 
-    // Allocate memory for pBuffer
-    pack->pBuffer = new uchar[pack->size];
-    memset(pack->pBuffer, 0, pack->size);
-    pack->pBuffer[0] = 255;
+	// Allocate memory for pBuffer
+	pack->pBuffer = new uchar[pack->size];
+	memset(pack->pBuffer, 0, pack->size);
+	pack->pBuffer[0] = 255;
 
-    if (reason != nullptr) {
-        size_t remainingSpace = pack->size - 1;
-        size_t reasonLength = strlen(reason);
+	if (reason != nullptr) {
+		size_t remainingSpace = pack->size - 1;
+		size_t reasonLength = strlen(reason);
 
-        if (reasonLength < remainingSpace) {
-            strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
-            pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
-        } else {
-            strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
-            pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
-        }
-    } else {
-        strncpy((char*)&pack->pBuffer[1], "unknown", pack->size - 1);
-        pack->pBuffer[pack->size - 1] = '\0'; // Ensure null termination
-    }
+		if (reasonLength < remainingSpace) {
+			strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+			pack->pBuffer[pack->size - 1] = '\0';  // Ensure null termination
+		} else {
+			strncpy((char*)&pack->pBuffer[1], reason, remainingSpace - 1);
+			pack->pBuffer[pack->size - 1] = '\0';  // Ensure null termination
+		}
+	} else {
+		strncpy((char*)&pack->pBuffer[1], "unknown", pack->size - 1);
+		pack->pBuffer[pack->size - 1] = '\0';  // Ensure null termination
+	}
 
-    SendPacket(pack);
-    safe_delete(pack);
+	SendPacket(pack);
+	safe_delete(pack);
 }
 
 void EmuTCPConnection::RemoveRelay(EmuTCPConnection* relay, bool iSendRelayDisconnect) {

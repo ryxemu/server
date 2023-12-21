@@ -25,7 +25,7 @@ bool WorldConnection::SendPacket(ServerPacket *pack) {
 
 void WorldConnection::OnConnected() {
 	const Config *Config = Config::get();
-	Log(Logs::General, Logs::Netcode, "[WORLD] Connected to World: %s:%d", Config->WorldIP.c_str(), Config->WorldTCPPort);
+	Log(Logs::General, Logs::Netcode, "[WORLD] Connected to World: %s:%d", Config::get()->WorldWANIP.c_str(), Config::get()->WorldWANPort);
 
 	auto pack = new ServerPacket(ServerOP_ZAAuth, 16);
 	MD5::Generate((const uchar *)m_password.c_str(), m_password.length(), pack->pBuffer);
@@ -46,16 +46,16 @@ void WorldConnection::Process() {
 
 void WorldConnection::AsyncConnect() {
 	const Config *Config = Config::get();
-	tcpc.AsyncConnect(Config->WorldIP.c_str(), Config->WorldTCPPort);
+	tcpc.AsyncConnect(Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort);
 }
 
 bool WorldConnection::Connect() {
 	const Config *Config = Config::get();
 	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcpc.Connect(Config->WorldIP.c_str(), Config->WorldTCPPort, errbuf)) {
+	if (tcpc.Connect(Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort, errbuf)) {
 		return true;
 	} else {
-		Log(Logs::General, Logs::Netcode, "[WORLD] WorldConnection connect: Connecting to the server %s:%d failed: %s", Config->WorldIP.c_str(), Config->WorldTCPPort, errbuf);
+		Log(Logs::General, Logs::Netcode, "[WORLD] WorldConnection connect: Connecting to the server %s:%d failed: %s", Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort, errbuf);
 	}
 	return false;
 }

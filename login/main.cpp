@@ -7,6 +7,7 @@
 #include "../common/crash.h"
 #include "../common/eqemu_logsys.h"
 #include "../common/event/timer.h"
+#include "../common/config.h"
 
 #include "eq_crypto.h"
 #include "login_server.h"
@@ -30,125 +31,42 @@ int main() {
 	set_exception_handler();
 	LogInfo("Starting LoginServer v{}", VERSION);
 
-	LogSys.log_settings[Logs::Error].log_to_console = Logs::General;
-
-	/* Parse out login.ini */
-	server.config = new Config();
-	LogInfo("Config System Init.");
-	server.config->Parse("login.ini");
-
-	if (server.config->GetVariable("options", "unregistered_allowed").compare("FALSE") == 0) {
-		server.options.AllowUnregistered(false);
-	}
-
-	if (server.config->GetVariable("options", "dump_packets_in").compare("TRUE") == 0) {
-		server.options.DumpInPackets(true);
-	}
-
-	if (server.config->GetVariable("options", "dump_packets_out").compare("TRUE") == 0) {
-		server.options.DumpOutPackets(true);
-	}
-
-	if (server.config->GetVariable("security", "allow_token_login").compare("TRUE") == 0)  //
-		server.options.AllowTokenLogin(true);
-
-	if (server.config->GetVariable("security", "allow_password_login").compare("FALSE") == 0)  //
-		server.options.AllowPasswordLogin(false);
-
-	if (server.config->GetVariable("options", "auto_create_accounts").compare("TRUE") == 0)  //
-		server.options.AutoCreateAccounts(true);
-
-	std::string mode = server.config->GetVariable("security", "mode");
-	if (mode.size() > 0) {
-		server.options.EncryptionMode(atoi(mode.c_str()));
-	}
-
-	std::string local_network = server.config->GetVariable("options", "local_network");
-	if (local_network.size() > 0) {
-		server.options.LocalNetwork(local_network);
-	}
-
-	// Parse local network option.
-	std::string mip = server.config->GetVariable("options", "network_ip");
-	if (mip.size() > 0) {
-		server.options.NetworkIP(mip);
-	}
-
-	if (server.config->GetVariable("options", "reject_duplicate_servers").compare("TRUE") == 0) {
-		server.options.RejectDuplicateServers(true);
-	}
-
-	local_network = server.config->GetVariable("schema", "account_table");
-	if (local_network.size() > 0) {
-		server.options.AccountTable(local_network);
-	}
-
-	local_network = server.config->GetVariable("schema", "world_registration_table");
-	if (local_network.size() > 0) {
-		server.options.WorldRegistrationTable(local_network);
-	}
-
-	local_network = server.config->GetVariable("schema", "world_admin_registration_table");
-	if (local_network.size() > 0) {
-		server.options.WorldAdminRegistrationTable(local_network);
-	}
-
-	local_network = server.config->GetVariable("schema", "world_server_type_table");
-	if (local_network.size() > 0) {
-		server.options.WorldServerTypeTable(local_network);
-	}
-
-	local_network = server.config->GetVariable("schema", "loginserver_setting_table");
-	if (local_network.size() > 0)
-		server.options.LoginSettingTable(local_network);
-
-	/* Create database connection */
-	if (server.config->GetVariable("database", "subsystem").compare("MySQL") == 0) {
-		LogInfo("MySQL Database Init.");
-		server.db = (Database*)new Database(
-		    server.config->GetVariable("database", "user"),
-		    server.config->GetVariable("database", "password"),
-		    server.config->GetVariable("database", "host"),
-		    server.config->GetVariable("database", "port"),
-		    server.config->GetVariable("database", "db"));
-	}
-
-	/* Make sure our database got created okay, otherwise cleanup and exit. */
-	if (!server.db) {
-		LogError("Database Initialization Failure.");
-		LogInfo("Config System Shutdown.");
-		delete server.config;
-		LogInfo("Log System Shutdown.");
+	auto load_result = Config::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
 		return 1;
 	}
 
+	LogSys.log_settings[Logs::Error].log_to_console = Logs::General;
+
+	server.db = (Database*)new Database(
+	    Config::get()->DatabaseUsername,
+	    Config::get()->DatabasePassword,
+	    Config::get()->DatabaseHost,
+	    Config::get()->DatabasePort,
+	    Config::get()->DatabaseDB);
+
 	// create our server manager.
-	LogInfo("Server Manager Initialize.");
 	server.server_manager = new ServerManager();
 	if (!server.server_manager) {
 		// We can't run without a server manager, cleanup and exit.
-		LogError("Server Manager Failed to Start.");
+		LogError("Server Manager Failed to Start");
 
-		LogInfo("Database System Shutdown.");
+		LogInfo("Database System Shutdown");
 		delete server.db;
-		LogInfo("Config System Shutdown.");
-		delete server.config;
 		return 1;
 	}
 
 	// create our client manager.
-	LogInfo("Client Manager Initialize.");
 	server.client_manager = new ClientManager();
 	if (!server.client_manager) {
 		// We can't run without a client manager, cleanup and exit.
-		LogError("Client Manager Failed to Start.");
-		LogInfo("Server Manager Shutdown.");
+		LogError("Client Manager Failed to Start");
+		LogInfo("Server Manager Shutdown");
 		delete server.server_manager;
 
-		LogInfo("Database System Shutdown.");
+		LogInfo("Database System Shutdown");
 		delete server.db;
-		LogInfo("Config System Shutdown.");
-		delete server.config;
 		return 1;
 	}
 
@@ -159,8 +77,6 @@ int main() {
 	SetConsoleTitle("EQEmu Login Server");
 #endif
 #endif
-
-	LogInfo("Server Started.");
 
 	auto loop_fun = [&](EQ::Timer* t) {
 		Timer::SetCurrentTime();
@@ -180,19 +96,17 @@ int main() {
 
 	EQ::EventLoop::Get().Run();
 
-	LogInfo("Server Shutdown.");
+	LogInfo("Server Shutdown");
 
-	LogInfo("Client Manager Shutdown.");
+	LogInfo("Client Manager Shutdown");
 	delete server.client_manager;
 
-	LogInfo("Server Manager Shutdown.");
+	LogInfo("Server Manager Shutdown");
 	delete server.server_manager;
 
-	LogInfo("Database System Shutdown.");
+	LogInfo("Database System Shutdown");
 	delete server.db;
 
-	LogInfo("Config System Shutdown.");
-	delete server.config;
 	LogSys.CloseFileLogs();
 
 	return 0;

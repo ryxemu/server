@@ -1,16 +1,49 @@
-world:
-  is_locked: false
-  short_name: ryx
-  long_name: RyXEmu
-  wan_address: 0.0.0.0
-  lan_address: 0.0.0.0
-  max_clients: -1
-  intranet_ip: 127.0.0.1
-  intranet_port: 9001
-  telnet_is_enabled: true
-  telnet_ip: 127.0.0.1
-  telnet_port: 9000
-  shared_key: pleasegenerateakey
+world: # world server settings
+  is_locked: false # if true, only accounts with a status above a certain value can log in
+  short_name: ryx # Short Server Name, used for configs on client
+  long_name: "RyXEmu Server" # Long Server Name displayed on login screen
+  wan_ip: "0.0.0.0" # which IP address to listen for WAN connections, default 0.0.0.0
+  wan_port: 9000 # which port for WAN
+  lan_ip: "127.0.0.1" # which IP Address to listen for LAN connections, default 127.0.0.1
+  lan_port: 9000 # which port for LAN, default 9001
+  max_clients: -1 # max number of clients allowed, -1 default
+  shared_key: pleasegenerateakey # shared key for WAN connections, default pleasegenerateakey
+  login: # login connections
+  - ip: "127.0.0.1" # which IP address to connect to login to, default 127.0.0.1
+    port: 5998 # which port to connect to login to, default 5998
+    username: admin # username to login with, default admin
+    password: admin # password to login with, default admin
+    type: 0 # type of login server, default 0
+  telnet: # telnet server settings
+    is_enabled: true # if telnet is enabled
+    ip: 127.0.0.1 # which IP address to listen for telnet connections, default 127.0.0.1
+    port: 9000 # which port to listen for telnet connections, default 9000
+login: # login server settings
+  lan_ip: 127.0.0.1 # which lan ip to listen for connections, default 127.0.0.1
+  lan_port: 5998 # which port to listen for connections, default 5998
+  username: admin
+  password: admin
+  is_auto_create_accounts_enabled: false
+  is_auto_account_activated: false
+  is_login_failure_logged: false
+  is_login_ip_logged: false
+  is_unregistered_allowed: true
+  is_duplicate_server_rejected: false
+  is_trace_enabled: false
+  is_trace_world_enabled: false
+  is_packet_in_logging_enabled: false
+  is_packet_out_logging_enabled: false
+  salt: randomstring
+  security:
+    plugin: EQEmuAuthCrypto
+    mode: 5
+  schema:
+    access_log_table: tblaccountaccesslog
+    account_table: tblLoginServerAccounts
+    world_registration_table: tblWorldServerRegistration
+    world_admin_registration_table: tblServerAdminRegistration
+    world_server_type_table: tblServerListType
+    loginserver_setting_table: tblloginserversettings
 ucs:
   host: 0.0.0.0
   port: 7778
@@ -30,12 +63,6 @@ zone:
   default_status: 0
   port_min: 7000
   port_max: 6400
-login_server:
-- port: 5998
-  account:
-  password:
-  host: login.projecteq.net
-  type: 0
 dir:
   patches: assets/patches/
   opcodes: assets/opcodes/

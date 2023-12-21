@@ -94,7 +94,7 @@ bool ZoneServer::SetZone(uint32 iZoneID, bool iStaticZone) {
 }
 
 void ZoneServer::LSShutDownUpdate(uint32 zoneid) {
-	if (Config::get()->UpdateStats) {
+	if (Config::get()->WorldUpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSZoneShutdown;
 		pack->size = sizeof(ZoneShutdown_Struct);
@@ -112,7 +112,7 @@ void ZoneServer::LSShutDownUpdate(uint32 zoneid) {
 }
 
 void ZoneServer::LSBootUpdate(uint32 zoneid, bool startup) {
-	if (Config::get()->UpdateStats) {
+	if (Config::get()->WorldUpdateStats) {
 		auto pack = new ServerPacket;
 		if (startup)
 			pack->opcode = ServerOP_LSZoneStart;
@@ -132,7 +132,7 @@ void ZoneServer::LSBootUpdate(uint32 zoneid, bool startup) {
 }
 
 void ZoneServer::LSSleepUpdate(uint32 zoneid) {
-	if (Config::get()->UpdateStats) {
+	if (Config::get()->WorldUpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSZoneSleep;
 		pack->size = sizeof(ServerLSZoneSleep_Struct);
@@ -167,10 +167,10 @@ bool ZoneServer::Process() {
 	ServerPacket* pack = 0;
 	while ((pack = tcpc->PopPacket())) {
 		if (!is_authenticated) {
-			if (Config::get()->SharedKey.length() > 0) {
+			if (Config::get()->WorldSharedKey.length() > 0) {
 				if (pack->opcode == ServerOP_ZAAuth && pack->size == 16) {
 					uint8 tmppass[16];
-					MD5::Generate((const uchar*)Config::get()->SharedKey.c_str(), Config::get()->SharedKey.length(), tmppass);
+					MD5::Generate((const uchar*)Config::get()->WorldSharedKey.c_str(), Config::get()->WorldSharedKey.length(), tmppass);
 					if (memcmp(pack->pBuffer, tmppass, 16) == 0)
 						is_authenticated = true;
 					else {
@@ -733,16 +733,6 @@ bool ZoneServer::Process() {
 				}
 				break;
 			}
-			case ServerOP_SetLaunchName: {
-				if (pack->size != sizeof(LaunchName_Struct))
-					break;
-				const LaunchName_Struct* ln = (const LaunchName_Struct*)pack->pBuffer;
-				launcher_name = ln->launcher_name;
-				launched_name = ln->zone_name;
-				database.ZoneConnected(database.GetZoneID(ln->zone_name), ln->zone_name);
-				Log(Logs::Detail, Logs::WorldServer, "Zone started with name %s by launcher %s", launched_name.c_str(), launcher_name.c_str());
-				break;
-			}
 			case ServerOP_ShutdownAll: {
 				if (pack->size == 0) {
 					zoneserver_list.SendPacket(pack);
@@ -822,7 +812,7 @@ bool ZoneServer::Process() {
 					break;
 				ZoneToZone_Struct* ztz = (ZoneToZone_Struct*)pack->pBuffer;
 				ClientListEntry* client = nullptr;
-				if (Config::get()->UpdateStats) {
+				if (Config::get()->WorldUpdateStats) {
 					client = client_list.FindCharacter(ztz->name);
 				}
 
@@ -1405,30 +1395,6 @@ bool ZoneServer::Process() {
 			}
 			case ServerOP_Weather: {
 				zoneserver_list.SendPacket(pack);
-				break;
-			}
-			case ServerOP_BootDownZones: {
-				ServerDownZoneBoot_struct* s = (ServerDownZoneBoot_struct*)pack->pBuffer;
-				std::string query = StringFormat("SELECT zone FROM launcher_zones WHERE enabled = 1");
-				auto results = database.QueryDatabase(query);
-				if (!results.Success()) {
-					Log(Logs::General, Logs::Error, "BootDownZones: %s", results.ErrorMessage().c_str());
-					break;
-				}
-
-				for (auto row = results.begin(); row != results.end(); ++row) {
-					std::string zone_name = row[0];
-					ZoneServer* zs = zoneserver_list.FindByName(zone_name.c_str());
-					if (zs == nullptr) {
-						uint32 zoneserverid = zoneserver_list.GetAvailableZoneID();
-						if (zoneserverid == 0) {
-							break;
-						}
-
-						zoneserver_list.SOPZoneBootup(s->adminname, zoneserverid, zone_name.c_str(), true);
-					}
-				}
-
 				break;
 			}
 			default: {

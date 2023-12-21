@@ -220,7 +220,7 @@ void ZSList::SendZoneStatus(const char* to, int16 admin, WorldTCPConnection* con
 
 	iterator.Reset();
 	char locked[4];
-	if (Config::get()->IsLocked == true) {
+	if (Config::get()->IsWorldLocked == true) {
 		strcpy(locked, "Yes");
 	} else {
 		strcpy(locked, "No");

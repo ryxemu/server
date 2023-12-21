@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
 		worldserver.SetLauncherName("NONE");
 	}
 
-	worldserver.SetPassword(Config::get()->SharedKey.c_str());
+	worldserver.SetPassword(Config::get()->WorldSharedKey.c_str());
 
 	LogInfo("Connecting to MySQL...");
 	if (!database.Connect(
