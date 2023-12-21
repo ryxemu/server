@@ -460,7 +460,7 @@ void WorldServer::SendClientAuth(unsigned int ip, string account, string key, un
 
 	if (client_address.compare(world_address) == 0) {
 		client_auth->local = 1;
-	} else if (client_address.find(Config::get()->LoginLANIP) != string::npos) {
+	} else if (client_address.find(Config::get()->LoginPlayerIP) != string::npos) {
 		client_auth->local = 1;
 	} else {
 		client_auth->local = 0;

@@ -100,74 +100,38 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	const char* zone_name;
-	std::string z_name;
-	if (argc == 4) {
-		worldserver.SetLauncherName(argv[2]);
-		auto zone_port = Strings::Split(argv[1], ':');
-
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
-		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config::get()->SetZonePort(atoi(p_name.c_str()));
-		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else if (argc == 3) {
-		worldserver.SetLauncherName(argv[2]);
-		auto zone_port = Strings::Split(argv[1], ':');
-
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
-		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config::get()->SetZonePort(atoi(p_name.c_str()));
-		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else if (argc == 2) {
-		worldserver.SetLauncherName("NONE");
-		auto zone_port = Strings::Split(argv[1], ':');
-
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
-		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config::get()->SetZonePort(atoi(p_name.c_str()));
-		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else {
-		zone_name = ".";
-		worldserver.SetLaunchedName(".");
-		worldserver.SetLauncherName("NONE");
+	std::string zone_port = "";
+	std::string zone_name = ".";
+	std::string launcher_name = "NONE";
+	if (argc > 3) {
+		LogInfo("Usage: zone [zone_name[:port]] [launcher_name]");
+		return 1;
 	}
+	if (argc > 1) {
+		auto zone_args = Strings::Split(argv[1], ':');
+		if (zone_args.size() > 1) {
+			zone_port = zone_args[1];
+		}
+		zone_name = zone_args[0];
+		if (zone_name.empty()) {
+			zone_name = ".";
+		}
+		if (zone_name.find("dynamic_") == 0) {
+			zone_name = ".";
+		}
+		launcher_name = (argc > 2) ? argv[2] : zone_name;
+	}
+
+	worldserver.SetLauncherName(launcher_name.c_str());
+	Config::get()->SetZonePort(atoi(zone_port.c_str()));
 
 	worldserver.SetPassword(Config::get()->WorldSharedKey.c_str());
 
-	LogInfo("Connecting to MySQL...");
+	LogInfo(
+	    "Connecting to DB {0}@{1}:{2}",
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
 	if (!database.Connect(
 	        Config::get()->DatabaseHost.c_str(),
 	        Config::get()->DatabaseUsername.c_str(),
@@ -190,8 +154,6 @@ int main(int argc, char** argv) {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	LogInfo("VERSION: {} ", VERSION);
-
 	/*
 	 * Setup nice signal handlers
 	 */
@@ -210,10 +172,8 @@ int main(int argc, char** argv) {
 	}
 #endif
 
-	LogInfo("Mapping Incoming Opcodes");
 	MapOpcodes();
 
-	LogInfo("Loading Variables");
 	database.LoadVariables();
 
 	std::string hotfix_name;
@@ -223,32 +183,28 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	LogInfo("Loading zone names");
 	database.LoadZoneNames();
 
-	LogInfo("Loading items");
 	if (!database.LoadItems(hotfix_name)) {
 		LogError("Loading items FAILED!");
 		LogError("Failed. But ignoring error and going on...");
 	}
 
-	LogInfo("Loading npc faction lists");
 	if (!database.LoadNPCFactionLists(hotfix_name)) {
 		LogError("Loading npcs faction lists FAILED!");
 		return 1;
 	}
-	LogInfo("Loading loot tables");
+
 	if (!database.LoadLoot(hotfix_name)) {
 		LogError("Loading loot FAILED!");
 		return 1;
 	}
-	LogInfo("Loading skill caps");
+
 	if (!database.LoadSkillCaps(std::string(hotfix_name))) {
 		LogError("Loading skill caps FAILED!");
 		return 1;
 	}
 
-	LogInfo("Loading spells");
 	if (!database.LoadSpells(hotfix_name, &SPDAT_RECORDS, &spells)) {
 		LogError("Loading spells FAILED!");
 		return 1;
@@ -258,30 +214,22 @@ int main(int argc, char** argv) {
 	database.SetSharedItemsCount(database.GetItemsCount());
 	database.SetSharedSpellsCount(database.GetSpellsCount());
 
-	LogInfo("Loading base data");
 	if (!database.LoadBaseData(hotfix_name)) {
 		LogError("Loading base data FAILED!");
 		return 1;
 	}
 
-	LogInfo("Loading guilds");
 	guild_mgr.LoadGuilds();
 
-	LogInfo("Loading factions");
 	database.LoadFactionData();
 
-	LogInfo("Loading titles");
 	title_manager.LoadTitles();
 
-	LogInfo("Loading AA actions");
 	database.LoadAAActions();
 
-	LogInfo("Loading commands");
 	int retval = command_init();
 	if (retval < 0) {
 		LogError("Command loading FAILED");
-	} else {
-		LogInfo("{} commands loaded", retval);
 	}
 
 	// rules:
@@ -295,8 +243,6 @@ int main(int argc, char** argv) {
 		} else {
 			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 				LogInfo("No rule set configured, using default rules");
-			} else {
-				LogInfo("Loaded default rule set 'Default'");
 			}
 		}
 	}
@@ -306,11 +252,11 @@ int main(int argc, char** argv) {
 	parse->RegisterQuestInterface(lua.get(), "lua");
 
 	// now we have our parser, load the quests
-	LogInfo("Loading quests");
 	parse->ReloadQuests();
 
-	if (!worldserver.Connect()) {
-		LogError("Worldserver Connection Failed :: worldserver.Connect()");
+	auto result = worldserver.Connect();
+	if (!result.empty()) {
+		LogError("Failed world connect: {}", result);
 	}
 
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does MySQL pings and auto-reconnect
@@ -321,9 +267,9 @@ int main(int argc, char** argv) {
 	profile_dump_timer.Start();
 #endif
 #endif
-	if (!strlen(zone_name) || !strcmp(zone_name, ".")) {
+	if (zone_name.empty() || zone_name == ".") {
 		LogInfo("Entering sleep mode");
-	} else if (!Zone::Bootup(database.GetZoneID(zone_name), true)) {
+	} else if (!Zone::Bootup(database.GetZoneID(zone_name.c_str()), true)) {
 		LogError("Zone Bootup failed :: Zone::Bootup");
 		zone = 0;
 	}
@@ -358,13 +304,15 @@ int main(int argc, char** argv) {
 
 			worldserver.Process();
 
-			if (!eqsf.IsOpen() && Config::get()->ZonePortCurrent != 0) {
-				LogInfo("Starting EQ Network server on port {} ", Config::get()->ZonePortCurrent);
-				if (!eqsf.Open(Config::get()->ZonePortCurrent)) {
-					LogError("Failed to open port {} ", Config::get()->ZonePortCurrent);
+			if (!eqsf.IsOpen() && Config::get()->ZonePort != 0) {
+				auto result = eqsf.Open(Config::get()->ZoneIP, Config::get()->ZonePort);
+				if (!result.empty()) {
+					LogError("Failed to listen for client connections on UDP {}:{}: {}", Config::get()->ZoneIP, Config::get()->ZonePort, result);
 					Config::get()->SetZonePort(0);
 					worldserver.Disconnect();
 					worldwasconnected = false;
+				} else {
+					LogInfo("Listening for client connections on UDP {}:{}", Config::get()->ZoneIP, Config::get()->ZonePort);
 				}
 			}
 

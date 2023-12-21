@@ -90,6 +90,30 @@ void Config::parse_config() {
 		WorldSharedKey = _root["world"]["shared_key"].as<std::string>();
 	}
 
+	WorldZonePortMin = 7000;
+	if (!_root["world"]["zone_port_min"].IsNull()) {
+		if (_root["world"]["zone_port_min"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("world.zone_port_min must be an integer");
+		}
+		WorldZonePortMin = _root["world"]["zone_port_min"].as<uint16_t>();
+	}
+
+	WorldZonePortMax = 7400;
+	if (!_root["world"]["zone_port_max"].IsNull()) {
+		if (_root["world"]["zone_port_max"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("world.zone_port_max must be an integer");
+		}
+		WorldZonePortMax = _root["world"]["zone_port_max"].as<uint16_t>();
+	}
+
+	WorldDefaultStatus = 0;
+	if (!_root["world"]["default_status"].IsNull()) {
+		if (_root["world"]["default_status"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("world.default_status must be an integer");
+		}
+		WorldDefaultStatus = _root["world"]["default_status"].as<uint16_t>();
+	}
+
 	if (_root["world"]["login"].IsNull()) {
 		throw std::runtime_error("Missing world.login elements in config.yaml");
 	}
@@ -169,20 +193,36 @@ void Config::parse_config() {
 		WorldTelnetPort = _root["world"]["telnet"]["port"].as<uint16_t>();
 	}
 
-	LoginLANIP = "127.0.0.1";
-	if (!_root["login"]["lan_ip"].IsNull()) {
-		if (_root["login"]["lan_ip"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login.lan_ip must be a string");
+	LoginPlayerIP = "127.0.0.1";
+	if (!_root["login"]["player_ip"].IsNull()) {
+		if (_root["login"]["player_ip"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("login.player_ip must be a string");
 		}
-		LoginLANIP = _root["login"]["lan_ip"].as<std::string>();
+		LoginPlayerIP = _root["login"]["player_ip"].as<std::string>();
 	}
 
-	LoginLANPort = 5998;
-	if (!_root["login"]["lan_port"].IsNull()) {
-		if (_root["login"]["lan_port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login.lan_port must be an integer");
+	LoginPlayerPort = 5998;
+	if (!_root["login"]["player_port"].IsNull()) {
+		if (_root["login"]["player_port"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("login.player_port must be an integer");
 		}
-		LoginLANPort = _root["login"]["lan_port"].as<uint16_t>();
+		LoginPlayerPort = _root["login"]["player_port"].as<uint16_t>();
+	}
+
+	LoginWorldIP = "127.0.0.1";
+	if (!_root["login"]["world_ip"].IsNull()) {
+		if (_root["login"]["world_ip"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("login.world_ip must be a string");
+		}
+		LoginWorldIP = _root["login"]["world_ip"].as<std::string>();
+	}
+
+	LoginWorldPort = 5998;
+	if (!_root["login"]["world_port"].IsNull()) {
+		if (_root["login"]["world_port"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("login.world_port must be an integer");
+		}
+		LoginWorldPort = _root["login"]["world_port"].as<uint16_t>();
 	}
 
 	if (_root["login"]["username"].IsNull()) {
@@ -354,19 +394,21 @@ void Config::parse_config() {
 	}
 	LoginLoginServerSettingTable = _root["login"]["schema"]["loginserver_setting_table"].as<std::string>();
 
-	if (!_root["ucs"]["host"].IsNull()) {
-		if (_root["ucs"]["host"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("ucs.host must be a string");
+	UCSIP = "0.0.0.0";
+	if (!_root["ucs"]["ip"].IsNull()) {
+		if (_root["ucs"]["ip"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("ucs.ip must be a string");
 		}
 
-		ChatHost = _root["ucs"]["host"].as<std::string>();
+		UCSIP = _root["ucs"]["ip"].as<std::string>();
 	}
 
+	UCSPort = 7778;
 	if (!_root["ucs"]["port"].IsNull()) {
 		if (_root["ucs"]["port"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("ucs.port must be an integer");
 		}
-		ChatPort = _root["ucs"]["port"].as<uint16_t>();
+		UCSPort = _root["ucs"]["port"].as<uint16_t>();
 	}
 
 	if (!_root["database"]["host"].IsNull()) {
@@ -459,31 +501,27 @@ void Config::parse_config() {
 		throw std::runtime_error("Missing query_serv.port in config.yaml");
 	}
 
-	if (!_root["zone"]["default_status"].IsNull()) {
-		if (_root["zone"]["default_status"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.default_status must be an integer");
+	ZoneIP = "0.0.0.0";
+	if (!_root["zone"]["ip"].IsNull()) {
+		if (_root["zone"]["ip"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("zone.ip must be a string");
 		}
-		DefaultStatus = _root["zone"]["default_status"].as<uint8_t>();
-	} else {
-		DefaultStatus = 0;
+		ZoneIP = _root["zone"]["ip"].as<std::string>();
 	}
 
-	if (!_root["zone"]["port_min"].IsNull()) {
-		if (_root["zone"]["port_min"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.port_min must be an integer");
+	ZoneWorldIP = "127.0.0.1";
+	if (!_root["zone"]["world_ip"].IsNull()) {
+		if (_root["zone"]["world_ip"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("zone.world_ip must be a string");
 		}
-		ZonePortLow = _root["zone"]["port_min"].as<uint16_t>();
-	} else {
-		ZonePortLow = 7000;
+		ZoneWorldIP = _root["zone"]["world_ip"].as<std::string>();
 	}
-
-	if (!_root["zone"]["port_max"].IsNull()) {
-		if (_root["zone"]["port_max"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.port_max must be an integer");
+	ZoneWorldPort = 9000;
+	if (!_root["zone"]["world_port"].IsNull()) {
+		if (_root["zone"]["world_port"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("zone.world_port must be an integer");
 		}
-		ZonePortHigh = _root["zone"]["port_max"].as<uint16_t>();
-	} else {
-		ZonePortHigh = 7400;
+		ZoneWorldPort = _root["zone"]["world_port"].as<uint16_t>();
 	}
 
 	if (!_root["dir"]["maps"].IsNull()) {

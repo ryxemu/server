@@ -12,10 +12,10 @@
 class EQStream;
 class Timer;
 
+// EQStreamFactory is a UDP connection wrapper
 class EQStreamFactory : private Timeoutable {
    private:
 	int sock;
-	int Port;
 
 	bool ReaderRunning;
 	Mutex MReaderRunning;
@@ -51,7 +51,6 @@ class EQStreamFactory : private Timeoutable {
 		StreamType = type;
 		sock = -1;
 	}
-	EQStreamFactory(EQStreamType type, int port, uint32 timeout = 61000);
 
 	EQStream *Pop();
 	void Push(EQStream *s);
@@ -59,11 +58,7 @@ class EQStreamFactory : private Timeoutable {
 	EQOldStream *PopOld();
 	void PushOld(EQOldStream *s);
 
-	bool Open();
-	bool Open(unsigned long port) {
-		Port = port;
-		return Open();
-	}
+	std::string Open(const std::string &address, int bind_port);
 	bool IsOpen() { return sock != -1; }
 	void Close();
 	void ReaderLoop();

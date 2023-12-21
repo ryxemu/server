@@ -18,7 +18,7 @@
 #define ServerOP_ZoneShutdown 0x0005    // unload all data, goto sleep mode
 #define ServerOP_ZoneBootup 0x0006      // come out of sleep mode and load zone specified
 #define ServerOP_ZoneStatus 0x0007      // Shows status of all zones
-#define ServerOP_SetConnectInfo 0x0008  // Tells server address and port #
+#define ServerOP_SetConnectInfo 0x0008  // zone->world tells address and port (when static), world->zone tells port (when dynamic)
 #define ServerOP_EmoteMessage 0x0009    // Worldfarts
 #define ServerOP_ClientList 0x000A      // Update worldserver's client list, for #whos
 #define ServerOP_Who 0x000B             // #who

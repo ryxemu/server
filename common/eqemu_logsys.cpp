@@ -5,6 +5,7 @@
 #include "database.h"
 #include "misc.h"
 #include "rulesys.h"
+#include "config.h"
 
 #include <iostream>
 #include <fstream>
@@ -406,8 +407,6 @@ void EQEmuLogSys::StartFileLogs(const std::string& log_name) {
 		if (platform_file_name.empty())
 			return;
 
-		LogInfo("Starting File Log [logs/{0}_{1}.log]", platform_file_name.c_str(), getpid());
-
 		/**
 		 * Make directory if not exists
 		 */
@@ -424,10 +423,9 @@ void EQEmuLogSys::StartFileLogs(const std::string& log_name) {
 		if (platform_file_name.empty())
 			return;
 
-		LogInfo("Starting File Log [logs/{0}_{1}.log]", platform_file_name.c_str(), getpid());
-
 		process_log.open(StringFormat("logs/%s_%i.log", platform_file_name.c_str(), getpid()), std::ios_base::app | std::ios_base::out);
 	}
+	LogInfo("Logging to logs/{0}_{1}.log", platform_file_name.c_str(), getpid());
 }
 
 /**

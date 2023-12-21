@@ -37,13 +37,6 @@ ThreadReturnType EQStreamFactoryWriterLoop(void *eqfs) {
 	THREAD_RETURN(nullptr);
 }
 
-EQStreamFactory::EQStreamFactory(EQStreamType type, int port, uint32 timeout)
-    : Timeoutable(5000), stream_timeout(timeout) {
-	StreamType = type;
-	Port = port;
-	sock = -1;
-}
-
 void EQStreamFactory::Close() {
 	Stop();
 
@@ -55,28 +48,29 @@ void EQStreamFactory::Close() {
 	sock = -1;
 }
 
-bool EQStreamFactory::Open() {
-	struct sockaddr_in address;
+// Listen to a new UDP socket connection
+std::string EQStreamFactory::Open(const std::string &address, int bind_port) {
+	struct sockaddr_in listen_address;
 #ifndef WIN32
-	pthread_t t1, t2;
+	pthread_t reader_thread, writer_thread;
 #endif
 	/* Setup internet address information.
 	This is used with the bind() call */
-	memset((char *)&address, 0, sizeof(address));
-	address.sin_family = AF_INET;
-	address.sin_port = htons(Port);
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
+	memset((char *)&listen_address, 0, sizeof(listen_address));
+	listen_address.sin_family = AF_INET;
+	listen_address.sin_port = htons(bind_port);
+	listen_address.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	/* Setting up UDP port for new clients */
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock < 0) {
-		return false;
+		return fmt::format("socket: {}", strerror(errno));
 	}
 
-	if (bind(sock, (struct sockaddr *)&address, sizeof(address)) < 0) {
+	if (bind(sock, (struct sockaddr *)&listen_address, sizeof(listen_address)) < 0) {
 		close(sock);
 		sock = -1;
-		return false;
+		return fmt::format("bind: {}", strerror(errno));
 	}
 #ifdef _WINDOWS
 	unsigned long nonblock = 1;
@@ -89,10 +83,10 @@ bool EQStreamFactory::Open() {
 	_beginthread(EQStreamFactoryReaderLoop, 0, this);
 	_beginthread(EQStreamFactoryWriterLoop, 0, this);
 #else
-	pthread_create(&t1, nullptr, EQStreamFactoryReaderLoop, this);
-	pthread_create(&t2, nullptr, EQStreamFactoryWriterLoop, this);
+	pthread_create(&reader_thread, nullptr, EQStreamFactoryReaderLoop, this);
+	pthread_create(&writer_thread, nullptr, EQStreamFactoryWriterLoop, this);
 #endif
-	return true;
+	return "";
 }
 
 EQStream *EQStreamFactory::Pop() {

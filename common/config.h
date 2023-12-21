@@ -9,6 +9,13 @@
 // this doesn't appear to affect linux-based systems..need feedback for _WIN64
 #include <fmt/format.h>
 #endif
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 struct LoginConfig {
 	std::string LoginIP;
@@ -26,19 +33,23 @@ class Config {
 	std::string WorldLongName;                 // world.long_name
 	std::string WorldWANIP;                    // world.wan_ip
 	uint16 WorldWANPort;                       // world.wan_port
-	std::string WorldLANIP;                    // world.lan_address
+	std::string WorldLANIP;                    // world.lan_ip
 	uint16 WorldLANPort;                       // world.lan_port
-	std::string WorldLoginIP;                  // world.login_ip
 	int32 WorldMaxClients;                     // world.max_players, maximum number of players allowed to log in
 	LinkedList<LoginConfig *> WorldLoginList;  // world.login_list, list of login servers to connect to
 	bool IsWorldTelnetEnabled;                 // world.telnet_enabled, is telnet enabled
 	std::string WorldTelnetIP;                 // world.telnet_ip
 	uint16 WorldTelnetPort;                    // world.telnet_port
 	std::string WorldSharedKey;                // world.shared_key
+	uint16 WorldZonePortMin;                   // world.zone_port_min
+	uint16 WorldZonePortMax;                   // world.zone_port_max
+	uint16 WorldDefaultStatus;                 // world.default_status
 
-	std::string LoginLANIP;                        // login.lan_address
-	uint16 LoginLANPort;                           // login.lan_port
-	std::string LoginUsername;                      // login.username
+	std::string LoginPlayerIP;                     // login.player_ip
+	uint16 LoginPlayerPort;                        // login.lan_port
+	std::string LoginWorldIP;                      // login.world_ip
+	uint16 LoginWorldPort;                         // login.world_port
+	std::string LoginUsername;                     // login.username
 	std::string LoginPassword;                     // login.password
 	bool IsLoginAutoCreateAccountsEnabled;         // login.is_auto_create_accounts_enabled
 	bool IsLoginAutoAccountActivated;              // login.is_auto_account_activated
@@ -60,9 +71,8 @@ class Config {
 	std::string LoginWorldServerTypeTable;         // login.schema.world_server_type_table
 	std::string LoginLoginServerSettingTable;      // login.schema.loginserver_setting_table
 
-	// From <chatserver/>
-	std::string ChatHost;
-	uint16 ChatPort;
+	std::string UCSIP;
+	uint16 UCSPort;
 
 	// From <database/>
 	std::string DatabaseHost;
@@ -86,11 +96,10 @@ class Config {
 	std::string SharedMemDir;
 	std::string LogDir;
 
-	// From <zones/>
-	uint16 ZonePortLow;
-	uint16 ZonePortHigh;
-	uint8 DefaultStatus;
-	uint16 ZonePortCurrent;  // temporary variable (not loaded from config) // TODO: add to a proper state system
+	std::string ZoneIP;
+	uint16 ZonePort;  // temporary variable (not loaded from config) of what port zone is using // TODO: add to a proper state system
+	std::string ZoneWorldIP;
+	uint16 ZoneWorldPort;
 
 	//	uint16 DynamicCount;
 	//	map<string,uint16> StaticZones;
@@ -125,7 +134,10 @@ class Config {
 			_config->_root = YAML::LoadFile(Config::ConfigFile);
 			_config->parse_config();
 		} catch (YAML::BadFile &e) {
-			return fmt::format("Failed opening {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+			if (e.mark.line == -1) {
+				return fmt::format("Failed opening config: {}. This likely means the file was not found at {}/config.yaml", e.msg, CurrentWorkingDirectory());
+			}
+			return fmt::format("Failed opening config: {}:{}: {}", e.mark.line, e.mark.column, e.msg);
 		} catch (YAML::RepresentationException &e) {
 			return fmt::format("Failed with {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
 		} catch (YAML::ParserException &e) {
@@ -151,7 +163,7 @@ class Config {
 		if (_config == nullptr) {
 			return;
 		}
-		_config->ZonePortCurrent = value;
+		_config->ZonePort = value;
 		return;
 	}
 
@@ -169,6 +181,14 @@ class Config {
 		}
 		_config->WorldLANIP = value;
 		return;
+	}
+
+	// Returns the Current Working Directory that the program was started from
+	static std::string CurrentWorkingDirectory() {
+		char buff[FILENAME_MAX];
+		GetCurrentDir(buff, FILENAME_MAX);
+		std::string current_working_dir(buff);
+		return current_working_dir;
 	}
 };
 

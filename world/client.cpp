@@ -596,8 +596,8 @@ bool Client::HandleEnterWorldPacket(const EQApplicationPacket *app) {
 	char buffer[112];
 
 	sprintf(buffer, "%s,%i,%s.%s,%08x",
-	        Config::get()->ChatHost.c_str(),
-	        Config::get()->ChatPort,
+	        Config::get()->UCSIP.c_str(),
+	        Config::get()->UCSPort,
 	        Config::get()->WorldShortName.c_str(),
 	        this->GetCharName(), MailKey);
 	outapp2->size = strlen(buffer) + 1;

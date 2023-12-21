@@ -58,8 +58,11 @@ int main() {
 
 	WorldShortName = Config::get()->WorldShortName;
 
-	LogInfo("Connecting to MySQL");
-
+	LogInfo(
+	    "Connecting to DB {0}@{1}:{2}",
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
 	if (!database.Connect(
 	        Config::get()->DatabaseHost.c_str(),
 	        Config::get()->DatabaseUsername.c_str(),
@@ -84,12 +87,10 @@ int main() {
 	} else {
 		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 			LogInfo("No rule set configured, using default rules");
-		} else {
-			LogInfo("Loaded default rule set 'default'", tmp);
 		}
 	}
 
-	g_Clientlist = new Clientlist(Config::get()->ChatPort);
+	g_Clientlist = new Clientlist();
 
 	ChannelList = new ChatChannelList();
 

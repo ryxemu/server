@@ -68,7 +68,7 @@ void WorldServer::OnConnected() {
 	pack = new ServerPacket(ServerOP_SetConnectInfo, sizeof(ServerConnectInfo));
 	ServerConnectInfo* sci = (ServerConnectInfo*)pack->pBuffer;
 
-	sci->port = Config::get()->ZonePortCurrent;
+	sci->port = Config::get()->ZonePort;
 	if (Config::get()->WorldWANIP.length() > 0) {
 		strn0cpy(sci->address, Config::get()->WorldWANIP.c_str(), 250);
 	}

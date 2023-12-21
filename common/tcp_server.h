@@ -5,17 +5,20 @@
 #include "mutex.h"
 #include <vector>
 #include <queue>
+#include <string>
 
 #define TCPServer_ErrorBufferSize 1024
 
 // this is the non-connection type specific server.
 class BaseTCPServer {
    public:
+#include <string>
+
 	BaseTCPServer(uint16 iPort = 0);
 	virtual ~BaseTCPServer();
 
-	bool Open(uint16 iPort = 0, char *errbuf = 0);  // opens the port
-	void Close();                                   // closes the port
+	std::string Open(std::string bind_address, uint16 iPort = 0);
+	void Close();  // closes the port
 	bool IsOpen();
 	inline uint16 GetPort() { return pPort; }
 	inline uint32 GetNextID() { return NextID++; }

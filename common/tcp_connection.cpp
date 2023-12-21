@@ -12,7 +12,7 @@
 #endif
 #ifdef DARWIN
 #define MSG_NOSIGNAL SO_NOSIGPIPE  // Corysia Taware - Sept. 27, 2013
-                                   // See http://lists.apple.com/archives/macnetworkprog/2002/Dec/msg00091.html
+	                               // See http://lists.apple.com/archives/macnetworkprog/2002/Dec/msg00091.html
 #endif                             // DARWIN
 
 #ifdef _WINDOWS
@@ -374,9 +374,9 @@ bool TCPConnection::Connect(const char* irAddress, uint16 irPort, char* errbuf) 
 	if (!tmpIP) {
 		if (errbuf) {
 #ifdef _WINDOWS
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): Couldnt resolve hostname. Error: %i", WSAGetLastError());
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "resolve hostname: %i", WSAGetLastError());
 #else
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): Couldnt resolve hostname. Error #%i: %s", errno, strerror(errno));
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "resolve hostname #%i: %s", errno, strerror(errno));
 #endif
 		}
 		return false;
@@ -418,10 +418,10 @@ bool TCPConnection::ConnectIP(uint32 in_ip, uint16 in_port, char* errbuf) {
 	if ((connection_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET || connection_socket == 0) {
 #ifdef _WINDOWS
 		if (errbuf)
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): Allocating socket failed. Error: %i", WSAGetLastError());
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "allocating socket %i", WSAGetLastError());
 #else
 		if (errbuf)
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): Allocating socket failed. Error: %s", strerror(errno));
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "allocating socket: %s", strerror(errno));
 #endif
 		SetState(TCPS_Ready);
 		SetAsyncConnect(false);
@@ -435,7 +435,7 @@ bool TCPConnection::ConnectIP(uint32 in_ip, uint16 in_port, char* errbuf) {
 #ifdef _WINDOWS
 	if (connect(connection_socket, (PSOCKADDR)&server_sin, sizeof(server_sin)) == SOCKET_ERROR) {
 		if (errbuf)
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): connect() failed. Error: %i", WSAGetLastError());
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "connect: %i", WSAGetLastError());
 		closesocket(connection_socket);
 		connection_socket = 0;
 		SetState(TCPS_Ready);
@@ -445,7 +445,7 @@ bool TCPConnection::ConnectIP(uint32 in_ip, uint16 in_port, char* errbuf) {
 #else
 	if (connect(connection_socket, (struct sockaddr*)&server_sin, sizeof(server_sin)) == SOCKET_ERROR) {
 		if (errbuf)
-			snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::Connect(): connect() failed. Error: %s", strerror(errno));
+			snprintf(errbuf, TCPConnection_ErrorBufferSize, "connect: %s", strerror(errno));
 		close(connection_socket);
 		connection_socket = 0;
 		SetState(TCPS_Ready);
@@ -588,7 +588,7 @@ bool TCPConnection::RecvData(char* errbuf) {
 		recvbuf = tmpbuf;
 		if (recvbuf_size >= MaxTCPReceiveBuffferSize) {
 			if (errbuf)
-				snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): recvbuf_size >= MaxTCPReceiveBuffferSize");
+				snprintf(errbuf, TCPConnection_ErrorBufferSize, "recvbuf_size >= MaxTCPReceiveBuffferSize");
 			return false;
 		}
 	}
@@ -618,18 +618,18 @@ bool TCPConnection::RecvData(char* errbuf) {
 #ifdef _WINDOWS
 		if (!(WSAGetLastError() == WSAEWOULDBLOCK)) {
 			if (errbuf)
-				snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): Error: %i", WSAGetLastError());
+				snprintf(errbuf, TCPConnection_ErrorBufferSize, "ProcessReceivedData: %i", WSAGetLastError());
 			return false;
 		}
 #else
 		if (!(errno == EWOULDBLOCK)) {
 			if (errbuf)
-				snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): Error: %s", strerror(errno));
+				snprintf(errbuf, TCPConnection_ErrorBufferSize, "ProcessReceivedData: %s", strerror(errno));
 			return false;
 		}
 #endif
 	} else if (status == 0) {
-		snprintf(errbuf, TCPConnection_ErrorBufferSize, "TCPConnection::RecvData(): Connection closed");
+		snprintf(errbuf, TCPConnection_ErrorBufferSize, "connection closed");
 		return false;
 	}
 

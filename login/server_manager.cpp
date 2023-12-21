@@ -13,13 +13,15 @@ extern bool run_server;
 ServerManager::ServerManager() {
 	char error_buffer[TCPConnection_ErrorBufferSize];
 
-	tcps = new EmuTCPServer(Config::get()->LoginLANPort, true);
-	if (!tcps->Open(Config::get()->LoginLANPort, error_buffer)) {
-		LogError("ServerManager fatal error opening port on %u: %s", Config::get()->LoginLANPort, error_buffer);
+	tcps = new EmuTCPServer(Config::get()->LoginWorldPort, true);
+
+	auto result = tcps->Open(Config::get()->LoginWorldIP, Config::get()->LoginWorldPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for client connections on TCP {}:{}: {}", Config::get()->LoginWorldIP, Config::get()->LoginWorldPort, result);
 		run_server = false;
-		return;
+		exit(1);
 	}
-	LogInfo("Listening on TCP {}:{}", Config::get()->LoginLANIP, Config::get()->LoginLANPort);
+	LogInfo("Listening for world connections on TCP {}:{}", Config::get()->LoginWorldIP, Config::get()->LoginWorldPort);
 }
 
 ServerManager::~ServerManager() {
@@ -110,7 +112,7 @@ EQApplicationPacket* ServerManager::CreateOldServerListPacket(Client* c) {
 
 		if (world_ip.compare(client_ip) == 0) {
 			packet_size += servername.size() + 1 + (*iter)->GetLocalIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
-		} else if (client_ip.find(Config::get()->LoginLANIP) != string::npos) {
+		} else if (client_ip.find(Config::get()->LoginWorldIP) != string::npos) {
 			packet_size += servername.size() + 1 + (*iter)->GetLocalIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
 		} else {
 			packet_size += servername.size() + 1 + (*iter)->GetRemoteIP().size() + 1 + sizeof(ServerListServerFlags_Struct);
@@ -155,7 +157,7 @@ EQApplicationPacket* ServerManager::CreateOldServerListPacket(Client* c) {
 		if (world_ip.compare(client_ip) == 0) {
 			memcpy(data_ptr, (*iter)->GetLocalIP().c_str(), (*iter)->GetLocalIP().size());
 			data_ptr += ((*iter)->GetLocalIP().size() + 1);
-		} else if (client_ip.find(Config::get()->LoginLANIP) != string::npos) {
+		} else if (client_ip.find(Config::get()->LoginWorldIP) != string::npos) {
 			memcpy(data_ptr, (*iter)->GetLocalIP().c_str(), (*iter)->GetLocalIP().size());
 			data_ptr += ((*iter)->GetLocalIP().size() + 1);
 		} else {

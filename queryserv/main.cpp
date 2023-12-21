@@ -43,7 +43,10 @@ int main() {
 
 	WorldShortName = Config::get()->WorldShortName;
 
-	LogInfo("Connecting to MySQL...");
+	LogInfo("Connecting to DB {0}@{1}:{2}",
+	        Config::get()->QSDatabaseHost.c_str(),
+	        Config::get()->QSDatabaseUsername.c_str(),
+	        Config::get()->QSDatabasePassword.c_str());
 
 	/* MySQL Connection */
 	if (!database.Connect(

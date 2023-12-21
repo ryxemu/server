@@ -560,13 +560,13 @@ uint16 ZSList::GetAvailableZonePort() {
 	uint16 port = 0;
 
 	if (LastAllocatedPort == 0)
-		i = Config::get()->ZonePortLow;
+		i = Config::get()->WorldZonePortMin;
 	else
 		i = LastAllocatedPort + 1;
 
 	while (i != LastAllocatedPort && port == 0) {
-		if (i > Config::get()->ZonePortHigh)
-			i = Config::get()->ZonePortLow;
+		if (i > Config::get()->WorldZonePortMax)
+			i = Config::get()->WorldZonePortMin;
 
 		if (!FindByPort(i)) {
 			port = i;

@@ -9,7 +9,7 @@ extern bool run_server;
 extern EQEmuLogSys Log;
 
 ClientManager::ClientManager() {
-	stream = new EQStreamFactory(NewLSStream, Config::get()->LoginLANPort);
+	stream = new EQStreamFactory(NewLSStream);
 	ops = new RegularOpcodeManager;
 
 	std::string opfile = Config::get()->PatchDir;
@@ -19,13 +19,15 @@ ClientManager::ClientManager() {
 
 	run_server = false;
 	if (!ops->LoadOpcodes(opfile.c_str())) {
-		LogError("ClientManager fatal error: couldn't load opcodes at {}", opfile.c_str());
+		LogError("Failed to load opcodes from {}", opfile.c_str());
 		return;
 	}
-	if (!stream->Open()) {
-		LogError("ClientManager fatal error: couldn't open Old stream");
-		return;
+	auto result = stream->Open(Config::get()->LoginPlayerIP, Config::get()->LoginPlayerPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for client connections on UDP {}:{}: {}", Config::get()->LoginPlayerIP, Config::get()->LoginPlayerPort, result);
+		exit(1);
 	}
+	LogInfo("Listening for client connections on UDP {}:{}", Config::get()->LoginPlayerIP, Config::get()->LoginPlayerPort);
 	run_server = true;
 }
 

@@ -49,15 +49,13 @@ void WorldConnection::AsyncConnect() {
 	tcpc.AsyncConnect(Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort);
 }
 
-bool WorldConnection::Connect() {
-	const Config *Config = Config::get();
+std::string WorldConnection::Connect() {
 	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcpc.Connect(Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort, errbuf)) {
-		return true;
-	} else {
-		Log(Logs::General, Logs::Netcode, "[WORLD] WorldConnection connect: Connecting to the server %s:%d failed: %s", Config::get()->WorldLANIP.c_str(), Config::get()->WorldLANPort, errbuf);
+	if (!tcpc.Connect(Config::get()->ZoneWorldIP.c_str(), Config::get()->ZoneWorldPort, errbuf)) {
+		return fmt::format("TCP {}:{}: {}", Config::get()->ZoneWorldIP, Config::get()->ZoneWorldPort, errbuf);
 	}
-	return false;
+	LogInfo("Connected to world server on TCP {}:{}", Config::get()->ZoneWorldIP, Config::get()->ZoneWorldPort);
+	return "";
 }
 
 void WorldConnection::Disconnect() {

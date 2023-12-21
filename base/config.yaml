@@ -2,25 +2,30 @@ world: # world server settings
   is_locked: false # if true, only accounts with a status above a certain value can log in
   short_name: ryx # Short Server Name, used for configs on client
   long_name: "RyXEmu Server" # Long Server Name displayed on login screen
-  wan_ip: "0.0.0.0" # which IP address to listen for WAN connections, default 0.0.0.0
-  wan_port: 9000 # which port for WAN
-  lan_ip: "127.0.0.1" # which IP Address to listen for LAN connections, default 127.0.0.1
-  lan_port: 9000 # which port for LAN, default 9001
-  max_clients: -1 # max number of clients allowed, -1 default
+  wan_ip: "127.0.0.1" # WAN IP address, this is sent to the login server and is relayed to players to connect to your world server, default 127.0.0.1
+  wan_port: 9000 # WAN UDP Port, this is sent to the login server and is relayed to players to connect to your world server, default 9000
+  lan_ip: "0.0.0.0" # which IP Address to listen for connections, default 0.0.0.0
+  lan_port: 9000 # which UDP port to listen on, default 9000
+  max_clients: -1 # max number of clients allowed, default -1
   shared_key: pleasegenerateakey # shared key for WAN connections, default pleasegenerateakey
+  default_status: 0 # default status for new accounts, default 0
+  zone_port_min: 7000 # when world spins up dynamic zones, this is the minimum port range a zone gets assigned to
+  zone_port_max: 7400 # when world spins up dynamic zones, this is the maximum port range a zone gets assigned to
   login: # login connections
-  - ip: "127.0.0.1" # which IP address to connect to login to, default 127.0.0.1
+  - ip: "127.0.0.1" # which IP address to use to connect to login server, default 127.0.0.1
     port: 5998 # which port to connect to login to, default 5998
     username: admin # username to login with, default admin
     password: admin # password to login with, default admin
     type: 0 # type of login server, default 0
   telnet: # telnet server settings
-    is_enabled: true # if telnet is enabled
+    is_enabled: true # if telnet is enabled, default true
     ip: 127.0.0.1 # which IP address to listen for telnet connections, default 127.0.0.1
-    port: 9000 # which port to listen for telnet connections, default 9000
+    port: 9000 # which TCP port to listen for telnet connections, default 9000
 login: # login server settings
-  lan_ip: 127.0.0.1 # which lan ip to listen for connections, default 127.0.0.1
-  lan_port: 5998 # which port to listen for connections, default 5998
+  player_ip: "0.0.0.0" # which IP address to listen to for client connections, default 0.0.0.0
+  player_port: 5998 # which UDP port to listen for client connections, default 5998
+  world_ip: "0.0.0.0" # which lan ip to listen for world connections, default 0.0.0.0
+  world_port: 5998 # which TCP port to listen for world connections, default 5998
   username: admin
   password: admin
   is_auto_create_accounts_enabled: false
@@ -45,7 +50,7 @@ login: # login server settings
     world_server_type_table: tblServerListType
     loginserver_setting_table: tblloginserversettings
 ucs:
-  host: 0.0.0.0
+  ip: 0.0.0.0
   port: 7778
 database:
   db: ryx
@@ -60,9 +65,9 @@ query_serv:
   username: ryx
   password: ryxpass
 zone:
-  default_status: 0
-  port_min: 7000
-  port_max: 6400
+  ip: 0.0.0.0 # which IP address to listen for client connections, default 0.0.0.0
+  world_ip: 127.0.0.1 # which IP address to connect to world server, default 127.0.0.1
+  world_port: 9000 # which TCP port to connect to world server, default 9000
 dir:
   patches: assets/patches/
   opcodes: assets/opcodes/

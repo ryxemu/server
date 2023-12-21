@@ -16,16 +16,13 @@
 void CatchSignal(int sig_num);
 void UpdateWindowTitle(char* iNewTitle);
 
-#define EQ_WORLD_PORT 9000  // mandated by the client
-#define LOGIN_PORT 5997
-
 class NetConnection {
    public:
 	NetConnection() {
 		world_locked = false;
 		for (int i = 0; i < 5; i++) {
 			memset(loginaddress[i], 0, sizeof(loginaddress[i]));
-			loginport[i] = LOGIN_PORT;
+			loginport[i] = 5997;  // TODO: fix hard coded login port
 		}
 		memset(worldname, 0, sizeof(worldname));
 		memset(worldshortname, 0, sizeof(worldshortname));

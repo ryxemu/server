@@ -94,7 +94,7 @@ shared:
 .PHONY: zone
 zone:
 	@-rm build/bin/logs/zone/zone*.log
-	cd build/bin && ./zone
+	cd build/bin && ./zone ecommons
 
 # Runs world binary
 .PHONY: world

@@ -39,6 +39,11 @@ int main() {
 
 	LogSys.log_settings[Logs::Error].log_to_console = Logs::General;
 
+	LogInfo(
+	    "Connecting to DB {0}@{1}:{2}",
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
 	server.db = (Database*)new Database(
 	    Config::get()->DatabaseUsername,
 	    Config::get()->DatabasePassword,

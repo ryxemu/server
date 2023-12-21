@@ -327,7 +327,7 @@ bool ClientListEntry::CheckStale() {
 bool ClientListEntry::CheckAuth(uint32 iLSID, const char* iKey) {
 	if (strncmp(plskey, iKey, 10) == 0) {
 		if (paccountid == 0 && LSID() > 0) {
-			int16 tmpStatus = Config::get()->DefaultStatus;
+			int16 tmpStatus = Config::get()->WorldDefaultStatus;
 			paccountid = database.CreateAccount(plsname, 0, tmpStatus, LSID());
 			if (!paccountid) {
 				Log(Logs::Detail, Logs::WorldServer, "Error adding local account for LS login: '%s', duplicate name?", plsname);

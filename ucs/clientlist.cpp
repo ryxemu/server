@@ -12,6 +12,7 @@
 #include "../common/emu_tcp_connection.h"
 #include "../common/emu_tcp_server.h"
 #include "../common/servertalk.h"
+#include "../common/config.h"
 #include "worldserver.h"
 #include <list>
 #include <vector>
@@ -155,21 +156,22 @@ static void ProcessCommandIgnore(Client *c, std::string Ignoree) {
 
 	safe_delete(outapp);
 }
-Clientlist::Clientlist(int ChatPort) {
-	chatsf = new EQStreamFactory(ChatStream, ChatPort, 60000);
+
+Clientlist::Clientlist() {
+	chatsf = new EQStreamFactory(ChatStream, 60000);
 
 	ChatOpMgr = new RegularOpcodeManager;
 
-	if (!ChatOpMgr->LoadOpcodes("chat_opcodes.conf"))
-		exit(1);
-
-	if (chatsf->Open()) {
-		LogF(Logs::Detail, Logs::LoginServer, "Client (UDP) Chat listener started on port [{0}].", ChatPort);
-	} else {
-		LogF(Logs::Detail, Logs::UCSServer, "Failed to start client (UDP) listener (port [{0}]-4i)", ChatPort);
-
+	if (!ChatOpMgr->LoadOpcodes("chat_opcodes.conf")) {
 		exit(1);
 	}
+
+	auto result = chatsf->Open(Config::get()->UCSIP, Config::get()->UCSPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for client connections on UDP {}:{}: {}", Config::get()->LoginPlayerIP, Config::get()->LoginPlayerPort, result);
+		exit(1);
+	}
+	LogInfo("Listening for client connections on UDP {}:{}", Config::get()->LoginPlayerIP, Config::get()->LoginPlayerPort);
 }
 
 Client::Client(EQStream *eqs) {

@@ -49,10 +49,8 @@ bool Database::Connect(const char* host, const char* user, const char* passwd, c
 	if (!Open(host, user, passwd, database, port, &errnum, errbuf)) {
 		LogError("[MySQL] Failed to connect to database: Error: [{}] ", errbuf);
 		return false;
-	} else {
-		LogInfo("[MySQL] Using database [{}] at [{}] : [{}] ", database, host, port);
-		return true;
 	}
+	return true;
 }
 
 /*

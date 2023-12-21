@@ -88,7 +88,7 @@ void CatchSignal(int sig_num);
 
 void LoadDatabaseConnections() {
 	LogInfo(
-	    "Connecting to MySQL {0}@{1}:{2}...",
+	    "Connecting to DB {0}@{1}:{2}",
 	    Config::get()->DatabaseUsername.c_str(),
 	    Config::get()->DatabaseHost.c_str(),
 	    Config::get()->DatabasePort);
@@ -203,22 +203,16 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	LogInfo("Loading zones..");
 	database.LoadZoneNames();
-	LogInfo("Clearing groups..");
 	database.ClearGroup();
-	LogInfo("Clearing raids..");
 	database.ClearRaid();
 	database.ClearRaidDetails();
-	LogInfo("Loading items..");
 	if (!database.LoadItems(hotfix_name))
 		LogError("Error: Could not load item data. But ignoring");
 
-	LogInfo("Loading skill caps..");
 	if (!database.LoadSkillCaps(std::string(hotfix_name)))
 		LogError("Error: Could not load skill cap data. But ignoring");
 
-	LogInfo("Loading guilds..");
 	guild_mgr.LoadGuilds();
 	// rules:
 	{
@@ -231,8 +225,6 @@ int main(int argc, char** argv) {
 		} else {
 			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 				LogInfo("No rule set configured, using default rules");
-			} else {
-				LogInfo("Loaded default rule set 'default'", tmp.c_str());
 			}
 		}
 	}
@@ -273,18 +265,19 @@ int main(int argc, char** argv) {
 	database.LoadCharacterCreateAllocations();
 	database.LoadCharacterCreateCombos();
 
-	char errbuf[TCPConnection_ErrorBufferSize];
-	if (!tcps.Open(Config::get()->WorldTelnetPort, errbuf)) {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config::get()->WorldTelnetPort);
-		LogError("        {0}", errbuf);
-		return 1;
+	auto result = tcps.Open(Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for zone connections on TCP {}:{}: {}", Config::get()->WorldLANIP, Config::get()->WorldLANPort, result);
+		exit(1);
 	}
-	LogInfo("Zone (TCP) listener started on port {}.", Config::get()->WorldTelnetPort);
-	if (!eqsf.Open()) {
-		LogInfo("Failed to start client (UDP) listener (port 9000)");
-		return 1;
+	LogInfo("Listening for zone connections on TCP {}:{}", Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+
+	result = eqsf.Open(Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for client connections on UDP {}:{}: {}", Config::get()->WorldLANIP, Config::get()->WorldLANPort, result);
+		exit(1);
 	}
-	LogInfo("Client (UDP) listener started.");
+	LogInfo("Listening for client connections on UDP {}:{}", Config::get()->WorldLANIP, Config::get()->WorldLANPort);
 
 	// register all the patches we have avaliable with the stream identifier.
 	EQStreamIdentifier stream_identifier;
