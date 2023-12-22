@@ -162,7 +162,12 @@ Clientlist::Clientlist() {
 
 	ChatOpMgr = new RegularOpcodeManager;
 
-	if (!ChatOpMgr->LoadOpcodes("chat_opcodes.conf")) {
+	std::string opfile = Config::get()->DirPatch;
+	opfile += "opcodes";
+	opfile += ".conf";
+
+	if (!ChatOpMgr->LoadOpcodes(opfile.c_str())) {
+		LogError("Failed to load opcodes from {}", opfile.c_str());
 		exit(1);
 	}
 

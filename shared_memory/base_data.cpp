@@ -16,7 +16,7 @@ void LoadBaseData(SharedDatabase *database, const std::string &prefix) {
 	uint32 size = records * 16 * sizeof(BaseDataStruct);
 
 	auto Config = Config::get();
-	std::string file_name = Config::get()->SharedMemDir + prefix + std::string("base_data");
+	std::string file_name = Config::get()->DirSharedMem + prefix + std::string("base_data");
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
 

@@ -17,7 +17,7 @@ void LoadSkillCaps(SharedDatabase *database, const std::string &prefix) {
 	uint32 size = (class_count * skill_count * level_count * sizeof(uint16));
 
 	auto Config = Config::get();
-	std::string file_name = Config::get()->SharedMemDir + prefix + std::string("skill_caps");
+	std::string file_name = Config::get()->DirSharedMem + prefix + std::string("skill_caps");
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
 

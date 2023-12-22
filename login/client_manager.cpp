@@ -12,9 +12,8 @@ ClientManager::ClientManager() {
 	stream = new EQStreamFactory(NewLSStream);
 	ops = new RegularOpcodeManager;
 
-	std::string opfile = Config::get()->PatchDir;
-	opfile += "patch_";
-	opfile += "Ls20231211";
+	std::string opfile = Config::get()->DirPatch;
+	opfile += "opcodes";
 	opfile += ".conf";
 
 	run_server = false;

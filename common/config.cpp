@@ -528,53 +528,53 @@ void Config::parse_config() {
 		if (_root["dir"]["maps"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.maps must be a string");
 		}
-		MapDir = _root["dir"]["maps"].as<std::string>();
+		DirMap = _root["dir"]["maps"].as<std::string>();
 	} else {
-		MapDir = "maps/";
+		DirMap = "maps/";
 	}
 
 	if (!_root["dir"]["logs"].IsNull()) {
 		if (_root["dir"]["logs"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.logs must be a string");
 		}
-		LogDir = _root["dir"]["logs"].as<std::string>();
+		DirLog = _root["dir"]["logs"].as<std::string>();
 	} else {
-		LogDir = "logs/";
+		DirLog = "logs/";
 	}
 
 	if (!_root["dir"]["lua_modules"].IsNull()) {
 		if (_root["dir"]["lua_modules"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.lua_modules must be a string");
 		}
-		LuaModuleDir = _root["dir"]["lua_modules"].as<std::string>();
+		DirLuaModule = _root["dir"]["lua_modules"].as<std::string>();
 	} else {
-		LuaModuleDir = "quests/lua_modules/";
+		DirLuaModule = "quests/lua_modules/";
 	}
 
 	if (!_root["dir"]["quests"].IsNull()) {
 		if (_root["dir"]["quests"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.quests must be a string");
 		}
-		QuestDir = _root["dir"]["quests"].as<std::string>();
+		DirQuest = _root["dir"]["quests"].as<std::string>();
 	} else {
-		QuestDir = "quests/";
+		DirQuest = "quests/";
 	}
 
 	if (!_root["dir"]["patches"].IsNull()) {
 		if (_root["dir"]["patches"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.patches must be a string");
 		}
-		PatchDir = _root["dir"]["patches"].as<std::string>();
+		DirPatch = _root["dir"]["patches"].as<std::string>();
 	} else {
-		PatchDir = "assets/patches/";
+		DirPatch = "assets/patches/";
 	}
 
 	if (!_root["dir"]["shared_memory"].IsNull()) {
 		if (_root["dir"]["shared_memory"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("dir.shared_memory must be a string");
 		}
-		SharedMemDir = _root["dir"]["shared_memory"].as<std::string>();
+		DirSharedMem = _root["dir"]["shared_memory"].as<std::string>();
 	} else {
-		SharedMemDir = "shared/";
+		DirSharedMem = "shared/";
 	}
 }

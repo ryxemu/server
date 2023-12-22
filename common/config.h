@@ -89,12 +89,12 @@ class Config {
 	uint16 QSDatabasePort;
 
 	// From dir
-	std::string MapDir;
-	std::string QuestDir;
-	std::string LuaModuleDir;
-	std::string PatchDir;
-	std::string SharedMemDir;
-	std::string LogDir;
+	std::string DirMap;
+	std::string DirQuest;
+	std::string DirLuaModule;
+	std::string DirPatch;
+	std::string DirSharedMem;
+	std::string DirLog;
 
 	std::string ZoneIP;
 	uint16 ZonePort;  // temporary variable (not loaded from config) of what port zone is using // TODO: add to a proper state system
