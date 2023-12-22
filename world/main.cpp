@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("world_{}.log", getpid()));
 
 	if (argc >= 2) {
 		std::string tmp;

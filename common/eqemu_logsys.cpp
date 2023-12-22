@@ -392,40 +392,22 @@ void EQEmuLogSys::CloseFileLogs() {
 
 void EQEmuLogSys::StartFileLogs(const std::string& log_name) {
 	EQEmuLogSys::CloseFileLogs();
-
-	/* When loading settings, we must have been given a reason in category based logging to output to a file in order to even create or open one... */
 	if (!file_logs_enabled)
 		return;
 
-	/**
-	 * Zone
-	 */
+	std::string path = "logs/";
 	if (EQEmuLogSys::log_platform == EQEmuExePlatform::ExePlatformZone) {
 		if (!log_name.empty())
 			platform_file_name = log_name;
-
 		if (platform_file_name.empty())
 			return;
 
-		/**
-		 * Make directory if not exists
-		 */
 		EQEmuLogSys::MakeDirectory("logs/zone");
-
-		/**
-		 * Open file pointer
-		 */
-		process_log.open(StringFormat("logs/zone/%s_%i.log", platform_file_name.c_str(), getpid()), std::ios_base::app | std::ios_base::out);
-	} else {
-		/**
-		 * All other processes
-		 */
-		if (platform_file_name.empty())
-			return;
-
-		process_log.open(StringFormat("logs/%s_%i.log", platform_file_name.c_str(), getpid()), std::ios_base::app | std::ios_base::out);
+		path.append("zone/");
 	}
-	LogInfo("Logging to logs/{0}_{1}.log", platform_file_name.c_str(), getpid());
+	path.append(log_name);
+	process_log.open(path, std::ios_base::app | std::ios_base::out);
+	LogInfo("Logging to {}", path);
 }
 
 /**

@@ -66,7 +66,7 @@ int main() {
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("queryserv_{}.log", getpid()));
 
 	if (signal(SIGINT, CatchSignal) == SIG_ERR) {
 		LogInfo("Could not set signal handler");

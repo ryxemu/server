@@ -75,7 +75,7 @@ int main() {
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("ucs_{}.log", getpid()));
 
 	char tmp[64];
 

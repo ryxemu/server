@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("shared_{}.log", getpid()));
 
 	database.LoadVariables();
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_items) {
-		Log(Logs::General, Logs::Status, "Loading items...");
+		Log(Logs::General, Logs::Status, "Loading items");
 		try {
 			LoadItems(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_factions) {
-		Log(Logs::General, Logs::Status, "Loading factions...");
+		Log(Logs::General, Logs::Status, "Loading factions");
 		try {
 			LoadFactions(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_loot) {
-		Log(Logs::General, Logs::Status, "Loading loot...");
+		Log(Logs::General, Logs::Status, "Loading loot");
 		try {
 			LoadLoot(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_skill_caps) {
-		Log(Logs::General, Logs::Status, "Loading skill caps...");
+		Log(Logs::General, Logs::Status, "Loading skill caps");
 		try {
 			LoadSkillCaps(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_spells) {
-		Log(Logs::General, Logs::Status, "Loading spells...");
+		Log(Logs::General, Logs::Status, "Loading spells");
 		try {
 			LoadSpells(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_bd) {
-		Log(Logs::General, Logs::Status, "Loading base data...");
+		Log(Logs::General, Logs::Status, "Loading base data");
 		try {
 			LoadBaseData(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -189,6 +189,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	LogInfo("Completed with no failures");
 	LogSys.CloseFileLogs();
+
 	return 0;
 }

@@ -89,7 +89,7 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 	zone->pathing = IPathfinder::Load(zone->map_name);
 	if (zone->zonemap == nullptr) {
 		zone->is_zonemap_loaded = false;
-		LogInfo("Failed to load zonemap for {}, ignoring", zonename);
+		LogError("Failed to load zonemap for {}, ignoring", zonename);
 	}
 
 	std::string tmp;
@@ -129,9 +129,7 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 	UpdateWindowTitle(nullptr);
 	zone->GetTimeSync();
 
-	/* Set Logging */
-
-	LogSys.StartFileLogs(StringFormat("%s_port_%u", zone->GetShortName(), Config::get()->ZonePort));
+	LogSys.StartFileLogs(fmt::format("zone_{}_{}.log", getpid(), zone->GetShortName()));
 
 	return true;
 }

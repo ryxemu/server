@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
 	    ->SetGMSayHandler(&Zone::GMSayHookCallBackProcess)
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("zone_{}.log", getpid()));
 
 	/* Guilds */
 	guild_mgr.SetDatabase(&database);
@@ -323,7 +323,7 @@ int main(int argc, char** argv) {
 				// structures and opcodes for that patch.
 				struct in_addr in;
 				in.s_addr = eqss->GetRemoteIP();
-				Log(Logs::Detail, Logs::WorldServer, "New connection from %s:%d", inet_ntoa(in), ntohs(eqss->GetRemotePort()));
+				Log(Logs::Detail, Logs::WorldServer, "New client connection from %s:%d", inet_ntoa(in), ntohs(eqss->GetRemotePort()));
 				stream_identifier.AddStream(eqss);  // takes the stream
 			}
 
@@ -334,7 +334,7 @@ int main(int argc, char** argv) {
 				// structures and opcodes for that patch.
 				struct in_addr in;
 				in.s_addr = eqoss->GetRemoteIP();
-				Log(Logs::Detail, Logs::WorldServer, "New connection from %s:%d", inet_ntoa(in), ntohs(eqoss->GetRemotePort()));
+				Log(Logs::Detail, Logs::WorldServer, "New old client connection from %s:%d", inet_ntoa(in), ntohs(eqoss->GetRemotePort()));
 				stream_identifier.AddOldStream(eqoss);  // takes the stream
 			}
 
