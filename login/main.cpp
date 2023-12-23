@@ -29,7 +29,7 @@ int main() {
 	RegisterExecutablePlatform(ExePlatformLogin);
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
-	LogInfo("Starting LoginServer v{}", VERSION);
+	LogInfo("Starting Login v{}", VERSION);
 
 	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
@@ -50,6 +50,16 @@ int main() {
 	    Config::get()->DatabaseHost,
 	    Config::get()->DatabasePort,
 	    Config::get()->DatabaseDB);
+
+	// LogSys.LoadLogDatabaseSettings();
+	LogSys.StartFileLogs(fmt::format("login_{}.log", getpid()));
+
+	if (Config::get()->IsLoginPacketDumpEnabled) {
+		LogSys.log_settings[Logs::Netcode].log_to_console = Logs::Detail;
+		LogSys.log_settings[Logs::Netcode].is_category_enabled = true;
+		LogSys.log_settings[Logs::PacketServerClientWithDump].log_to_console = Logs::Detail;
+		LogSys.log_settings[Logs::PacketServerClientWithDump].is_category_enabled = true;
+	}
 
 	// create our server manager.
 	server.server_manager = new ServerManager();
@@ -77,9 +87,9 @@ int main() {
 
 #ifdef WIN32
 #ifdef UNICODE
-	SetConsoleTitle(L"EQEmu Login Server");
+	SetConsoleTitle(L"RyxEmu Login Server");
 #else
-	SetConsoleTitle("EQEmu Login Server");
+	SetConsoleTitle("RyxEmu Login Server");
 #endif
 #endif
 

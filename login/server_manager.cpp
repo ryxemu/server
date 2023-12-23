@@ -197,9 +197,7 @@ void ServerManager::SendOldUserToWorldRequest(const char* server_id, unsigned in
 			(*iter)->GetConnection()->SendPacket(outapp);
 			found = true;
 
-			if (Config::get()->IsLoginPacketOutLoggingEnabled) {
-				LogInfo("[Size: {0}] [{1}]", outapp->size, DumpServerPacketToString(outapp).c_str());
-			}
+			LogNetcode("[Size: {0}] [{1}]", outapp->size, DumpServerPacketToString(outapp).c_str());
 			delete outapp;
 
 			return;

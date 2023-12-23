@@ -172,11 +172,13 @@ void EQStreamFactory::ReaderLoop() {
 		if ((num = select(sock + 1, &readset, nullptr, nullptr, &sleep_time)) < 0) {
 			// What do we wanna do?
 			continue;
-		} else if (num == 0)
+		} else if (num == 0) {
 			continue;
+		}
 
-		if (sock == -1)
+		if (sock == -1) {
 			break;  // somebody closed us while we were sleeping.
+		}
 
 		if (FD_ISSET(sock, &readset)) {
 #ifdef _WINDOWS
@@ -221,15 +223,17 @@ void EQStreamFactory::ReaderLoop() {
 					// oldstr
 					oldstream_itr = OldStreams.find(std::make_pair(from.sin_addr.s_addr, from.sin_port));
 					EQOldStream *oldcurstream = nullptr;
-					if (oldstream_itr != OldStreams.end())
+					if (oldstream_itr != OldStreams.end()) {
 						oldcurstream = oldstream_itr->second;
+					}
 
 					if (curstream != nullptr) {
 						// dont bother processing incoming packets for closed connections
-						if (curstream->CheckClosed())
+						if (curstream->CheckClosed()) {
 							curstream = nullptr;
-						else
+						} else {
 							curstream->PutInUse();
+						}
 						MStreams.unlock();  // the in use flag prevents the stream from being deleted while we are using it.
 
 						if (curstream) {
@@ -239,10 +243,11 @@ void EQStreamFactory::ReaderLoop() {
 							curstream->ReleaseFromUse();
 						}
 					} else if (oldcurstream != nullptr) {
-						if (oldcurstream->CheckClosed())
+						if (oldcurstream->CheckClosed()) {
 							oldcurstream = nullptr;
-						else
+						} else {
 							oldcurstream->PutInUse();
+						}
 
 						MStreams.unlock();  // the in use flag prevents the stream from being deleted while we are using it.
 

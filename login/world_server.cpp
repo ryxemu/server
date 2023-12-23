@@ -41,11 +41,9 @@ void WorldServer::Reset() {
 bool WorldServer::Process() {
 	ServerPacket *app = nullptr;
 	while (app = connection->PopPacket()) {
-		LogDebug("Application packet received from server: [{0}], (size {1})", app->opcode, app->size);
+		LogNetcode("Application packet received from server: [{0}], (size {1})", app->opcode, app->size);
 
-		if (Config::get()->IsLoginPacketOutLoggingEnabled) {
-			LogInfo("[Size: {0}] [{1}]", app->size, DumpServerPacketToString(app).c_str());
-		}
+		LogNetcode("[Size: {0}] [{1}]", app->size, DumpServerPacketToString(app).c_str());
 
 		switch (app->opcode) {
 			case ServerOP_NewLSInfo: {
@@ -69,12 +67,12 @@ bool WorldServer::Process() {
 					break;
 				}
 
-				LogDebug("World Server Status Recieved");
+				LogNetcode("World Server Status Recieved");
 
 				auto *ls_status = (ServerLSStatus_Struct *)app->pBuffer;
 
-				LogDebug("World Server Status Update | Server [{0}] Status [{1}] Players [{2}] Zones [{3}]",
-				         GetLongName(), ls_status->status, ls_status->num_players, ls_status->num_zones);
+				LogNetcode("World Server Status Update | Server [{0}] Status [{1}] Players [{2}] Zones [{3}]",
+				           GetLongName(), ls_status->status, ls_status->num_players, ls_status->num_zones);
 
 				Handle_LSStatus(ls_status);
 				break;
@@ -144,7 +142,7 @@ bool WorldServer::Process() {
 					per->Sequence = c->GetPlaySequence();
 					per->ServerNumber = c->GetPlayServerID();
 					LogInfo("Found sequence and play of [{0}] [{1}]", c->GetPlaySequence(), c->GetPlayServerID());
-					LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
+					LogNetcode("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 
 					if (utwr->response > 0) {
 						per->Allowed = 1;
@@ -178,9 +176,7 @@ bool WorldServer::Process() {
 					LogInfo("Sending play response with following data, allowed {} , sequence {} , server number {} , message {} ",
 					        per->Allowed, per->Sequence, per->ServerNumber, per->Message);
 
-					if (Config::get()->IsLoginPacketOutLoggingEnabled) {
-						LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
-					}
+					LogNetcode("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 
 					c->SendPlayResponse(outapp);
 					delete outapp;
@@ -468,8 +464,6 @@ void WorldServer::SendClientAuth(unsigned int ip, string account, string key, un
 
 	connection->SendPacket(outapp);
 
-	if (Config::get()->IsLoginPacketInLoggingEnabled) {
-		Log(Logs::General, Logs::LoginServer, "[Size: %u] %s", outapp->size, DumpServerPacketToString(outapp).c_str());
-	}
+	LogNetcode("[Size: %u] %s", outapp->size, DumpServerPacketToString(outapp).c_str());
 	safe_delete(outapp);
 }

@@ -92,9 +92,6 @@ class TCPServer : public BaseTCPServer {
 		while (cur != m_list.end()) {
 			T *data = *cur;
 			if (data != nullptr && data->IsFree() && (!data->CheckNetActive())) {
-#if EQN_DEBUG >= 4
-				std::cout << "TCPConnection Connection deleted." << std::endl;
-#endif
 				delete data;
 				cur = m_list.erase(cur);
 			} else {

@@ -34,10 +34,9 @@ login: # login server settings
   is_login_ip_logged: false
   is_unregistered_allowed: true
   is_duplicate_server_rejected: false
-  is_trace_enabled: false
-  is_trace_world_enabled: false
-  is_packet_in_logging_enabled: false
-  is_packet_out_logging_enabled: false
+  is_trace_enabled: true
+  is_trace_world_enabled: true
+  is_packet_dump_enabled: true
   salt: randomstring
   security:
     plugin: EQEmuAuthCrypto

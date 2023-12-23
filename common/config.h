@@ -59,8 +59,7 @@ class Config {
 	bool IsLoginDuplicateServerRejected;           // login.is_duplicate_server_rejected
 	bool IsLoginTraceEnabled;                      // login.is_trace_enabled
 	bool IsLoginTraceWorldEnabled;                 // login.is_trace_world_enabled
-	bool IsLoginPacketInLoggingEnabled;            // login.is_packet_in_logging_enabled
-	bool IsLoginPacketOutLoggingEnabled;           // login.is_packet_out_logging_enabled
+	bool IsLoginPacketDumpEnabled;                 // login.is_packet_dump_enabled
 	std::string LoginSalt;                         // login.salt
 	std::string LoginSecurityPlugin;               // login.security.plugin
 	int32 LoginSecurityMode;                       // login.security.mode

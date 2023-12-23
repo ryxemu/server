@@ -305,20 +305,12 @@ void Config::parse_config() {
 		IsLoginTraceWorldEnabled = _root["login"]["is_trace_world_enabled"].as<bool>();
 	}
 
-	IsLoginPacketInLoggingEnabled = false;
-	if (!_root["login"]["is_packet_in_logging_enabled"].IsNull()) {
-		if (_root["login"]["is_packet_in_logging_enabled"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login.is_packet_in_logging_enabled must be a boolean");
+	IsLoginPacketDumpEnabled = false;
+	if (!_root["login"]["is_packet_dump_enabled"].IsNull()) {
+		if (_root["login"]["is_packet_dump_enabled"].Type() != YAML::NodeType::Scalar) {
+			throw std::runtime_error("login.is_packet_dump_enabled must be a boolean");
 		}
-		IsLoginPacketInLoggingEnabled = _root["login"]["is_packet_in_logging_enabled"].as<bool>();
-	}
-
-	IsLoginPacketOutLoggingEnabled = false;
-	if (!_root["login"]["is_packet_out_logging_enabled"].IsNull()) {
-		if (_root["login"]["is_packet_out_logging_enabled"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login.is_packet_out_logging_enabled must be a boolean");
-		}
-		IsLoginPacketOutLoggingEnabled = _root["login"]["is_packet_out_logging_enabled"].as<bool>();
+		IsLoginPacketDumpEnabled = _root["login"]["is_packet_dump_enabled"].as<bool>();
 	}
 
 	if (_root["login"]["salt"].IsNull()) {

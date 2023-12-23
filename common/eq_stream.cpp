@@ -7,6 +7,7 @@
 #include "platform.h"
 #include "strings.h"
 #include "rulesys.h"
+#include "config.h"
 
 #include <string>
 #include <iostream>
@@ -102,14 +103,16 @@ EQProtocolPacket *EQStream::MakeProtocolPacket(const unsigned char *buf, uint32 
 
 void EQStream::ProcessPacket(EQProtocolPacket *p) {
 	uint32 processed = 0, subpacket_length = 0;
-	if (p == nullptr)
+	if (p == nullptr) {
 		return;
+	}
 	// Raw Application packet
 	if (p->opcode > 0xff) {
 		p->opcode = htons(p->opcode);  // byte order is backwards in the protocol packet
 		EQRawApplicationPacket *ap = MakeApplicationPacket(p);
-		if (ap)
+		if (ap) {
 			InboundQueuePush(ap);
+		}
 		return;
 	}
 
@@ -332,7 +335,7 @@ void EQStream::ProcessPacket(EQProtocolPacket *p) {
 			// Kinda kludgy, but trie for now
 			if (StreamType == UnknownStream) {
 				if (compressed) {
-					if (remote_port == 9000 || (remote_port == 0 && p->src_port == 9000)) {
+					if (remote_port == Config::get()->WorldWANPort || (remote_port == 0 && p->src_port == Config::get()->WorldWANPort)) {
 						SetStreamType(WorldStream);
 					} else {
 						SetStreamType(ZoneStream);
@@ -463,13 +466,15 @@ void EQStream::ProcessPacket(EQProtocolPacket *p) {
 }
 
 void EQStream::QueuePacket(const EQApplicationPacket *p, bool ack_req) {
-	if (p == nullptr)
+	if (p == nullptr) {
 		return;
+	}
 
 	EQApplicationPacket *newp = p->Copy();
 
-	if (newp != nullptr)
+	if (newp != nullptr) {
 		FastQueuePacket(&newp, ack_req);
+	}
 }
 
 void EQStream::FastQueuePacket(EQApplicationPacket **p, bool ack_req) {
@@ -580,14 +585,14 @@ void EQStream::SequencedPush(EQProtocolPacket *p) {
 
 void EQStream::NonSequencedPush(EQProtocolPacket *p) {
 	MOutboundQueue.lock();
-	LogNetcode(_L "Pushing non-sequenced packet of length [{0}]" __L, p->size);
+	LogNetcode("Pushing non-sequenced packet of length [{0}]", p->size);
 	NonSequencedQueue.push(p);
 	MOutboundQueue.unlock();
 }
 
 void EQStream::SendAck(uint16 seq) {
 	uint16 Seq = htons(seq);
-	LogNetcodeDetail(_L "Sending ack with sequence [{0}]" __L, seq);
+	LogNetcodeDetail("Sending ack with sequence [{0}]", seq);
 	SetLastAckSent(seq);
 	NonSequencedPush(new EQProtocolPacket(OP_Ack, (unsigned char *)&Seq, sizeof(uint16)));
 }
@@ -809,8 +814,8 @@ void EQStream::WritePacket(int eq_fd, EQProtocolPacket *p) {
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = remote_ip;
 	address.sin_port = remote_port;
-#ifdef NOWAY
-	uint32 ip = address.sin_addr.s_addr;
+
+	/* uint32 ip = address.sin_addr.s_addr;
 	std::cout << "Sending to: "
 	          << (int)*(unsigned char *)&ip
 	          << "." << (int)*((unsigned char *)&ip + 1)
@@ -819,8 +824,8 @@ void EQStream::WritePacket(int eq_fd, EQProtocolPacket *p) {
 	          << "," << (int)ntohs(address.sin_port) << "(" << p->size << ")" << std::endl;
 
 	p->DumpRaw();
-	std::cout << "-------------" << std::endl;
-#endif
+	std::cout << "-------------" << std::endl; */
+
 	length = p->serialize(buffer);
 	if (p->opcode != OP_SessionRequest && p->opcode != OP_SessionResponse) {
 		if (compressed) {
@@ -1003,7 +1008,7 @@ bool EQStream::HasOutgoingData() {
 void EQStream::OutboundQueueClear() {
 	EQProtocolPacket *p = nullptr;
 
-	Log(Logs::Detail, Logs::Netcode, _L "Clearing outbound queue" __L);
+	LogNetcode("Clearing outbound queue");
 
 	MOutboundQueue.lock();
 	while (!NonSequencedQueue.empty()) {
@@ -1024,7 +1029,7 @@ void EQStream::OutboundQueueClear() {
 void EQStream::PacketQueueClear() {
 	EQProtocolPacket *p = nullptr;
 
-	Log(Logs::Detail, Logs::Netcode, _L "Clearing future packet queue" __L);
+	LogNetcode("Clearing future packet queue");
 
 	if (!PacketQueue.empty()) {
 		std::map<unsigned short, EQProtocolPacket *>::iterator itr;
@@ -1055,7 +1060,7 @@ void EQStream::Process(const unsigned char *buffer, const uint32 length) {
 		delete p;
 		ProcessQueue();
 	} else {
-		Log(Logs::Detail, Logs::Netcode, _L "Incoming packet failed checksum" __L);
+		LogNetcode("Incoming packet failed checksum");
 		//_SendDisconnect();
 		// SetState(CLOSED);
 	}

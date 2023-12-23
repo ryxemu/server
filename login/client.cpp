@@ -25,10 +25,8 @@ Client::Client(EQStreamInterface* c, ClientVersion v) {
 bool Client::Process() {
 	EQApplicationPacket* app = connection->PopPacket();
 	while (app) {
-		LogDebug("Application packet received from client");
-		if (Config::get()->IsLoginPacketInLoggingEnabled) {
-			LogDebug("[Size: {0}] [{1}]", app->size, DumpPacketToString(app).c_str());
-		}
+		LogNetcode("Application packet received from client");
+		LogNetcode("[Size: {0}] [{1}]", app->size, DumpPacketToString(app).c_str());
 
 		switch (app->GetOpcode()) {
 			case OP_SessionReady: {
@@ -308,9 +306,7 @@ void Client::Handle_Play(const char* data) {
 void Client::SendServerListPacket() {
 	EQApplicationPacket* outapp = server.server_manager->CreateOldServerListPacket(this);
 
-	if (Config::get()->IsLoginPacketOutLoggingEnabled) {
-		LogInfo("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
-	}
+	LogNetcode("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 
 	connection->QueuePacket(outapp);
 	delete outapp;
@@ -336,8 +332,8 @@ void Client::Handle_Banner(unsigned int size) {
 }
 
 void Client::SendPlayResponse(EQApplicationPacket* outapp) {
-	LogDebug("Sending play response to client");
-	LogDebug("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
+	LogNetcode("Sending play response to client");
+	LogNetcode("[Size: {0}] [{1}]", outapp->size, DumpPacketToString(outapp).c_str());
 
 	connection->QueuePacket(outapp);
 	status = cs_logged_in;
