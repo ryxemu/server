@@ -27,8 +27,8 @@ void LoadLoot(SharedDatabase *database, const std::string &prefix) {
 	                        (loot_drop_entries_count * sizeof(LootDropEntries_Struct));  // number of loot table entries
 
 	auto Config = Config::get();
-	std::string file_name_lt = Config->SharedMemDir + prefix + std::string("loot_table");
-	std::string file_name_ld = Config->SharedMemDir + prefix + std::string("loot_drop");
+	std::string file_name_lt = Config::get()->DirSharedMem + prefix + std::string("loot_table");
+	std::string file_name_ld = Config::get()->DirSharedMem + prefix + std::string("loot_drop");
 
 	EQ::MemoryMappedFile mmf_loot_table(file_name_lt, loot_table_size);
 	EQ::MemoryMappedFile mmf_loot_drop(file_name_ld, loot_drop_size);

@@ -34,16 +34,20 @@ int main(int argc, char **argv) {
 	auto Config = Config::get();
 
 	SharedDatabase database;
-	Log(Logs::General, Logs::Status, "Connecting to database...");
-	if (!database.Connect(Config->DatabaseHost.c_str(), Config->DatabaseUsername.c_str(),
-	                      Config->DatabasePassword.c_str(), Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+	LogInfo(
+	    "Connecting to DB {0}@{1}:{2}",
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
+	if (!database.Connect(Config::get()->DatabaseHost.c_str(), Config::get()->DatabaseUsername.c_str(),
+	                      Config::get()->DatabasePassword.c_str(), Config::get()->DatabaseDB.c_str(), Config::get()->DatabasePort)) {
 		LogError("Unable to connect to the database, cannot continue without a database connection");
 		return 1;
 	}
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("shared_{}.log", getpid()));
 
 	database.LoadVariables();
 
@@ -126,7 +130,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_items) {
-		Log(Logs::General, Logs::Status, "Loading items...");
+		Log(Logs::General, Logs::Status, "Loading items");
 		try {
 			LoadItems(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -136,7 +140,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_factions) {
-		Log(Logs::General, Logs::Status, "Loading factions...");
+		Log(Logs::General, Logs::Status, "Loading factions");
 		try {
 			LoadFactions(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -146,7 +150,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_loot) {
-		Log(Logs::General, Logs::Status, "Loading loot...");
+		Log(Logs::General, Logs::Status, "Loading loot");
 		try {
 			LoadLoot(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -156,7 +160,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_skill_caps) {
-		Log(Logs::General, Logs::Status, "Loading skill caps...");
+		Log(Logs::General, Logs::Status, "Loading skill caps");
 		try {
 			LoadSkillCaps(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -166,7 +170,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_spells) {
-		Log(Logs::General, Logs::Status, "Loading spells...");
+		Log(Logs::General, Logs::Status, "Loading spells");
 		try {
 			LoadSpells(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -176,7 +180,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_bd) {
-		Log(Logs::General, Logs::Status, "Loading base data...");
+		Log(Logs::General, Logs::Status, "Loading base data");
 		try {
 			LoadBaseData(&database, hotfix_name);
 		} catch (std::exception &ex) {
@@ -185,6 +189,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	LogInfo("Completed with no failures");
 	LogSys.CloseFileLogs();
+
 	return 0;
 }

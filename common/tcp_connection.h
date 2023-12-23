@@ -61,7 +61,6 @@ class TCPConnection {
 
 	virtual ~TCPConnection();
 
-	// Functions for outgoing connections
 	bool Connect(const char* irAddress, uint16 irPort, char* errbuf = 0);
 	virtual bool ConnectIP(uint32 irIP, uint16 irPort, char* errbuf = 0);
 	void AsyncConnect(const char* irAddress, uint16 irPort);

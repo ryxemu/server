@@ -12,18 +12,17 @@
 #include "../common/misc_functions.h"
 #include "worldserver.h"
 #include "clientlist.h"
-#include "ucsconfig.h"
 #include "database.h"
 #include "../common/packet_functions.h"
 #include "../common/md5.h"
+#include "../common/config.h"
 
 extern WorldServer worldserver;
 extern Clientlist *g_Clientlist;
-extern const ucsconfig *Config;
 extern Database database;
 
 WorldServer::WorldServer()
-    : WorldConnection(EmuTCPConnection::packetModeUCS, Config->SharedKey.c_str()) {
+    : WorldConnection(EmuTCPConnection::packetModeUCS, Config::get()->WorldSharedKey.c_str()) {
 	pTryReconnect = true;
 }
 

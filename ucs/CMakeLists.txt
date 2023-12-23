@@ -5,7 +5,6 @@ SET(ucs_sources
 	clientlist.cpp
 	database.cpp
 	main.cpp
-	ucsconfig.cpp
 	worldserver.cpp
 )
 
@@ -13,7 +12,6 @@ SET(ucs_headers
 	chatchannel.h
 	clientlist.h
 	database.h
-	ucsconfig.h
 	worldserver.h
 )
 

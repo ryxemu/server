@@ -146,8 +146,6 @@ static std::vector<std::string> GetServerTables() {
 	    "eqtime",
 	    "gm_ips",
 	    "hackers",
-	    "launcher",
-	    "launcher_zones",
 	    "logsys_categories",
 	    "name_filter",
 	    "rule_sets",

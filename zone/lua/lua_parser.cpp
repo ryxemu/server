@@ -795,24 +795,24 @@ void LuaParser::ReloadQuests() {
 #endif
 
 	auto module_path = sv["package"]["path"].get<std::string>();
-	module_path += ";" + Config::get()->LuaModuleDir + "/?.lua;" + Config::get()->LuaModuleDir + "/?/init.lua";
+	module_path += ";" + Config::get()->DirLuaModule + "/?.lua;" + Config::get()->DirLuaModule + "/?/init.lua";
 	// luarock paths using lua_modules as tree
 	// to path it adds foo/share/lua/5.1/?.lua and foo/share/lua/5.1/?/init.lua
-	module_path += ";" + Config::get()->LuaModuleDir + "/share/lua/" + lua_version + "/?.lua";
-	module_path += ";" + Config::get()->LuaModuleDir + "/share/lua/" + lua_version + "/?/init.lua";
+	module_path += ";" + Config::get()->DirLuaModule + "/share/lua/" + lua_version + "/?.lua";
+	module_path += ";" + Config::get()->DirLuaModule + "/share/lua/" + lua_version + "/?/init.lua";
 	sv["package"]["path"] = module_path;
 
 	module_path = sv["package"]["cpath"].get<std::string>();
-	module_path += ";" + Config::get()->LuaModuleDir + "/?" + libext;
+	module_path += ";" + Config::get()->DirLuaModule + "/?" + libext;
 	// luarock paths using lua_modules as tree
 	// luarocks adds foo/lib/lua/5.1/?.so for cpath
-	module_path += ";" + Config::get()->LuaModuleDir + "/lib/lua/" + lua_version + "/?" + libext;
+	module_path += ";" + Config::get()->DirLuaModule + "/lib/lua/" + lua_version + "/?" + libext;
 	sv["package"]["cpath"] = module_path;
 
 	MapFunctions();
 
 	// load init
-	std::string filename = fmt::format("{}/{}/script_init.lua", Config::get()->QuestDir, QUEST_GLOBAL_DIRECTORY);
+	std::string filename = fmt::format("{}/{}/script_init.lua", Config::get()->DirQuest, QUEST_GLOBAL_DIRECTORY);
 
 	auto result = sv.safe_script_file(filename, sol::script_pass_on_error);
 	if (!result.valid() && result.status() != sol::call_status::file) {
@@ -824,7 +824,7 @@ void LuaParser::ReloadQuests() {
 	if (zone) {
 		std::string zone_script = fmt::format(
 		    "{}/{}/script_init_v{}.lua",
-		    Config::get()->QuestDir,
+		    Config::get()->DirQuest,
 		    zone->GetShortName(),
 		    0);  // zone->GetInstanceVersion());
 		result = sv.safe_script_file(zone_script, sol::script_pass_on_error);
@@ -832,7 +832,7 @@ void LuaParser::ReloadQuests() {
 			sol::error error = result;
 			AddError(error.what());
 		} else {
-			zone_script = fmt::format("{}/{}/script_init.lua", Config::get()->QuestDir, zone->GetShortName());
+			zone_script = fmt::format("{}/{}/script_init.lua", Config::get()->DirQuest, zone->GetShortName());
 			result = sv.safe_script_file(zone_script, sol::script_pass_on_error);
 			if (!result.valid() && result.status() != sol::call_status::file) {
 				sol::error error = result;
@@ -841,7 +841,7 @@ void LuaParser::ReloadQuests() {
 		}
 	}
 
-	FILE *load_order = fopen(fmt::format("{}/load_order.txt", Config::get()->LuaModuleDir).c_str(), "r");
+	FILE *load_order = fopen(fmt::format("{}/load_order.txt", Config::get()->DirLuaModule).c_str(), "r");
 	if (load_order) {
 		char file_name[256] = {0};
 		while (fgets(file_name, 256, load_order) != nullptr) {
@@ -853,7 +853,7 @@ void LuaParser::ReloadQuests() {
 				}
 			}
 
-			LoadScript(fmt::format("{}/{}", Config::get()->LuaModuleDir, file_name), file_name);
+			LoadScript(fmt::format("{}/{}", Config::get()->DirLuaModule, file_name), file_name);
 			// error checking
 			// m_impl->mods.emplace_back(LuaMod(&m_impl->loaded[file_name], this, file_name));
 		}

@@ -14,16 +14,6 @@ EQStreamProxy::EQStreamProxy(EQStream *&stream, const StructStrategy *structs, O
 	m_pStream->SetOpcodeManager(m_opcodes);
 }
 
-EQStreamProxy::EQStreamProxy(EQOldStream *&stream, const StructStrategy *structs, OpcodeManager **opcodes)
-    : m_stream(stream),
-      m_structs(structs),
-      m_opcodes(opcodes) {
-	stream = nullptr;  // take the stream.
-
-	EQOldStream *m_pStream = (EQOldStream *)m_stream;
-	m_pStream->SetOpcodeManager(m_opcodes);
-}
-
 EQStreamProxy::~EQStreamProxy() {
 	// delete m_stream;	//released by the stream factory.
 }

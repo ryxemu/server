@@ -5,9 +5,6 @@ SET(world_sources
 	cliententry.cpp
 	clientlist.cpp
 	console.cpp
-	eql_config.cpp
-	launcher_link.cpp
-	launcher_list.cpp
 	login_server.cpp
 	login_server_list.cpp
 	main.cpp
@@ -24,9 +21,6 @@ SET(world_headers
 	cliententry.h
 	clientlist.h
 	console.h
-	eql_config.h
-	launcher_link.h
-	launcher_list.h
 	login_server.h
 	login_server_list.h
 	main.h

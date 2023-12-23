@@ -104,7 +104,7 @@ void ClientListEntry::SetOnline(int8 iOnline) {
 		stale = 0;
 }
 void ClientListEntry::LSUpdate(ZoneServer* iZS) {
-	if (Config::get()->UpdateStats) {
+	if (Config::get()->WorldUpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSZoneInfo;
 		pack->size = sizeof(ZoneInfo_Struct);
@@ -118,7 +118,7 @@ void ClientListEntry::LSUpdate(ZoneServer* iZS) {
 	}
 }
 void ClientListEntry::LSZoneChange(ZoneToZone_Struct* ztz) {
-	if (Config::get()->UpdateStats) {
+	if (Config::get()->WorldUpdateStats) {
 		auto pack = new ServerPacket;
 		pack->opcode = ServerOP_LSPlayerZoneChange;
 		pack->size = sizeof(ServerLSPlayerZoneChange_Struct);
@@ -327,7 +327,7 @@ bool ClientListEntry::CheckStale() {
 bool ClientListEntry::CheckAuth(uint32 iLSID, const char* iKey) {
 	if (strncmp(plskey, iKey, 10) == 0) {
 		if (paccountid == 0 && LSID() > 0) {
-			int16 tmpStatus = Config::get()->DefaultStatus;
+			int16 tmpStatus = Config::get()->WorldDefaultStatus;
 			paccountid = database.CreateAccount(plsname, 0, tmpStatus, LSID());
 			if (!paccountid) {
 				Log(Logs::Detail, Logs::WorldServer, "Error adding local account for LS login: '%s', duplicate name?", plsname);

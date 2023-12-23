@@ -413,7 +413,6 @@ int command_init(void) {
 	    command_add("zcolor", "[red] [green] [blue] - Change sky color.", AccountStatus::GMImpossible, command_zcolor) ||
 	    command_add("zheader", "[zonename] - Load zheader for zonename from the database.", AccountStatus::GMImpossible, command_zheader) ||
 	    command_add("zone", "[Zone ID|Zone Short Name] [X] [Y] [Z] - Teleport to specified Zone by ID or Short Name (coordinates are optional).", AccountStatus::QuestTroupe, command_zone) ||
-	    command_add("zonebootup", "(shortname) (ZoneServerID) - Make a zone server boot a specific zone. If no arguments are given, it will find and boot any crashed zones.", AccountStatus::GMImpossible, command_zonebootup) ||
 	    command_add("zonelock", "[list/lock/unlock] - Set/query lock flag for zoneservers.", AccountStatus::GMAreas, command_zonelock) ||
 	    command_add("zoneshutdown", "[shortname] - Shut down a zone server.", AccountStatus::GMImpossible, command_zoneshutdown) ||
 	    command_add("zonespawn", "- Not implemented.", AccountStatus::Max, command_zonespawn) ||
@@ -3247,29 +3246,6 @@ void command_zoneshutdown(Client *c, const Seperator *sep) {
 			s->zoneid = database.GetZoneID(sep->arg[1]);
 		worldserver.SendPacket(pack);
 		safe_delete(pack);
-	}
-}
-
-void command_zonebootup(Client *c, const Seperator *sep) {
-	if (!worldserver.Connected()) {
-		c->Message(CC_Default, "Error: World server disconnected");
-	} else if (sep->arg[1][0] == 0) {
-		auto pack = new ServerPacket(ServerOP_BootDownZones, sizeof(ServerDownZoneBoot_struct));
-		ServerDownZoneBoot_struct *s = (ServerDownZoneBoot_struct *)pack->pBuffer;
-		strcpy(s->adminname, c->GetName());
-		worldserver.SendPacket(pack);
-		safe_delete(pack);
-		c->Message(CC_Default, "Zonebootup completed.");
-	} else {
-		auto pack = new ServerPacket(ServerOP_ZoneBootup, sizeof(ServerZoneStateChange_struct));
-		ServerZoneStateChange_struct *s = (ServerZoneStateChange_struct *)pack->pBuffer;
-		s->ZoneServerID = atoi(sep->arg[2]);
-		strcpy(s->adminname, c->GetName());
-		s->zoneid = database.GetZoneID(sep->arg[1]);
-		s->makestatic = true;
-		worldserver.SendPacket(pack);
-		safe_delete(pack);
-		c->Message(CC_Default, "Zonebootup completed.");
 	}
 }
 

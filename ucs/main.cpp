@@ -9,8 +9,8 @@
 #include "../common/crash.h"
 #include "../common/strings.h"
 #include "../common/event/timer.h"
+#include "../common/config.h"
 #include "database.h"
-#include "ucsconfig.h"
 #include "chatchannel.h"
 #include "worldserver.h"
 #include <list>
@@ -22,8 +22,6 @@ EQEmuLogSys LogSys;
 TimeoutManager timeout_manager;
 Database database;
 WorldServer *worldserver = nullptr;
-
-const ucsconfig *Config;
 
 std::string WorldShortName;
 
@@ -52,31 +50,32 @@ int main() {
 
 	LogInfo("Starting UCS v{}", VERSION);
 
-	auto load_result = ucsconfig::LoadConfig();
+	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
 		return 1;
 	}
 
-	Config = ucsconfig::get();
+	WorldShortName = Config::get()->WorldShortName;
 
-	WorldShortName = Config->ShortName;
-
-	LogInfo("Connecting to MySQL");
-
+	LogInfo(
+	    "Connecting to DB {0}@{1}:{2}",
+	    Config::get()->DatabaseUsername.c_str(),
+	    Config::get()->DatabaseHost.c_str(),
+	    Config::get()->DatabasePort);
 	if (!database.Connect(
-	        Config->DatabaseHost.c_str(),
-	        Config->DatabaseUsername.c_str(),
-	        Config->DatabasePassword.c_str(),
-	        Config->DatabaseDB.c_str(),
-	        Config->DatabasePort)) {
+	        Config::get()->DatabaseHost.c_str(),
+	        Config::get()->DatabaseUsername.c_str(),
+	        Config::get()->DatabasePassword.c_str(),
+	        Config::get()->DatabaseDB.c_str(),
+	        Config::get()->DatabasePort)) {
 		LogInfo("Cannot continue without a database connection.");
 		return 1;
 	}
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("ucs_{}.log", getpid()));
 
 	char tmp[64];
 
@@ -88,12 +87,10 @@ int main() {
 	} else {
 		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 			LogInfo("No rule set configured, using default rules");
-		} else {
-			LogInfo("Loaded default rule set 'default'", tmp);
 		}
 	}
 
-	g_Clientlist = new Clientlist(Config->ChatPort);
+	g_Clientlist = new Clientlist();
 
 	ChannelList = new ChatChannelList();
 

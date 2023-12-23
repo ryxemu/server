@@ -305,20 +305,6 @@ bool WorldDatabase::GetStartZone(PlayerProfile_Struct *in_pp, CharCreate_Struct 
 	return true;
 }
 
-void WorldDatabase::GetLauncherList(std::vector<std::string> &rl) {
-	rl.clear();
-
-	const std::string query = "SELECT name FROM launcher";
-	auto results = QueryDatabase(query);
-	if (!results.Success()) {
-		LogError("WorldDatabase::GetLauncherList: {} ", results.ErrorMessage().c_str());
-		return;
-	}
-
-	for (auto row = results.begin(); row != results.end(); ++row)
-		rl.push_back(row[0]);
-}
-
 void WorldDatabase::SetMailKey(int CharID, int IPAddress, int MailKey) {
 	char MailKeyString[17];
 

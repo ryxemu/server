@@ -18,7 +18,7 @@ class Database : public DBcore {
 	/**
 	 * Constructor, tries to set our database to connect to the supplied options.
 	 */
-	Database(std::string user, std::string pass, std::string host, std::string port, std::string name);
+	Database(std::string user, std::string pass, std::string host, uint16 port, std::string name);
 
 	/**
 	 * Destructor, frees our database if needed.
@@ -81,7 +81,7 @@ class Database : public DBcore {
 
    protected:
 	std::string user, pass, host, port, name;
-	MYSQL *database;
+	MYSQL *database = nullptr;
 };
 
 #endif

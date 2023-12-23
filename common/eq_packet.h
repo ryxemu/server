@@ -12,8 +12,6 @@ static const EmuOpcode OP_Unknown = 0;
 #include "emu_opcodes.h"
 #endif
 
-class EQOldStream;
-
 /************ PACKETS ************/
 struct EQPACKET_HDR_INFO {
 	uint8 a0_Unknown : 1;
@@ -42,7 +40,6 @@ struct FRAGMENT_INFO {
 
 class EQPacket : public BasePacket {
 	friend class EQStream;
-	friend class EQOldStream;
 
    public:
 	virtual ~EQPacket() {}
@@ -76,7 +73,6 @@ class EQRawApplicationPacket;
 
 class EQProtocolPacket : public BasePacket {
 	friend class EQStream;
-	friend class EQOldStream;
 	friend class EQStreamPair;
 
    public:
@@ -104,74 +100,6 @@ class EQProtocolPacket : public BasePacket {
 	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
 
 	uint32 Size() const { return size + 2; }
-
-	// the actual raw EQ opcode
-	uint16 opcode;
-};
-
-// Old (2001-era) packet
-class EQOldPacket {
-	friend class EQStream;
-	friend class EQStreamPair;
-
-   public:
-	EQOldPacket();
-	EQOldPacket(const unsigned char *buf, uint32 len);
-	~EQOldPacket();
-	//	EQProtocolPacket(const unsigned char *buf, uint32 len);
-	EQOldPacket *Copy() { return new EQOldPacket(); }
-
-	bool acked;
-
-   public:
-	void DecodePacket(uint16 length, uchar *pPacket);
-	uint32 ReturnPacket(uchar **data, EQOldStream *netcon);
-	EQRawApplicationPacket *MakeAppPacket() const;
-	void Clear(void) {
-		*((uint16 *)&HDR) = 0;
-		this->dwSEQ = 0;
-		this->dwARSP = 0;
-		this->dwARQ = 0;
-		this->dbASQ_low = 0;
-		this->dbASQ_high = 0;
-		this->dwOpCode = 0;
-		this->fraginfo.dwCurr = 0;
-		this->fraginfo.dwSeq = 0;
-		this->fraginfo.dwTotal = 0;
-		this->dwExtraSize = 0;
-		this->pExtra = 0;
-		this->ack_fields = 0;
-		this->resend_count = 0;
-		this->dwLoopedOnce = 0;
-		this->LastSent = 0;
-		this->Resend = false;
-	}
-
-	EQPACKET_HDR_INFO HDR;
-	uint16 dwSEQ;           // Sequence number
-	uint16 dwARSP;
-	uint16 b3ARSP;
-	uint16 b4_size;
-	uchar *ack_fields;
-	uint16 dwARQ;
-	uint16 dbASQ_high : 8;
-	uint16 dbASQ_low : 8;
-	uint16 dwOpCode;         // Not all packet have opcodes.
-	FRAGMENT_INFO fraginfo;  // Fragment info
-	uint16 dwExtraSize;      // Size of additional info.
-	uchar *pExtra;           // Additional information
-	uint16 resend_count;     // Quagmire: Moving resend count to a packet by packet basis
-	uint16 dwLoopedOnce;     // Checks counter of times packet has looped. Basically a bool but kept multiples for debugging purposes
-	uint32 LastSent;         // Last time this packet was sent.
-	bool Resend;
-
-	// Quagmire: Made the CRC stuff static and public. Makes things easier elsewhere.
-	static uint32 GenerateCRC(uint32 b, uint32 bufsize, uchar *buf);
-	uint16 GetRawOpcode() const { return (opcode); }
-
-   private:
-	static uint32 RoL(uint32 in, uint32 bits);
-	static uint32 CRCLookup(uchar idx);
 
 	// the actual raw EQ opcode
 	uint16 opcode;

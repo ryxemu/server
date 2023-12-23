@@ -3,11 +3,12 @@
 #include "login_server.h"
 #include "../common/eqemu_logsys.h"
 #include "../common/strings.h"
+#include "../common/config.h"
 
 extern EQEmuLogSys LogSys;
 extern LoginServer server;
 
-Database::Database(string user, string pass, string host, string port, string name) {
+Database::Database(string user, string pass, string host, uint16 port, string name) {
 	this->user = user;
 	this->pass = pass;
 	this->host = host;
@@ -20,7 +21,7 @@ Database::Database(string user, string pass, string host, string port, string na
 	        user.c_str(),
 	        pass.c_str(),
 	        name.c_str(),
-	        atoi(port.c_str()),
+	        port,
 	        &errnum,
 	        errbuf)) {
 		Log(Logs::General, Logs::Error, "Failed to connect to database: Error: %s", errbuf);
@@ -38,7 +39,7 @@ Database::~Database() {
 
 bool Database::GetLoginDataFromAccountName(string &name, string &password, unsigned int &id) {
 	auto query = fmt::format("SELECT LoginServerID, AccountPassword FROM {} WHERE AccountName = '{}';",
-	                         server.options.GetAccountTable(),
+	                         Config::get()->LoginAccountTable.c_str(),
 	                         Strings::Escape(name));
 
 	auto results = QueryDatabase(query);
@@ -96,7 +97,7 @@ bool Database::GetLoginTokenDataFromToken(const std::string &token, const std::s
 
 bool Database::CreateLoginData(const std::string &name, const std::string &password, unsigned int &id) {
 	auto query = fmt::format("SELECT ifnull(max(LoginServerID),0) + 1 FROM {0}",
-	                         server.options.GetAccountTable());
+	                         Config::get()->LoginAccountTable.c_str());
 
 	auto results = QueryDatabase(query);
 	if (!results.Success() || results.RowCount() != 1) {
@@ -110,7 +111,7 @@ bool Database::CreateLoginData(const std::string &name, const std::string &passw
 	auto insert_query = fmt::format(
 	    "INSERT INTO {0} (AccountName, AccountPassword, AccountEmail, LastLoginDate, LastIPAddress) "
 	    " VALUES('{1}', SHA('{2}'), 'local_creation', NOW(), '127.0.0.1'); ",
-	    server.options.GetAccountTable(),
+	    Config::get()->LoginAccountTable.c_str(),
 	    Strings::Escape(name),
 	    Strings::Escape(password));
 
@@ -141,8 +142,8 @@ bool Database::GetWorldRegistration(string long_name, string short_name, unsigne
 	    "  JOIN {1} AS SLT ON WSR.ServerListTypeID = SLT.ServerListTypeID\n"
 	    "WHERE\n"
 	    "  WSR.ServerShortName = '{2}' LIMIT 1",
-	    server.options.GetWorldRegistrationTable(),
-	    server.options.GetWorldServerTypeTable(),
+	    Config::get()->LoginWorldRegistrationTable.c_str(),
+	    Config::get()->LoginWorldServerTypeTable.c_str(),
 	    Strings::Escape(short_name));
 
 	auto results = QueryDatabase(query);
@@ -162,7 +163,7 @@ bool Database::GetWorldRegistration(string long_name, string short_name, unsigne
 	if (db_account_id > 0) {
 		auto world_registration_query = fmt::format(
 		    "SELECT AccountName, AccountPassword FROM {0} WHERE ServerAdminID = {1} LIMIT 1",
-		    server.options.GetWorldAdminRegistrationTable(),
+		    Config::get()->LoginWorldAdminRegistrationTable.c_str(),
 		    db_account_id);
 
 		auto world_registration_results = QueryDatabase(world_registration_query);
@@ -182,7 +183,7 @@ bool Database::GetWorldRegistration(string long_name, string short_name, unsigne
 void Database::UpdateLSAccountData(unsigned int id, string ip_address) {
 	auto query = fmt::format(
 	    "UPDATE {0} SET LastIPAddress = '{1}', LastLoginDate = NOW() where LoginServerId = {2}",
-	    server.options.GetAccountTable(),
+	    Config::get()->LoginAccountTable.c_str(),
 	    ip_address,
 	    id);
 
@@ -193,7 +194,7 @@ void Database::UpdateLSAccountInfo(unsigned int id, string name, string password
 	auto query = fmt::format(
 	    "REPLACE {0} SET LoginServerID = {1}, AccountName = '{2}', AccountPassword = sha('{3}'), AccountCreateDate = now(), "
 	    "AccountEmail = '{4}', LastIPAddress = '0.0.0.0', LastLoginDate = now()",
-	    server.options.GetAccountTable(),
+	    Config::get()->LoginAccountTable.c_str(),
 	    id,
 	    Strings::Escape(name),
 	    Strings::Escape(password),
@@ -205,7 +206,7 @@ void Database::UpdateLSAccountInfo(unsigned int id, string name, string password
 void Database::UpdateWorldRegistration(unsigned int id, string long_name, string ip_address) {
 	auto query = fmt::format(
 	    "UPDATE {0} SET ServerLastLoginDate = NOW(), ServerLastIPAddr = '{1}', ServerLongName = '{2}' WHERE ServerID = {3}",
-	    server.options.GetWorldRegistrationTable(),
+	    Config::get()->LoginWorldRegistrationTable.c_str(),
 	    ip_address,
 	    Strings::Escape(long_name),
 	    id);
@@ -216,7 +217,7 @@ void Database::UpdateWorldRegistration(unsigned int id, string long_name, string
 bool Database::CreateWorldRegistration(string long_name, string short_name, unsigned int &id) {
 	auto query = fmt::format(
 	    "SELECT ifnull(max(ServerID),0) + 1 FROM {0}",
-	    server.options.GetWorldRegistrationTable());
+	    Config::get()->LoginWorldRegistrationTable.c_str());
 
 	auto results = QueryDatabase(query);
 	if (!results.Success() || results.RowCount() != 1) {
@@ -230,7 +231,7 @@ bool Database::CreateWorldRegistration(string long_name, string short_name, unsi
 	auto insert_query = fmt::format(
 	    "INSERT INTO {0} SET ServerID = {1}, ServerLongName = '{2}', ServerShortName = '{3}', \n"
 	    "ServerListTypeID = 3, ServerAdminID = 0, ServerTrusted = 0, ServerTagDescription = ''",
-	    server.options.GetWorldRegistrationTable(),
+	    Config::get()->LoginWorldRegistrationTable.c_str(),
 	    id,
 	    long_name,
 	    short_name);
@@ -253,7 +254,7 @@ bool Database::CreateWorldRegistration(string long_name, string short_name, unsi
 bool Database::GetLoginSettings(std::string type, std::string value) {
 	auto query = fmt::format(
 	    "SELECT * FROM {0} ",
-	    server.options.GetLoginSettingTable());
+	    Config::get()->LoginLoginServerSettingTable.c_str());
 
 	auto results = QueryDatabase(query);
 
@@ -267,7 +268,7 @@ bool Database::GetLoginSettings(std::string type, std::string value) {
 
 bool Database::GetWorldPreferredStatus(int id) {
 	auto query = fmt::format("SELECT ServerListTypeID FROM {} WHERE ServerID = {} ",
-	                         server.options.GetWorldRegistrationTable(),
+	                         Config::get()->LoginWorldRegistrationTable.c_str(),
 	                         id);
 
 	auto results = QueryDatabase(query);
@@ -286,7 +287,7 @@ std::string Database::LoginSettings(std::string type) {
 	    "SELECT * FROM {0} "
 	    "WHERE "
 	    "type = '{1}' ",
-	    server.options.GetLoginSettingTable(),
+	    Config::get()->LoginLoginServerSettingTable.c_str(),
 	    type);
 
 	auto results = QueryDatabase(query);
@@ -303,23 +304,23 @@ std::string Database::LoginSettings(std::string type) {
 
 bool Database::CheckSettings(int type) {
 	if (type == 1) {
-		auto query = fmt::format("SHOW TABLES LIKE '{}' ", server.options.GetLoginSettingTable());
+		auto query = fmt::format("SHOW TABLES LIKE '{}' ", Config::get()->LoginLoginServerSettingTable.c_str());
 
 		auto results = QueryDatabase(query);
 
 		if (!results.Success()) {
 			return false;
 		}
-		LogInfo("tblloginserversettings exists sending continue.");
+		LogInfo("tblloginserversettings exists sending continue");
 	} else if (type == 2) {
-		auto query = fmt::format("SELECT * FROM {} ", server.options.GetLoginSettingTable());
+		auto query = fmt::format("SELECT * FROM {} ", Config::get()->LoginLoginServerSettingTable.c_str());
 
 		auto results = QueryDatabase(query);
 
 		if (!results.Success()) {
 			return false;
 		}
-		LogInfo("tblloginserversettings entries exist sending continue.");
+		LogInfo("tblloginserversettings entries exist sending continue");
 	} else {
 		return false;
 	}
@@ -330,7 +331,7 @@ bool Database::CheckSettings(int type) {
 bool Database::CheckExtraSettings(std::string type) {
 	LogInfo("Entered CheckExtraSettings using type: [{0}].", type.c_str());
 
-	auto query = fmt::format("SELECT * FROM `{0}` WHERE `type` = '{1}';", server.options.GetLoginSettingTable(), type);
+	auto query = fmt::format("SELECT * FROM `{0}` WHERE `type` = '{1}';", Config::get()->LoginLoginServerSettingTable.c_str(), type);
 
 	auto check_results = QueryDatabase(query);
 

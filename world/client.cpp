@@ -117,7 +117,7 @@ void Client::SendLogServer() {
 	l->Locale = 0;
 	l->ProfanityFilter = 0;
 
-	const char *wsn = Config::get()->ShortName.c_str();
+	const char *wsn = Config::get()->WorldShortName.c_str();
 	memcpy(l->worldshortname, wsn, strlen(wsn));
 	memcpy(l->loggingServerAddress, "127.0.0.1", 10);
 	l->loggingServerPort = 9878;
@@ -234,7 +234,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 		Log(Logs::Detail, Logs::WorldServer, "Logged in. Mode=%s", pZoning ? "(Zoning)" : "(CharSel)");
 		Log(Logs::Detail, Logs::WorldServer, "LS Account #%d", cle->LSID());
 
-		if (Config::get()->UpdateStats) {
+		if (Config::get()->WorldUpdateStats) {
 			auto pack = new ServerPacket;
 			pack->opcode = ServerOP_LSPlayerJoinWorld;
 			pack->size = sizeof(ServerLSPlayerJoinWorld_Struct);
@@ -596,9 +596,9 @@ bool Client::HandleEnterWorldPacket(const EQApplicationPacket *app) {
 	char buffer[112];
 
 	sprintf(buffer, "%s,%i,%s.%s,%08x",
-	        Config::get()->ChatHost.c_str(),
-	        Config::get()->ChatPort,
-	        Config::get()->ShortName.c_str(),
+	        Config::get()->UCSIP.c_str(),
+	        Config::get()->UCSPort,
+	        Config::get()->WorldShortName.c_str(),
 	        this->GetCharName(), MailKey);
 	outapp2->size = strlen(buffer) + 1;
 	outapp2->pBuffer = new uchar[outapp2->size];
@@ -774,7 +774,7 @@ bool Client::Process() {
 	}
 
 	if (!eqs->CheckState(ESTABLISHED)) {
-		if (Config::get()->UpdateStats) {
+		if (Config::get()->WorldUpdateStats) {
 			auto pack = new ServerPacket;
 			pack->opcode = ServerOP_LSPlayerLeftWorld;
 			pack->size = sizeof(ServerLSPlayerLeftWorld_Struct);
@@ -906,8 +906,8 @@ void Client::Clearance(int8 response) {
 			zs_addr = inet_ntoa(in);
 
 			if (strcmp(zs_addr, "127.0.0.1") == 0) {
-				Log(Logs::Detail, Logs::WorldServer, "Local zone address was %s, setting local address to: %s", zs_addr, Config::get()->LocalAddress.c_str());
-				zs_addr = Config::get()->LocalAddress.c_str();
+				Log(Logs::Detail, Logs::WorldServer, "Local zone address was %s, setting local address to: %s", zs_addr, Config::get()->WorldLANIP.c_str());
+				zs_addr = Config::get()->WorldLANIP.c_str();
 			} else {
 				Log(Logs::Detail, Logs::WorldServer, "Local zone address %s", zs_addr);
 			}
@@ -918,7 +918,7 @@ void Client::Clearance(int8 response) {
 		if (addr[0]) {
 			zs_addr = addr;
 		} else {
-			zs_addr = Config::get()->WorldAddress.c_str();
+			zs_addr = Config::get()->WorldWANIP.c_str();
 		}
 	}
 

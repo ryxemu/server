@@ -214,7 +214,7 @@ class EQEmuLogSys {
 	/**
 	 * @param log_name
 	 */
-	void StartFileLogs(const std::string& log_name = ""); /* Used to declare the processes file log and to keep it open for later use */
+	void StartFileLogs(const std::string& log_name);
 
 	/*
 	    LogSettings Struct

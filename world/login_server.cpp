@@ -29,7 +29,6 @@
 
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
-extern int errno;
 #endif
 
 #define IGNORE_LS_FATAL_ERROR
@@ -102,7 +101,7 @@ bool LoginServer::Process() {
 				utwrs->lsaccountid = utwr->lsaccountid;
 				utwrs->ToID = utwr->FromID;
 
-				if (Config::get()->IsLocked == true) {
+				if (Config::get()->IsWorldLocked == true) {
 					if (status < 80 && status > -1)
 						utwrs->response = 0;
 					if (status >= 80)
@@ -111,7 +110,7 @@ bool LoginServer::Process() {
 					utwrs->response = 1;
 				}
 
-				int32 x = Config::get()->MaxClients;
+				int32 x = Config::get()->WorldMaxClients;
 				if ((int32)numplayers >= x && x != -1 && x != 255 && status < 80)
 					utwrs->response = -3;
 
@@ -166,8 +165,8 @@ bool LoginServer::Process() {
 				break;
 			}
 			case ServerOP_LSRemoteAddr: {
-				if (!Config::get()->WorldAddress.length()) {
-					Config::get()->SetWorldAddress((char*)pack->pBuffer);
+				if (!Config::get()->WorldWANIP.length()) {
+					Config::get()->SetWorldWANIP(std::string(reinterpret_cast<char*>(pack->pBuffer)));
 					Log(Logs::Detail, Logs::WorldServer, "Loginserver provided %s as world address", pack->pBuffer);
 				}
 				break;
@@ -240,10 +239,10 @@ void LoginServer::SendInfo() {
 	ServerLSInfo_Struct* lsi = (ServerLSInfo_Struct*)pack->pBuffer;
 	strcpy(lsi->protocolversion, EQEMU_PROTOCOL_VERSION);
 	strcpy(lsi->serverversion, LOGIN_VERSION);
-	strcpy(lsi->name, Config::get()->LongName.c_str());
+	strcpy(lsi->name, Config::get()->WorldLongName.c_str());
 	strcpy(lsi->account, LoginAccount);
 	strcpy(lsi->password, LoginPassword);
-	strcpy(lsi->address, Config::get()->WorldAddress.c_str());
+	strcpy(lsi->address, Config::get()->WorldWANIP.c_str());
 	SendPacket(pack);
 	delete pack;
 }
@@ -258,17 +257,17 @@ void LoginServer::SendNewInfo() {
 	ServerNewLSInfo_Struct* lsi = (ServerNewLSInfo_Struct*)pack->pBuffer;
 	strcpy(lsi->protocolversion, EQEMU_PROTOCOL_VERSION);
 	strcpy(lsi->serverversion, LOGIN_VERSION);
-	strcpy(lsi->name, Config::get()->LongName.c_str());
-	strcpy(lsi->shortname, Config::get()->ShortName.c_str());
+	strcpy(lsi->name, Config::get()->WorldLongName.c_str());
+	strcpy(lsi->shortname, Config::get()->WorldShortName.c_str());
 	strcpy(lsi->account, LoginAccount);
 	strcpy(lsi->password, LoginPassword);
-	if (Config::get()->WorldAddress.length())
-		strcpy(lsi->remote_address, Config::get()->WorldAddress.c_str());
-	if (Config::get()->LocalAddress.length())
-		strcpy(lsi->local_address, Config::get()->LocalAddress.c_str());
+	if (Config::get()->WorldWANIP.length())
+		strcpy(lsi->remote_address, Config::get()->WorldWANIP.c_str());
+	if (Config::get()->WorldLANIP.length())
+		strcpy(lsi->local_address, Config::get()->WorldLANIP.c_str());
 	else {
 		tcpc->GetSockName(lsi->local_address, &port);
-		Config::get()->SetLocalAddress(lsi->local_address);
+		Config::get()->SetWorldLANIP(lsi->local_address);
 	}
 	SendPacket(pack);
 	delete pack;
@@ -283,7 +282,7 @@ void LoginServer::SendStatus() {
 	memset(pack->pBuffer, 0, pack->size);
 	ServerLSStatus_Struct* lss = (ServerLSStatus_Struct*)pack->pBuffer;
 
-	if (Config::get()->IsLocked)
+	if (Config::get()->IsWorldLocked)
 		lss->status = -2;
 	else if (numzones <= 0)
 		lss->status = -1;

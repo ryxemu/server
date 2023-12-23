@@ -4,13 +4,11 @@ SET(qserv_sources
 	database.cpp
 	dbupdate.cpp
 	main.cpp
-	queryservconfig.cpp
 	worldserver.cpp
 )
 
 SET(qserv_headers
 	database.h
-	queryservconfig.h
 	worldserver.h
 )
 

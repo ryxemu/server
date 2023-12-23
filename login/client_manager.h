@@ -52,8 +52,8 @@ class ClientManager {
 	void ProcessDisconnect();
 
 	list<Client*> clients;
-	OpcodeManager* old_ops;
-	EQStreamFactory* old_stream;
+	OpcodeManager* ops;
+	EQStreamFactory* stream;
 };
 
 #endif

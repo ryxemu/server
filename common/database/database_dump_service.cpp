@@ -74,10 +74,10 @@ std::string DatabaseDumpService::GetBaseMySQLDumpCommand() {
 
 	return fmt::format(
 	    "mysqldump -u {} -p{} -h {} {}",
-	    config->DatabaseUsername,
-	    config->DatabasePassword,
-	    config->DatabaseHost,
-	    config->DatabaseDB);
+	    Config::get()->DatabaseUsername,
+	    Config::get()->DatabasePassword,
+	    Config::get()->DatabaseHost,
+	    Config::get()->DatabaseDB);
 }
 
 /**
@@ -178,9 +178,9 @@ void DatabaseDumpService::Dump() {
 
 	LogInfo(
 	    "Database [{}] Host [{}] Username [{}]",
-	    config->DatabaseDB,
-	    config->DatabaseHost,
-	    config->DatabaseUsername);
+	    Config::get()->DatabaseDB,
+	    Config::get()->DatabaseHost,
+	    Config::get()->DatabaseUsername);
 
 	std::string options = "--allow-keywords --extended-insert --max-allowed-packet=1G --net-buffer-length=32704";
 	if (IsDumpWithNoData()) {

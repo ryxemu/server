@@ -31,7 +31,7 @@ WaterMap* WaterMap::LoadWaterMapfile(std::string zone_name) {
 	} else if (file_exists("Maps")) {
 		filename = "Maps";
 	} else {
-		filename = Config::get()->MapDir;
+		filename = Config::get()->DirMap;
 	}
 
 	std::string file_path = filename + "/" + zone_name + std::string(".wtr");
