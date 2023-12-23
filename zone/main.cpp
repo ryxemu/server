@@ -286,7 +286,6 @@ int main(int argc, char** argv) {
 	UpdateWindowTitle(nullptr);
 	bool worldwasconnected = worldserver.Connected();
 	EQStream* eqss;
-	EQOldStream* eqoss;
 	EQStreamInterface* eqsi;
 	std::chrono::time_point<std::chrono::steady_clock> frame_prev = std::chrono::steady_clock::now();
 
@@ -325,17 +324,6 @@ int main(int argc, char** argv) {
 				in.s_addr = eqss->GetRemoteIP();
 				Log(Logs::Detail, Logs::WorldServer, "New client connection from %s:%d", inet_ntoa(in), ntohs(eqss->GetRemotePort()));
 				stream_identifier.AddStream(eqss);  // takes the stream
-			}
-
-			// check the factory for any new incoming streams.
-			while ((eqoss = eqsf.PopOld())) {
-				// pull the stream out of the factory and give it to the stream identifier
-				// which will figure out what patch they are running, and set up the dynamic
-				// structures and opcodes for that patch.
-				struct in_addr in;
-				in.s_addr = eqoss->GetRemoteIP();
-				Log(Logs::Detail, Logs::WorldServer, "New old client connection from %s:%d", inet_ntoa(in), ntohs(eqoss->GetRemotePort()));
-				stream_identifier.AddOldStream(eqoss);  // takes the stream
 			}
 
 			// give the stream identifier a chance to do its work....

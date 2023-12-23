@@ -34,10 +34,6 @@ class EQStreamFactory : private Timeoutable {
 
 	Mutex MWritingStreams;
 
-	std::queue<EQOldStream *> NewOldStreams;
-
-	std::map<std::pair<uint32, uint16>, EQOldStream *> OldStreams;
-
 	virtual void CheckTimeout();
 
 	Timer *DecayTimer;
@@ -54,9 +50,6 @@ class EQStreamFactory : private Timeoutable {
 
 	EQStream *Pop();
 	void Push(EQStream *s);
-
-	EQOldStream *PopOld();
-	void PushOld(EQOldStream *s);
 
 	std::string Open(const std::string &address, int bind_port);
 	bool IsOpen() { return sock != -1; }

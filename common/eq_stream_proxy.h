@@ -5,7 +5,6 @@
 #include "eq_stream_intf.h"
 
 class EQStream;
-class EQOldStream;
 class StructStrategy;
 class OpcodeManager;
 class EQApplicationPacket;
@@ -14,7 +13,6 @@ class EQStreamProxy : public EQStreamInterface {
    public:
 	// takes ownership of the stream.
 	EQStreamProxy(EQStream *&stream, const StructStrategy *structs, OpcodeManager **opcodes);
-	EQStreamProxy(EQOldStream *&stream, const StructStrategy *structs, OpcodeManager **opcodes);
 	virtual ~EQStreamProxy();
 
 	// EQStreamInterface:

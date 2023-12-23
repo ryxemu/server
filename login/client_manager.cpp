@@ -43,19 +43,6 @@ ClientManager::~ClientManager() {
 
 void ClientManager::Process() {
 	ProcessDisconnect();
-	EQOldStream *oldcur = stream->PopOld();
-	if (stream) {
-		while (oldcur) {
-			struct in_addr in;
-			in.s_addr = oldcur->GetRemoteIP();
-			LogInfo("New client connection from {0}:{1}", inet_ntoa(in), ntohs(oldcur->GetRemotePort()));
-
-			oldcur->SetOpcodeManager(&ops);
-			Client *c = new Client(oldcur, cv_old);
-			clients.push_back(c);
-			oldcur = stream->PopOld();
-		}
-	}
 
 	list<Client *>::iterator iter = clients.begin();
 	while (iter != clients.end()) {

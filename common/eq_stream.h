@@ -71,8 +71,6 @@ type HI_LOSWAPshort(type a) { return (LO_BYTE(a) << 8) | (HI_BYTE(a) >> 8); }
 template <typename type>  // HI_LOSWAPlong
 type HI_LOSWAPlong(type a) { return (LO_WORD(a) << 16) | (HIWORD(a) >> 16); }
 
-#define EQOLDSTREAM_OUTBOUD_THRESHOLD 9
-
 // Added struct
 typedef struct
 {
@@ -169,8 +167,8 @@ class FragmentGroup {
 	}
 
    private:
-	uint16 seq;            // Sequence number
-	uint16 opcode;         // Fragment group's opcode
+	uint16 seq;     // Sequence number
+	uint16 opcode;  // Fragment group's opcode
 	uint16 num_fragments;
 	Fragment *fragment;
 };
@@ -446,192 +444,6 @@ class EQStream : public EQStreamInterface {
 		MatchFailed
 	} MatchState;
 	MatchState CheckSignature(const Signature *sig);
-};
-
-class EQOldStream : public EQStreamInterface {
-	friend class EQStreamPair;  // for collector.
-	friend class EQStream;
-
-   public:
-	EQOldStream();
-	EQOldStream(sockaddr_in in, int fd_sock);
-	~EQOldStream();
-
-   protected:
-	Mutex MResendQueue;
-	Mutex MOutboundQueue;
-	Mutex MInboundQueue;
-	uint32 remote_ip;
-	uint16 remote_port;
-	EQStreamState State;
-	Mutex MState;
-	EQStreamType StreamType;
-
-	uint8 active_users;  // how many things are actively using this
-	Mutex MInUse;
-
-   public:
-	bool IsTooMuchPending() {
-		return (packetspending > EQOLDSTREAM_OUTBOUD_THRESHOLD) ? true : false;
-	}
-
-	int16 PacketsPending() {
-		return packetspending;
-	}
-
-	void SetDebugLevel(int8 set_level) {
-		debug_level = set_level;
-	}
-
-	void LogPackets(bool logging) {
-		LOG_PACKETS = logging;
-	}
-
-	// parce/make packets
-	void ParceEQPacket(uint16 dwSize, uchar *pPacket);
-	void MakeEQPacket(EQProtocolPacket *app, bool ack_req = true);  // Make a fragment eq packet and put them on the SQUEUE/RSQUEUE
-	void MakeClosePacket();
-	// Add ack to packet if requested
-	void AddAck(EQOldPacket *pack) {
-		if (CACK.dwARQ) {
-			pack->HDR.b2_ARSP = 1;      // Set ack response field
-			pack->dwARSP = CACK.dwARQ;  // ACK current ack number.
-			CACK.dwARQ = 0;
-		}
-	}
-	// Timer Functions
-
-	// Check all class timers and call proper functions
-	void CheckTimers(void);
-
-	int CheckActive(void) {
-		if (pm_state == CLOSED) {
-			return (0);
-		} else {
-			return (1);
-		}
-	}
-
-	virtual void Close();
-
-	// Incomming / Outgoing Ack's
-	void IncomingARSP(uint16 dwARSP);
-	void IncomingARQ(uint16 dwARQ);
-	void OutgoingARQ(uint16 dwARQ);
-	void OutgoingARSP();
-	void ResendRequest(uint16 count_size, const uchar *bits, uint16 arsp_start);
-	void ResendBefore(uint16 dwARQ);
-
-	void InboundQueueClear();
-	void OutboundQueueClear();
-
-	std::deque<EQOldPacket *> SendQueue;             // Store packets thats on the send que
-	std::vector<EQRawApplicationPacket *> OutQueue;  // parced packets ready to go out of this class
-
-   private:
-	bool ProcessPacket(EQOldPacket *pack, bool from_buffer = false);
-	void CheckBufferedPackets();
-	EQRawApplicationPacket *MakeApplicationPacket(EQOldPacket *p);
-
-	FragmentGroupList fragment_group_list;
-	std::vector<EQOldPacket *> buffered_packets;  // Buffer of incoming packets
-
-	EQStreamState pm_state;  // manager state
-	uint16 dwFragSeq;        // current fragseq
-	int8 debug_level;
-	bool LOG_PACKETS;
-	bool bTimeout;
-	bool bTimeoutTrigger;
-	bool isWriting;
-	int16 packetspending;
-	OpcodeManager **OpMgr;
-	int listening_socket;
-	uint16 arsp_response;
-
-	Mutex MRate;
-	int32 RateThreshold;
-	int32 DecayRate;
-
-	uint32 LastPacket;
-	Mutex MVarlock;
-	bool sent_Fin;
-
-	int32 datarate_sec;  // bytes/1000ms
-	int32 datarate_tic;  // bytes/100ms
-	int32 dataflow;
-
-   public:
-	// interface used by application (EQStreamInterface)
-	virtual void QueuePacket(const EQApplicationPacket *p, bool ack_req = true);
-	virtual void FastQueuePacket(EQApplicationPacket **p, bool ack_req = true);
-	virtual EQApplicationPacket *PopPacket();
-	virtual uint32 GetRemoteIP() const { return remote_ip; }
-	virtual uint16 GetRemotePort() const { return remote_port; }
-	virtual void ReleaseFromUse() {
-		MInUse.lock();
-		if (active_users > 0) active_users--;
-		MInUse.unlock();
-	}
-	virtual void RemoveData();
-	virtual bool CheckState(EQStreamState state) { return GetState() == state; }
-	virtual std::string Describe() const { return ("Direct EQOldStream"); }
-	virtual bool IsInUse() {
-		bool flag;
-		MInUse.lock();
-		flag = (active_users > 0);
-		MInUse.unlock();
-		return flag;
-	}
-	bool IsWriting() { return isWriting; }
-	void SetWriting(bool var) { isWriting = var; }
-	inline void PutInUse() {
-		MInUse.lock();
-		active_users++;
-		MInUse.unlock();
-	}
-	inline EQStreamState GetState() {
-		EQStreamState s;
-		MState.lock();
-		s = pm_state;
-		MState.unlock();
-		return s;
-	}
-	void SendPacketQueue(bool Block = true);
-	void FinalizePacketQueue();
-	void ClearPacketQueue();
-	void FlagPacketQueueForResend();
-	void ReceiveData(uchar *buf, int len);
-	void SetStreamType(EQStreamType t);
-	inline const EQStreamType GetStreamType() const { return StreamType; }
-	static const char *StreamTypeString(EQStreamType t);
-	virtual bool IsOldStream() const { return true; }
-	EQStream::MatchState CheckSignature(const EQStream::Signature *sig);
-	bool HasOutgoingData();
-	bool CheckClosed() { return GetState() == CLOSED; }
-	void Process(const unsigned char *data, const uint32 length);
-	void CheckTimeout(uint32 now, uint32 timeout = 10000);
-	void SetState(EQStreamState state);
-	void SetLastPacketTime(uint32 t) { LastPacket = t; }
-	void SetOpcodeManager(OpcodeManager **opm) { OpMgr = opm; }
-	void _SendDisconnect();
-	void SetTimeOut(bool time) { bTimeout = time; }
-	bool GetTimeOut() { return bTimeout; }
-	void SetDataRate(float in_datarate) {
-		datarate_sec = (int32)(in_datarate * 1024);
-		datarate_tic = datarate_sec / 10;
-		dataflow = 0;
-	}                                                           // conversion from kb/sec to byte/100ms, byte/1000ms
-	float GetDataRate() { return (float)datarate_sec / 1024; }  // conversion back to kb/second
-	inline bool DataQueueFull() { return (dataflow > datarate_sec); }
-	inline int32 GetDataFlow() { return dataflow; }
-	ACK_INFO SACK;  // Server -> client info.
-	ACK_INFO CACK;  // Client -> server info.
-	uint16 dwLastCACK;
-	uint16 dwLastARSP;
-	bool sent_Start;
-	Timer *no_ack_sent_timer;
-	Timer *keep_alive_timer;
-	Timer *datarate_timer;
 };
 
 #endif
