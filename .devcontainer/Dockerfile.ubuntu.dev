@@ -1,4 +1,9 @@
 # This is a "dev" image for running ryxemu in development, also for dev containers
+ARG USERNAME=user-name-goes-here
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
-RUN sudo apt update && sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils git liblua5.2-0 liblua5.2-dev libmariadb-dev libssl-dev minizip make mariadb-client locales nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb libyaml-cpp-dev ccache ninja-build pv mariadb-server libboost-dev
-USER root
+RUN sudo apt update && sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils git liblua5.2-0 liblua5.2-dev libmariadb-dev libssl-dev minizip make mariadb-client locales nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb libyaml-cpp-dev ccache ninja-build pv mariadb-server libboost-dev valgrind
+
+USER $USERNAME
