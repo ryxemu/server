@@ -6,6 +6,7 @@
 #include "misc.h"
 #include "op_codes.h"
 #include "platform.h"
+#include "eqemu_logsys.h"
 
 #include <sstream>
 #ifndef STATIC_OPCODE
@@ -299,9 +300,13 @@ unsigned char *tmpbuffer=nullptr;
 */
 
 bool EQProtocolPacket::ValidateCRC(const unsigned char *buffer, int length, uint32 Key) {
-	if (buffer[0] == 0x00 && (buffer[1] == OP_SessionRequest || buffer[1] == OP_SessionResponse || buffer[1] == OP_OutOfSession)) {
+	if (buffer[0] == 0x00 &&
+	    (buffer[1] == OP_SessionRequest ||
+	     buffer[1] == OP_SessionResponse ||
+	     buffer[1] == OP_OutOfSession)) {
 		return true;
 	}
+
 	uint16 comp_crc = CRC16(buffer, length - 2, Key);
 	uint16 packet_crc = ntohs(*(const uint16 *)(buffer + length - 2));
 	if (!packet_crc) {
@@ -310,7 +315,7 @@ bool EQProtocolPacket::ValidateCRC(const unsigned char *buffer, int length, uint
 	if (comp_crc == packet_crc) {
 		return true;
 	}
-	// LogNetcode("CRC mismatch: comp={}, packet={}", std::hex << comp_crc, packet_crc << std::dec);
+	LogNetcode("Failed incoming checksum: wanted {:#06x}, got: {:#06x}", comp_crc, packet_crc);
 	return false;
 }
 

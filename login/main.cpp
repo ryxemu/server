@@ -50,14 +50,14 @@ int main() {
 	    Config::get()->DatabaseHost,
 	    Config::get()->DatabasePort,
 	    Config::get()->DatabaseDB);
-
-	// LogSys.LoadLogDatabaseSettings();
+	LogSys.SetDatabase(server.db);
+	LogSys.LoadLogDatabaseSettings();
 	LogSys.StartFileLogs(fmt::format("login_{}.log", getpid()));
 
 	if (Config::get()->IsLoginPacketDumpEnabled) {
-		LogSys.log_settings[Logs::Netcode].log_to_console = Logs::Detail;
+		LogSys.log_settings[Logs::Netcode].log_to_console = Logs::General;
 		LogSys.log_settings[Logs::Netcode].is_category_enabled = true;
-		LogSys.log_settings[Logs::PacketServerClientWithDump].log_to_console = Logs::Detail;
+		LogSys.log_settings[Logs::PacketServerClientWithDump].log_to_console = Logs::General;
 		LogSys.log_settings[Logs::PacketServerClientWithDump].is_category_enabled = true;
 	}
 

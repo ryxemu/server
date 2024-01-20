@@ -585,7 +585,7 @@ void EQStream::SequencedPush(EQProtocolPacket *p) {
 
 void EQStream::NonSequencedPush(EQProtocolPacket *p) {
 	MOutboundQueue.lock();
-	LogNetcode("Pushing non-sequenced packet of length [{0}]", p->size);
+	LogNetcodeDetail("Pushing non-sequenced packet of length [{0}]", p->size);
 	NonSequencedQueue.push(p);
 	MOutboundQueue.unlock();
 }
@@ -604,9 +604,10 @@ void EQStream::SendOutOfOrderAck(uint16 seq) {
 }
 
 void EQStream::Write(int eq_fd) {
-	std::queue<EQProtocolPacket *> ReadyToSend;
-	bool SeqEmpty = false, NonSeqEmpty = false;
-	std::deque<EQProtocolPacket *>::iterator sitr;
+	std::queue<EQProtocolPacket *> buf;             // buf is the queued packets to send on this write
+	bool is_seq_empty = false;                      // is sequential packets empty for buf in write?
+	bool is_nonseq_empty = false;                   // is nonsequential packets empty for buf in write?
+	std::deque<EQProtocolPacket *>::iterator sitr;  // stream iterator
 
 	// Check our rate to make sure we can send more
 	MRate.lock();
@@ -618,8 +619,9 @@ void EQStream::Write(int eq_fd) {
 
 	// If we got more packets to we need to ack, send an ack on the highest one
 	MAcks.lock();
-	if (CompareSequence(LastAckSent, NextAckToSend) == SeqFuture)
+	if (CompareSequence(LastAckSent, NextAckToSend) == SeqFuture) {
 		SendAck(NextAckToSend);
+	}
 	MAcks.unlock();
 
 	// Lock the outbound queues while we process
@@ -643,13 +645,17 @@ void EQStream::Write(int eq_fd) {
 
 	// Find the next sequenced packet to send from the "queue"
 	sitr = SequencedQueue.begin();
-	if (sitr != SequencedQueue.end())
+	if (sitr != SequencedQueue.end()) {
 		sitr += NextSequencedSend;
+	}
 
 	// Loop until both are empty or MaxSends is reached
-	while (!SeqEmpty || !NonSeqEmpty) {
+	while (!is_seq_empty || !is_nonseq_empty) {
 		// See if there are more non-sequenced packets left
-		if (!NonSequencedQueue.empty()) {
+		if (NonSequencedQueue.empty()) {
+			is_nonseq_empty = true;
+		}
+		if (!is_nonseq_empty) {
 			if (!p) {
 				// If we don't have a packet to try to combine into, use this one as the base
 				// And remove it form the queue
@@ -660,7 +666,7 @@ void EQStream::Write(int eq_fd) {
 				// Tryint to combine this packet with the base didn't work (too big maybe)
 				// So just send the base packet (we'll try this packet again later)
 				Log(Logs::Detail, Logs::Netcode, _L "Combined packet full at len %d, next non-seq packet is len %d" __L, p->size, (NonSequencedQueue.front())->size);
-				ReadyToSend.push(p);
+				buf.push(p);
 				BytesWritten += p->size;
 				p = nullptr;
 
@@ -675,9 +681,6 @@ void EQStream::Write(int eq_fd) {
 				delete NonSequencedQueue.front();
 				NonSequencedQueue.pop();
 			}
-		} else {
-			// No more non-sequenced packets
-			NonSeqEmpty = true;
 		}
 
 		if (sitr != SequencedQueue.end()) {
@@ -692,7 +695,7 @@ void EQStream::Write(int eq_fd) {
 
 			if (SequencedQueue.empty()) {
 				Log(Logs::Detail, Logs::Netcode, _L "Tried to write a packet with an empty queue (%d is past next out %d)" __L, seq_send, NextOutSeq);
-				SeqEmpty = true;
+				is_seq_empty = true;
 				continue;
 			}
 
@@ -712,7 +715,7 @@ void EQStream::Write(int eq_fd) {
 					// Trying to combine this packet with the base didn't work (too big maybe)
 					// So just send the base packet (we'll try this packet again later)
 					Log(Logs::Detail, Logs::Netcode, _L "Combined packet full at len %d, next seq packet %d is len %d" __L, p->size, seq_send, (*sitr)->size);
-					ReadyToSend.push(p);
+					buf.push(p);
 					BytesWritten += p->size;
 					p = nullptr;
 
@@ -733,9 +736,9 @@ void EQStream::Write(int eq_fd) {
 					// Copy it first as it will still live until it is acked
 					p = (*sitr)->Copy();
 					if (p != nullptr) {
-						Log(Logs::Detail, Logs::Netcode, _L "Starting combined packet with seq packet %d of len %d" __L, seq_send, p->size);
+						Log(Logs::Detail, Logs::Netcode, _L "Starting write combined packet with seq packet %d of len %d" __L, seq_send, p->size);
 					} else {
-						Log(Logs::Detail, Logs::Netcode, _L "Starting combined packet with seq packet %d" __L, seq_send);
+						Log(Logs::Detail, Logs::Netcode, _L "Starting write combined packet with seq packet %d" __L, seq_send);
 					}
 
 					++sitr;
@@ -744,7 +747,7 @@ void EQStream::Write(int eq_fd) {
 					// Trying to combine this packet with the base didn't work (too big maybe)
 					// So just send the base packet (we'll try this packet again later)
 					Log(Logs::Detail, Logs::Netcode, _L "Combined packet full at len %d, next seq packet %d is len %d" __L, p->size, seq_send, (*sitr)->size);
-					ReadyToSend.push(p);
+					buf.push(p);
 					BytesWritten += p->size;
 					p = nullptr;
 
@@ -769,34 +772,34 @@ void EQStream::Write(int eq_fd) {
 			}
 		} else {
 			// No more sequenced packets
-			SeqEmpty = true;
+			is_seq_empty = true;
 		}
 	}
 
 	// We have a packet still, must have run out of both seq and non-seq, so send it
 	if (p) {
 		Log(Logs::Detail, Logs::Netcode, _L "Final combined packet not full, len %d" __L, p->size);
-		ReadyToSend.push(p);
+		buf.push(p);
 		BytesWritten += p->size;
 	}
 
 	// Unlock the queue
 	MOutboundQueue.unlock();
 
-	if (!ReadyToSend.empty()) {
+	if (!buf.empty()) {
 		LastSent = Timer::GetCurrentTime();
 	}
 
 	// Send all the packets we "made"
-	while (!ReadyToSend.empty()) {
-		p = ReadyToSend.front();
+	while (!buf.empty()) {
+		p = buf.front();
 		WritePacket(eq_fd, p);
 		delete p;
-		ReadyToSend.pop();
+		buf.pop();
 	}
 
 	// see if we need to send our disconnect and finish our close
-	if (SeqEmpty && NonSeqEmpty) {
+	if (is_seq_empty && is_nonseq_empty) {
 		// no more data to send
 		if (CheckState(CLOSING)) {
 			Log(Logs::Detail, Logs::Netcode, _L "All outgoing data flushed, closing stream." __L);
@@ -1008,7 +1011,7 @@ bool EQStream::HasOutgoingData() {
 void EQStream::OutboundQueueClear() {
 	EQProtocolPacket *p = nullptr;
 
-	LogNetcode("Clearing outbound queue");
+	LogNetcodeDetail("Clearing outbound queue");
 
 	MOutboundQueue.lock();
 	while (!NonSequencedQueue.empty()) {
@@ -1029,41 +1032,44 @@ void EQStream::OutboundQueueClear() {
 void EQStream::PacketQueueClear() {
 	EQProtocolPacket *p = nullptr;
 
-	LogNetcode("Clearing future packet queue");
+	LogNetcodeDetail("Clearing future packet queue");
 
-	if (!PacketQueue.empty()) {
-		std::map<unsigned short, EQProtocolPacket *>::iterator itr;
-		for (itr = PacketQueue.begin(); itr != PacketQueue.end(); ++itr) {
-			p = itr->second;
-			delete p;
-		}
-		PacketQueue.clear();
+	if (PacketQueue.empty()) {
+		return;
 	}
+	std::map<unsigned short, EQProtocolPacket *>::iterator itr;
+	for (itr = PacketQueue.begin(); itr != PacketQueue.end(); ++itr) {
+		p = itr->second;
+		delete p;
+	}
+	PacketQueue.clear();
 }
 
 void EQStream::Process(const unsigned char *buffer, const uint32 length) {
 	static unsigned char newbuffer[2048];
 	uint32 newlength = 0;
-	if (EQProtocolPacket::ValidateCRC(buffer, length, Key)) {
-		if (compressed) {
-			newlength = EQProtocolPacket::Decompress(buffer, length, newbuffer, 2048);
-		} else {
-			memcpy(newbuffer, buffer, length);
-			newlength = length;
-			if (encoded)
-				EQProtocolPacket::ChatDecode(newbuffer, newlength - 2, Key);
-		}
-		if (buffer[1] != 0x01 && buffer[1] != 0x02 && buffer[1] != 0x1d)
-			newlength -= 2;
-		EQProtocolPacket *p = MakeProtocolPacket(newbuffer, newlength);
-		ProcessPacket(p);
-		delete p;
-		ProcessQueue();
-	} else {
-		LogNetcode("Incoming packet failed checksum");
+	if (!EQProtocolPacket::ValidateCRC(buffer, length, Key)) {
 		//_SendDisconnect();
 		// SetState(CLOSED);
+		return;
 	}
+
+	if (compressed) {
+		newlength = EQProtocolPacket::Decompress(buffer, length, newbuffer, 2048);
+	} else {
+		memcpy(newbuffer, buffer, length);
+		newlength = length;
+		if (encoded) {
+			EQProtocolPacket::ChatDecode(newbuffer, newlength - 2, Key);
+		}
+	}
+	if (buffer[1] != 0x01 && buffer[1] != 0x02 && buffer[1] != 0x1d) {
+		newlength -= 2;
+	}
+	EQProtocolPacket *p = MakeProtocolPacket(newbuffer, newlength);
+	ProcessPacket(p);
+	delete p;
+	ProcessQueue();
 }
 
 long EQStream::GetNextAckToSend() {
@@ -1119,8 +1125,9 @@ void EQStream::AckPackets(uint16 seq) {
 			delete SequencedQueue.front();
 			SequencedQueue.pop_front();
 			// adjust our "next" pointer
-			if (NextSequencedSend > 0)
+			if (NextSequencedSend > 0) {
 				NextSequencedSend--;
+			}
 			// advance the base sequence number to the seq of the block after the one we just got rid of.
 			SequencedBase++;
 		}
@@ -1175,7 +1182,7 @@ EQProtocolPacket *EQStream::RemoveQueue(uint16 seq) {
 }
 
 void EQStream::SetStreamType(EQStreamType type) {
-	Log(Logs::Detail, Logs::Netcode, _L "Changing stream type from %s to %s" __L, StreamTypeString(StreamType), StreamTypeString(type));
+	LogNetcode("Changing stream type from {} to {}", StreamTypeString(StreamType), StreamTypeString(type));
 	StreamType = type;
 	switch (StreamType) {
 		case LoginStream:
