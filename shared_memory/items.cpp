@@ -20,7 +20,7 @@ void LoadItems(SharedDatabase *database, const std::string &prefix) {
 	uint32 size = static_cast<uint32>(EQ::FixedMemoryHashSet<EQ::ItemData>::estimated_size(items, max_item));
 
 	auto Config = Config::get();
-	std::string file_name = Config->SharedMemDir + prefix + std::string("items");
+	std::string file_name = Config::get()->DirSharedMem + prefix + std::string("items");
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
 

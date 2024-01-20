@@ -129,17 +129,14 @@ void BaseTCPServer::ListenNewConnections() {
 	}
 }
 
-bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
-	if (errbuf)
-		errbuf[0] = 0;
+// Listen to a new TCP socket connection
+std::string BaseTCPServer::Open(std::string bind_address, uint16 bind_port) {
 	LockMutex lock(&MSock);
 	if (sock != 0) {
-		if (errbuf)
-			snprintf(errbuf, TCPServer_ErrorBufferSize, "Listening socket already open");
-		return false;
+		return "Listening socket already open";
 	}
-	if (in_port != 0) {
-		pPort = in_port;
+	if (bind_port != 0) {
+		pPort = bind_port;
 	}
 
 #ifdef _WINDOWS
@@ -160,9 +157,7 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 	//	Setting up TCP port for new TCP connections
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) {
-		if (errbuf)
-			snprintf(errbuf, TCPServer_ErrorBufferSize, "socket(): INVALID_SOCKET");
-		return false;
+		return fmt::format("socket: {}", strerror(errno));
 	}
 
 	// Quag: dont think following is good stuff for TCP, good for UDP
@@ -177,9 +172,7 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 		close(sock);
 #endif
 		sock = 0;
-		if (errbuf)
-			sprintf(errbuf, "bind(): <0");
-		return false;
+		return fmt::format("bind: {}", strerror(errno));
 	}
 
 	int bufsize = 64 * 1024;  // 64kbyte recieve buffer, up from default of 8k
@@ -193,18 +186,14 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 	if (listen(sock, SOMAXCONN) == SOCKET_ERROR) {
 #ifdef _WINDOWS
 		closesocket(sock);
-		if (errbuf)
-			snprintf(errbuf, TCPServer_ErrorBufferSize, "listen() failed, Error: %d", WSAGetLastError());
 #else
 		close(sock);
-		if (errbuf)
-			snprintf(errbuf, TCPServer_ErrorBufferSize, "listen() failed, Error: %s", strerror(errno));
 #endif
 		sock = 0;
-		return false;
+		return fmt::format("listen: {}", strerror(errno));
 	}
 
-	return true;
+	return "";
 }
 
 void BaseTCPServer::Close() {

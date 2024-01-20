@@ -14,7 +14,7 @@ OpcodeManager::OpcodeManager() {
 bool OpcodeManager::LoadOpcodesFile(const char *filename, OpcodeSetStrategy *s, bool report_errors) {
 	FILE *opf = fopen(filename, "r");
 	if (opf == nullptr) {
-		LogError("Unable to open opcodes file [{}]", filename);
+		LogError("Unable to open opcodes file {}", filename);
 		return (false);
 	}
 

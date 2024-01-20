@@ -71,7 +71,7 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 		return false;
 	}
 
-	LogInfo("Booting {} ({})", zonename, iZoneID);
+	LogInfo("Starting {} ({})", zonename, iZoneID);
 
 	numclients = 0;
 	zone = new Zone(iZoneID, zonename);
@@ -84,12 +84,12 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 		return false;
 	}
 
-	LogInfo("{} is using {} for its map_name", zonename, zone->map_name);
 	zone->zonemap = Map::LoadMapFile(zone->map_name);
 	zone->watermap = WaterMap::LoadWaterMapfile(zone->map_name);
 	zone->pathing = IPathfinder::Load(zone->map_name);
 	if (zone->zonemap == nullptr) {
 		zone->is_zonemap_loaded = false;
+		LogError("Failed to load zonemap for {}, ignoring", zonename);
 	}
 
 	std::string tmp;
@@ -123,16 +123,13 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 
 	worldserver.SetZoneData(iZoneID);
 
-	LogInfo("---- Zone server [{}], listening on port:[{}] ----", zonename, Config::get()->ZonePortCurrent);
-	LogInfo("Zone Bootup: [{}] [{}] ([{}])",
-	        (iStaticZone) ? "Static" : "Dynamic", zonename, iZoneID);
+	LogInfo("Booted up as {} zone {} ({})", (iStaticZone) ? "static" : "dynamic", zonename, iZoneID);
+
 	parse->Init();
 	UpdateWindowTitle(nullptr);
 	zone->GetTimeSync();
 
-	/* Set Logging */
-
-	LogSys.StartFileLogs(StringFormat("%s_port_%u", zone->GetShortName(), Config::get()->ZonePortCurrent));
+	LogSys.StartFileLogs(fmt::format("zone_{}_{}.log", getpid(), zone->GetShortName()));
 
 	return true;
 }
@@ -151,7 +148,6 @@ bool Zone::LoadZoneObjects() {
 		return false;
 	}
 
-	LogInfo("Loading Objects from DB...");
 	for (auto row = results.begin(); row != results.end(); ++row) {
 		if (atoi(row[9]) == 0) {
 			// Type == 0 - Static Object
@@ -261,7 +257,6 @@ bool Zone::LoadGroundSpawns() {
 
 	memset(&groundspawn, 0, sizeof(groundspawn));
 	int gsindex = 0;
-	LogInfo("Loading Ground Spawns from DB...");
 	database.LoadGroundSpawns(zoneid, &groundspawn);
 	uint32 ix = 0;
 	char* name = nullptr;
@@ -452,7 +447,6 @@ int32 Zone::GetTempMerchantQtyNoSlot(uint32 NPCID, int16 itemid) {
 }
 
 void Zone::LoadTempMerchantData() {
-	LogInfo("Loading Temporary Merchant Lists...");
 	std::string query = StringFormat(
 	    "SELECT								   "
 	    "DISTINCT ml.npcid,					   "
@@ -551,8 +545,6 @@ void Zone::LoadNewMerchantData(uint32 merchantid) {
 }
 
 void Zone::GetMerchantDataForZoneLoad() {
-	LogInfo("Loading Merchant Lists...");
-
 	auto query = fmt::format(
 	    SQL(
 	        SELECT
@@ -598,7 +590,7 @@ void Zone::GetMerchantDataForZoneLoad() {
 
 	uint32 npcid = 0;
 	if (!results.Success() || !results.RowCount()) {
-		LogDebug("No Merchant Data found for [{}]", GetShortName());
+		LogDebug("No Merchant Data found for {}", GetShortName());
 		return;
 	}
 
@@ -720,8 +712,6 @@ void Zone::Shutdown(bool quite) {
 }
 
 void Zone::LoadZoneDoors(const char* zone) {
-	LogInfo("Loading doors for {} ...", zone);
-
 	uint32 maxid;
 	int32 count = database.GetDoorsCount(&maxid, zone);
 	if (count < 1) {
@@ -800,7 +790,6 @@ Zone::Zone(uint32 in_zoneid, const char* in_short_name)
 	autoshutdown_timer.Start(AUTHENTICATION_TIMEOUT * 1000, false);
 	Weather_Timer = new Timer(60000);
 	Weather_Timer->Start();
-	LogInfo("The next weather check for zone: {} will be in {} seconds.", short_name, Weather_Timer->GetRemainingTime() / 1000);
 	zone_weather = 0;
 	weather_intensity = 0;
 	blocked_spells = nullptr;
@@ -890,57 +879,47 @@ bool Zone::Init(bool iStaticZone) {
 
 	zone->update_range = 1000.0f;
 
-	LogInfo("Loading spawn conditions...");
 	if (!spawn_conditions.LoadSpawnConditions(short_name)) {
 		LogError("Loading spawn conditions failed, continuing without them.");
 	}
 
-	LogInfo("Loading static zone points...");
 	if (!database.LoadStaticZonePoints(&zone_point_list, short_name)) {
 		LogError("Loading static zone points failed.");
 		return false;
 	}
 
-	LogInfo("Loading spawn groups...");
 	if (!database.LoadSpawnGroups(short_name, &spawn_group_list)) {
 		LogError("Loading spawn groups failed.");
 		return false;
 	}
 
-	LogInfo("Loading spawn2 points...");
 	if (!database.PopulateZoneSpawnList(zoneid, spawn2_list)) {
 		LogError("Loading spawn2 points failed.");
 		return false;
 	}
 
-	LogInfo("Loading random box spawns...");
 	if (!database.PopulateRandomZoneSpawnList(zoneid, spawn2_list)) {
 		LogError("Loading random box spawns failed (Possibly over ID limit.)");
 	}
 
-	LogInfo("Loading player corpses...");
 	if (!database.LoadCharacterCorpses(zoneid)) {
 		LogError("Loading player corpses failed.");
 		return false;
 	}
 
-	LogInfo("Loading traps...");
 	if (!database.LoadTraps(short_name)) {
 		LogError("Loading traps failed.");
 		return false;
 	}
 
-	LogInfo("Loading ground spawns...");
 	if (!LoadGroundSpawns()) {
 		LogError("Loading ground spawns failed. continuing.");
 	}
 
-	LogInfo("Loading World Objects from DB...");
 	if (!LoadZoneObjects()) {
 		LogError("Loading World Objects failed. continuing.");
 	}
 
-	LogInfo("Flushing old respawn timers...");
 	database.QueryDatabase("DELETE FROM `respawn_times` WHERE (`start` + `duration`) < UNIX_TIMESTAMP(NOW())");
 
 	// load up the zone's doors (prints inside)
@@ -952,10 +931,7 @@ bool Zone::Init(bool iStaticZone) {
 		database.DeleteTraderItem(0);
 	}
 
-	LogInfo("Loading NPC Emotes...");
 	zone->LoadNPCEmotes(&NPCEmoteList);
-
-	LogInfo("Loading KeyRing Data...");
 	zone->LoadKeyRingData(&KeyRingDataList);
 
 	// Load AA information
@@ -976,10 +952,7 @@ bool Zone::Init(bool iStaticZone) {
 	petition_list.ClearPetitions();
 	petition_list.ReadDatabase();
 
-	LogInfo("Loading timezone data...");
 	zone->zone_time.setEQTimeZone(database.GetZoneTZ(zoneid));
-
-	LogInfo("Init Finished: ZoneID = {}, Time Offset = {} ", zoneid, zone->zone_time.getEQTimeZone());
 
 	LoadGrids();
 	LoadTickItems();
@@ -1052,8 +1025,6 @@ bool Zone::LoadZoneCFG(const char* filename, bool DontLoadDefault) {
 	strcpy(newzone_data.zone_short_name, GetShortName());
 	strcpy(newzone_data.zone_long_name, GetLongName());
 	strcpy(newzone_data.zone_short_name2, GetShortName());
-
-	LogInfo("Successfully loaded Zone Config.");
 	return true;
 }
 
@@ -1299,7 +1270,6 @@ void Zone::ChangeWeather() {
 			weathertimer = weatherTimerRule * 1000;
 			Weather_Timer->Start(weathertimer);
 		}
-		LogInfo("The next weather check for zone: {} will be in {} seconds.", zone->GetShortName(), Weather_Timer->GetRemainingTime() / 1000);
 	} else {
 		LogInfo("The weather for zone: {} has changed. Old weather was = {}. New weather is = {} The next check will be in {} seconds. Rain chance: {}, Rain duration: {}, Snow chance {}, Snow duration: {} ", zone->GetShortName(), tmpOldWeather, zone_weather, Weather_Timer->GetRemainingTime() / 1000, rainchance, rainduration, snowchance, snowduration);
 		this->weatherSend();

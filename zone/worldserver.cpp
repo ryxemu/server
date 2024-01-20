@@ -64,24 +64,16 @@ void WorldServer::OnConnected() {
 	WorldConnection::OnConnected();
 	ServerPacket* pack;
 
-	/* Tell the launcher what our information is */
-	pack = new ServerPacket(ServerOP_SetLaunchName, sizeof(LaunchName_Struct));
-	LaunchName_Struct* ln = (LaunchName_Struct*)pack->pBuffer;
-	strn0cpy(ln->launcher_name, m_launcherName.c_str(), 32);
-	strn0cpy(ln->zone_name, m_launchedName.c_str(), 16);
-	SendPacket(pack);
-	safe_delete(pack);
-
 	/* Tell the Worldserver basic information about this zone process */
 	pack = new ServerPacket(ServerOP_SetConnectInfo, sizeof(ServerConnectInfo));
 	ServerConnectInfo* sci = (ServerConnectInfo*)pack->pBuffer;
 
-	sci->port = Config::get()->ZonePortCurrent;
-	if (Config::get()->WorldAddress.length() > 0) {
-		strn0cpy(sci->address, Config::get()->WorldAddress.c_str(), 250);
+	sci->port = Config::get()->ZonePort;
+	if (Config::get()->WorldWANIP.length() > 0) {
+		strn0cpy(sci->address, Config::get()->WorldWANIP.c_str(), 250);
 	}
-	if (Config::get()->LocalAddress.length() > 0) {
-		strn0cpy(sci->local_address, Config::get()->LocalAddress.c_str(), 250);
+	if (Config::get()->WorldLANIP.length() > 0) {
+		strn0cpy(sci->local_address, Config::get()->WorldLANIP.c_str(), 250);
 	}
 
 	/* Fetch process ID */

@@ -413,7 +413,6 @@ int command_init(void) {
 	    command_add("zcolor", "[red] [green] [blue] - Change sky color.", AccountStatus::GMImpossible, command_zcolor) ||
 	    command_add("zheader", "[zonename] - Load zheader for zonename from the database.", AccountStatus::GMImpossible, command_zheader) ||
 	    command_add("zone", "[Zone ID|Zone Short Name] [X] [Y] [Z] - Teleport to specified Zone by ID or Short Name (coordinates are optional).", AccountStatus::QuestTroupe, command_zone) ||
-	    command_add("zonebootup", "(shortname) (ZoneServerID) - Make a zone server boot a specific zone. If no arguments are given, it will find and boot any crashed zones.", AccountStatus::GMImpossible, command_zonebootup) ||
 	    command_add("zonelock", "[list/lock/unlock] - Set/query lock flag for zoneservers.", AccountStatus::GMAreas, command_zonelock) ||
 	    command_add("zoneshutdown", "[shortname] - Shut down a zone server.", AccountStatus::GMImpossible, command_zoneshutdown) ||
 	    command_add("zonespawn", "- Not implemented.", AccountStatus::Max, command_zonespawn) ||
@@ -440,7 +439,7 @@ int command_init(void) {
 		if (cl_iter == commandlist.end()) {
 			orphaned_command_settings.push_back(cs_iter.first);
 			LogInfo(
-			    "Command [{}] no longer exists... Deleting orphaned entry from `command_settings` table...",
+			    "Command {} no longer exists... Deleting orphaned entry from `command_settings` table...",
 			    cs_iter.first.c_str());
 		}
 	}
@@ -457,13 +456,13 @@ int command_init(void) {
 		if (cs_iter == command_settings.end()) {
 			injected_command_settings.push_back(std::pair<std::string, uint8>(working_cl_iter.first, working_cl_iter.second->access));
 			LogInfo(
-			    "New Command [{}] found... Adding to `command_settings` table with access [{}]...",
+			    "New Command {} found... Adding to `command_settings` table with access {}...",
 			    working_cl_iter.first.c_str(),
 			    working_cl_iter.second->access);
 
 			if (working_cl_iter.second->access == 0) {
 				LogCommands(
-				    "command_init(): Warning: Command [{}] defaulting to access level 0!",
+				    "command_init(): Warning: Command {} defaulting to access level 0!",
 				    working_cl_iter.first.c_str());
 			}
 
@@ -472,7 +471,7 @@ int command_init(void) {
 
 		working_cl_iter.second->access = cs_iter->second.first;
 		LogCommands(
-		    "command_init(): - Command [{}] set to access level [{}]",
+		    "command_init(): - Command {} set to access level {}",
 		    working_cl_iter.first.c_str(),
 		    cs_iter->second.first);
 
@@ -487,7 +486,7 @@ int command_init(void) {
 
 			if (commandlist.find(alias_iter) != commandlist.end()) {
 				LogCommands(
-				    "command_init(): Warning: Alias [{}] already exists as a command - skipping!",
+				    "command_init(): Warning: Alias {} already exists as a command - skipping!",
 				    alias_iter.c_str());
 
 				continue;
@@ -497,7 +496,7 @@ int command_init(void) {
 			commandaliases[alias_iter] = working_cl_iter.first;
 
 			LogCommands(
-			    "command_init(): - Alias [{}] added to command [{}]",
+			    "command_init(): - Alias {} added to command {}",
 			    alias_iter.c_str(),
 			    commandaliases[alias_iter].c_str());
 		}
@@ -2618,7 +2617,7 @@ void command_setlanguage(Client *c, const Seperator *sep) {
 		c->Message(CC_Default, "Language Value = 0 to 100", HARD_SKILL_CAP);
 	} else {
 		LogInfo(
-		    "Set language request from [{}], Target: [{}] Language ID: [{}] Language Value: [{}]",
+		    "Set language request from {}, Target: {} Language ID: {} Language Value: {}",
 		    c->GetCleanName(),
 		    target->GetCleanName(),
 		    language_id,
@@ -3247,29 +3246,6 @@ void command_zoneshutdown(Client *c, const Seperator *sep) {
 			s->zoneid = database.GetZoneID(sep->arg[1]);
 		worldserver.SendPacket(pack);
 		safe_delete(pack);
-	}
-}
-
-void command_zonebootup(Client *c, const Seperator *sep) {
-	if (!worldserver.Connected()) {
-		c->Message(CC_Default, "Error: World server disconnected");
-	} else if (sep->arg[1][0] == 0) {
-		auto pack = new ServerPacket(ServerOP_BootDownZones, sizeof(ServerDownZoneBoot_struct));
-		ServerDownZoneBoot_struct *s = (ServerDownZoneBoot_struct *)pack->pBuffer;
-		strcpy(s->adminname, c->GetName());
-		worldserver.SendPacket(pack);
-		safe_delete(pack);
-		c->Message(CC_Default, "Zonebootup completed.");
-	} else {
-		auto pack = new ServerPacket(ServerOP_ZoneBootup, sizeof(ServerZoneStateChange_struct));
-		ServerZoneStateChange_struct *s = (ServerZoneStateChange_struct *)pack->pBuffer;
-		s->ZoneServerID = atoi(sep->arg[2]);
-		strcpy(s->adminname, c->GetName());
-		s->zoneid = database.GetZoneID(sep->arg[1]);
-		s->makestatic = true;
-		worldserver.SendPacket(pack);
-		safe_delete(pack);
-		c->Message(CC_Default, "Zonebootup completed.");
 	}
 }
 
@@ -9736,7 +9712,7 @@ void command_viewzoneloot(Client *c, const Seperator *sep) {
 			    "Goto"
 			);*/
 			npc_link = fmt::format(
-			    " NPC: {} (ID {}) ",  // [{}]",
+			    " NPC: {} (ID {}) ",  // {}",
 			    npc_name,
 			    current_entity_id
 			    // command_link

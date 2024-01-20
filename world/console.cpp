@@ -24,7 +24,6 @@
 #include "zoneserver.h"
 #include "zonelist.h"
 #include "clientlist.h"
-#include "launcher_list.h"
 #include "ucs.h"
 #include "queryserv.h"
 
@@ -38,7 +37,6 @@ extern ZSList zoneserver_list;
 extern uint32 numzones;
 extern LoginServerList loginserverlist;
 extern ClientList client_list;
-extern LauncherList launcher_list;
 extern UCSConnection UCSLink;
 extern QueryServConnection QSLink;
 extern volatile bool RunLoops;
@@ -243,10 +241,6 @@ bool Console::Process() {
 			Log(Logs::Detail, Logs::WorldServer, "New zoneserver #%d from %s:%d", zs->GetID(), inet_ntoa(in), GetPort());
 			zoneserver_list.Add(zs);
 			numzones++;
-			tcpc = 0;
-		} else if (tcpc->GetPacketMode() == EmuTCPConnection::packetModeLauncher) {
-			Log(Logs::Detail, Logs::WorldServer, "New launcher from %s:%d", inet_ntoa(in), GetPort());
-			launcher_list.Add(tcpc);
 			tcpc = 0;
 		} else if (tcpc->GetPacketMode() == EmuTCPConnection::packetModeUCS) {
 			Log(Logs::Detail, Logs::WorldServer, "New UCS Connection from %s:%d", inet_ntoa(in), GetPort());

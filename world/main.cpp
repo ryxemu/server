@@ -63,7 +63,6 @@ union semun {
 #include "zoneserver.h"
 #include "zonelist.h"
 #include "clientlist.h"
-#include "launcher_list.h"
 #include "wguild_mgr.h"
 #include "ucs.h"
 #include "queryserv.h"
@@ -76,7 +75,6 @@ ZSList zoneserver_list;
 LoginServerList loginserverlist;
 UCSConnection UCSLink;
 QueryServConnection QSLink;
-LauncherList launcher_list;
 EQ::Random emu_random;
 volatile bool RunLoops = true;
 uint32 numclients = 0;
@@ -90,7 +88,7 @@ void CatchSignal(int sig_num);
 
 void LoadDatabaseConnections() {
 	LogInfo(
-	    "Connecting to MySQL {0}@{1}:{2}...",
+	    "Connecting to DB {0}@{1}:{2}",
 	    Config::get()->DatabaseUsername.c_str(),
 	    Config::get()->DatabaseHost.c_str(),
 	    Config::get()->DatabasePort);
@@ -107,21 +105,13 @@ void LoadDatabaseConnections() {
 }
 
 void RegisterLoginservers() {
-	// add login server config to list
-	if (Config::get()->LoginCount == 0) {
-		if (Config::get()->LoginHost.length()) {
-			loginserverlist.Add(Config::get()->LoginHost.c_str(), Config::get()->LoginPort, Config::get()->LoginAccount.c_str(), Config::get()->LoginPassword.c_str(), Config::get()->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", Config::get()->LoginHost.c_str(), Config::get()->LoginPort);
-		}
-	} else {
-		LinkedList<LoginConfig*> loginlist = Config::get()->loginlist;
-		LinkedListIterator<LoginConfig*> iterator(loginlist);
-		iterator.Reset();
-		while (iterator.MoreElements()) {
-			loginserverlist.Add(iterator.GetData()->LoginHost.c_str(), iterator.GetData()->LoginPort, iterator.GetData()->LoginAccount.c_str(), iterator.GetData()->LoginPassword.c_str(), iterator.GetData()->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", iterator.GetData()->LoginHost.c_str(), iterator.GetData()->LoginPort);
-			iterator.Advance();
-		}
+	LinkedList<LoginConfig*> login_list = Config::get()->WorldLoginList;
+	LinkedListIterator<LoginConfig*> iterator(login_list);
+	iterator.Reset();
+	while (iterator.MoreElements()) {
+		loginserverlist.Add(iterator.GetData()->LoginIP.c_str(), iterator.GetData()->LoginPort, iterator.GetData()->LoginUsername.c_str(), iterator.GetData()->LoginPassword.c_str(), iterator.GetData()->LoginType);
+		LogInfo("Added loginserver [{0}]:[{1}]", iterator.GetData()->LoginIP.c_str(), iterator.GetData()->LoginPort);
+		iterator.Advance();
 	}
 }
 
@@ -164,7 +154,7 @@ int main(int argc, char** argv) {
 
 	LogSys.SetDatabase(&database)
 	    ->LoadLogDatabaseSettings()
-	    ->StartFileLogs();
+	    ->StartFileLogs(fmt::format("world_{}.log", getpid()));
 
 	if (argc >= 2) {
 		std::string tmp;
@@ -213,22 +203,16 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	LogInfo("Loading zones..");
 	database.LoadZoneNames();
-	LogInfo("Clearing groups..");
 	database.ClearGroup();
-	LogInfo("Clearing raids..");
 	database.ClearRaid();
 	database.ClearRaidDetails();
-	LogInfo("Loading items..");
 	if (!database.LoadItems(hotfix_name))
 		LogError("Error: Could not load item data. But ignoring");
 
-	LogInfo("Loading skill caps..");
 	if (!database.LoadSkillCaps(std::string(hotfix_name)))
 		LogError("Error: Could not load skill cap data. But ignoring");
 
-	LogInfo("Loading guilds..");
 	guild_mgr.LoadGuilds();
 	// rules:
 	{
@@ -241,8 +225,6 @@ int main(int argc, char** argv) {
 		} else {
 			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 				LogInfo("No rule set configured, using default rules");
-			} else {
-				LogInfo("Loaded default rule set 'default'", tmp.c_str());
 			}
 		}
 	}
@@ -264,9 +246,6 @@ int main(int argc, char** argv) {
 	Timer EQTimeTimer(600000);
 	EQTimeTimer.Start(600000);
 
-	LogInfo("Loading launcher list..");
-	launcher_list.LoadList();
-
 	std::string tmp;
 	database.GetVariable("holdzones", tmp);
 	if (tmp.length() == 1 && tmp[0] == '1') {
@@ -286,20 +265,19 @@ int main(int argc, char** argv) {
 	database.LoadCharacterCreateAllocations();
 	database.LoadCharacterCreateCombos();
 
-	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcps.Open(Config::get()->WorldTCPPort, errbuf)) {
-		LogInfo("Zone (TCP) listener started.");
-	} else {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:", Config::get()->WorldTCPPort);
-		LogError("        {0}", errbuf);
-		return 1;
+	auto result = tcps.Open(Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for zone connections on TCP {}:{}: {}", Config::get()->WorldLANIP, Config::get()->WorldLANPort, result);
+		exit(1);
 	}
-	if (eqsf.Open()) {
-		LogInfo("Client (UDP) listener started.");
-	} else {
-		LogInfo("Failed to start client (UDP) listener (port 9000)");
-		return 1;
+	LogInfo("Listening for zone connections on TCP {}:{}", Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+
+	result = eqsf.Open(Config::get()->WorldLANIP, Config::get()->WorldLANPort);
+	if (!result.empty()) {
+		LogError("Failed to listen for client connections on UDP {}:{}: {}", Config::get()->WorldLANIP, Config::get()->WorldLANPort, result);
+		exit(1);
 	}
+	LogInfo("Listening for client connections on UDP {}:{}", Config::get()->WorldLANIP, Config::get()->WorldLANPort);
 
 	// register all the patches we have avaliable with the stream identifier.
 	EQStreamIdentifier stream_identifier;
@@ -312,7 +290,6 @@ int main(int argc, char** argv) {
 	InterserverTimer.Trigger();
 	uint8 ReconnectCounter = 100;
 	EQStream* eqs;
-	EQOldStream* eqos;
 	EmuTCPConnection* tcpc;
 	EQStreamInterface* eqsi;
 
@@ -337,21 +314,6 @@ int main(int argc, char** argv) {
 			in.s_addr = eqs->GetRemoteIP();
 			LogInfo("New connection from {0}:{1}", inet_ntoa(in), ntohs(eqs->GetRemotePort()));
 			stream_identifier.AddStream(eqs);  // takes the stream
-			i++;
-			if (i == 5)
-				break;
-		}
-
-		i = 0;
-		// check the factory for any new incoming streams.
-		while ((eqos = eqsf.PopOld())) {
-			// pull the stream out of the factory and give it to the stream identifier
-			// which will figure out what patch they are running, and set up the dynamic
-			// structures and opcodes for that patch.
-			struct in_addr in {};
-			in.s_addr = eqos->GetRemoteIP();
-			Log(Logs::Detail, Logs::WorldServer, "New connection from %s:%d", inet_ntoa(in), ntohs(eqos->GetRemotePort()));
-			stream_identifier.AddOldStream(eqos);  // takes the stream
 			i++;
 			if (i == 5)
 				break;
@@ -413,7 +375,6 @@ int main(int argc, char** argv) {
 		loginserverlist.Process();
 		console_list.Process();
 		zoneserver_list.Process();
-		launcher_list.Process();
 		UCSLink.Process();
 		QSLink.Process();
 

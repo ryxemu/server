@@ -2,15 +2,14 @@
 #define _EQSTREAMTYPE_H
 
 typedef enum {
-	UnknownStream=0,
+	UnknownStream = 0,
 	LoginStream,
 	WorldStream,
 	ZoneStream,
 	ChatOrMailStream,
 	ChatStream,
 	MailStream,
-	OldStream
+	NewLSStream
 } EQStreamType;
-
 
 #endif

@@ -373,7 +373,7 @@ bool Map::DoCollisionCheck(glm::vec3 myloc, glm::vec3 oloc, glm::vec3 &outnorm, 
 }
 
 Map *Map::LoadMapFile(std::string file) {
-	std::string filename = Config::get()->MapDir;
+	std::string filename = Config::get()->DirMap;
 	filename += "/";
 	std::transform(file.begin(), file.end(), file.begin(), ::tolower);
 	filename += file;

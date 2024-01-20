@@ -1091,7 +1091,7 @@ void ZoneDatabase::SaveCharacterBinds(Client* c) {
 		}
 	}
 
-	LogDebug("bind count is [{}]", bind_count);
+	LogDebug("bind count is {}", bind_count);
 
 	// allocate memory for binds
 	binds.reserve(bind_count);

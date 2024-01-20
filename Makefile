@@ -1,7 +1,7 @@
 NAME := ryxemu-server
 VERSION ?= 0.0.1
 
-DOCKER_ARGS := --rm  --name ${NAME} -v ${PWD}:/src -w /src ${NAME}
+DOCKER_ARGS := --rm --name ${NAME} -v ${PWD}:/src --user=$(shell id -u):$(shell id -g)` -w /src ${NAME}
 
 # Run 'ninja' in build directory
 .PHONY: build
@@ -80,6 +80,18 @@ prep:
 test:
 	cd build/bin && ./tests
 
+run-%:
+	cd build/bin && ./$*
+
+valgrind-%:
+	cd build/bin && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=logs/valgrind-$*.log ./$*
+
+gdb-%:
+	cd build/bin && gdb -ex run ./$*
+
+replay-%:
+	cd build/bin && ./hc replay --path $*.pcap --impersonate 10.0.0.5 --remoteConnection 127.0.0.1:5998 --step
+
 # Runs login binary
 .PHONY: login
 login:
@@ -94,7 +106,8 @@ shared:
 .PHONY: zone
 zone:
 	@-rm build/bin/logs/zone/zone*.log
-	cd build/bin && ./zone
+	@-rm build/bin/logs/zone/*_port_*.log
+	cd build/bin && ./zone ecommons
 
 # Runs world binary
 .PHONY: world

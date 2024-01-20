@@ -1,4 +1,9 @@
 # This was removed due to alpine isn't fully supported with cpptools for intellisense
+ARG USERNAME=user-name-goes-here
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
 FROM mcr.microsoft.com/devcontainers/base:alpine-3.14
 RUN apk add --no-cache cmake ninja boost-dev lua5.2-dev mariadb-dev ccache util-linux-dev wget unzip gdb libstdc++ g++
-USER root
+
+USER $USERNAME

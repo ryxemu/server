@@ -33,7 +33,7 @@ void Register(EQStreamIdentifier &into) {
 	auto Config = Config::get();
 	// create our opcode manager if we havent already
 	if (opcodes == nullptr) {
-		std::string opfile = Config->PatchDir;
+		std::string opfile = Config::get()->DirPatch;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";
@@ -52,26 +52,6 @@ void Register(EQStreamIdentifier &into) {
 
 	signature.ignore_eq_opcode = 0;
 
-	// Intel version's OP_SendLoginInfo is 200 bytes
-	pname = std::string(name) + "_world";
-	// register our world signature.
-	signature.first_length = sizeof(structs::LoginInfo_Struct) + 4;
-	signature.first_eq_opcode = opcodes->EmuToEQ(OP_SendLoginInfo);
-	into.RegisterOldPatch(signature, pname.c_str(), &opcodes, &struct_strategy);
-
-	// PPC version's OP_SendLoginInfo is 196 bytes
-	pname = std::string(name) + "_world_PPC";
-	// register our world signature.
-	signature.first_length = sizeof(structs::LoginInfo_Struct);
-	signature.first_eq_opcode = opcodes->EmuToEQ(OP_SendLoginInfo);
-	into.RegisterOldPatch(signature, pname.c_str(), &opcodes, &struct_strategy);
-
-	pname = std::string(name) + "_zone";
-	// register our zone signature.
-	signature.first_length = sizeof(structs::SetDataRate_Struct);
-	signature.first_eq_opcode = opcodes->EmuToEQ(OP_DataRate);
-	into.RegisterOldPatch(signature, pname.c_str(), &opcodes, &struct_strategy);
-
 	Log(Logs::General, Logs::Netcode, "[IDENTIFY] Registered patch %s", name);
 }
 
@@ -82,7 +62,7 @@ void Reload() {
 
 	if (opcodes != nullptr) {
 		auto Config = Config::get();
-		std::string opfile = Config->PatchDir;
+		std::string opfile = Config::get()->DirPatch;
 		opfile += "patch_";
 		opfile += name;
 		opfile += ".conf";

@@ -36,11 +36,11 @@ bool QueryServConnection::Process() {
 
 	while ((pack = Stream->PopPacket())) {
 		if (!authenticated) {
-			if (Config::get()->SharedKey.length() > 0) {
+			if (Config::get()->WorldSharedKey.length() > 0) {
 				if (pack->opcode == ServerOP_ZAAuth && pack->size == 16) {
 					uint8 tmppass[16];
 
-					MD5::Generate((const uchar *)Config::get()->SharedKey.c_str(), Config::get()->SharedKey.length(), tmppass);
+					MD5::Generate((const uchar *)Config::get()->WorldSharedKey.c_str(), Config::get()->WorldSharedKey.length(), tmppass);
 
 					if (memcmp(pack->pBuffer, tmppass, 16) == 0)
 						authenticated = true;

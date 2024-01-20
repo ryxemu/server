@@ -200,7 +200,7 @@ class Client {
 
 class Clientlist {
    public:
-	Clientlist(int ChatPort);
+	Clientlist();
 	void Process();
 	void CloseAllConnections();
 	Client *FindCharacter(std::string CharacterName);

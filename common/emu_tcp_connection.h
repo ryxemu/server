@@ -34,7 +34,6 @@ class EmuTCPConnection : public TCPConnection {
 		            modeTransition,
 		            modePacket };
 	enum ePacketMode { packetModeZone,
-		               packetModeLauncher,
 		               packetModeLogin,
 		               packetModeUCS,
 		               packetModeQueryServ,

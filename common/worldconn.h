@@ -22,7 +22,7 @@ class WorldConnection {
 	bool Connected() const { return (pConnected && tcpc.Connected()); }
 
 	void SetPassword(const char *password) { m_password = password; }
-	bool Connect();
+	std::string Connect();
 	void AsyncConnect();
 	void Disconnect();
 	inline bool TryReconnect() const { return pTryReconnect; }

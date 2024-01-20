@@ -402,7 +402,7 @@ bool SharedDatabase::LoadItems(const std::string& prefix) {
 		auto Config = Config::get();
 		EQ::IPCMutex mutex("items");
 		mutex.Lock();
-		std::string file_name = Config->SharedMemDir + prefix + std::string("items");
+		std::string file_name = Config::get()->DirSharedMem + prefix + std::string("items");
 		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		items_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name));
 		items_hash = std::unique_ptr<EQ::FixedMemoryHashSet<EQ::ItemData>>(new EQ::FixedMemoryHashSet<EQ::ItemData>(reinterpret_cast<uint8*>(items_mmf->Get()), items_mmf->Size()));
@@ -758,7 +758,7 @@ bool SharedDatabase::LoadNPCFactionLists(const std::string& prefix) {
 		auto Config = Config::get();
 		EQ::IPCMutex mutex("faction");
 		mutex.Lock();
-		std::string file_name = Config->SharedMemDir + prefix + std::string("faction");
+		std::string file_name = Config::get()->DirSharedMem + prefix + std::string("faction");
 		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		faction_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name));
 		faction_hash = std::unique_ptr<EQ::FixedMemoryHashSet<NPCFactionList>>(new EQ::FixedMemoryHashSet<NPCFactionList>(reinterpret_cast<uint8*>(faction_mmf->Get()), faction_mmf->Size()));
@@ -959,7 +959,7 @@ bool SharedDatabase::LoadSkillCaps(const std::string& prefix) {
 		auto Config = Config::get();
 		EQ::IPCMutex mutex("skill_caps");
 		mutex.Lock();
-		std::string file_name = Config->SharedMemDir + prefix + std::string("skill_caps");
+		std::string file_name = Config::get()->DirSharedMem + prefix + std::string("skill_caps");
 		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		skill_caps_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name));
 		mutex.Unlock();
@@ -1111,7 +1111,7 @@ bool SharedDatabase::LoadSpells(const std::string& prefix, int32* records, const
 		EQ::IPCMutex mutex("spells");
 		mutex.Lock();
 
-		std::string file_name = Config->SharedMemDir + prefix + std::string("spells");
+		std::string file_name = Config::get()->DirSharedMem + prefix + std::string("spells");
 		spells_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name));
 		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		*records = *reinterpret_cast<uint32*>(spells_mmf->Get());
@@ -1352,7 +1352,7 @@ bool SharedDatabase::LoadBaseData(const std::string& prefix) {
 		EQ::IPCMutex mutex("base_data");
 		mutex.Lock();
 
-		std::string file_name = Config->SharedMemDir + prefix + std::string("base_data");
+		std::string file_name = Config::get()->DirSharedMem + prefix + std::string("base_data");
 		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		base_data_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name));
 		mutex.Unlock();
@@ -1597,12 +1597,12 @@ bool SharedDatabase::LoadLoot(const std::string& prefix) {
 		auto Config = Config::get();
 		EQ::IPCMutex mutex("loot");
 		mutex.Lock();
-		std::string file_name_lt = Config->SharedMemDir + prefix + std::string("loot_table");
+		std::string file_name_lt = Config::get()->DirSharedMem + prefix + std::string("loot_table");
 		loot_table_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name_lt));
 		loot_table_hash = std::unique_ptr<EQ::FixedMemoryVariableHashSet<LootTable_Struct>>(new EQ::FixedMemoryVariableHashSet<LootTable_Struct>(
 		    reinterpret_cast<uint8*>(loot_table_mmf->Get()),
 		    loot_table_mmf->Size()));
-		std::string file_name_ld = Config->SharedMemDir + prefix + std::string("loot_drop");
+		std::string file_name_ld = Config::get()->DirSharedMem + prefix + std::string("loot_drop");
 		loot_drop_mmf = std::unique_ptr<EQ::MemoryMappedFile>(new EQ::MemoryMappedFile(file_name_ld));
 		loot_drop_hash = std::unique_ptr<EQ::FixedMemoryVariableHashSet<LootDrop_Struct>>(new EQ::FixedMemoryVariableHashSet<LootDrop_Struct>(
 		    reinterpret_cast<uint8*>(loot_drop_mmf->Get()),

@@ -17,7 +17,7 @@ void LoadFactions(SharedDatabase *database, const std::string &prefix) {
 	uint32 size = static_cast<uint32>(EQ::FixedMemoryHashSet<NPCFactionList>::estimated_size(lists, max_list));
 
 	auto Config = Config::get();
-	std::string file_name = Config->SharedMemDir + prefix + std::string("faction");
+	std::string file_name = Config::get()->DirSharedMem + prefix + std::string("faction");
 	EQ::MemoryMappedFile mmf(file_name, size);
 	mmf.ZeroFile();
 
