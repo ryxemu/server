@@ -687,7 +687,7 @@ void NPC::AssignWaypoints(int32 grid_id, int start_wp) {
 			new_waypoint.centerpoint = entry.centerpoint;
 
 			LogPathing(
-			    "Loading Grid [{}] number [{}] name [{}]",
+			    "Loading Grid {} number {} name {}",
 			    grid_id,
 			    entry.number,
 			    GetCleanName());

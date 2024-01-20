@@ -5202,7 +5202,7 @@ void Client::Handle_OP_Logout(const EQApplicationPacket *app) {
 
 void Client::Handle_OP_LootItem(const EQApplicationPacket *app) {
 	if (app->size != sizeof(LootingItem_Struct)) {
-		LogError("Wrong size: OP_LootItem, size=[{}], expected [{}]", app->size, sizeof(LootingItem_Struct));
+		LogError("Wrong size: OP_LootItem, size={}, expected {}", app->size, sizeof(LootingItem_Struct));
 		return;
 	}
 
@@ -7221,7 +7221,7 @@ void Client::Handle_OP_SpawnAppearance(const EQApplicationPacket *app) {
 
 void Client::Handle_OP_Split(const EQApplicationPacket *app) {
 	if (app->size != sizeof(Split_Struct)) {
-		LogError("Wrong size: OP_Split, size=[{}], expected [{}]", app->size, sizeof(Split_Struct));
+		LogError("Wrong size: OP_Split, size={}, expected {}", app->size, sizeof(Split_Struct));
 		return;
 	}
 

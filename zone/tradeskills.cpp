@@ -393,7 +393,7 @@ bool ZoneDatabase::GetTradeRecipe(const EQ::ItemInstance* container, uint8 c_typ
 	uint32 count = 0;
 	uint32 sum = 0;
 	for (uint8 i = 0; i < 10; i++) {  //
-		LogTradeskills("[GetTradeRecipe] Fetching item [{}]", i);
+		LogTradeskills("[GetTradeRecipe] Fetching item {}", i);
 
 		const EQ::ItemInstance* inst = container->GetItem(i);
 		if (!inst) {
@@ -402,7 +402,7 @@ bool ZoneDatabase::GetTradeRecipe(const EQ::ItemInstance* container, uint8 c_typ
 
 		const EQ::ItemData* item = GetItem(inst->GetItem()->ID);
 		if (!item) {
-			LogTradeskills("[GetTradeRecipe] item [{}] not found!", inst->GetItem()->ID);
+			LogTradeskills("[GetTradeRecipe] item {} not found!", inst->GetItem()->ID);
 			continue;
 		}
 
@@ -416,7 +416,7 @@ bool ZoneDatabase::GetTradeRecipe(const EQ::ItemInstance* container, uint8 c_typ
 		sum += item->ID;
 		count++;
 
-		LogTradeskills("[GetTradeRecipe] Item in container index [{}] item [{}] found [{}]", i, item->ID, count);
+		LogTradeskills("[GetTradeRecipe] Item in container index {} item {} found {}", i, item->ID, count);
 	}
 
 	// no items == no recipe
@@ -558,7 +558,7 @@ bool ZoneDatabase::GetTradeRecipe(const EQ::ItemInstance* container, uint8 c_typ
 			}
 
 			LogTradeskills(
-			    "[GetTradeRecipe] Component count loop [{}] item [{}] recipe component_count [{}]",
+			    "[GetTradeRecipe] Component count loop {} item {} recipe component_count {}",
 			    component_count,
 			    item->ID,
 			    atoi(row[1]));
@@ -607,8 +607,8 @@ bool ZoneDatabase::GetTradeRecipe(uint32 recipe_id, uint8 c_type, uint32 some_id
 	    containers.c_str());
 	auto results = QueryDatabase(query);
 	if (!results.Success()) {
-		LogError("Error in GetTradeRecipe, query: [{}] ", query.c_str());
-		LogError("Error in GetTradeRecipe, error: [{}] ", results.ErrorMessage().c_str());
+		LogError("Error in GetTradeRecipe, query: {} ", query.c_str());
+		LogError("Error in GetTradeRecipe, error: {} ", results.ErrorMessage().c_str());
 		return false;
 	}
 

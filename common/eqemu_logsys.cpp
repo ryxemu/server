@@ -488,7 +488,7 @@ EQEmuLogSys* EQEmuLogSys::LoadLogDatabaseSettings() {
 		}
 	}
 
-	LogInfo("Loaded [{}] log categories", categories.size());
+	LogDebug("Loaded {} log categories", categories.size());
 
 	return this;
 }

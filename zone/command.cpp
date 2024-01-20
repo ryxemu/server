@@ -439,7 +439,7 @@ int command_init(void) {
 		if (cl_iter == commandlist.end()) {
 			orphaned_command_settings.push_back(cs_iter.first);
 			LogInfo(
-			    "Command [{}] no longer exists... Deleting orphaned entry from `command_settings` table...",
+			    "Command {} no longer exists... Deleting orphaned entry from `command_settings` table...",
 			    cs_iter.first.c_str());
 		}
 	}
@@ -456,13 +456,13 @@ int command_init(void) {
 		if (cs_iter == command_settings.end()) {
 			injected_command_settings.push_back(std::pair<std::string, uint8>(working_cl_iter.first, working_cl_iter.second->access));
 			LogInfo(
-			    "New Command [{}] found... Adding to `command_settings` table with access [{}]...",
+			    "New Command {} found... Adding to `command_settings` table with access {}...",
 			    working_cl_iter.first.c_str(),
 			    working_cl_iter.second->access);
 
 			if (working_cl_iter.second->access == 0) {
 				LogCommands(
-				    "command_init(): Warning: Command [{}] defaulting to access level 0!",
+				    "command_init(): Warning: Command {} defaulting to access level 0!",
 				    working_cl_iter.first.c_str());
 			}
 
@@ -471,7 +471,7 @@ int command_init(void) {
 
 		working_cl_iter.second->access = cs_iter->second.first;
 		LogCommands(
-		    "command_init(): - Command [{}] set to access level [{}]",
+		    "command_init(): - Command {} set to access level {}",
 		    working_cl_iter.first.c_str(),
 		    cs_iter->second.first);
 
@@ -486,7 +486,7 @@ int command_init(void) {
 
 			if (commandlist.find(alias_iter) != commandlist.end()) {
 				LogCommands(
-				    "command_init(): Warning: Alias [{}] already exists as a command - skipping!",
+				    "command_init(): Warning: Alias {} already exists as a command - skipping!",
 				    alias_iter.c_str());
 
 				continue;
@@ -496,7 +496,7 @@ int command_init(void) {
 			commandaliases[alias_iter] = working_cl_iter.first;
 
 			LogCommands(
-			    "command_init(): - Alias [{}] added to command [{}]",
+			    "command_init(): - Alias {} added to command {}",
 			    alias_iter.c_str(),
 			    commandaliases[alias_iter].c_str());
 		}
@@ -2617,7 +2617,7 @@ void command_setlanguage(Client *c, const Seperator *sep) {
 		c->Message(CC_Default, "Language Value = 0 to 100", HARD_SKILL_CAP);
 	} else {
 		LogInfo(
-		    "Set language request from [{}], Target: [{}] Language ID: [{}] Language Value: [{}]",
+		    "Set language request from {}, Target: {} Language ID: {} Language Value: {}",
 		    c->GetCleanName(),
 		    target->GetCleanName(),
 		    language_id,
@@ -9712,7 +9712,7 @@ void command_viewzoneloot(Client *c, const Seperator *sep) {
 			    "Goto"
 			);*/
 			npc_link = fmt::format(
-			    " NPC: {} (ID {}) ",  // [{}]",
+			    " NPC: {} (ID {}) ",  // {}",
 			    npc_name,
 			    current_entity_id
 			    // command_link

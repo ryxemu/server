@@ -590,7 +590,7 @@ void Zone::GetMerchantDataForZoneLoad() {
 
 	uint32 npcid = 0;
 	if (!results.Success() || !results.RowCount()) {
-		LogDebug("No Merchant Data found for [{}]", GetShortName());
+		LogDebug("No Merchant Data found for {}", GetShortName());
 		return;
 	}
 

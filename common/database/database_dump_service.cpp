@@ -170,14 +170,14 @@ void DatabaseDumpService::Dump() {
 		LogSys.SilenceConsoleLogging();
 	}
 
-	LogInfo("MySQL installed [{}]", GetMySQLVersion());
+	LogInfo("MySQL installed {}", GetMySQLVersion());
 
 	SetDumpFileName(Config::get()->DatabaseDB + '-' + GetDumpDate());
 
 	auto config = Config::get();
 
 	LogInfo(
-	    "Database [{}] Host [{}] Username [{}]",
+	    "Database {} Host {} Username {}",
 	    Config::get()->DatabaseDB,
 	    Config::get()->DatabaseHost,
 	    Config::get()->DatabaseUsername);
@@ -267,7 +267,7 @@ void DatabaseDumpService::Dump() {
 	}
 
 	if (!tables_to_dump.empty()) {
-		LogInfo("Dumping Tables [{}]", tables_to_dump);
+		LogInfo("Dumping Tables {}", tables_to_dump);
 	}
 
 	LogInfo("Database dump created at [{}.sql]", GetDumpFileNameWithPath());
@@ -299,16 +299,16 @@ void DatabaseDumpService::Dump() {
 		}
 	}
 
-	//	LogDebug("[{}] dump-to-console", IsDumpOutputToConsole());
-	//	LogDebug("[{}] dump-path", GetSetDumpPath());
-	//	LogDebug("[{}] compression", (IsDumpWithCompression() ? "true" : "false"));
-	//	LogDebug("[{}] query-serv", (IsDumpQueryServerTables() ? "true" : "false"));
-	//	LogDebug("[{}] has-compression-binary", (HasCompressionBinary() ? "true" : "false"));
-	//	LogDebug("[{}] content", (IsDumpContentTables() ? "true" : "false"));
-	//	LogDebug("[{}] no-data", (IsDumpWithNoData() ? "true" : "false"));
-	//	LogDebug("[{}] login", (IsDumpLoginServerTables() ? "true" : "false"));
-	//	LogDebug("[{}] player", (IsDumpPlayerTables() ? "true" : "false"));
-	//	LogDebug("[{}] system", (IsDumpSystemTables() ? "true" : "false"));
+	//	LogDebug("{} dump-to-console", IsDumpOutputToConsole());
+	//	LogDebug("{} dump-path", GetSetDumpPath());
+	//	LogDebug("{} compression", (IsDumpWithCompression() ? "true" : "false"));
+	//	LogDebug("{} query-serv", (IsDumpQueryServerTables() ? "true" : "false"));
+	//	LogDebug("{} has-compression-binary", (HasCompressionBinary() ? "true" : "false"));
+	//	LogDebug("{} content", (IsDumpContentTables() ? "true" : "false"));
+	//	LogDebug("{} no-data", (IsDumpWithNoData() ? "true" : "false"));
+	//	LogDebug("{} login", (IsDumpLoginServerTables() ? "true" : "false"));
+	//	LogDebug("{} player", (IsDumpPlayerTables() ? "true" : "false"));
+	//	LogDebug("{} system", (IsDumpSystemTables() ? "true" : "false"));
 }
 
 bool DatabaseDumpService::IsDumpSystemTables() const {

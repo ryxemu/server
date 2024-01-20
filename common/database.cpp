@@ -47,7 +47,7 @@ bool Database::Connect(const char* host, const char* user, const char* passwd, c
 	uint32 errnum = 0;
 	char errbuf[MYSQL_ERRMSG_SIZE];
 	if (!Open(host, user, passwd, database, port, &errnum, errbuf)) {
-		LogError("[MySQL] Failed to connect to database: Error: [{}] ", errbuf);
+		LogError("[MySQL] Failed to connect to database: Error: {} ", errbuf);
 		return false;
 	}
 	return true;
@@ -271,7 +271,7 @@ bool Database::SetAccountStatus(const char* name, int16 status) {
 }
 
 bool Database::SetAccountStatus(const std::string& account_name, int16 status) {
-	LogInfo("Account [{}] is attempting to be set to status [{}]", account_name, status);
+	LogInfo("Account {} is attempting to be set to status {}", account_name, status);
 
 	std::string query = fmt::format(
 	    SQL(
@@ -286,7 +286,7 @@ bool Database::SetAccountStatus(const std::string& account_name, int16 status) {
 	}
 
 	if (results.RowsAffected() == 0) {
-		LogWarning("Account [{}] does not exist!", account_name);
+		LogWarning("Account {} does not exist!", account_name);
 		return false;
 	}
 
